@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-// Тип wide_string зависит от архитектуры и платформы
+// РўРёРї wide_string Р·Р°РІРёСЃРёС‚ РѕС‚ Р°СЂС…РёС‚РµРєС‚СѓСЂС‹ Рё РїР»Р°С‚С„РѕСЂРјС‹
 #ifdef _WIN32
 typedef wchar_t wide_char_t;
 #else
