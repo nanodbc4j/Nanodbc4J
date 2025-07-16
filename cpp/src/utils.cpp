@@ -1,4 +1,4 @@
-#include "utils.h"
+﻿#include "utils.h"
 
 wide_string_t to_wide_string(const char16_t* string) {
     // Преобразуем входящую строку в wide_string (используется UTF-16LE)

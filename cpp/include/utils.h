@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 
 // Тип wide_string зависит от архитектуры и платформы

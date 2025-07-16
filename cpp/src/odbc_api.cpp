@@ -1,8 +1,8 @@
-#include "odbc_api.h"
+п»ї#include "odbc_api.h"
 #include <exception>
 #include "utils.h"
 
-// Тип wide_string зависит от архитектуры и платформы
+// РўРёРї wide_string Р·Р°РІРёСЃРёС‚ РѕС‚ Р°СЂС…РёС‚РµРєС‚СѓСЂС‹ Рё РїР»Р°С‚С„РѕСЂРјС‹
 #ifdef _WIN32
 typedef wchar_t wide_char_t;
 #else
@@ -51,5 +51,8 @@ int is_connected(const nanodbc::connection* conn, NativeError* error) {
     }
     return 0;
 }
-
+ 
+void std_free(void* ptr) {
+    free(ptr);
+}
 

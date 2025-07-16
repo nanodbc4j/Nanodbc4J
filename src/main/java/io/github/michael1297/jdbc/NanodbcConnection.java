@@ -1,5 +1,7 @@
 package io.github.michael1297.jdbc;
 
+import io.github.michael1297.core.NativeDB;
+
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -20,6 +22,13 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class NanodbcConnection implements Connection {
+    NativeDB nativeDB = NativeDB.INSTANCE;
+
+    public NanodbcConnection(String url, Properties prop) throws SQLException {
+
+
+    }
+
     @Override
     public Statement createStatement() throws SQLException {
         return null;
