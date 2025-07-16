@@ -1,10 +1,19 @@
-﻿package io.github.michael1297.jdbc;
+package io.github.michael1297.jdbc;
+
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
+import io.github.michael1297.core.Datasource;
+import io.github.michael1297.core.DatasourcePtr;
+import io.github.michael1297.core.NativeDB;
+import io.github.michael1297.core.NativeMemory;
 
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +43,7 @@ public class NanodbcDriver implements Driver {
     /**
      * Validates a URL
      *
-     * @param url
+     * @param url url
      * @return true if the URL is valid, false otherwise
      */
     public static boolean isValidURL(String url) {
@@ -82,7 +91,6 @@ public class NanodbcDriver implements Driver {
      * @param url the URL
      * @param prop the properties
      * @return a Connection object that represents a connection to the URL
-     * @throws SQLException
      * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
      */
     public static NanodbcConnection createConnection(String url, Properties prop) throws SQLException {
@@ -97,7 +105,6 @@ public class NanodbcDriver implements Driver {
      *
      * @param url the URL
      * @return a Connection object that represents a connection to the URL
-     * @throws SQLException
      * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
      */
     public static NanodbcConnection createConnection(String url) throws SQLException {
@@ -105,5 +112,45 @@ public class NanodbcDriver implements Driver {
 
         url = url.trim();
         return new NanodbcConnection(extractAddress(url), new Properties());
+    }
+
+    public static List<String> driversList(){
+        try (NativeMemory memory = new NativeMemory()) {
+            IntByReference count = new IntByReference();
+
+            Pointer list = memory.track(NativeDB.INSTANCE.drivers_list(count));
+
+            List<String> drivers = new ArrayList<>();
+
+            for (int i = 0; i < count.getValue(); i++) {
+                Pointer pStr = memory.track(list.getPointer((long) i * NativeDB.POINTER_SIZE));
+                String str = pStr.getWideString(0);
+                drivers.add(str);
+            }
+
+            return drivers;
+        }
+    }
+
+    public static List<Datasource> datasourcesList(){
+        try (NativeMemory memory = new NativeMemory()){
+            IntByReference count = new IntByReference();
+            Pointer list = NativeDB.INSTANCE.datasources_list(count);
+
+            List<Datasource> datasources = new ArrayList<>();
+
+            for (int i = 0; i < count.getValue(); i++) {
+                Pointer pItem = memory.track(list.getPointer((long) i * NativeDB.POINTER_SIZE));
+
+                DatasourcePtr ds = new DatasourcePtr(pItem);
+                String name = memory.track(ds.name).getWideString(0);
+                String driver = memory.track(ds.driver).getWideString(0);
+
+                datasources.add(new Datasource(name, driver));
+            }
+
+            memory.track(list);
+            return datasources;
+        }
     }
 }

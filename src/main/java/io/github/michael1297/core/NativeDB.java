@@ -5,13 +5,16 @@ import com.sun.jna.LastErrorException;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public interface NativeDB extends Library {
     NativeDB INSTANCE = Native.load(getLibraryName(), NativeDB.class, getOptions());
+
+    int POINTER_SIZE = (System.getProperty("os.arch").endsWith("64") ? 8 : 4);
 
     private static String getLibraryName() {
         if (Platform.isWindows()) {
@@ -30,29 +33,34 @@ public interface NativeDB extends Library {
         return options;
     }
 
-     /**
+    /**
      * Метод создаёт соединение с базой данных
      *
      * @param connection_string Массив символов (UTF-16LE) строки подключения
-     * @param error Ошибка, возникающая при соединении
+     * @param error             Ошибка, возникающая при соединении
      */
-    PointerByReference connection(char[] connection_string, NativeError error) throws LastErrorException;
+    Pointer connection(char[] connection_string, NativeError error) throws LastErrorException;
 
     /**
      * Закрывает существующее подключение
      *
      * @param connection Указатель на соединение
-     * @param error Возможная ошибка закрытия
+     * @param error      Возможная ошибка закрытия
      */
-    void disconnect(PointerByReference connection, NativeError error) throws LastErrorException;
+    void disconnect(Pointer connection, NativeError error) throws LastErrorException;
 
     /**
      * Проверяет состояние соединения
      *
-     * @param conn Указатель на соединение
+     * @param conn  Указатель на соединение
      * @param error Информация об ошибке
      * @return True, если соединение активно
      */
-    boolean is_connected(PointerByReference conn, NativeError error);
+    boolean is_connected(Pointer conn, NativeError error);
 
+    Pointer drivers_list(IntByReference count);
+
+    Pointer datasources_list(IntByReference count);
+
+    void std_free(Pointer ptr);
 }

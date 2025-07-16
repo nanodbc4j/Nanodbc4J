@@ -11,3 +11,11 @@ typedef char16_t wide_char_t;
 typedef std::basic_string<wide_char_t> wide_string_t;
 
 wide_string_t to_wide_string(const char16_t* string);
+
+std::u16string to_u16string(const std::string& str);
+
+std::u16string to_u16string(const std::u16string& str);
+
+std::u16string to_u16string(const std::u32string& str);
+
+std::u16string to_u16string(const std::wstring& str);
