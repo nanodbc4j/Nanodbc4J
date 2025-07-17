@@ -3,8 +3,7 @@ package io.github.michael1297.core;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
-import java.util.List;
-
+@Structure.FieldOrder({"name", "driver"})
 public class DatasourcePtr extends Structure {
     public Pointer name;
     public Pointer driver;
@@ -21,11 +20,5 @@ public class DatasourcePtr extends Structure {
     public void setPointer(Pointer p) {
         useMemory(p);
         read();
-    }
-
-
-    @Override
-    protected List<String> getFieldOrder() {
-        return List.of("name", "driver");
     }
 }
