@@ -1,10 +1,12 @@
 package io.github.michael1297.core;
 
+import io.github.michael1297.core.struct.NativeError;
+
 public class NativeException extends RuntimeException {
     private final int errorCode;
     private final String errorType;
 
-    public NativeException(NativeError  error) {
+    public NativeException(NativeError error) {
         super(error.getErrorMessage());
         this.errorCode = error.error_code;
         this.errorType = error.getErrorType();

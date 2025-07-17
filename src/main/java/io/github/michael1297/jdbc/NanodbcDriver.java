@@ -2,8 +2,11 @@ package io.github.michael1297.jdbc;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import io.github.michael1297.core.Datasource;
-import io.github.michael1297.core.DatasourcePtr;
+import io.github.michael1297.core.pointer.ObjectPointer;
+import io.github.michael1297.core.pointer.StringPtr;
+import io.github.michael1297.dto.DatasourceDto;
+import io.github.michael1297.core.pointer.ArrayPtr;
+import io.github.michael1297.core.struct.DatasourceStruct;
 import io.github.michael1297.core.NativeDB;
 import io.github.michael1297.core.PointerTracker;
 
@@ -117,13 +120,12 @@ public class NanodbcDriver implements Driver {
     public static List<String> driversList(){
         try (PointerTracker memory = new PointerTracker()) {
             IntByReference count = new IntByReference();
-
-            Pointer list = memory.track(NativeDB.INSTANCE.drivers_list(count));
+            ArrayPtr list = memory.track(NativeDB.INSTANCE.drivers_list(count));
 
             List<String> drivers = new ArrayList<>();
 
             for (int i = 0; i < count.getValue(); i++) {
-                Pointer pStr = memory.track(list.getPointer((long) i * NativeDB.POINTER_SIZE));
+                StringPtr pStr = memory.track(list.getObjectPtr(i, StringPtr.class));
                 String str = pStr.getWideString(0);
                 drivers.add(str);
             }
@@ -132,24 +134,23 @@ public class NanodbcDriver implements Driver {
         }
     }
 
-    public static List<Datasource> datasourcesList(){
+    public static List<DatasourceDto> datasourcesList(){
         try (PointerTracker memory = new PointerTracker()){
             IntByReference count = new IntByReference();
-            Pointer list = NativeDB.INSTANCE.datasources_list(count);
+            ArrayPtr list = memory.track(NativeDB.INSTANCE.datasources_list(count));
 
-            List<Datasource> datasources = new ArrayList<>();
+            List<DatasourceDto> datasources = new ArrayList<>();
 
             for (int i = 0; i < count.getValue(); i++) {
-                Pointer pItem = memory.track(list.getPointer((long) i * NativeDB.POINTER_SIZE));
+                ObjectPointer pItem = memory.track(list.getObjectPtr(i, ObjectPointer.class));
 
-                DatasourcePtr ds = new DatasourcePtr(pItem);
+                DatasourceStruct ds = new DatasourceStruct(pItem.getPointer());
                 String name = memory.track(ds.name).getWideString(0);
                 String driver = memory.track(ds.driver).getWideString(0);
 
-                datasources.add(new Datasource(name, driver));
+                datasources.add(new DatasourceDto(name, driver));
             }
 
-            memory.track(list);
             return datasources;
         }
     }

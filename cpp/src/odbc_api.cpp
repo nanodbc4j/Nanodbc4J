@@ -61,18 +61,15 @@ nanodbc::statement* create_statement(nanodbc::connection* conn, NativeError* err
     return nullptr;
 }
 
-nanodbc::statement* prepare_statement(nanodbc::connection* conn, const char16_t* sql, long timeout, NativeError* error) {
+void prepare_statement(nanodbc::statement* stmt, const char16_t* sql, long timeout, NativeError* error) {
     init_error(error);
     try {
-        auto statement = new nanodbc::statement(*conn);
-        nanodbc::prepare(*statement, to_wide_string(sql).c_str(), timeout);
-        return statement;
+        nanodbc::prepare(*stmt, to_wide_string(sql).c_str(), timeout);
     } catch (const exception& e) {
         set_error(error, 2, "StatementError", e.what());
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown create statement error");
     }
-    return nullptr;
 }
 
 nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {

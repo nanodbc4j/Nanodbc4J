@@ -7,14 +7,17 @@ import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import io.github.michael1297.core.pointer.ConnectionPtr;
+import io.github.michael1297.core.pointer.ResultSetPtr;
+import io.github.michael1297.core.pointer.StatementPtr;
+import io.github.michael1297.core.pointer.ArrayPtr;
+import io.github.michael1297.core.struct.NativeError;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public interface NativeDB extends Library {
     NativeDB INSTANCE = Native.load(getLibraryName(), NativeDB.class, getOptions());
-
-    int POINTER_SIZE = (System.getProperty("os.arch").endsWith("64") ? 8 : 4);
 
     private static String getLibraryName() {
         if (Platform.isWindows()) {
@@ -39,7 +42,7 @@ public interface NativeDB extends Library {
      * @param connection_string Массив символов (UTF-16LE) строки подключения
      * @param error             Ошибка, возникающая при соединении
      */
-    Pointer connection(char[] connection_string, long timeout, NativeError error) throws LastErrorException;
+    ConnectionPtr connection(String connection_string, long timeout, NativeError error) throws LastErrorException;
 
     /**
      * Закрывает существующее подключение
@@ -47,7 +50,7 @@ public interface NativeDB extends Library {
      * @param connection Указатель на соединение
      * @param error      Возможная ошибка закрытия
      */
-    void disconnect(Pointer connection, NativeError error) throws LastErrorException;
+    void disconnect(ConnectionPtr connection, NativeError error) throws LastErrorException;
 
     /**
      * Проверяет состояние соединения
@@ -56,11 +59,21 @@ public interface NativeDB extends Library {
      * @param error Информация об ошибке
      * @return True, если соединение активно
      */
-    boolean is_connected(Pointer conn, NativeError error);
+    boolean is_connected(ConnectionPtr conn, NativeError error);
 
-    Pointer drivers_list(IntByReference count);
+    StatementPtr create_statement(ConnectionPtr conn, NativeError error);
 
-    Pointer datasources_list(IntByReference count);
+    void prepare_statement(StatementPtr stmt, String sql, long timeout, NativeError error);
+
+    ResultSetPtr execute(StatementPtr stmt, NativeError error);
+
+    void close_result(ResultSetPtr results, NativeError error);
+
+    void close_statement(StatementPtr stmt, NativeError error);
+
+    ArrayPtr drivers_list(IntByReference count);
+
+    ArrayPtr datasources_list(IntByReference count);
 
     void std_free(Pointer ptr);
 }

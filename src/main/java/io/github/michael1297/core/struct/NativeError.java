@@ -1,4 +1,4 @@
-package io.github.michael1297.core;
+package io.github.michael1297.core.struct;
 
 import com.sun.jna.Structure;
 

@@ -12,7 +12,7 @@ extern "C" {
 
     nanodbc::statement* create_statement(nanodbc::connection* conn, NativeError* error);
 
-    nanodbc::statement* prepare_statement(nanodbc::connection* conn, const char16_t* sql, long timeout, NativeError* error);
+    void prepare_statement(nanodbc::statement* conn, const char16_t* sql, long timeout, NativeError* error);
 
     nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error);
 

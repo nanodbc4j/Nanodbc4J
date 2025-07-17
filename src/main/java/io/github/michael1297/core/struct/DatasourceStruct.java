@@ -1,17 +1,17 @@
-package io.github.michael1297.core;
+package io.github.michael1297.core.struct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 @Structure.FieldOrder({"name", "driver"})
-public class DatasourcePtr extends Structure {
+public class DatasourceStruct extends Structure {
     public Pointer name;
     public Pointer driver;
 
-    public DatasourcePtr(){
+    public DatasourceStruct(){
     }
 
-    public DatasourcePtr(Pointer p) {
+    public DatasourceStruct(Pointer p) {
         super(p);
         read();
     }
