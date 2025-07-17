@@ -39,7 +39,7 @@ public interface NativeDB extends Library {
      * @param connection_string Массив символов (UTF-16LE) строки подключения
      * @param error             Ошибка, возникающая при соединении
      */
-    Pointer connection(char[] connection_string, NativeError error) throws LastErrorException;
+    Pointer connection(char[] connection_string, long timeout, NativeError error) throws LastErrorException;
 
     /**
      * Закрывает существующее подключение
