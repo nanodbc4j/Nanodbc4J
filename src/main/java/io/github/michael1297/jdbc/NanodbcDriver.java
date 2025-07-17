@@ -5,7 +5,7 @@ import com.sun.jna.ptr.IntByReference;
 import io.github.michael1297.core.Datasource;
 import io.github.michael1297.core.DatasourcePtr;
 import io.github.michael1297.core.NativeDB;
-import io.github.michael1297.core.NativeMemory;
+import io.github.michael1297.core.PointerTracker;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -19,7 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class NanodbcDriver implements Driver {
-    public static final Logger logger = Logger.getLogger(NanodbcDriver.class.getName());
+    private static final Logger logger = Logger.getLogger(NanodbcDriver.class.getName());
     public static final String PREFIX = "jdbc:odbc:";
 
     static {
@@ -46,7 +46,7 @@ public class NanodbcDriver implements Driver {
      * @param url url
      * @return true if the URL is valid, false otherwise
      */
-    public static boolean isValidURL(String url) {
+    static boolean isValidURL(String url) {
         return url != null && url.toLowerCase().startsWith(PREFIX);
     }
 
@@ -115,7 +115,7 @@ public class NanodbcDriver implements Driver {
     }
 
     public static List<String> driversList(){
-        try (NativeMemory memory = new NativeMemory()) {
+        try (PointerTracker memory = new PointerTracker()) {
             IntByReference count = new IntByReference();
 
             Pointer list = memory.track(NativeDB.INSTANCE.drivers_list(count));
@@ -133,7 +133,7 @@ public class NanodbcDriver implements Driver {
     }
 
     public static List<Datasource> datasourcesList(){
-        try (NativeMemory memory = new NativeMemory()){
+        try (PointerTracker memory = new PointerTracker()){
             IntByReference count = new IntByReference();
             Pointer list = NativeDB.INSTANCE.datasources_list(count);
 

@@ -2,11 +2,11 @@ package io.github.michael1297.core;
 
 import com.sun.jna.Pointer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 
-public class NativeMemory implements AutoCloseable {
-    private final List<Pointer> pointers = new ArrayList<>();
+public class PointerTracker implements AutoCloseable {
+    private final Collection<Pointer> pointers = new HashSet<>();
 
     public Pointer track(Pointer ptr) {
         if (!isNull(ptr)) {
@@ -24,7 +24,7 @@ public class NativeMemory implements AutoCloseable {
         pointers.clear();
     }
 
-    public static boolean isNull(Pointer ptr) {
+    private static boolean isNull(Pointer ptr) {
         return ptr == null || ptr.equals(Pointer.NULL);
     }
 }
