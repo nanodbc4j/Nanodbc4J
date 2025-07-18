@@ -2,20 +2,49 @@
 #include <exception>
 #include "utils.h"
 
-// Тип wide_string зависит от архитектуры и платформы
-#ifdef _WIN32
-typedef wchar_t wide_char_t;
-#else
-typedef char16_t wide_char_t;
-#endif
-
 using namespace std;
 
+template<typename Result>
+static Result execute_with_error_handling(const function<Result()>& operation, NativeError* error) {
+    init_error(error);
+    try {
+        return operation();
+    } catch (const nanodbc::index_range_error& e) {
+        set_error(error, 1, "IndexError", e.what());
+    } catch (const nanodbc::type_incompatible_error& e) {
+        set_error(error, 2, "TypeError", e.what());
+    } catch (const std::exception& e) {
+        set_error(error, 3, "DatabaseError", e.what());
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown error");
+    }
+    return Result{}; // Возвращаем значение по умолчанию
+}
+
+template<typename T>
+static T get_value_by_name(nanodbc::result* results, const wide_string_t& column_name, NativeError* error, T fallback = T{}) {
+    return execute_with_error_handling<T>(
+        [=]() {
+            return results->get<T>(column_name, fallback);
+        },
+        error
+    );
+}
+
+template<typename T>
+static T get_value_by_index(nanodbc::result* results, int index, NativeError* error, T fallback = T{}) {
+    return execute_with_error_handling<T>(
+        [=]() {
+            return results->get<T>(index, fallback);
+        },
+        error
+    );
+}
 
 nanodbc::connection* connection(const char16_t* connection_string, long timeout, NativeError* error) {
     init_error(error);
     try {
-        return new nanodbc::connection(to_wide_string(connection_string).c_str(), timeout);
+        return new nanodbc::connection(to_wide_string(connection_string), timeout);
     } catch (const exception& e) {
         set_error(error, 1, "DatabaseError", e.what());
     } catch (...) {
@@ -37,7 +66,7 @@ void disconnect(nanodbc::connection* connection,  NativeError* error) {
     }
 }
 
-int is_connected(const nanodbc::connection* conn, NativeError* error) {
+bool is_connected(const nanodbc::connection* conn, NativeError* error) {
     init_error(error);
     try {
         return conn && conn->connected();
@@ -46,7 +75,7 @@ int is_connected(const nanodbc::connection* conn, NativeError* error) {
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown connection check error");
     }
-    return 0;
+    return false;
 }
 
 nanodbc::statement* create_statement(nanodbc::connection* conn, NativeError* error) {
@@ -64,7 +93,7 @@ nanodbc::statement* create_statement(nanodbc::connection* conn, NativeError* err
 void prepare_statement(nanodbc::statement* stmt, const char16_t* sql, long timeout, NativeError* error) {
     init_error(error);
     try {
-        nanodbc::prepare(*stmt, to_wide_string(sql).c_str(), timeout);
+        nanodbc::prepare(*stmt, to_wide_string(sql), timeout);
     } catch (const exception& e) {
         set_error(error, 2, "StatementError", e.what());
     } catch (...) {
@@ -85,14 +114,78 @@ nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {
     return nullptr;
 }
 
+bool next_result(nanodbc::result* results, NativeError* error) {
+    init_error(error);
+    try {
+        return results && results->next();
+    }
+    catch (const exception& e) {
+        set_error(error, 2, "ResultError", e.what());
+    }
+    catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown next result error");
+    }
+    return false;
+}
+
+int get_int_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    return get_value_by_index<int>(results, index, error, 0);
+}
+
+long get_long_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    return get_value_by_index<long>(results, index, error, 0L);
+}
+
+double get_double_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    return get_value_by_index<double>(results, index, error, 0.0);
+}
+
+bool get_bool_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    // result->get<bool>() не работает
+    return get_value_by_index<short>(results, index, error, 0);
+}
+
+float get_float_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    return get_value_by_index<float>(results, index, error, 0.0f);
+}
+
+short get_short_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    return get_value_by_index<short>(results, index, error, 0);
+}
+
+int get_int_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    return get_value_by_name<int>(results, to_wide_string(name), error, 0);
+}
+
+long get_long_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    return get_value_by_name<long>(results, to_wide_string(name), error, 0L);
+}
+
+double get_double_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    return get_value_by_name<double>(results, to_wide_string(name), error, 0.0);
+}
+
+bool get_bool_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    // result->get<bool>() не работает
+    return get_value_by_name<short>(results, to_wide_string(name), error, 0);
+}
+
+float get_float_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    return get_value_by_name<float>(results, to_wide_string(name), error, 0.0f);
+}
+
+short get_short_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    return get_value_by_name<short>(results, to_wide_string(name), error, 0);
+}
+
 void close_result(nanodbc::result* results, NativeError* error) {
     init_error(error);
     try {
         delete results;
     } catch (const exception& e) {
-        set_error(error, 2, "StatementError", e.what());
+        set_error(error, 2, "ResultError", e.what());
     } catch (...) {
-        set_error(error, -1, "UnknownError", "Unknown close statement error");
+        set_error(error, -1, "UnknownError", "Unknown close result error");
     }
 }
 
