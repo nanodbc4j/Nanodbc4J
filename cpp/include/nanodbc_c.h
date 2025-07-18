@@ -1,0 +1,29 @@
+#pragma once
+
+#include <cstdint>
+
+extern "C" {
+
+    struct c_date {
+        int16_t year;  ///< Year [0-inf).
+        int16_t month; ///< Month of the year [1-12].
+        int16_t day;   ///< Day of the month [1-31].
+    };
+
+    struct c_time {
+        int16_t hour;    ///< Hours since midnight [0-23].
+        int16_t minute;  ///< Minutes after the hour [0-59].
+        int16_t second;  ///< Seconds after the minute.
+    };
+
+    struct c_timestamp {
+        int16_t year;     ///< Year [0-inf).
+        int16_t month;    ///< Month of the year [1-12].
+        int16_t day;      ///< Day of the month [1-31].
+        int16_t hour;     ///< Hours since midnight [0-23].
+        int16_t minute;   ///< Minutes after the hour [0-59].
+        int16_t second;   ///< Seconds after the minute.
+        int32_t fract;    ///< Fractional seconds.
+    };
+
+} // extern "C"
