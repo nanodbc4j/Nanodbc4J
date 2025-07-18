@@ -1,4 +1,4 @@
-package io.github.michael1297.core;
+package io.github.michael1297.internal;
 
 import com.sun.jna.Function;
 import com.sun.jna.LastErrorException;
@@ -7,11 +7,11 @@ import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import io.github.michael1297.core.pointer.ConnectionPtr;
-import io.github.michael1297.core.pointer.ResultSetPtr;
-import io.github.michael1297.core.pointer.StatementPtr;
-import io.github.michael1297.core.pointer.ArrayPtr;
-import io.github.michael1297.core.struct.NativeError;
+import io.github.michael1297.internal.pointer.ConnectionPtr;
+import io.github.michael1297.internal.pointer.ResultSetPtr;
+import io.github.michael1297.internal.pointer.StatementPtr;
+import io.github.michael1297.internal.pointer.ArrayPtr;
+import io.github.michael1297.internal.struct.NativeError;
 
 import java.util.HashMap;
 import java.util.Map;

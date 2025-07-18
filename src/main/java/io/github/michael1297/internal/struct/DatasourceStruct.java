@@ -1,10 +1,10 @@
-package io.github.michael1297.core.struct;
+package io.github.michael1297.internal.struct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 @Structure.FieldOrder({"name", "driver"})
-public class DatasourceStruct extends Structure {
+public final class DatasourceStruct extends Structure {
     public Pointer name;
     public Pointer driver;
 

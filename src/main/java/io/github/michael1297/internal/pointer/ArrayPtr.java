@@ -1,9 +1,9 @@
-package io.github.michael1297.core.pointer;
+package io.github.michael1297.internal.pointer;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
-public class ArrayPtr extends PointerType {
+public final class ArrayPtr extends PointerType {
     public static final int POINTER_SIZE = System.getProperty("os.arch").endsWith("64") ? 8 : 4;
 
     public ArrayPtr() {

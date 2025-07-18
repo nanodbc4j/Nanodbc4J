@@ -1,9 +1,9 @@
-package io.github.michael1297.core.struct;
+package io.github.michael1297.internal.struct;
 
 import com.sun.jna.Structure;
 
 @Structure.FieldOrder({"error_code", "error_message", "error_type"})
-public class NativeError extends Structure {
+public final class NativeError extends Structure {
     public int error_code;
     public byte[] error_message = new byte[256];
     public byte[] error_type = new byte[64];

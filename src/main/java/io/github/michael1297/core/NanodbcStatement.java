@@ -1,4 +1,4 @@
-package io.github.michael1297.jdbc;
+package io.github.michael1297.core;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

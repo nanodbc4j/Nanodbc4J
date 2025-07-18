@@ -1,8 +1,8 @@
-package io.github.michael1297.core;
+package io.github.michael1297.exceptions;
 
-import io.github.michael1297.core.struct.NativeError;
+import io.github.michael1297.internal.struct.NativeError;
 
-public class NativeException extends RuntimeException {
+public final class NativeException extends RuntimeException {
     private final int errorCode;
     private final String errorType;
 

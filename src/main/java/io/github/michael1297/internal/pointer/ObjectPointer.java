@@ -1,9 +1,9 @@
-package io.github.michael1297.core.pointer;
+package io.github.michael1297.internal.pointer;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
-public class ObjectPointer extends PointerType {
+public final class ObjectPointer extends PointerType {
     public ObjectPointer() {
     }
 

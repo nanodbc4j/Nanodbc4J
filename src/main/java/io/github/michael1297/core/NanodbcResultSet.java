@@ -1,4 +1,4 @@
-package io.github.michael1297.jdbc;
+package io.github.michael1297.core;
 
 import java.io.InputStream;
 import java.io.Reader;

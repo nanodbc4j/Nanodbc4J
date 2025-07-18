@@ -1,6 +1,6 @@
-package io.github.michael1297.jdbc;
+package io.github.michael1297.core;
 
-import io.github.michael1297.core.NativeDB;
+import io.github.michael1297.internal.NativeDB;
 
 import java.sql.Array;
 import java.sql.Blob;
