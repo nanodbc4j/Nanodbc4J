@@ -1,11 +1,13 @@
 ﻿#include "odbc_api.h"
 #include <exception>
-#include "string_utils.h"
+#include "utils/string_utils.h"
+#include <utils/struct_converter.h>
 
 using namespace std;
+using namespace utils;
 
 template<typename Result>
-static Result execute_with_error_handling(const function<Result()>& operation, NativeError* error) {
+static Result get_value_with_error_handling(const function<Result()>& operation, NativeError* error) {
     init_error(error);
     try {
         return operation();
@@ -23,7 +25,7 @@ static Result execute_with_error_handling(const function<Result()>& operation, N
 
 template<typename T>
 static T get_value_by_name(nanodbc::result* results, const wide_string_t& column_name, NativeError* error, T fallback = T{}) {
-    return execute_with_error_handling<T>(
+    return get_value_with_error_handling<T>(
         [=]() {
             return results->get<T>(column_name, fallback);
         },
@@ -33,7 +35,7 @@ static T get_value_by_name(nanodbc::result* results, const wide_string_t& column
 
 template<typename T>
 static T get_value_by_index(nanodbc::result* results, int index, NativeError* error, T fallback = T{}) {
-    return execute_with_error_handling<T>(
+    return get_value_with_error_handling<T>(
         [=]() {
             return results->get<T>(index, fallback);
         },
@@ -41,16 +43,45 @@ static T get_value_by_index(nanodbc::result* results, int index, NativeError* er
     );
 }
 
-nanodbc::connection* connection(const char16_t* connection_string, long timeout, NativeError* error) {
+static nanodbc::connection* connection_with_error_handling(const function<nanodbc::connection*()>& operation, NativeError* error) {
     init_error(error);
     try {
-        return new nanodbc::connection(to_wide_string(connection_string), timeout);
+        return operation();
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 1, "DatabaseError", e.what());
     } catch (const exception& e) {
         set_error(error, 1, "DatabaseError", e.what());
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown connection error");
     }
     return nullptr;
+}
+
+nanodbc::connection* connection(const char16_t* connection_string, NativeError* error) {
+    return connection_with_error_handling(
+        [&]() {
+            return new nanodbc::connection(to_wide_string(connection_string));
+        },
+        error
+    );
+}
+
+nanodbc::connection* connection_with_timeout(const char16_t* connection_string, long timeout, NativeError* error) {
+    return connection_with_error_handling(
+        [&]() {
+            return new nanodbc::connection(to_wide_string(connection_string), timeout);
+        },
+        error
+    );
+}
+
+nanodbc::connection* connection_with_user_pass_timeout(const char16_t* dsn, const char16_t* user, const char16_t* pass, long timeout, NativeError* error) {
+    return connection_with_error_handling(
+        [&]() {
+            return new nanodbc::connection(to_wide_string(dsn), to_wide_string(user), to_wide_string(pass), timeout);
+        },
+        error
+    );
 }
 
 void disconnect(nanodbc::connection* connection,  NativeError* error) {
@@ -203,7 +234,7 @@ void close_statement(nanodbc::statement* stmt, NativeError* error) {
     }
 }
 
-const char16_t** drivers_list(int* count) {
+const driver** drivers_list(int* count) {
     auto drivers_list = nanodbc::list_drivers();
     *count = static_cast<int>(drivers_list.size());
 
@@ -230,7 +261,8 @@ const char16_t** drivers_list(int* count) {
         result[i] = strCopy;
     }
 
-    return result;
+    return nullptr;
+    //return result;
 }
 
 const datasource** datasources_list(int* count) {
@@ -244,7 +276,7 @@ const datasource** datasources_list(int* count) {
     if (!result) return nullptr;
 
     for (size_t i = 0; i < datasources.size(); ++i) {
-        datasource* item = static_cast<datasource*>(malloc(sizeof(datasource)));
+        datasource* item = converter::convert(&datasources[i]);
 
         if (!item) {
             // Освобождаем уже выделенную память в случае ошибки
@@ -256,16 +288,6 @@ const datasource** datasources_list(int* count) {
             free(result);
             return nullptr;
         }
-
-        // Копируем name
-        auto u16_name = to_u16string(datasources[i].name);
-        item->name = static_cast<char16_t*>(malloc(sizeof(char16_t) * (u16_name.size() + 1)));
-        copy(u16_name.c_str(), u16_name.c_str() + u16_name.size() + 1, const_cast<char16_t*>(item->name));
-
-        // Копируем driver
-        auto u16_driver = to_u16string(datasources[i].driver);
-        item->driver = static_cast<char16_t*>(malloc(sizeof(char16_t) * (u16_driver.size() + 1)));
-        copy(u16_driver.c_str(), u16_driver.c_str() + u16_driver.size() + 1, const_cast<char16_t*>(item->driver));
 
         result[i] = item;
     }

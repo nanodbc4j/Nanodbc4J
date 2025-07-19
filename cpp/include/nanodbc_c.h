@@ -6,6 +6,18 @@
 extern "C" {
 #endif
 
+    /// \brief Driver attributes.
+    struct attribute {
+        const char16_t* keyword; ///< Driver keyword attribute.
+        const char16_t* value;   ///< Driver attribute value.
+    };
+
+    struct driver {
+        const char16_t* name;            ///< Driver name.
+        attribute* attributes; ///< Driver attributes.
+        int attribute_count;
+    };
+
     struct datasource {
         const char16_t* name;   ///< DSN name.
         const char16_t* driver; ///< Driver description.

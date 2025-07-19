@@ -1,13 +1,6 @@
 package io.github.michael1297.core;
 
-import com.sun.jna.ptr.IntByReference;
 import io.github.michael1297.core.metadata.Datasource;
-import io.github.michael1297.internal.pointer.ObjectPointer;
-import io.github.michael1297.internal.pointer.StringPtr;
-import io.github.michael1297.internal.pointer.ArrayPtr;
-import io.github.michael1297.internal.struct.DatasourceStruct;
-import io.github.michael1297.internal.NativeDB;
-import io.github.michael1297.internal.PointerTracker;
 import io.github.michael1297.internal.utils.Handler;
 
 import java.sql.Connection;
@@ -15,7 +8,6 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -100,7 +92,7 @@ public class NanodbcDriver implements Driver {
         if (!isValidURL(url)) return null;
 
         url = url.trim();
-        return new NanodbcConnection(extractAddress(url), prop);
+        return new NanodbcConnection(extractAddress(url));
     }
 
     /**
@@ -111,10 +103,7 @@ public class NanodbcDriver implements Driver {
      * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
      */
     public static NanodbcConnection createConnection(String url) throws SQLException {
-        if (!isValidURL(url)) return null;
-
-        url = url.trim();
-        return new NanodbcConnection(extractAddress(url), new Properties());
+        return createConnection(url, null);
     }
 
     public static List<String> driversList(){

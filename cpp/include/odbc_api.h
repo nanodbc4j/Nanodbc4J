@@ -4,7 +4,11 @@
 #include "nanodbc_c.h"
 
 extern "C" {
-    nanodbc::connection* connection(const char16_t* connection_string, long timeout, NativeError* error);
+    nanodbc::connection* connection(const char16_t* connection_string, NativeError* error);
+
+    nanodbc::connection* connection_with_timeout(const char16_t* connection_string, long timeout, NativeError* error);
+
+    nanodbc::connection* connection_with_user_pass_timeout(const char16_t* dsn, const char16_t* user, const char16_t* pass, long timeout, NativeError* error);
 
     void disconnect (nanodbc::connection* conn, NativeError* error);
 
@@ -46,7 +50,7 @@ extern "C" {
 
     void close_statement(nanodbc::statement* stmt, NativeError* error);
 
-    const char16_t** drivers_list(int* count);
+    const driver** drivers_list(int* count);
 
     const datasource** datasources_list(int* count);
 

@@ -1,6 +1,7 @@
 package io.github.michael1297.core;
 
-import io.github.michael1297.internal.NativeDB;
+import io.github.michael1297.internal.pointer.ConnectionPtr;
+import io.github.michael1297.internal.struct.NativeError;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -22,10 +23,11 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class NanodbcConnection implements Connection {
-    NativeDB nativeDB = NativeDB.INSTANCE;
+    private ConnectionPtr connectionPtr;
 
-    public NanodbcConnection(String url, Properties prop) throws SQLException {
-
+    public NanodbcConnection(String url) throws SQLException {
+        NativeError nativeError = new NativeError();
+        //NativeDB.INSTANCE.connection(url)
 
     }
 
