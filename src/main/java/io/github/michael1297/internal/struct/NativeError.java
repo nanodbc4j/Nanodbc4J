@@ -1,18 +1,47 @@
 package io.github.michael1297.internal.struct;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import io.github.michael1297.internal.NativeDB;
+
+import java.nio.charset.StandardCharsets;
 
 @Structure.FieldOrder({"error_code", "error_message", "error_type"})
-public final class NativeError extends Structure {
+public final class NativeError extends Structure implements AutoCloseable {
     public int error_code;
-    public byte[] error_message = new byte[256];
-    public byte[] error_type = new byte[64];
+    public Pointer error_message;
+    public Pointer error_type;
+
+    private volatile boolean closed = false;
 
     public String getErrorMessage() {
-        return new String(error_message).trim();
+        return error_message == null ? "" : error_message.getString(0, StandardCharsets.UTF_8.name());
     }
 
     public String getErrorType() {
-        return new String(error_type).trim();
+        return error_type == null ? "" : error_type.getString(0, StandardCharsets.UTF_8.name());
+    }
+
+    @Override
+    public void close() {
+        if (closed) return;
+
+        if(error_type != null) {
+            NativeDB.INSTANCE.std_free(error_type);
+        }
+        if (error_message != null) {
+            NativeDB.INSTANCE.std_free(error_message);
+        }
+
+        closed = true;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            close();
+        } finally {
+            super.finalize();
+        }
     }
 }

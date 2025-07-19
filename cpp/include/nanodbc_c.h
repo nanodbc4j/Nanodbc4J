@@ -2,7 +2,14 @@
 
 #include <cstdint>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
+
+    struct datasource {
+        const char16_t* name;   ///< DSN name.
+        const char16_t* driver; ///< Driver description.
+    };
 
     struct c_date {
         int16_t year;  ///< Year [0-inf).
@@ -26,4 +33,6 @@ extern "C" {
         int32_t fract;    ///< Fractional seconds.
     };
 
+#ifdef __cplusplus
 } // extern "C"
+#endif

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <nanodbc/nanodbc.h>
 #include "error_info.h"
-#include "datasource.h"
+#include "nanodbc_c.h"
 
 extern "C" {
     nanodbc::connection* connection(const char16_t* connection_string, long timeout, NativeError* error);

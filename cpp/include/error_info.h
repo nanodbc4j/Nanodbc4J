@@ -5,9 +5,9 @@ extern "C" {
 #endif
 
     struct NativeError {
-        int error_code = 0;
-        char error_message[256]{};
-        char error_type[64]{};
+        int error_code;
+        char* error_message;
+        char* error_type;
     };
 
 #ifdef __cplusplus

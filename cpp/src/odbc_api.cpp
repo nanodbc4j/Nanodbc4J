@@ -1,6 +1,6 @@
 ﻿#include "odbc_api.h"
 #include <exception>
-#include "utils.h"
+#include "string_utils.h"
 
 using namespace std;
 
@@ -56,8 +56,10 @@ nanodbc::connection* connection(const char16_t* connection_string, long timeout,
 void disconnect(nanodbc::connection* connection,  NativeError* error) {
     init_error(error);
     try {
-        connection->disconnect();
-        delete connection;
+        if (connection) {
+            connection->disconnect();
+            delete connection;
+        }        
     } catch (const exception& e) {
         set_error(error, 2, "DisconnectError", e.what());
     }
@@ -272,5 +274,7 @@ const datasource** datasources_list(int* count) {
 }
  
 void std_free(void* ptr) {
-    free(ptr);
+    if (ptr) {
+        free(ptr);
+    }
 }
