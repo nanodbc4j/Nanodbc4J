@@ -9,7 +9,6 @@ import com.sun.jna.ptr.IntByReference;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
-import io.github.michael1297.internal.pointer.ArrayPtr;
 import io.github.michael1297.internal.struct.DatasourceStruct;
 import io.github.michael1297.internal.struct.DriverStruct;
 import io.github.michael1297.internal.struct.NativeError;

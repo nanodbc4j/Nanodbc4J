@@ -5,7 +5,6 @@ import com.sun.jna.ptr.IntByReference;
 import io.github.michael1297.core.metadata.Datasource;
 import io.github.michael1297.core.metadata.Driver;
 import io.github.michael1297.internal.NativeDB;
-import io.github.michael1297.internal.pointer.ArrayPtr;
 import io.github.michael1297.internal.struct.DatasourceStruct;
 import io.github.michael1297.internal.struct.DriverStruct;
 
@@ -13,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Handler {
+    public static final long POINTER_SIZE = System.getProperty("os.arch").endsWith("64") ? 8 : 4;
+
     private Handler() {
     }
 
@@ -22,12 +23,12 @@ public final class Handler {
         Pointer driversListPtrs = NativeDB.INSTANCE.drivers_list(count);
         try {
             for (int i = 0; i < count.getValue(); i++) {
-                DriverStruct ds = new DriverStruct(ArrayPtr.getObjectPtr(driversListPtrs, i));
+                DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(POINTER_SIZE * i));
                 List<Driver.Attribute>  driverAttributes = new ArrayList<>(ds.attribute_count);
                 String name = ds.name.getWideString(0);
 
                 for(int j = 0; j < ds.attribute_count; j++){
-                    DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ArrayPtr.getObjectPtr(ds.attributes, j));
+                    DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ds.attributes.getPointer(POINTER_SIZE * j));
                     String keyword = attr.keyword.getWideString(0);
                     String value = attr.value.getWideString(0);
                     driverAttributes.add(new Driver.Attribute(keyword, value));
@@ -47,7 +48,7 @@ public final class Handler {
         Pointer datasourcesListPtrs = NativeDB.INSTANCE.datasources_list(count);
         try {
             for (int i = 0; i < count.getValue(); i++) {
-                DatasourceStruct ds = new DatasourceStruct(ArrayPtr.getObjectPtr(datasourcesListPtrs, i));
+                DatasourceStruct ds = new DatasourceStruct(datasourcesListPtrs.getPointer(POINTER_SIZE * i));
                 String name = ds.name.getWideString(0);
                 String driver = ds.driver.getWideString(0);
                 datasources.add(new Datasource(name, driver));
