@@ -1,20 +1,22 @@
 # Nanodbc4J
 
-**Experimental Java binding for [nanodbc](https://github.com/nanodbc/nanodbc) using JNA**
+**Experimental JDBC-ODBC Bridge using nanodbc and JNA**
 
-This project aims to provide a lightweight Java interface to the [nanodbc](https://github.com/nanodbc/nanodbc) C++ library via **Java Native Access (JNA)**. It allows Java applications to use ODBC directly through the modern C++ nanodbc library, without relying on JDBC drivers.
+> **Note**: This project is **experimental** and under active development. It is not suitable for production use.
 
-> ⚠️ **Warning**: This project is currently **experimental** and under active development. APIs may change frequently and it is not yet suitable for production use.
+Nanodbc4J is a **JDBC driver** that enables Java applications to access ODBC data sources directly, using the modern [nanodbc](https://github.com/nanodbc/nanodbc ) C++ library via **Java Native Access (JNA)**.
 
-## Goals
+It is designed as a replacement for the legacy Oracle JDBC-ODBC Bridge, which was removed in Java 8. Nanodbc4J aims to provide a **lightweight, cross-platform** alternative that supports modern ODBC features and integrates with standard JDBC-based applications.
 
-- Provide a simple and efficient way to access ODBC from Java.
-- Wrap nanodbc features such as:
-    - Connection handling
-    - Queries and prepared statements
-    - Transactions
-    - Attribute settings (connection & statement)
-- Use JNA to avoid JNI boilerplate and simplify integration.
+##  Why this Project?
+
+Since Oracle removed the built-in **JDBC-ODBC Bridge** in Java 8, Java developers have been left without a standard way to connect to ODBC data sources.
+
+Nanodbc4J fills this gap by:
+
+- Using modern C++ (via `nanodbc`) for safe and efficient ODBC access.
+- Providing a **JDBC-compliant interface** for use in Java applications.
+- Supporting cross-platform builds for **Windows (ODBC)** and **Linux (unixODBC)**.
 
 ## Features (planned)
 
@@ -25,6 +27,15 @@ This project aims to provide a lightweight Java interface to the [nanodbc](https
 - [ ] Transaction support
 - [ ] Unicode support
 - [ ] Error handling and diagnostics
+
+## ⚠️ Limitations
+
+- **Experimental**: APIs may change frequently.
+- **Performance**: JNA is slower than JNI or native code.
+- **Platform dependent**: Requires ODBC driver installed and configured.
+- **Incomplete JDBC coverage**: Not all JDBC features are implemented yet.
+
+---
 
 ## Requirements
 
