@@ -265,8 +265,7 @@ const driver** drivers_list(int* count) {
 }
 
 const datasource** datasources_list(int* count) {
-    auto datasource_list = nanodbc::list_datasources();
-    vector<nanodbc::datasource> datasources(datasource_list.begin(), datasource_list.end());
+    auto datasources = nanodbc::list_datasources();
     *count = static_cast<int>(datasources.size());
     return converter::convert(datasources);
 }

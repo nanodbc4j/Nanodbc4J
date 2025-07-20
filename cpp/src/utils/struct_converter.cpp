@@ -8,28 +8,28 @@ datasource* converter::convert(const nanodbc::datasource* data) {
     datasource* item = static_cast<datasource*>(malloc(sizeof(datasource)));
     if (!item) return nullptr;
 
-    // Копируем name
+    // РљРѕРїРёСЂСѓРµРј name
     auto name = utils::to_u16string(data->name);
     item->name = duplicate_string(name.c_str());
 
-    // Копируем driver
+    // РљРѕРїРёСЂСѓРµРј driver
     auto driver = utils::to_u16string(data->driver);
     item->driver = duplicate_string(driver.c_str());
 
     return item;
 }
 
-const datasource** converter::convert(const vector<nanodbc::datasource>& datasources) {
-    // Выделяем массив указателей на datasource
+const datasource** converter::convert(const std::list<nanodbc::datasource>& datasources) {
+    // Р’С‹РґРµР»СЏРµРј РјР°СЃСЃРёРІ СѓРєР°Р·Р°С‚РµР»РµР№ РЅР° datasource
     const datasource** result = static_cast<const datasource**>(malloc(sizeof(datasource*) * datasources.size()));
     if (!result) return nullptr;
 
-    for (size_t i = 0; i < datasources.size(); ++i) {
-        datasource* item = convert(&datasources[i]);
-
+    size_t i = 0;
+    for (const auto& source : datasources) {
+        datasource* item = convert(&source);
         if (!item) {
-            // Освобождаем уже выделенную память в случае ошибки
-            for (int j = 0; j < i; ++j) {
+            // РћСЃРІРѕР±РѕР¶РґР°РµРј СѓР¶Рµ РІС‹РґРµР»РµРЅРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹
+            for (size_t j = 0; j < i; ++j) {
                 free((void*)result[j]->name);
                 free((void*)result[j]->driver);
                 free((void*)result[j]);
@@ -38,7 +38,7 @@ const datasource** converter::convert(const vector<nanodbc::datasource>& datasou
             return nullptr;
         }
 
-        result[i] = item;
+        result[i++] = item;
     }
 
     return result;
@@ -63,32 +63,68 @@ driver* converter::convert(const nanodbc::driver* _driver) {
 
     auto name = utils::to_u16string(_driver->name);
     item->name = duplicate_string(name.c_str());
+    item->attribute_count = 0;
 
-    vector<nanodbc::driver::attribute> attributes(_driver->attributes.begin(), _driver->attributes.end());
+    //vector<nanodbc::driver::attribute> attributes(_driver->attributes.begin(), _driver->attributes.end());
+    const auto& attributes = _driver->attributes;
 
-    // Выделяем массив указателей на driver::attribute
+    // Р’С‹РґРµР»СЏРµРј РјР°СЃСЃРёРІ СѓРєР°Р·Р°С‚РµР»РµР№ РЅР° driver::attribute
     item->attributes = static_cast<const driver::attribute**>(malloc(sizeof(driver::attribute*) * attributes.size()));
     if (!item->attributes) {
         free(item);
         return nullptr;
     }
 
-    for (size_t i = 0; i < attributes.size(); ++i) {
-        auto* attr_item = convert(&attributes[i]);
+    size_t i = 0;
+    for (const auto& attr : attributes) {
+        auto* attr_item = convert(&attr);
         if (!attr_item) {
-            // Освобождаем уже выделенную память в случае ошибки
-            for (int j = 0; j < i; ++j) {
+            // РћСЃРІРѕР±РѕР¶РґР°РµРј СѓР¶Рµ РІС‹РґРµР»РµРЅРЅС‹Рµ Р°С‚СЂРёР±СѓС‚С‹
+            for (size_t j = 0; j < i; ++j) {
                 free((void*)item->attributes[j]->keyword);
                 free((void*)item->attributes[j]->value);
                 free((void*)item->attributes[j]);
             }
+            free((void*)item->attributes);
+            free((void*)item->name);
             free(item);
             return nullptr;
         }
 
-        item->attributes[i] = attr_item;
-        ++item->attribute_count;
+        item->attributes[i++] = attr_item;
     }
 
+    item->attribute_count = static_cast<int>(attributes.size());
+
     return item;
+}
+
+const driver** converter::convert(const list<nanodbc::driver>& drivers) {
+    // Р’С‹РґРµР»СЏРµРј РјР°СЃСЃРёРІ СѓРєР°Р·Р°С‚РµР»РµР№ РЅР° datasource
+    const driver** result = static_cast<const driver**>(malloc(sizeof(driver*) * drivers.size()));
+    if (!result) return nullptr;
+
+    size_t i = 0;
+    for (const auto& drv : drivers) {
+        driver* item = convert(&drv);
+        if (!item) {
+            // РћСЃРІРѕР±РѕР¶РґР°РµРј СѓР¶Рµ РІС‹РґРµР»РµРЅРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹
+            for (size_t j = 0; j < i; ++j) {
+                for (int k = 0; k < result[j]->attribute_count; ++k) {
+                    free((void*)result[j]->attributes[k]->keyword);
+                    free((void*)result[j]->attributes[k]->value);
+                    free((void*)result[j]->attributes[k]);
+                }
+                free((void*)result[j]->attributes);
+                free((void*)result[j]->name);
+                free((void*)result[j]);
+            }
+            free(result);
+            return nullptr;
+        }
+
+        result[i++] = item;
+    }
+
+    return result;
 }

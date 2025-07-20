@@ -45,6 +45,11 @@ CharT* utils::duplicate_string(const CharT* src) {
 
     size_t length = std::char_traits<CharT>::length(src);
 
+    // Защита от переполнения
+    if (length > std::numeric_limits<size_t>::max() / sizeof(CharT)) {
+        return nullptr;
+    }
+
     CharT* dest = static_cast<CharT*>(malloc(sizeof(CharT) * (length + 1)));
     if (!dest) return nullptr;
 
