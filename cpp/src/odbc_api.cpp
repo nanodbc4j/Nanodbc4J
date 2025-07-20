@@ -236,9 +236,8 @@ void close_statement(nanodbc::statement* stmt, NativeError* error) {
 
 const driver** drivers_list(int* count) {
     auto drivers_list = nanodbc::list_drivers();
-    *count = static_cast<int>(drivers_list.size());
-
-    vector<nanodbc::driver> drivers (drivers_list.begin(), drivers_list.end());
+    vector<nanodbc::driver> drivers(drivers_list.begin(), drivers_list.end());
+    *count = static_cast<int>(drivers.size());
 
     // Выделяем массив указателей на char16_t
     const char16_t** result = static_cast<const char16_t**>(malloc(sizeof(char16_t*) * drivers.size()));
@@ -267,32 +266,9 @@ const driver** drivers_list(int* count) {
 
 const datasource** datasources_list(int* count) {
     auto datasource_list = nanodbc::list_datasources();
-    *count = static_cast<int>(datasource_list.size());
-
     vector<nanodbc::datasource> datasources(datasource_list.begin(), datasource_list.end());
-
-    // Выделяем массив указателей на datasource
-    const datasource** result = static_cast<const datasource**>(malloc(sizeof(datasource*) * datasources.size()));
-    if (!result) return nullptr;
-
-    for (size_t i = 0; i < datasources.size(); ++i) {
-        datasource* item = converter::convert(&datasources[i]);
-
-        if (!item) {
-            // Освобождаем уже выделенную память в случае ошибки
-            for (int j = 0; j < i; ++j) {
-                free((void*)result[j]->name);
-                free((void*)result[j]->driver);
-                free((void*)result[j]);
-            }
-            free(result);
-            return nullptr;
-        }
-
-        result[i] = item;
-    }
-
-    return result;
+    *count = static_cast<int>(datasources.size());
+    return converter::convert(datasources);
 }
  
 void std_free(void* ptr) {
