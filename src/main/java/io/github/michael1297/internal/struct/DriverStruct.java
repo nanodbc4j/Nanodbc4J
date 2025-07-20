@@ -2,15 +2,12 @@ package io.github.michael1297.internal.struct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import io.github.michael1297.internal.NativeDB;
 
 @Structure.FieldOrder({"name", "attributes", "attribute_count"})
-public class DriverStruct extends Structure implements AutoCloseable {
+public class DriverStruct extends Structure {
     public Pointer name;
     public Pointer attributes;
     public int attribute_count;
-
-    private volatile boolean closed = false;
 
     public DriverStruct(){
     }
@@ -26,26 +23,23 @@ public class DriverStruct extends Structure implements AutoCloseable {
         read();
     }
 
-    @Override
-    public void close() {
-        if (closed) return;
+    @Structure.FieldOrder({"keyword", "value"})
+    public static class AttributeStruct extends Structure {
+        public Pointer keyword; ///< Driver keyword attribute.
+        public Pointer value;   ///< Driver attribute value.
 
-        if(name != null) {
-            NativeDB.INSTANCE.std_free(name);
-        }
-        if (attributes != null) {
-            NativeDB.INSTANCE.std_free(attributes);
+        public AttributeStruct(){
         }
 
-        closed = true;
-    }
+        public AttributeStruct(Pointer p) {
+            super(p);
+            read();
+        }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
+        // Публичный метод для установки указателя
+        public void setPointer(Pointer p) {
+            useMemory(p);
+            read();
         }
     }
 }

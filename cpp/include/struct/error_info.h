@@ -8,7 +8,14 @@ extern "C" {
         int error_code;
         char* error_message;
         char* error_type;
+
+        NativeError();
+        NativeError(const NativeError& other);
+        ~NativeError();
     };
+
+    // очистить структуры ошибки
+    void clear_native_error(NativeError* error);
 
 #ifdef __cplusplus
 }

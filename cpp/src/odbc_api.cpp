@@ -234,37 +234,13 @@ void close_statement(nanodbc::statement* stmt, NativeError* error) {
     }
 }
 
-const driver** drivers_list(int* count) {
+const Driver** drivers_list(int* count) {
     auto drivers_list = nanodbc::list_drivers();
-    vector<nanodbc::driver> drivers(drivers_list.begin(), drivers_list.end());
-    *count = static_cast<int>(drivers.size());
-
-    // Выделяем массив указателей на char16_t
-    const char16_t** result = static_cast<const char16_t**>(malloc(sizeof(char16_t*) * drivers.size()));
-    if (!result) return nullptr;
-
-    for (size_t i = 0; i < drivers.size(); ++i) {
-        u16string utf16_name = to_u16string(drivers[i].name);
-        size_t length = utf16_name.size();
-
-        char16_t* strCopy = static_cast<char16_t*>(malloc(sizeof(char16_t) * (length + 1)));
-
-        if (!strCopy) {
-            for (size_t j = 0; j < i; ++j)
-                free(const_cast<char16_t*>(result[j]));
-            free(result);
-            return nullptr;
-        }
-
-        copy(utf16_name.c_str(), utf16_name.c_str() + length + 1, strCopy);
-        result[i] = strCopy;
-    }
-
-    return nullptr;
-    //return result;
+    *count = static_cast<int>(drivers_list.size());
+    return converter::convert(drivers_list);
 }
 
-const datasource** datasources_list(int* count) {
+const Datasource** datasources_list(int* count) {
     auto datasources = nanodbc::list_datasources();
     *count = static_cast<int>(datasources.size());
     return converter::convert(datasources);

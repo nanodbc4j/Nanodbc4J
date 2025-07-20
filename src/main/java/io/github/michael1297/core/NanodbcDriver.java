@@ -106,7 +106,7 @@ public class NanodbcDriver implements Driver {
         return createConnection(url, null);
     }
 
-    public static List<String> driversList(){
+    public static List<io.github.michael1297.core.metadata.Driver> driversList(){
         return Handler.driversList();
     }
 

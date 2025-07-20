@@ -1,16 +1,17 @@
 #pragma once
 #include <vector>
 #include <nanodbc/nanodbc.h>
-#include "nanodbc_c.h"
+#include "struct/nanodbc_c.h"
 
 namespace converter {
-	datasource* convert(const nanodbc::datasource* data);
+	Datasource* convert(const nanodbc::datasource* data);
 
-	const datasource** convert(const std::list<nanodbc::datasource>& datasources);
+	const Datasource** convert(const std::list<nanodbc::datasource>& datasources);
 
-	driver::attribute* convert(const nanodbc::driver::attribute* attr);
+	Driver::Attribute* convert(const nanodbc::driver::attribute* attr);
 
-	driver* convert(const nanodbc::driver* _driver);
+	Driver* convert(const nanodbc::driver* _driver);
 
-	const driver** convert(const std::list<nanodbc::driver>& drivers);
+	const Driver** convert(const std::list<nanodbc::driver>& drivers);
+
 }

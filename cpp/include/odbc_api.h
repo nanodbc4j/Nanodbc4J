@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <nanodbc/nanodbc.h>
-#include "error_info.h"
-#include "nanodbc_c.h"
+#include "struct/error_info.h"
+#include "struct/nanodbc_c.h"
 
 extern "C" {
     nanodbc::connection* connection(const char16_t* connection_string, NativeError* error);
@@ -50,9 +50,9 @@ extern "C" {
 
     void close_statement(nanodbc::statement* stmt, NativeError* error);
 
-    const driver** drivers_list(int* count);
+    const Driver** drivers_list(int* count);
 
-    const datasource** datasources_list(int* count);
+    const Datasource** datasources_list(int* count);
 
     void std_free(void* ptr);
 }

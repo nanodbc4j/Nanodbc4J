@@ -30,6 +30,10 @@ public final class ArrayPtr extends PointerType implements AutoCloseable {
         }
     }
 
+    public static Pointer getObjectPtr(Pointer list, long index){
+        return list.getPointer(index * POINTER_SIZE);
+    }
+
     @Override
     public void close() {
         if (closed) return;

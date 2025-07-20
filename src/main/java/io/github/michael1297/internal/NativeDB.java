@@ -1,7 +1,6 @@
 package io.github.michael1297.internal;
 
 import com.sun.jna.Function;
-import com.sun.jna.LastErrorException;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
@@ -11,6 +10,8 @@ import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.pointer.ArrayPtr;
+import io.github.michael1297.internal.struct.DatasourceStruct;
+import io.github.michael1297.internal.struct.DriverStruct;
 import io.github.michael1297.internal.struct.NativeError;
 
 import java.util.HashMap;
@@ -106,9 +107,19 @@ public interface NativeDB extends Library {
 
     void close_statement(StatementPtr stmt, NativeError error);
 
-    ArrayPtr drivers_list(IntByReference count);
+    Pointer drivers_list(IntByReference count);
 
-    ArrayPtr datasources_list(IntByReference count);
+    Pointer datasources_list(IntByReference count);
 
     void std_free(Pointer ptr);
+
+    void clear_native_error(NativeError error);
+
+    void delete_datasource (DatasourceStruct datasource);
+
+    void delete_datasource_array (Pointer datasource_array, int size);
+
+    void delete_driver (DriverStruct driver);
+
+    void delete_driver_array (Pointer driver_array, int size);
 }
