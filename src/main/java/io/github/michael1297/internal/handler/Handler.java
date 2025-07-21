@@ -1,4 +1,4 @@
-package io.github.michael1297.internal.utils;
+package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;

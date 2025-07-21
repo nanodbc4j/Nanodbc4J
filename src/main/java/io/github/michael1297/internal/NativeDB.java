@@ -42,7 +42,7 @@ public interface NativeDB extends Library {
      * @param connection_string Массив символов (UTF-16LE) строки подключения
      * @param error             Ошибка, возникающая при соединении
      */
-    ConnectionPtr connection(String connection_string, long timeout, NativeError error);
+    ConnectionPtr connection(String connection_string, NativeError error);
 
     /**
      * Метод создаёт соединение с базой данных
@@ -52,6 +52,8 @@ public interface NativeDB extends Library {
      * @param error             Ошибка, возникающая при соединении
      */
     ConnectionPtr connection_with_timeout(String connection_string, long timeout, NativeError error);
+
+    ConnectionPtr connection_with_user_pass_timeout(String dsn, String user, String pass, long timeout, NativeError error);
 
     /**
      * Закрывает существующее подключение

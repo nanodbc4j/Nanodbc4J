@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include <nanodbc/nanodbc.h>
 #include "struct/nanodbc_c.h"

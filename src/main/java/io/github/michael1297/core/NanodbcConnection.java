@@ -1,7 +1,9 @@
 package io.github.michael1297.core;
 
+import io.github.michael1297.exceptions.NanodbcSQLException;
+import io.github.michael1297.exceptions.NativeException;
+import io.github.michael1297.internal.handler.ConnectionHandler;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
-import io.github.michael1297.internal.struct.NativeError;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -23,12 +25,14 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class NanodbcConnection implements Connection {
-    private ConnectionPtr connectionPtr;
+    protected ConnectionPtr connectionPtr;
 
-    public NanodbcConnection(String url) throws SQLException {
-        NativeError nativeError = new NativeError();
-        //NativeDB.INSTANCE.connection(url)
-
+    NanodbcConnection(String url) throws SQLException {
+        try {
+            connectionPtr = ConnectionHandler.connect(url);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
@@ -73,12 +77,20 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public void close() throws SQLException {
-
+        try {
+            ConnectionHandler.disconnect(connectionPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public boolean isClosed() throws SQLException {
-        return false;
+        try {
+            return !ConnectionHandler.isConnected(connectionPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

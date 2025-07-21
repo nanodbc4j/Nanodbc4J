@@ -1,4 +1,4 @@
-#include "struct/nanodbc_c.h"
+﻿#include "struct/nanodbc_c.h"
 #include "utils/string_utils.h"
 
 using namespace utils;
@@ -128,40 +128,4 @@ Datasource::~Datasource() {
 
 	name = nullptr;
 	driver = nullptr;
-}
-
-inline void delete_datasource (Datasource* datasource) {
-	if (datasource) {
-		delete datasource;
-	}
-}
-
-void delete_datasource_array(Datasource** datasource_array, int size) {
-	if (!datasource_array) {
-		return;
-	}
-
-	for (int i = 0; i < size; ++i) {
-		delete_datasource(datasource_array[i]);
-		datasource_array[i] = nullptr;
-	}
-	delete[] datasource_array;
-}
-
-inline void delete_driver(Driver* driver) {
-	if (driver) {
-		delete driver;
-	}
-}
-
-void delete_driver_array(Driver** driver_array, int size) {
-	if (!driver_array) {
-		return;
-	}
-
-	for (int i = 0; i < size; ++i) {
-		delete_driver(driver_array[i]);
-		driver_array[i] = nullptr;
-	}
-	delete[] driver_array;
 }

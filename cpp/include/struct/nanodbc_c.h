@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cstdint>
 #include <nanodbc/nanodbc.h>
 
@@ -58,15 +58,7 @@ extern "C" {
         int16_t minute;   ///< Minutes after the hour [0-59].
         int16_t second;   ///< Seconds after the minute.
         int32_t fract;    ///< Fractional seconds.
-    };
-
-    void delete_datasource (Datasource* datasource);
-
-    void delete_datasource_array (Datasource** datasource_array, int size);
-
-    void delete_driver (Driver* driver);
-
-    void delete_driver_array (Driver** driver_array, int size);
+    };    
 
 #ifdef __cplusplus
 } // extern "C"

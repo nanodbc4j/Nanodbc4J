@@ -1,13 +1,14 @@
 package io.github.michael1297.core;
 
 import io.github.michael1297.core.metadata.Datasource;
-import io.github.michael1297.internal.utils.Handler;
+import io.github.michael1297.internal.handler.Handler;
 
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -16,6 +17,8 @@ import java.util.logging.Logger;
 public class NanodbcDriver implements Driver {
     private static final Logger logger = Logger.getLogger(NanodbcDriver.class.getName());
     public static final String PREFIX = "jdbc:odbc:";
+    public static final int MAJOR_VERSION = 1;
+    public static final int MINOR_VERSION = 7;
 
     static {
         try {
@@ -27,10 +30,11 @@ public class NanodbcDriver implements Driver {
 
     @Override
     public Connection connect(String connection, Properties info) throws SQLException {
-        return null;
+        return new NanodbcConnection(connection);
     }
 
     /** @see java.sql.Driver#acceptsURL(java.lang.String) */
+    @Override
     public boolean acceptsURL(String url) {
         return isValidURL(url);
     }
@@ -52,12 +56,12 @@ public class NanodbcDriver implements Driver {
 
     @Override
     public int getMajorVersion() {
-        return 0;
+        return MAJOR_VERSION;
     }
 
     @Override
     public int getMinorVersion() {
-        return 0;
+        return MINOR_VERSION;
     }
 
     /** @see java.sql.Driver#jdbcCompliant() */
@@ -66,8 +70,8 @@ public class NanodbcDriver implements Driver {
     }
 
     @Override
-    public Logger getParentLogger() {
-        return logger;
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
     }
 
     /**
