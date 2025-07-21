@@ -5,7 +5,7 @@ import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.struct.NativeError;
 
-public class ConnectionHandler {
+public final class ConnectionHandler {
     private ConnectionHandler () {
     }
 

@@ -79,6 +79,7 @@ public class NanodbcConnection implements Connection {
     public void close() throws SQLException {
         try {
             ConnectionHandler.disconnect(connectionPtr);
+            connectionPtr = null;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -311,5 +312,16 @@ public class NanodbcConnection implements Connection {
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return false;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            if (connectionPtr != null) {
+                close();
+            }
+        } finally {
+            super.finalize();
+        }
     }
 }
