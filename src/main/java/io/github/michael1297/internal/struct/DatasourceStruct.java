@@ -9,7 +9,7 @@ public final class DatasourceStruct extends Structure {
     public Pointer name;
     public Pointer driver;
 
-    public DatasourceStruct(){
+    public DatasourceStruct() {
     }
 
     public DatasourceStruct(Pointer p) {

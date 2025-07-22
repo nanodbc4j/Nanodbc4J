@@ -6,14 +6,18 @@ import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.struct.NativeError;
 
 public final class StatementHandler {
-    private  StatementHandler(){
+    private StatementHandler() {
     }
 
-    public static void close (StatementPtr statement) {
+    public static void close(StatementPtr statement) {
         NativeError nativeError = new NativeError();
-        NativeDB.INSTANCE.close_statement(statement, nativeError);
-        if(nativeError.error_code != 0) {
-            throw new NativeException(nativeError);
+        try {
+            NativeDB.INSTANCE.close_statement(statement, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
 }

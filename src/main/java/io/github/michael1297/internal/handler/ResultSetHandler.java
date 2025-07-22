@@ -9,30 +9,42 @@ public final class ResultSetHandler {
     private ResultSetHandler() {
     }
 
-    public static void close (ResultSetPtr resultSet) {
+    public static void close(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
-        NativeDB.INSTANCE.close_result(resultSet, nativeError);
-        if(nativeError.error_code != 0) {
-            throw new NativeException(nativeError);
+        try {
+            NativeDB.INSTANCE.close_result(resultSet, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
 
-    public static <T> T getValueByIndex (ResultSetPtr resultSet, int index, TriFunction<ResultSetPtr, Integer, NativeError, T> function) {
+    public static <T> T getValueByIndex(ResultSetPtr resultSet, int index, TriFunction<ResultSetPtr, Integer, NativeError, T> function) {
         NativeError nativeError = new NativeError();
-        T value = function.apply(resultSet, index, nativeError);
-        if(nativeError.error_code != 0) {
-            throw new NativeException(nativeError);
+        try {
+            T value = function.apply(resultSet, index, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return value;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
         }
-        return value;
     }
 
-    public static <T> T getValueByName (ResultSetPtr resultSet, String name, TriFunction<ResultSetPtr, String, NativeError, T> function) {
+    public static <T> T getValueByName(ResultSetPtr resultSet, String name, TriFunction<ResultSetPtr, String, NativeError, T> function) {
         NativeError nativeError = new NativeError();
-        T value = function.apply(resultSet, name, nativeError);
-        if(nativeError.error_code != 0) {
-            throw new NativeException(nativeError);
+        try {
+            T value = function.apply(resultSet, name, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return value;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
         }
-        return value;
     }
 
 

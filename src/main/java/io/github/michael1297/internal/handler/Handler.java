@@ -24,10 +24,10 @@ public final class Handler {
         try {
             for (int i = 0; i < count.getValue(); i++) {
                 DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(POINTER_SIZE * i));
-                List<Driver.Attribute>  driverAttributes = new ArrayList<>(ds.attribute_count);
+                List<Driver.Attribute> driverAttributes = new ArrayList<>(ds.attribute_count);
                 String name = ds.name.getWideString(0);
 
-                for(int j = 0; j < ds.attribute_count; j++){
+                for (int j = 0; j < ds.attribute_count; j++) {
                     DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ds.attributes.getPointer(POINTER_SIZE * j));
                     String keyword = attr.keyword.getWideString(0);
                     String value = attr.value.getWideString(0);

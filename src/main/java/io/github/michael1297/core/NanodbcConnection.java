@@ -15,6 +15,7 @@ import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Savepoint;
@@ -37,42 +38,42 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public Statement createStatement() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public String nativeSQL(String sql) throws SQLException {
-        return "";
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public boolean getAutoCommit() throws SQLException {
-        return false;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void commit() throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void rollback() throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
@@ -96,62 +97,62 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        return false;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void setCatalog(String catalog) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public String getCatalog() throws SQLException {
-        return "";
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void setTransactionIsolation(int level) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public int getTransactionIsolation() throws SQLException {
-        return 0;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
@@ -161,87 +162,87 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void setHoldability(int holdability) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public int getHoldability() throws SQLException {
-        return 0;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public Savepoint setSavepoint() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public Savepoint setSavepoint(String name) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void rollback(Savepoint savepoint) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public Clob createClob() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public Blob createBlob() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public NClob createNClob() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public SQLXML createSQLXML() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
@@ -266,47 +267,47 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public Properties getClientInfo() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void setSchema(String schema) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public String getSchema() throws SQLException {
-        return "";
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void abort(Executor executor) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public int getNetworkTimeout() throws SQLException {
-        return 0;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override

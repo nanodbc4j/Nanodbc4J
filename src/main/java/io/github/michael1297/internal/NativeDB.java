@@ -116,11 +116,11 @@ public interface NativeDB extends Library {
 
     void clear_native_error(NativeError error);
 
-    void delete_datasource (DatasourceStruct datasource);
+    void delete_datasource(DatasourceStruct datasource);
 
-    void delete_datasource_array (Pointer datasource_array, int size);
+    void delete_datasource_array(Pointer datasource_array, int size);
 
-    void delete_driver (DriverStruct driver);
+    void delete_driver(DriverStruct driver);
 
-    void delete_driver_array (Pointer driver_array, int size);
+    void delete_driver_array(Pointer driver_array, int size);
 }

@@ -49,7 +49,7 @@ public class NanodbcResultSet implements ResultSet {
         try {
             ResultSetHandler.close(resultSetPtr);
             resultSetPtr = null;
-        } catch (NativeException e){
+        } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
     }
@@ -654,7 +654,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Statement getStatement() throws SQLException {
-        if(resultSetPtr == null) {
+        if (resultSetPtr == null) {
             throw new SQLFeatureNotSupportedException("ResultSet closed");
         }
         return statement.get();

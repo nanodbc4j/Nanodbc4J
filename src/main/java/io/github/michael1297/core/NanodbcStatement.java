@@ -37,7 +37,7 @@ public class NanodbcStatement implements Statement {
         try {
             StatementHandler.close(statementPtr);
             statementPtr = null;
-        } catch (NativeException e){
+        } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
     }
@@ -164,7 +164,7 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public Connection getConnection() throws SQLException {
-        if(statementPtr == null) {
+        if (statementPtr == null) {
             throw new NanodbcSQLException("Statement closed");
         }
         return connection.get();
@@ -253,7 +253,7 @@ public class NanodbcStatement implements Statement {
     @Override
     protected void finalize() throws Throwable {
         try {
-            if(statementPtr != null) {
+            if (statementPtr != null) {
                 close();
             }
         } finally {
