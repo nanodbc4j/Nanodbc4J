@@ -8,6 +8,8 @@ extern "C" {
 
     nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error);
 
+    int execute_update(nanodbc::statement* stmt, NativeError* error);
+
     void close_statement(nanodbc::statement* stmt, NativeError* error);
 
 }

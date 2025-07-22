@@ -12,14 +12,11 @@ static nanodbc::connection* connection_with_error_handling(const function<nanodb
     init_error(error);
     try {
         return operation();
-    }
-    catch (const nanodbc::database_error& e) {
+    } catch (const nanodbc::database_error& e) {
         set_error(error, 1, "DatabaseError", e.what());
-    }
-    catch (const exception& e) {
+    } catch (const exception& e) {
         set_error(error, 1, "DatabaseError", e.what());
-    }
-    catch (...) {
+    } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown connection error");
     }
     return nullptr;
@@ -70,11 +67,9 @@ bool is_connected(const nanodbc::connection* conn, NativeError* error) {
     init_error(error);
     try {
         return conn && conn->connected();
-    }
-    catch (const exception& e) {
+    } catch (const exception& e) {
         set_error(error, 3, "ConnectionCheckError", e.what());
-    }
-    catch (...) {
+    } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown connection check error");
     }
     return false;
@@ -87,11 +82,9 @@ void disconnect(nanodbc::connection* connection, NativeError* error) {
             connection->disconnect();
             delete connection;
         }
-    }
-    catch (const exception& e) {
+    } catch (const exception& e) {
         set_error(error, 2, "DisconnectError", e.what());
-    }
-    catch (...) {
+    } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown disconnect error");
     }
 }

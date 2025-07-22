@@ -1,21 +1,24 @@
 package io.github.michael1297.internal.handler;
 
+import com.sun.jna.Pointer;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.struct.NativeError;
 
 public final class ResultSetHandler {
+    // Static methods only
     private ResultSetHandler() {
     }
 
-    public static void close(ResultSetPtr resultSet) {
+    public static boolean next(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.close_result(resultSet, nativeError);
+            boolean hasNext = NativeDB.INSTANCE.next_result(resultSet, nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
+            return hasNext;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -24,7 +27,7 @@ public final class ResultSetHandler {
     public static <T> T getValueByIndex(ResultSetPtr resultSet, int index, TriFunction<ResultSetPtr, Integer, NativeError, T> function) {
         NativeError nativeError = new NativeError();
         try {
-            T value = function.apply(resultSet, index, nativeError);
+            T value = function.apply(resultSet, index - 1, nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
@@ -47,6 +50,57 @@ public final class ResultSetHandler {
         }
     }
 
+    public static String getStringValueByIndex(ResultSetPtr resultSet, int index) {
+        NativeError nativeError = new NativeError();
+        Pointer strPtr = null;
+        try {
+            strPtr = NativeDB.INSTANCE.get_string_value_by_index(resultSet, index - 1, nativeError); // В ODBC расчет начинается с 0
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+
+            if (strPtr == null || strPtr.equals(Pointer.NULL)) {
+                return null;
+            }
+
+            return strPtr.getWideString(0);
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+            NativeDB.INSTANCE.std_free(strPtr);
+        }
+    }
+
+    public static String getStringValueByName(ResultSetPtr resultSet, String name) {
+        NativeError nativeError = new NativeError();
+        Pointer strPtr = null;
+        try {
+            strPtr = NativeDB.INSTANCE.get_string_value_by_name(resultSet, name, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+
+            if (strPtr == null ||strPtr.equals(Pointer.NULL)) {
+                return null;
+            }
+
+            return strPtr.getWideString(0);
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+            NativeDB.INSTANCE.std_free(strPtr);
+        }
+    }
+
+    public static void close(ResultSetPtr resultSet) {
+        NativeError nativeError = new NativeError();
+        try {
+            NativeDB.INSTANCE.close_result(resultSet, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
 
     @FunctionalInterface
     public interface TriFunction<T, U, V, R> {

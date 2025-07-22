@@ -4,6 +4,7 @@ import io.github.michael1297.exceptions.NanodbcSQLException;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.handler.ConnectionHandler;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
+import io.github.michael1297.internal.pointer.StatementPtr;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -27,6 +28,7 @@ import java.util.concurrent.Executor;
 
 public class NanodbcConnection implements Connection {
     protected ConnectionPtr connectionPtr;
+    private static final long TIMEOUT = 5;
 
     NanodbcConnection(String url) throws SQLException {
         try {
@@ -38,12 +40,23 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public Statement createStatement() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            StatementPtr statementPtr = ConnectionHandler.create(connectionPtr);
+            return new NanodbcStatement(this, statementPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            StatementPtr statementPtr = ConnectionHandler.create(connectionPtr);
+            ConnectionHandler.prepared(statementPtr, sql, TIMEOUT);
+            return new NanodbcPreparedStatement(this, statementPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

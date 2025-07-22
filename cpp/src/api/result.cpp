@@ -9,17 +9,13 @@ static Result get_value_with_error_handling(const function<Result()>& operation,
     init_error(error);
     try {
         return operation();
-    }
-    catch (const nanodbc::index_range_error& e) {
+    } catch (const nanodbc::index_range_error& e) {
         set_error(error, 1, "IndexError", e.what());
-    }
-    catch (const nanodbc::type_incompatible_error& e) {
+    } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, 2, "TypeError", e.what());
-    }
-    catch (const std::exception& e) {
+    } catch (const std::exception& e) {
         set_error(error, 3, "DatabaseError", e.what());
-    }
-    catch (...) {
+    } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown error");
     }
     return Result{}; // Возвращаем значение по умолчанию
@@ -50,11 +46,9 @@ bool next_result(nanodbc::result* results, NativeError* error) {
     init_error(error);
     try {
         return results && results->next();
-    }
-    catch (const exception& e) {
+    } catch (const exception& e) {
         set_error(error, 2, "ResultError", e.what());
-    }
-    catch (...) {
+    } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown next result error");
     }
     return false;
@@ -85,6 +79,26 @@ short get_short_value_by_index(nanodbc::result* results, int index, NativeError*
     return get_value_by_index<short>(results, index, error, 0);
 }
 
+#include <iostream>
+
+const char16_t* get_string_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    init_error(error);
+    try {
+        auto value = results->get<nanodbc::string>(index);
+        auto u16_value = to_u16string(value);
+        return duplicate_string(u16_value.c_str());
+    } catch (const nanodbc::index_range_error& e) {
+        set_error(error, 1, "IndexError", e.what());
+    } catch (const nanodbc::type_incompatible_error& e) {
+        set_error(error, 2, "TypeError", e.what());
+    } catch (const std::exception& e) {
+        set_error(error, 3, "DatabaseError", e.what());
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown error");
+    }
+    return nullptr;    
+}
+
 int get_int_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
     return get_value_by_name<int>(results, to_wide_string(name), error, 0);
 }
@@ -110,15 +124,31 @@ short get_short_value_by_name(nanodbc::result* results, const char16_t* name, Na
     return get_value_by_name<short>(results, to_wide_string(name), error, 0);
 }
 
+const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    init_error(error);
+    try {
+        auto value = results->get<nanodbc::string>(to_wide_string(name));
+        auto u16_value = to_u16string(value);
+        return duplicate_string(u16_value.c_str());
+    } catch (const nanodbc::index_range_error& e) {
+        set_error(error, 1, "IndexError", e.what());
+    } catch (const nanodbc::type_incompatible_error& e) {
+        set_error(error, 2, "TypeError", e.what());
+    } catch (const std::exception& e) {
+        set_error(error, 3, "DatabaseError", e.what());
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown error");
+    }
+    return nullptr;
+}
+
 void close_result(nanodbc::result* results, NativeError* error) {
     init_error(error);
     try {
         delete results;
-    }
-    catch (const exception& e) {
+    } catch (const exception& e) {
         set_error(error, 2, "ResultError", e.what());
-    }
-    catch (...) {
+    } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown close result error");
     }
 }

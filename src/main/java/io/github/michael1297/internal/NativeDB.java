@@ -78,6 +78,8 @@ public interface NativeDB extends Library {
 
     ResultSetPtr execute(StatementPtr stmt, NativeError error);
 
+    int execute_update(StatementPtr stmt, NativeError error);
+
     boolean next_result(ResultSetPtr results, NativeError error);
 
     int get_int_value_by_index(ResultSetPtr results, int index, NativeError error);
@@ -92,6 +94,8 @@ public interface NativeDB extends Library {
 
     short get_short_value_by_index(ResultSetPtr results, int index, NativeError error);
 
+    Pointer get_string_value_by_index(ResultSetPtr results, int index, NativeError error);
+
     int get_int_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     long get_long_value_by_name(ResultSetPtr results, String name, NativeError error);
@@ -103,6 +107,8 @@ public interface NativeDB extends Library {
     float get_float_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     short get_short_value_by_name(ResultSetPtr results, String name, NativeError error);
+
+    Pointer get_string_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     void close_result(ResultSetPtr results, NativeError error);
 

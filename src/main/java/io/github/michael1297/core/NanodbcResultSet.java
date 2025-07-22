@@ -41,7 +41,11 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public boolean next() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.next(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
@@ -61,7 +65,11 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getStringValueByIndex(resultSetPtr, columnIndex);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
@@ -165,7 +173,11 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getStringValueByName(resultSetPtr, columnLabel);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

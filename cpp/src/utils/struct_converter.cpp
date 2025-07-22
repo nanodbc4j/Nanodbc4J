@@ -1,4 +1,4 @@
-#include "utils/struct_converter.h"
+﻿#include "utils/struct_converter.h"
 #include "utils/string_utils.h"
 
 using namespace std;

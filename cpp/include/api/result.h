@@ -18,6 +18,8 @@ extern "C" {
 
     short get_short_value_by_index(nanodbc::result* results, int index, NativeError* error);
 
+    const char16_t* get_string_value_by_index(nanodbc::result* results, int index, NativeError* error);
+
     int get_int_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
     long get_long_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
@@ -29,6 +31,8 @@ extern "C" {
     float get_float_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
     short get_short_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
+
+    const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
     void close_result(nanodbc::result* results, NativeError* error);
 

@@ -1,5 +1,9 @@
 package io.github.michael1297.core;
 
+import io.github.michael1297.exceptions.NanodbcSQLException;
+import io.github.michael1297.exceptions.NativeException;
+import io.github.michael1297.internal.handler.StatementHandler;
+import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
 
 import java.io.InputStream;
@@ -33,12 +37,21 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr);
+            return new NanodbcResultSet(this, resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public int executeUpdate() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return StatementHandler.executeUpdate(statementPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

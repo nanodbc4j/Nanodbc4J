@@ -14,6 +14,7 @@ import java.util.List;
 public final class Handler {
     public static final long POINTER_SIZE = System.getProperty("os.arch").endsWith("64") ? 8 : 4;
 
+    // Static methods only
     private Handler() {
     }
 
