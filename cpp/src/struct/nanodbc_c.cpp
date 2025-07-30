@@ -3,12 +3,6 @@
 
 using namespace utils;
 
-Driver::Attribute::Attribute() {
-	keyword = nullptr;
-	value = nullptr;
-}
-
-
 Driver::Attribute::Attribute(const Driver::Attribute& other) {
 	keyword = duplicate_string(other.keyword);
 	value = duplicate_string(other.value);
@@ -31,15 +25,6 @@ Driver::Attribute::~Attribute() {
 	if (value){
 		free((void*) value);		
 	}
-
-	keyword = nullptr;
-	value = nullptr;
-}
-
-Driver::Driver() {
-	attribute_count = 0;
-	name = nullptr;
-	attributes = nullptr;
 }
 
 Driver::Driver(const Driver& other) {
@@ -94,12 +79,6 @@ Driver::~Driver() {
 	attribute_count = 0;
 }
 
-
-Datasource::Datasource() {
-	name = nullptr;
-	driver = nullptr;
-}
-
 Datasource::Datasource(const Datasource& other) {
 	auto _name = to_u16string(other.name);
 	name = duplicate_string(_name.c_str());	
@@ -125,7 +104,4 @@ Datasource::~Datasource() {
 	if (driver) {
 		free((void*) driver);
 	}
-
-	name = nullptr;
-	driver = nullptr;
 }

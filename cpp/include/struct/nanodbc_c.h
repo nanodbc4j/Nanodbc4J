@@ -9,30 +9,30 @@ extern "C" {
     struct Driver {
         /// \brief Driver attributes.
         struct Attribute {
-            const char16_t* keyword; ///< Driver keyword attribute.
-            const char16_t* value;   ///< Driver attribute value.
+            const char16_t* keyword = nullptr; ///< Driver keyword attribute.
+            const char16_t* value = nullptr;   ///< Driver attribute value.
 
-            Attribute();
+            Attribute() = default;
             Attribute(const Attribute& other);
             Attribute(const nanodbc::driver::attribute& other);
             ~Attribute();
         };
 
-        const char16_t* name;            ///< Driver name.
-        const Attribute** attributes; ///< Driver attributes.
-        int attribute_count;
+        const char16_t* name = nullptr;            ///< Driver name.
+        const Attribute** attributes = nullptr; ///< Driver attributes.
+        int attribute_count = 0;
 
-        Driver();
+        Driver() = default;
         Driver(const Driver& other);
         Driver(const nanodbc::driver& other);
         ~Driver();
     };
 
     struct Datasource {
-        const char16_t* name;   ///< DSN name.
-        const char16_t* driver; ///< Driver description.
+        const char16_t* name = nullptr;   ///< DSN name.
+        const char16_t* driver = nullptr; ///< Driver description.
 
-        Datasource();
+        Datasource() = default;
         Datasource(const Datasource& other);
         Datasource(const nanodbc::datasource& other);
         ~Datasource();
