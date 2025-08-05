@@ -5,7 +5,7 @@
 #include <codecvt>
 #include <sql.h>
 
-// Конвертация string в wstring
+// РљРѕРЅРІРµСЂС‚Р°С†РёВ¤ string РІ wstring
 static std::wstring stringToWstring(const std::string& str) {
     try {
         if (str.empty()) return L"";
@@ -17,12 +17,12 @@ static std::wstring stringToWstring(const std::string& str) {
     }
 }
 
-// Проверка успешности выполнения ODBC операции
+// РџСЂРѕРІРµСЂРєР° СѓСЃРїРµС€РЅРѕСЃС‚Рё РІС‹РїРѕР»РЅРµРЅРёВ¤ ODBC РѕРїРµСЂР°С†РёРё
 inline static bool isOdbcSuccess(const SQLRETURN& ret) {
     return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
 }
 
-// Получение строкового атрибута колонки через ODBC
+// РџРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂРѕРєРѕРІРѕРіРѕ Р°С‚СЂРёР±СѓС‚Р° РєРѕР»РѕРЅРєРё С‡РµСЂРµР· ODBC
 inline static std::wstring getColumnStringAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
     SQLWCHAR buffer[512] = { 0 };
     SQLSMALLINT length = 0;
@@ -41,7 +41,7 @@ inline static std::wstring getColumnStringAttribute(const SQLHSTMT& hStmt, const
     return L"";
 }
 
-// Получение числового атрибута колонки через ODBC
+// РџРѕР»СѓС‡РµРЅРёРµ С‡РёСЃР»РѕРІРѕРіРѕ Р°С‚СЂРёР±СѓС‚Р° РєРѕР»РѕРЅРєРё С‡РµСЂРµР· ODBC
 inline static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
     SQLLEN value = 0;
     SQLRETURN ret = SQLColAttributeW(
@@ -77,11 +77,11 @@ bool ResultSetMetaData::isAutoIncrement(int column) const {
     SQLLEN value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_AUTO_UNIQUE_VALUE);
     if (value == SQL_TRUE) return true;
 
-    // Дополнительные проверки через другие атрибуты
+    // Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїСЂРѕРІРµСЂРєРё С‡РµСЂРµР· РґСЂСѓРіРёРµ Р°С‚СЂРёР±СѓС‚С‹
     value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_BASE_COLUMN_NAME);
     std::wstring name = getColumnStringAttribute(hStmt_, column, SQL_DESC_BASE_COLUMN_NAME);
 
-    // Эвристика: если имя содержит "id" или "identity", возможно это автоинкремент
+    // РЃРІСЂРёСЃС‚РёРєР°: РµСЃР»Рё РёРјВ¤ СЃРѕРґРµСЂР¶РёС‚ "id" РёР»Рё "identity", РІРѕР·РјРѕР¶РЅРѕ СЌС‚Рѕ Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚
     std::wstring lowerName = name;
     std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::towlower);
     return (lowerName.find(L"id") != std::wstring::npos ||
@@ -93,7 +93,7 @@ bool ResultSetMetaData::isCaseSensitive(int column) const {
     if (value == SQL_TRUE) return true;
     if (value == SQL_FALSE) return false;
 
-    // Fallback: проверка по типу данных
+    // Fallback: РїСЂРѕРІРµСЂРєР° РїРѕ С‚РёРїСѓ РґР°РЅРЅС‹С…
     int type = getColumnType(column);
     return (type == SQL_VARCHAR || type == SQL_CHAR ||
         type == SQL_WVARCHAR || type == SQL_WCHAR);
@@ -104,7 +104,7 @@ bool ResultSetMetaData::isSearchable(int column) const {
     if (value == SQL_PRED_NONE) return false;
     if (value == SQL_PRED_BASIC || value == SQL_PRED_CHAR || value == SQL_SEARCHABLE) return true;
 
-    // Fallback: исключаем BLOB-типы
+    // Fallback: РёСЃРєР»СЋС‡Р°РµРј BLOB-С‚РёРїС‹
     int type = getColumnType(column);
     return !(type == SQL_LONGVARBINARY || type == SQL_LONGVARCHAR);
 }
@@ -113,7 +113,7 @@ bool ResultSetMetaData::isCurrency(int column) const {
     SQLLEN value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_FIXED_PREC_SCALE);
     if (value == SQL_TRUE) return true;
 
-    // Проверка по имени типа
+    // РїСЂРѕРІРµСЂРєР° РїРѕ РёРјРµРЅРё С‚РёРїР°
     std::wstring typeName = getColumnTypeName(column);
     std::transform(typeName.begin(), typeName.end(), typeName.begin(), ::towlower);
     return (typeName.find(L"money") != std::wstring::npos ||
@@ -136,7 +136,7 @@ bool ResultSetMetaData::isSigned(int column) const {
     if (value == SQL_FALSE) return true;
     if (value == SQL_TRUE) return false;
 
-    // Fallback: проверка по типу данных
+    // Fallback: РїСЂРѕРІРµСЂРєР° РїРѕ С‚РёРїСѓ РґР°РЅРЅС‹С…
     int type = getColumnType(column);
     return (type == SQL_INTEGER || type == SQL_BIGINT || type == SQL_SMALLINT ||
         type == SQL_TINYINT || type == SQL_DECIMAL || type == SQL_NUMERIC ||
@@ -147,7 +147,7 @@ int ResultSetMetaData::getColumnDisplaySize(int column) const {
     SQLLEN size = getColumnNumericAttribute(hStmt_, column, SQL_DESC_DISPLAY_SIZE);
     if (size > 0) return static_cast<int>(size);
 
-    // Fallback через nanodbc
+    // Fallback С‡РµСЂРµР· nanodbc
     try {
         return static_cast<int>(result_.column_size(column - 1));
     }
@@ -160,14 +160,14 @@ std::wstring ResultSetMetaData::getColumnLabel(int column) const {
     std::wstring label = getColumnStringAttribute(hStmt_, column, SQL_DESC_LABEL);
     if (!label.empty()) return label;
 
-    return getColumnName(column); // Если нет специального label, используем имя
+    return getColumnName(column); // в‰€СЃР»Рё РЅРµС‚ СЃРїРµС†РёР°Р»СЊРЅРѕРіРѕ label, РёСЃРїРѕР»СЊР·СѓРµРј РёРјВ¤
 }
 
 std::wstring ResultSetMetaData::getColumnName(int column) const {
     std::wstring name = getColumnStringAttribute(hStmt_, column, SQL_DESC_NAME);
     if (!name.empty()) return name;
 
-    // Fallback через nanodbc
+    // Fallback С‡РµСЂРµР· nanodbc
     try {
         return result_.column_name(column - 1);
     }
@@ -184,7 +184,7 @@ int ResultSetMetaData::getPrecision(int column) const {
     SQLLEN precision = getColumnNumericAttribute(hStmt_, column, SQL_DESC_PRECISION);
     if (precision > 0) return static_cast<int>(precision);
 
-    // Fallback: для строковых типов используем размер
+    // Fallback: РґР»В¤ СЃС‚СЂРѕРєРѕРІС‹С… С‚РёРїРѕРІ РёСЃРїРѕР»СЊР·СѓРµРј СЂР°Р·РјРµСЂ
     int type = getColumnType(column);
     if (type == SQL_CHAR || type == SQL_VARCHAR ||
         type == SQL_WCHAR || type == SQL_WVARCHAR) {
@@ -198,7 +198,7 @@ int ResultSetMetaData::getScale(int column) const {
     SQLLEN scale = getColumnNumericAttribute(hStmt_, column, SQL_DESC_SCALE);
     if (scale >= 0) return static_cast<int>(scale);
 
-    // Fallback через nanodbc
+    // Fallback С‡РµСЂРµР· nanodbc
     try {
         return result_.column_decimal_digits(column - 1);
     }
@@ -222,7 +222,7 @@ int ResultSetMetaData::getColumnType(int column) const {
         return type;
     }
 
-    // Fallback через nanodbc
+    // Fallback С‡РµСЂРµР· nanodbc
     try {
         return result_.column_datatype(column - 1);
     }
@@ -232,11 +232,11 @@ int ResultSetMetaData::getColumnType(int column) const {
 }
 
 std::wstring ResultSetMetaData::getColumnTypeName(int column) const {
-    // Сначала пробуем получить имя типа через ODBC
+    // РЎРЅР°С‡Р°Р»Р° РїСЂРѕР±СѓРµРј РїРѕР»СѓС‡РёС‚СЊ РёРјВ¤ С‚РёРїР° С‡РµСЂРµР· ODBC
     std::wstring typeName = getColumnStringAttribute(hStmt_, column, SQL_DESC_TYPE_NAME);
     if (!typeName.empty()) return typeName;
 
-    // Fallback: сопоставление по типу данных
+    // Fallback: СЃРѕРїРѕСЃС‚Р°РІР»РµРЅРёРµ РїРѕ С‚РёРїСѓ РґР°РЅРЅС‹С…
     int type = getColumnType(column);
     switch (type) {
     case SQL_INTEGER: return L"INTEGER";
