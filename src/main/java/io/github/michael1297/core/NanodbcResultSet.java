@@ -296,7 +296,11 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getResultSetMetaData(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

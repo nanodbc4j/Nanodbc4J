@@ -1,0 +1,79 @@
+package io.github.michael1297.internal.struct;
+
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+
+@Structure.FieldOrder ({"columnCount", "column"})
+public class MetaDataStruct extends Structure {
+
+    public int columnCount;
+    public Pointer column;
+
+    public MetaDataStruct(){
+    }
+
+    public MetaDataStruct(Pointer p){
+        super(p);
+        read();
+    }
+
+    public void setPointer(Pointer p) {
+        useMemory(p);
+        read();
+    }
+
+    @Structure.FieldOrder({
+            "isAutoIncrement",
+            "isCaseSensitive",
+            "isSearchable",
+            "isCurrency",
+            "isNullable",
+            "isSigned",
+            "displaySize",
+            "precision",
+            "scale",
+            "columnType",
+            "isReadOnly",
+            "isWritable",
+            "isDefinitelyWritable",
+            "columnLabel",
+            "columnName",
+            "schemaName",
+            "tableName",
+            "catalogName",
+            "columnTypeName"})
+    public static class ColumnMetaDataStruct extends Structure {
+        public boolean isAutoIncrement;
+        public boolean isCaseSensitive;
+        public boolean isSearchable;
+        public boolean isCurrency;
+        public int isNullable;
+        public boolean isSigned;
+        public int displaySize;
+        public int precision;
+        public int scale;
+        public int columnType;
+        public boolean isReadOnly;
+        public boolean isWritable;
+        public boolean isDefinitelyWritable;
+        public Pointer columnLabel;
+        public Pointer columnName;
+        public Pointer schemaName;
+        public Pointer tableName;
+        public Pointer catalogName;
+        public Pointer columnTypeName;
+
+        public ColumnMetaDataStruct(){
+        }
+
+        public ColumnMetaDataStruct(Pointer p){
+            super(p);
+            read();
+        }
+
+        public void setPointer(Pointer p) {
+            useMemory(p);
+            read();
+        }
+    }
+}

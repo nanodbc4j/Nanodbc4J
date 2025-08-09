@@ -1,107 +1,133 @@
 package io.github.michael1297.core;
 
+import io.github.michael1297.core.metadata.MetaData;
+
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class NanodbcResultSetMetaData implements ResultSetMetaData {
+    private final MetaData metaData;
+    public NanodbcResultSetMetaData(MetaData metaData){
+        this.metaData = metaData;
+    }
+
     @Override
     public int getColumnCount() throws SQLException {
-        return 0;
+        return metaData.columnCount;
     }
 
     @Override
     public boolean isAutoIncrement(int column) throws SQLException {
-        return false;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isAutoIncrement;
     }
 
     @Override
     public boolean isCaseSensitive(int column) throws SQLException {
-        return false;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isCaseSensitive;
     }
 
     @Override
     public boolean isSearchable(int column) throws SQLException {
-        return false;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isSearchable;
     }
 
     @Override
     public boolean isCurrency(int column) throws SQLException {
-        return false;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isCurrency;
     }
 
     @Override
     public int isNullable(int column) throws SQLException {
-        return 0;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isNullable;
     }
 
     @Override
     public boolean isSigned(int column) throws SQLException {
-        return false;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isSigned;
     }
 
     @Override
     public int getColumnDisplaySize(int column) throws SQLException {
-        return 0;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).displaySize;
     }
 
     @Override
     public String getColumnLabel(int column) throws SQLException {
-        return "";
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).columnLabel;
     }
 
     @Override
     public String getColumnName(int column) throws SQLException {
-        return "";
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).columnName;
     }
 
     @Override
     public String getSchemaName(int column) throws SQLException {
-        return "";
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).schemaName;
     }
 
     @Override
     public int getPrecision(int column) throws SQLException {
-        return 0;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).precision;
     }
 
     @Override
     public int getScale(int column) throws SQLException {
-        return 0;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).scale;
     }
 
     @Override
     public String getTableName(int column) throws SQLException {
-        return "";
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).tableName;
     }
 
     @Override
     public String getCatalogName(int column) throws SQLException {
-        return "";
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).catalogName;
     }
 
     @Override
     public int getColumnType(int column) throws SQLException {
-        return 0;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).columnType;
     }
 
     @Override
     public String getColumnTypeName(int column) throws SQLException {
-        return "";
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).columnTypeName;
     }
 
     @Override
     public boolean isReadOnly(int column) throws SQLException {
-        return false;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isReadOnly;
     }
 
     @Override
     public boolean isWritable(int column) throws SQLException {
-        return false;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isWritable;
     }
 
     @Override
     public boolean isDefinitelyWritable(int column) throws SQLException {
-        return false;
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).isDefinitelyWritable;
     }
 
     @Override
@@ -117,5 +143,12 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return false;
+    }
+
+    private void checkIndex (int index) throws SQLException {
+        index -= 1;
+        if (index < 0 || index > metaData.columnCount) {
+            throw new SQLException("column out of range");
+        }
     }
 }

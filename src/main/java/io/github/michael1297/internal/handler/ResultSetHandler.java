@@ -1,10 +1,15 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
+import io.github.michael1297.core.NanodbcResultSetMetaData;
+import io.github.michael1297.core.metadata.MetaData;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
+import io.github.michael1297.internal.pointer.MetaDataPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.struct.NativeError;
+
+import java.sql.ResultSetMetaData;
 
 public final class ResultSetHandler {
     // Static methods only
@@ -79,7 +84,7 @@ public final class ResultSetHandler {
                 throw new NativeException(nativeError);
             }
 
-            if (strPtr == null ||strPtr.equals(Pointer.NULL)) {
+            if (strPtr == null || strPtr.equals(Pointer.NULL)) {
                 return null;
             }
 
@@ -87,6 +92,27 @@ public final class ResultSetHandler {
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
             NativeDB.INSTANCE.std_free(strPtr);
+        }
+    }
+
+    public static ResultSetMetaData getResultSetMetaData(ResultSetPtr resultSet) {
+        NativeError nativeError = new NativeError();
+        MetaDataPtr metaDataPtr = null;
+        try {
+            metaDataPtr = NativeDB.INSTANCE.get_meta_data(resultSet, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+
+            if (metaDataPtr == null || metaDataPtr.getPointer().equals(Pointer.NULL)) {
+                return null;
+            }
+
+            MetaData metaData = MetaDataHandler.processerMetaData(metaDataPtr);
+            return new NanodbcResultSetMetaData(metaData);
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+            NativeDB.INSTANCE.delete_meta_data(metaDataPtr);
         }
     }
 

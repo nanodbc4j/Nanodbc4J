@@ -7,6 +7,7 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
+import io.github.michael1297.internal.pointer.MetaDataPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.struct.DatasourceStruct;
@@ -129,4 +130,8 @@ public interface NativeDB extends Library {
     void delete_driver(DriverStruct driver);
 
     void delete_driver_array(Pointer driver_array, int size);
+
+    MetaDataPtr get_meta_data(ResultSetPtr results, NativeError error);
+
+    void delete_meta_data(MetaDataPtr meta_data);
 }
