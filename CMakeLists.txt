@@ -26,22 +26,26 @@ set(NANODBC_DISABLE_TESTS ON)
 set(NANODBC_FORCE_LIBCXX  ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
+add_definitions(-DSPDLOG_WCHAR_TO_UTF8_SUPPORT)
+
 find_package(Threads REQUIRED)
 find_package(ODBC REQUIRED)
 
 add_subdirectory(third_party/nanodbc)
+add_subdirectory(third_party/spdlog)
+add_subdirectory(third_party/fmt)
 
 # Ищем все исходники в src/
 file(GLOB_RECURSE SRC_FILES "${SOURCE_DIR}/*.cpp" )
 
-# Создаём один DLL файл с содержимым src + nanodbc
+# Создаём один DLL файл с содержимым src
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
-# Подключаем заголовочные файлы проекта и nanodbc
+# Подключаем заголовочные файлы проекта
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
 # Линкуем зависимости
-target_link_libraries(${PROJECT_NAME} PRIVATE nanodbc ODBC::ODBC Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE nanodbc spdlog::spdlog fmt::fmt ODBC::ODBC Threads::Threads)
 
 # Убедиться, что все символы экспортируются
 set_target_properties(${PROJECT_NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)

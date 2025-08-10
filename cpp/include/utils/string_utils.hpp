@@ -14,6 +14,10 @@ namespace utils {
 
 	wide_string_t to_wide_string(const char16_t* string);
 
+	std::wstring to_wstring(const char16_t* str);
+
+	std::wstring to_wstring(const char* str);
+
 	std::u16string to_u16string(const std::string& str);
 
 	std::u16string to_u16string(const std::u16string& str);
