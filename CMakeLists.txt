@@ -44,8 +44,14 @@ add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 # Подключаем заголовочные файлы проекта
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
-# Линкуем зависимости
-target_link_libraries(${PROJECT_NAME} PRIVATE nanodbc spdlog::spdlog fmt::fmt ODBC::ODBC Threads::Threads)
+# Определяем ODBC_EXPORTS только при сборке библиотеки
+target_compile_definitions(${PROJECT_NAME} PRIVATE ODBC_EXPORTS)
 
-# Убедиться, что все символы экспортируются
-set_target_properties(${PROJECT_NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+# Линкуем зависимости
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+    nanodbc 
+    spdlog::spdlog 
+    fmt::fmt 
+    ODBC::ODBC 
+    Threads::Threads
+)
