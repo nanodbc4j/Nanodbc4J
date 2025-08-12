@@ -16,7 +16,11 @@ namespace utils {
 
 	std::wstring to_wstring(const char16_t* str);
 
+	std::wstring to_wstring(const std::u16string& str);
+
 	std::wstring to_wstring(const char* str);
+	
+	std::wstring to_wstring(const std::string& str);
 
 	std::u16string to_u16string(const std::string& str);
 

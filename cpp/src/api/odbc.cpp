@@ -1,59 +1,77 @@
-#include "api/odbc.h"
+﻿#include "api/odbc.h"
 #include <exception>
 #include "utils/string_utils.hpp"
-#include <utils/struct_converter.hpp>
+#include "utils/struct_converter.hpp"
+#include "utils/logger.hpp"
 
 
 const Driver** drivers_list(int* count) {
+	LOG_DEBUG_W(L"Fetching list of ODBC drivers...");
     auto drivers_list = nanodbc::list_drivers();
     *count = static_cast<int>(drivers_list.size());
+	LOG_DEBUG_W(L"Found {} ODBC drivers", *count);
     return converter::convert(drivers_list);
 }
 
 const Datasource** datasources_list(int* count) {
+	LOG_DEBUG_W(L"Fetching list of ODBC data sources...");
     auto datasources = nanodbc::list_datasources();
     *count = static_cast<int>(datasources.size());
+	LOG_DEBUG_W(L"Found {} ODBC data sources", *count);
     return converter::convert(datasources);
 }
  
 void std_free(void* ptr) {
+	LOG_DEBUG_W(L"Freeing memory at address: {}", reinterpret_cast<uintptr_t>(ptr));
     if (ptr) {
         free(ptr);
+		LOG_DEBUG_W(L"Memory freed successfully");
+		return;
     }
 }
 
-inline void delete_datasource(Datasource* datasource) {
+void delete_datasource(Datasource* datasource) {
+	LOG_DEBUG_W(L"Deleting Datasource object: {}", reinterpret_cast<uintptr_t>(datasource));
 	if (datasource) {
 		delete datasource;
+		LOG_DEBUG_W(L"Datasource deleted");
 	}
 }
 
 void delete_datasource_array(Datasource** datasource_array, int size) {
+	LOG_DEBUG_W(L"Deleting array of Datasource objects: {} elements, address: {}", size, reinterpret_cast<uintptr_t>(datasource_array));
 	if (!datasource_array) {
+		LOG_DEBUG_W(L"Datasource array is null, nothing to delete");
 		return;
 	}
 
 	for (int i = 0; i < size; ++i) {
+		LOG_DEBUG_W(L"Deleting Datasource at index {}: {}", i, reinterpret_cast<uintptr_t>(datasource_array[i]));
 		delete_datasource(datasource_array[i]);
-		datasource_array[i] = nullptr;
 	}
 	delete[] datasource_array;
+	LOG_DEBUG_W(L"Datasource array deleted");
 }
 
-inline void delete_driver(Driver* driver) {
+void delete_driver(Driver* driver) {
+	LOG_DEBUG_W(L"Deleting Driver object: {}", reinterpret_cast<uintptr_t>(driver));
 	if (driver) {
 		delete driver;
+		LOG_DEBUG_W(L"Driver deleted");
 	}
 }
 
 void delete_driver_array(Driver** driver_array, int size) {
+	LOG_DEBUG_W(L"Deleting array of Driver objects: {} elements, address: {}", size, reinterpret_cast<uintptr_t>(driver_array));
 	if (!driver_array) {
+		LOG_DEBUG_W(L"Driver array is null, nothing to delete");
 		return;
 	}
 
 	for (int i = 0; i < size; ++i) {
+		LOG_DEBUG_W(L"Deleting Driver at index {}: {}", i, reinterpret_cast<uintptr_t>(driver_array[i]));
 		delete_driver(driver_array[i]);
-		driver_array[i] = nullptr;
 	}
 	delete[] driver_array;
+	LOG_DEBUG_W(L"Driver array deleted");
 }

@@ -14,10 +14,13 @@ static nanodbc::connection* connection_with_error_handling(const function<nanodb
         return operation();
     } catch (const nanodbc::database_error& e) {
         set_error(error, 1, "DatabaseError", e.what());
+        LOG_DEBUG_W(L"Database error: {}", utils::to_wstring(e.what()));
     } catch (const exception& e) {
         set_error(error, 1, "DatabaseError", e.what());
+        LOG_DEBUG_W(L"Standard exception: {}", utils::to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown connection error");
+        LOG_DEBUG_W(L"Unknown exception in connection_with_error_handling");
     }
     return nullptr;
 }
@@ -33,6 +36,7 @@ nanodbc::connection* connection(const char16_t* connection_string, NativeError* 
 }
 
 nanodbc::connection* connection_with_timeout(const char16_t* connection_string, long timeout, NativeError* error) {
+    LOG_DEBUG_W(L"Сonnection_string={}, timeout={}", utils::to_wstring(connection_string), timeout);
     return connection_with_error_handling(
         [&]() {
             return new nanodbc::connection(to_wide_string(connection_string), timeout);
@@ -42,6 +46,10 @@ nanodbc::connection* connection_with_timeout(const char16_t* connection_string, 
 }
 
 nanodbc::connection* connection_with_user_pass_timeout(const char16_t* dsn, const char16_t* user, const char16_t* pass, long timeout, NativeError* error) {
+    LOG_DEBUG_W(L"DSN={}, User={}, Pass=***, Timeout={}",
+        utils::to_wstring(dsn),
+        utils::to_wstring(user),
+        timeout);
     return connection_with_error_handling(
         [&]() {
             return new nanodbc::connection(to_wide_string(dsn), to_wide_string(user), to_wide_string(pass), timeout);
@@ -51,41 +59,59 @@ nanodbc::connection* connection_with_user_pass_timeout(const char16_t* dsn, cons
 }
 
 nanodbc::statement* create_statement(nanodbc::connection* conn, NativeError* error) {
+    LOG_DEBUG_W(L"Creating statement for connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
-        return new nanodbc::statement(*conn);
-    }
-    catch (const exception& e) {
+        auto stmt = new nanodbc::statement(*conn);
+        LOG_DEBUG_W(L"Statement created successfully: {}", reinterpret_cast<uintptr_t>(stmt));
+        return stmt;
+    } catch (const exception& e) {
         set_error(error, 2, "StatementError", e.what());
-    }
-    catch (...) {
+        LOG_DEBUG_W(L"Exception in create_statement: {}", utils::to_wstring(e.what()));
+    } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown create statement error");
+        LOG_DEBUG_W(L"Unknown exception in create_statement");
     }
     return nullptr;
 }
 
 bool is_connected(const nanodbc::connection* conn, NativeError* error) {
+    LOG_DEBUG_W(L"Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
-        return conn && conn->connected();
+        bool connected = conn && conn->connected();
+        LOG_DEBUG_W(L"Connection status: {}", connected ? L"true" : L"false");
     } catch (const exception& e) {
         set_error(error, 3, "ConnectionCheckError", e.what());
+        LOG_DEBUG_W(L"Exception in is_connected: {}", utils::to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown connection check error");
+        LOG_DEBUG_W(L"Unknown exception in is_connected");
     }
     return false;
 }
 
 void disconnect(nanodbc::connection* connection, NativeError* error) {
+    LOG_DEBUG_W(L"Disconnecting connection: {}", reinterpret_cast<uintptr_t>(connection));
     init_error(error);
     try {
         if (connection) {
-            connection->disconnect();
+            if (connection->connected()) {
+                connection->disconnect();
+                LOG_DEBUG_W(L"Disconnected successfully");
+            } else {
+                LOG_DEBUG_W(L"Connection was already disconnected");
+            }
             delete connection;
+            LOG_DEBUG_W(L"Connection object deleted");
+        } else {
+            LOG_DEBUG_W(L"Attempted to disconnect null connection");
         }
     } catch (const exception& e) {
         set_error(error, 2, "DisconnectError", e.what());
+        LOG_DEBUG_W(L"Exception in disconnect: {}", utils::to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown disconnect error");
+        LOG_DEBUG_W(L"Unknown exception in disconnect");
     }
 }
