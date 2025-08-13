@@ -75,6 +75,14 @@ std::wstring utils::to_wstring(const std::string& str) {
     return to_wstring(str.c_str());
 }
 
+std::wstring utils::to_wstring(std::string_view str) {
+    return to_wstring(str.data());
+}
+
+std::wstring utils::to_wstring(std::wstring_view str) {
+    return std::wstring(str);
+}
+
 std::u16string utils::to_u16string(const std::string& str) {
     std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> conv;
     return conv.from_bytes(str);

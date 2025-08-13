@@ -22,6 +22,10 @@ namespace utils {
 	
 	std::wstring to_wstring(const std::string& str);
 
+	std::wstring to_wstring(std::string_view str);
+
+	std::wstring to_wstring(std::wstring_view str);
+
 	std::u16string to_u16string(const std::string& str);
 
 	std::u16string to_u16string(const std::u16string& str);
