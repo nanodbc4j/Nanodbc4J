@@ -45,7 +45,7 @@ public final class ResultSetHandler {
     public static <T> T getValueByName(ResultSetPtr resultSet, String name, TriFunction<ResultSetPtr, String, NativeError, T> function) {
         NativeError nativeError = new NativeError();
         try {
-            T value = function.apply(resultSet, name, nativeError);
+            T value = function.apply(resultSet, name + '\0', nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
@@ -79,7 +79,7 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         Pointer strPtr = null;
         try {
-            strPtr = NativeDB.INSTANCE.get_string_value_by_name(resultSet, name, nativeError);
+            strPtr = NativeDB.INSTANCE.get_string_value_by_name(resultSet, name + '\0', nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }

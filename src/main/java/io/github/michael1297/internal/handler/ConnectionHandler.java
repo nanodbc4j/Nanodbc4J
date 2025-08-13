@@ -14,7 +14,7 @@ public final class ConnectionHandler {
     public static ConnectionPtr connect(String connection_string) {
         NativeError nativeError = new NativeError();
         try {
-            ConnectionPtr ptr = NativeDB.INSTANCE.connection(connection_string, nativeError);
+            ConnectionPtr ptr = NativeDB.INSTANCE.connection(connection_string + '\0', nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
@@ -26,7 +26,7 @@ public final class ConnectionHandler {
 
     public static ConnectionPtr connect(String connection_string, long timeout) {
         NativeError nativeError = new NativeError();
-        ConnectionPtr ptr = NativeDB.INSTANCE.connection_with_timeout(connection_string, timeout, nativeError);
+        ConnectionPtr ptr = NativeDB.INSTANCE.connection_with_timeout(connection_string + '\0', timeout, nativeError);
         if (nativeError.error_code != 0) {
             throw new NativeException(nativeError);
         }
@@ -36,7 +36,7 @@ public final class ConnectionHandler {
     public static ConnectionPtr connect(String dsn, String user, String pass, long timeout) {
         NativeError nativeError = new NativeError();
         try {
-            ConnectionPtr ptr = NativeDB.INSTANCE.connection_with_user_pass_timeout(dsn, user, pass, timeout, nativeError);
+            ConnectionPtr ptr = NativeDB.INSTANCE.connection_with_user_pass_timeout(dsn + '\0', user + '\0', pass + '\0', timeout, nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
@@ -62,7 +62,7 @@ public final class ConnectionHandler {
     public static void prepared(StatementPtr statementPtr, String sql, long timeout) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.prepare_statement(statementPtr, sql, timeout, nativeError);
+            NativeDB.INSTANCE.prepare_statement(statementPtr, sql + '\0', timeout, nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
