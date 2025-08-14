@@ -1,4 +1,4 @@
-#include "struct/meta_data_c.h"
+﻿#include "struct/meta_data_c.h"
 #include "utils/string_utils.hpp"
 
 // Копируем строки через duplicate_string
@@ -8,6 +8,11 @@ static auto& dup = utils::duplicate_string<char16_t>;
 static auto str_free = [](const char16_t* str) {
     if (str) free((void*) str);
 };
+
+inline static const char16_t* convert(const std::wstring& str) {
+    auto u16str = utils::to_u16string(str);
+    return dup(u16str.c_str());
+}
 
 MetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) {
     isAutoIncrement = other.isAutoIncrement;
@@ -71,6 +76,8 @@ MetaData::MetaData(const MetaData& other) {
     }
 }
 
+#include <iostream>
+
 MetaData::MetaData(const ResultSetMetaData& other) {
     columnCount = other.getColumnCount();
 
@@ -79,25 +86,36 @@ MetaData::MetaData(const ResultSetMetaData& other) {
         for (int i = 0; i < columnCount; ++i) {
             ColumnMetaData* data = new ColumnMetaData();
 
-            data->isAutoIncrement = other.isAutoIncrement(i);
-            data->isCaseSensitive = other.isCaseSensitive(i);
-            data->isSearchable = other.isSearchable(i);
-            data->isCurrency = other.isCurrency(i);
-            data->isNullable = other.isNullable(i);
-            data->isSigned = other.isSigned(i);
-            data->displaySize = other.getColumnDisplaySize(i);
-            data->precision = other.getPrecision(i);
-            data->scale = other.getScale(i);
-            data->columnType = other.getColumnType(i);
-            data->isReadOnly = other.isReadOnly(i);
-            data->isWritable = other.isWritable(i);
-            data->isDefinitelyWritable = other.isDefinitelyWritable(i);
-            data->columnLabel = dup(utils::to_u16string(other.getColumnLabel(i)).c_str());
-            data->columnName = dup(utils::to_u16string(other.getColumnName(i)).c_str());
-            data->schemaName = dup(utils::to_u16string(other.getSchemaName(i)).c_str());
-            data->tableName = dup(utils::to_u16string(other.getTableName(i)).c_str());
-            data->catalogName = dup(utils::to_u16string(other.getCatalogName(i)).c_str());
-            data->columnTypeName = dup(utils::to_u16string(other.getColumnTypeName(i)).c_str());
+            // Отсчет начинается с 1
+            data->isAutoIncrement = other.isAutoIncrement(i + 1);
+            data->isCaseSensitive = other.isCaseSensitive(i + 1);
+            data->isSearchable = other.isSearchable(i + 1);
+            data->isCurrency = other.isCurrency(i + 1);
+            data->isNullable = other.isNullable(i + 1);
+            data->isSigned = other.isSigned(i + 1);
+            data->displaySize = other.getColumnDisplaySize(i + 1);
+            data->precision = other.getPrecision(i + 1);
+            data->scale = other.getScale(i + 1);
+            data->columnType = other.getColumnType(i + 1);
+            data->isReadOnly = other.isReadOnly(i + 1);
+            data->isWritable = other.isWritable(i + 1);
+            data->isDefinitelyWritable = other.isDefinitelyWritable(i + 1);
+            data->columnLabel = convert(other.getColumnLabel(i + 1));
+            data->columnName = convert(other.getColumnName(i + 1));
+            data->schemaName = convert(other.getSchemaName(i + 1));
+            data->tableName = convert(other.getTableName(i + 1));
+            data->catalogName = convert(other.getCatalogName(i + 1));
+            data->columnTypeName = convert(other.getColumnTypeName(i + 1));
+
+            std::wcout << L"column: " << i << std::endl;
+            std::wcout << L"getColumnLabel: " << other.getColumnLabel(i + 1) << std::endl;
+            std::wcout << L"getColumnName: " << other.getColumnName(i + 1) << std::endl;
+            std::wcout << L"getSchemaName: " << other.getSchemaName(i + 1) << std::endl;
+            std::wcout << L"getTableName: " << other.getTableName(i + 1) << std::endl;
+            std::wcout << L"getCatalogName: " << other.getCatalogName(i + 1) << std::endl;
+            std::wcout << L"getColumnTypeName: " << other.getColumnTypeName(i + 1) << std::endl;
+
+            std::wcout <<  std::endl;
 
             column[i] = data;
         }

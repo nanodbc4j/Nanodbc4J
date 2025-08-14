@@ -6,7 +6,6 @@
 #include <codecvt>
 
 #ifdef _WIN32
-#define NOMINMAX
 #include <windows.h>
 #endif
 
@@ -101,12 +100,12 @@ std::u16string utils::to_u16string(const std::u32string& str) {
 std::u16string utils::to_u16string(const std::wstring& str) {
 #ifdef _WIN32
     // Windows wchar_t == UTF-16
-    return reinterpret_cast<const char16_t*>(str.c_str());
+    return std::u16string(reinterpret_cast<const char16_t*>(str.c_str()));
 #else
     // Linux wchar_t == UTF-32
     wstring_convert<codecvt_utf16<wchar_t>, wchar_t> conv;
     string utf16 = conv.to_bytes(str.c_str(), str.c_str() + str.size());
-    return u16string(reinterpret_cast<const char16_t*>(utf16.c_str()), utf16.size() / sizeof(char16_t));
+    return std::u16string(reinterpret_cast<const char16_t*>(utf16.c_str()), utf16.size() / sizeof(char16_t));
 #endif
 }
 

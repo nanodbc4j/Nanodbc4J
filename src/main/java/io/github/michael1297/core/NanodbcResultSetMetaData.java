@@ -145,6 +145,11 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return metaData.toString();
+    }
+
     private void checkIndex (int index) throws SQLException {
         index -= 1;
         if (index < 0 || index > metaData.columnCount) {

@@ -1,21 +1,11 @@
-#include "core/result_set_meta_data.hpp"
+﻿#include "core/result_set_meta_data.hpp"
 #include <string>
 #include <algorithm>
 #include <locale>
 #include <codecvt>
 #include <sql.h>
 
-// Конвертаци¤ string в wstring
-static std::wstring stringToWstring(const std::string& str) {
-    try {
-        if (str.empty()) return L"";
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-        return converter.from_bytes(str);
-    }
-    catch (...) {
-        return L"";
-    }
-}
+#define BUFFER_SIZE 512
 
 // Проверка успешности выполнени¤ ODBC операции
 inline static bool isOdbcSuccess(const SQLRETURN& ret) {
@@ -24,19 +14,24 @@ inline static bool isOdbcSuccess(const SQLRETURN& ret) {
 
 // Получение строкового атрибута колонки через ODBC
 inline static std::wstring getColumnStringAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
-    SQLWCHAR buffer[512] = { 0 };
-    SQLSMALLINT length = 0;
+    SQLWCHAR buffer[BUFFER_SIZE] = { 0 };
+    SQLSMALLINT byteLength = 0;
     SQLRETURN ret = SQLColAttributeW(
         hStmt,
         column,
         field,
         buffer,
         sizeof(buffer) / sizeof(SQLWCHAR),
-        &length,
+        &byteLength,
         nullptr);
 
-    if (isOdbcSuccess(ret) && length > 0) {
-        return std::wstring(buffer, length);
+    if (isOdbcSuccess(ret) && byteLength > 0) {
+        // Преобразуем байты в количество символов
+        SQLSMALLINT numChars = byteLength / sizeof(SQLWCHAR);
+
+        // Защита от переполнения
+        numChars = std::min(numChars, static_cast<SQLSMALLINT>(BUFFER_SIZE - 1));
+        return std::wstring(buffer, numChars);
     }
     return L"";
 }

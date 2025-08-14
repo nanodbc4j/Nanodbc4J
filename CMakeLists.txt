@@ -47,6 +47,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 # Определяем ODBC_EXPORTS только при сборке библиотеки
 target_compile_definitions(${PROJECT_NAME} PRIVATE ODBC_EXPORTS)
 
+# Отключаем min max в windows.h
+target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
+
 # Линкуем зависимости
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     nanodbc 

@@ -1,8 +1,7 @@
-#pragma once
+﻿#pragma once
 #include <wtypes.h>
 #include <sqlext.h>
 #include <nanodbc/nanodbc.h>
-
 
 class ResultSetMetaData {
 private:
