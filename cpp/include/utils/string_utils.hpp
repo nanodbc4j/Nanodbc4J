@@ -1,5 +1,6 @@
-﻿#pragma once
+#pragma once
 #include <string>
+#include <iostream>
 
 // Тип wide_string зависит от архитектуры и платформы
 #ifdef _WIN32
@@ -38,3 +39,4 @@ namespace utils {
 	CharT* duplicate_string(const CharT* src);
 }
 
+std::wostream& operator<<(std::wostream& os, const char16_t* str);

@@ -1,4 +1,4 @@
-﻿#include "utils/string_utils.hpp"
+#include "utils/string_utils.hpp"
 #include <type_traits>
 #include <memory>
 #include <cstring>
@@ -131,3 +131,9 @@ CharT* utils::duplicate_string(const CharT* src) {
 template char* utils::duplicate_string(const char* src);
 template char16_t* utils::duplicate_string(const char16_t* src);
 template wchar_t* utils::duplicate_string(const wchar_t* src);
+
+
+std::wostream& operator<<(std::wostream& os, const char16_t* str) {
+    os << utils::to_wstring(str);
+    return os;
+}

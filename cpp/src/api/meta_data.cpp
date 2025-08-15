@@ -1,4 +1,4 @@
-﻿#include "api/meta_data.h"
+#include "api/meta_data.h"
 #include "utils/logger.hpp"
 
 MetaData* get_meta_data(nanodbc::result* results, NativeError* error) {

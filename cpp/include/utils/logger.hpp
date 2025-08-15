@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "spdlog/spdlog.h"
 #include "utils/string_utils.hpp"
 #include "utils/path_utils.h"

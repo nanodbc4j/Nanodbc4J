@@ -1,4 +1,4 @@
-﻿#include "struct/meta_data_c.h"
+#include "struct/meta_data_c.h"
 #include "utils/string_utils.hpp"
 
 // Копируем строки через duplicate_string
@@ -76,8 +76,6 @@ MetaData::MetaData(const MetaData& other) {
     }
 }
 
-#include <iostream>
-
 MetaData::MetaData(const ResultSetMetaData& other) {
     columnCount = other.getColumnCount();
 
@@ -106,16 +104,6 @@ MetaData::MetaData(const ResultSetMetaData& other) {
             data->tableName = convert(other.getTableName(i + 1));
             data->catalogName = convert(other.getCatalogName(i + 1));
             data->columnTypeName = convert(other.getColumnTypeName(i + 1));
-
-            std::wcout << L"column: " << i << std::endl;
-            std::wcout << L"getColumnLabel: " << other.getColumnLabel(i + 1) << std::endl;
-            std::wcout << L"getColumnName: " << other.getColumnName(i + 1) << std::endl;
-            std::wcout << L"getSchemaName: " << other.getSchemaName(i + 1) << std::endl;
-            std::wcout << L"getTableName: " << other.getTableName(i + 1) << std::endl;
-            std::wcout << L"getCatalogName: " << other.getCatalogName(i + 1) << std::endl;
-            std::wcout << L"getColumnTypeName: " << other.getColumnTypeName(i + 1) << std::endl;
-
-            std::wcout <<  std::endl;
 
             column[i] = data;
         }

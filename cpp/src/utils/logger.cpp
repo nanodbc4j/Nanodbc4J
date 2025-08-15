@@ -1,4 +1,4 @@
-﻿#include "utils/logger.hpp"
+#include "utils/logger.hpp"
 #include <mutex>
 
 static std::once_flag g_init_flag;
