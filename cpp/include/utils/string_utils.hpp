@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <iostream>
 
@@ -38,5 +38,3 @@ namespace utils {
 	template <typename CharT>
 	CharT* duplicate_string(const CharT* src);
 }
-
-std::wostream& operator<<(std::wostream& os, const char16_t* str);
