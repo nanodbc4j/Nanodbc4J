@@ -24,26 +24,26 @@ public class MetaDataHandler {
             var columnMetaData = new MetaData.ColumnMetaData();
             var columnMetaDataStruct = new MetaDataStruct.ColumnMetaDataStruct(metaDataStruct.column.getPointer(POINTER_SIZE * i));
 
-            columnMetaData.isAutoIncrement       = columnMetaDataStruct.isAutoIncrement;
-            columnMetaData.isCaseSensitive       = columnMetaDataStruct.isCaseSensitive;
-            columnMetaData.isSearchable          = columnMetaDataStruct.isSearchable;
-            columnMetaData.isCurrency            = columnMetaDataStruct.isCurrency;
+            columnMetaData.isAutoIncrement       = columnMetaDataStruct.isAutoIncrement != 0;
+            columnMetaData.isCaseSensitive       = columnMetaDataStruct.isCaseSensitive != 0;
+            columnMetaData.isSearchable          = columnMetaDataStruct.isSearchable != 0;
+            columnMetaData.isCurrency            = columnMetaDataStruct.isCurrency != 0;
             columnMetaData.isNullable            = columnMetaDataStruct.isNullable;
-            columnMetaData.isSigned              = columnMetaDataStruct.isSigned;
+            columnMetaData.isSigned              = columnMetaDataStruct.isSigned != 0;
             columnMetaData.displaySize           = columnMetaDataStruct.displaySize;
             columnMetaData.precision             = columnMetaDataStruct.precision;
             columnMetaData.scale                 = columnMetaDataStruct.scale;
             columnMetaData.columnType            = columnMetaDataStruct.columnType;
-            columnMetaData.isReadOnly            = columnMetaDataStruct.isReadOnly;
-            columnMetaData.isWritable            = columnMetaDataStruct.isWritable;
-            columnMetaData.isDefinitelyWritable  = columnMetaDataStruct.isDefinitelyWritable;
+            columnMetaData.isReadOnly            = columnMetaDataStruct.isReadOnly != 0;
+            columnMetaData.isWritable            = columnMetaDataStruct.isWritable != 0;
+            columnMetaData.isDefinitelyWritable  = columnMetaDataStruct.isDefinitelyWritable != 0;
 
             columnMetaData.columnLabel           = getWideString(columnMetaDataStruct.columnLabel);
             columnMetaData.columnName            = getWideString(columnMetaDataStruct.columnName);
             columnMetaData.schemaName            = getWideString(columnMetaDataStruct.schemaName);
-            //columnMetaData.tableName             = getWideString(columnMetaDataStruct.tableName); TODO
-            //columnMetaData.catalogName           = getWideString(columnMetaDataStruct.catalogName);
-            //columnMetaData.columnTypeName        = getWideString(columnMetaDataStruct.columnTypeName);
+            columnMetaData.tableName             = getWideString(columnMetaDataStruct.tableName);
+            columnMetaData.catalogName           = getWideString(columnMetaDataStruct.catalogName);
+            columnMetaData.columnTypeName        = getWideString(columnMetaDataStruct.columnTypeName);
 
             metaData.columnMetaData.add(columnMetaData);
         }

@@ -43,19 +43,19 @@ public class MetaDataStruct extends Structure {
             "catalogName",
             "columnTypeName"})
     public static class ColumnMetaDataStruct extends Structure {
-        public boolean isAutoIncrement;
-        public boolean isCaseSensitive;
-        public boolean isSearchable;
-        public boolean isCurrency;
+        public byte isAutoIncrement;
+        public byte isCaseSensitive;
+        public byte isSearchable;
+        public byte isCurrency;
         public int isNullable;
-        public boolean isSigned;
+        public byte isSigned;
         public int displaySize;
         public int precision;
         public int scale;
         public int columnType;
-        public boolean isReadOnly;
-        public boolean isWritable;
-        public boolean isDefinitelyWritable;
+        public byte isReadOnly;
+        public byte isWritable;
+        public byte isDefinitelyWritable;
         public Pointer columnLabel;
         public Pointer columnName;
         public Pointer schemaName;
