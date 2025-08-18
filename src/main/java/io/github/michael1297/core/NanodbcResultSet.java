@@ -75,7 +75,7 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
         try {
-            return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_bool_value_by_index);
+            return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_bool_value_by_index) != 0;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -183,7 +183,7 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public boolean getBoolean(String columnLabel) throws SQLException {
         try {
-            return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_bool_value_by_name);
+            return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_bool_value_by_name) != 0;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }

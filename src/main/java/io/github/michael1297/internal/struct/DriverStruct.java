@@ -4,7 +4,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 @Structure.FieldOrder({"name", "attributes", "attribute_count"})
-public class DriverStruct extends Structure {
+public final class DriverStruct extends Structure {
     public Pointer name;
     public Pointer attributes;
     public int attribute_count;

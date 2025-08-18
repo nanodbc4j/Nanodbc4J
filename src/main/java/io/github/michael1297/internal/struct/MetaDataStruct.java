@@ -4,7 +4,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 @Structure.FieldOrder ({"columnCount", "column"})
-public class MetaDataStruct extends Structure {
+public final class MetaDataStruct extends Structure {
 
     public int columnCount;
     public Pointer column;

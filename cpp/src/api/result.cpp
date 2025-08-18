@@ -1,4 +1,4 @@
-﻿#include "api/result.h"
+#include "api/result.h"
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
 
@@ -82,8 +82,7 @@ double get_double_value_by_index(nanodbc::result* results, int index, NativeErro
 
 bool get_bool_value_by_index(nanodbc::result* results, int index, NativeError* error) {
     // result->get<bool>() не работает
-    short value = get_value_by_index<short>(results, index, error, 0);
-    return value != 0;
+    return get_value_by_index<short>(results, index, error, 0);
 }
 
 float get_float_value_by_index(nanodbc::result* results, int index, NativeError* error) {

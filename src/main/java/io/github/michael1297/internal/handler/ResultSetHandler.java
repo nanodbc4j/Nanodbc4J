@@ -19,7 +19,7 @@ public final class ResultSetHandler {
     public static boolean next(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            boolean hasNext = NativeDB.INSTANCE.next_result(resultSet, nativeError);
+            boolean hasNext = NativeDB.INSTANCE.next_result(resultSet, nativeError) != 0;
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }

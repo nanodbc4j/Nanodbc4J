@@ -71,7 +71,7 @@ public interface NativeDB extends Library {
      * @param error Информация об ошибке
      * @return True, если соединение активно
      */
-    boolean is_connected(ConnectionPtr conn, NativeError error);
+    byte is_connected(ConnectionPtr conn, NativeError error);
 
     StatementPtr create_statement(ConnectionPtr conn, NativeError error);
 
@@ -81,7 +81,7 @@ public interface NativeDB extends Library {
 
     int execute_update(StatementPtr stmt, NativeError error);
 
-    boolean next_result(ResultSetPtr results, NativeError error);
+    byte next_result(ResultSetPtr results, NativeError error);
 
     int get_int_value_by_index(ResultSetPtr results, int index, NativeError error);
 
@@ -89,7 +89,7 @@ public interface NativeDB extends Library {
 
     double get_double_value_by_index(ResultSetPtr results, int index, NativeError error);
 
-    boolean get_bool_value_by_index(ResultSetPtr results, int index, NativeError error);
+    byte get_bool_value_by_index(ResultSetPtr results, int index, NativeError error);
 
     float get_float_value_by_index(ResultSetPtr results, int index, NativeError error);
 
@@ -103,7 +103,7 @@ public interface NativeDB extends Library {
 
     double get_double_value_by_name(ResultSetPtr results, String name, NativeError error);
 
-    boolean get_bool_value_by_name(ResultSetPtr results, String name, NativeError error);
+    byte get_bool_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     float get_float_value_by_name(ResultSetPtr results, String name, NativeError error);
 

@@ -86,7 +86,7 @@ public final class ConnectionHandler {
     public static boolean isConnected(ConnectionPtr ptr) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.is_connected(ptr, nativeError);
+            boolean result = NativeDB.INSTANCE.is_connected(ptr, nativeError) != 0;
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }

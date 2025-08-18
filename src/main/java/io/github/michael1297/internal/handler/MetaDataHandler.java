@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import static io.github.michael1297.internal.handler.Handler.POINTER_SIZE;
 
-public class MetaDataHandler {
+public final class MetaDataHandler {
     // Static methods only
     private MetaDataHandler(){
     }
