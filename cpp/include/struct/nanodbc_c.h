@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <cstdint>
 #include <nanodbc/nanodbc.h>
 
@@ -39,25 +39,37 @@ extern "C" {
     };
 
     struct CDate {
-        int16_t year;  ///< Year [0-inf).
-        int16_t month; ///< Month of the year [1-12].
-        int16_t day;   ///< Day of the month [1-31].
+        int16_t year = 0;  ///< Year [0-inf).
+        int16_t month = 1; ///< Month of the year [1-12].
+        int16_t day = 1;   ///< Day of the month [1-31].
+
+        CDate() = default;
+        CDate(const CDate& other);
+        CDate(const nanodbc::date& other);
     };
 
     struct CTime {
-        int16_t hour;    ///< Hours since midnight [0-23].
-        int16_t minute;  ///< Minutes after the hour [0-59].
-        int16_t second;  ///< Seconds after the minute.
+        int16_t hour = 0;    ///< Hours since midnight [0-23].
+        int16_t minute = 0;  ///< Minutes after the hour [0-59].
+        int16_t second = 0;  ///< Seconds after the minute.
+
+        CTime() = default;
+        CTime(const CTime& other);
+        CTime(const nanodbc::time& other);
     };
 
     struct CTimestamp {
-        int16_t year;     ///< Year [0-inf).
-        int16_t month;    ///< Month of the year [1-12].
-        int16_t day;      ///< Day of the month [1-31].
-        int16_t hour;     ///< Hours since midnight [0-23].
-        int16_t minute;   ///< Minutes after the hour [0-59].
-        int16_t second;   ///< Seconds after the minute.
-        int32_t fract;    ///< Fractional seconds.
+        int16_t year = 0;     ///< Year [0-inf).
+        int16_t month = 1;    ///< Month of the year [1-12].
+        int16_t day = 1;      ///< Day of the month [1-31].
+        int16_t hour = 0;     ///< Hours since midnight [0-23].
+        int16_t minute = 0;   ///< Minutes after the hour [0-59].
+        int16_t second = 0;   ///< Seconds after the minute.
+        int32_t fract = 0;    ///< Fractional seconds.
+
+        CTimestamp() = default;
+        CTimestamp(const CTimestamp& other);
+        CTimestamp(const nanodbc::timestamp& other);
     };    
 
 #ifdef __cplusplus

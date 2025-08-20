@@ -143,17 +143,29 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getDateValueByIndex(resultSetPtr, columnIndex);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getTimeValueByIndex(resultSetPtr, columnIndex);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getTimestampValueByIndex(resultSetPtr, columnIndex);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
@@ -251,17 +263,29 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Date getDate(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getDateValueByName(resultSetPtr, columnLabel);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public Time getTime(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getTimeValueByName(resultSetPtr, columnLabel);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ResultSetHandler.getTimestampValueByName(resultSetPtr, columnLabel);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

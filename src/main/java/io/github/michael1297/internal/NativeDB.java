@@ -6,13 +6,8 @@ import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import io.github.michael1297.internal.pointer.ConnectionPtr;
-import io.github.michael1297.internal.pointer.MetaDataPtr;
-import io.github.michael1297.internal.pointer.ResultSetPtr;
-import io.github.michael1297.internal.pointer.StatementPtr;
-import io.github.michael1297.internal.struct.DatasourceStruct;
-import io.github.michael1297.internal.struct.DriverStruct;
-import io.github.michael1297.internal.struct.NativeError;
+import io.github.michael1297.internal.pointer.*;
+import io.github.michael1297.internal.struct.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,6 +92,12 @@ public interface NativeDB extends Library {
 
     Pointer get_string_value_by_index(ResultSetPtr results, int index, NativeError error);
 
+    DateStruct get_date_value_by_index(ResultSetPtr results, int index, NativeError error);
+
+    TimeStruct get_time_value_by_index(ResultSetPtr results, int index, NativeError error);
+
+    TimestampStruct get_timestamp_value_by_index(ResultSetPtr results, int index, NativeError error);
+
     int get_int_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     long get_long_value_by_name(ResultSetPtr results, String name, NativeError error);
@@ -110,6 +111,18 @@ public interface NativeDB extends Library {
     short get_short_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     Pointer get_string_value_by_name(ResultSetPtr results, String name, NativeError error);
+
+    DateStruct get_date_value_by_name(ResultSetPtr results,  String name, NativeError error);
+
+    TimeStruct get_time_value_by_name(ResultSetPtr results,  String name, NativeError error);
+
+    TimestampStruct get_timestamp_value_by_name(ResultSetPtr results,  String name, NativeError error);
+
+    void delete_date(DateStruct date);
+
+    void delete_time(TimeStruct time);
+
+    void delete_timestamp(TimestampStruct timestamp);
 
     void close_result(ResultSetPtr results, NativeError error);
 

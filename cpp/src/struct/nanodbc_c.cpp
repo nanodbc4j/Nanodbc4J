@@ -107,3 +107,47 @@ Datasource::~Datasource() {
 	name = nullptr;
 	driver = nullptr;
 }
+
+CDate::CDate(const CDate& other) {
+	day = other.day;
+	month = other.month;
+	year = other.year;
+}
+
+CDate::CDate(const nanodbc::date& other) {
+	day = other.day;
+	month = other.month;
+	year = other.year;
+}
+
+CTime::CTime(const CTime& other) {
+	hour = other.hour;
+	minute = other.minute;
+	second = other.second;
+}
+
+CTime::CTime(const nanodbc::time& other) {
+	hour = other.hour;
+	minute = other.min;
+	second = other.sec;
+}
+
+CTimestamp::CTimestamp(const CTimestamp& other) {
+	year = other.year;
+	month = other.month;
+	day = other.day;
+	hour = other.hour;
+	minute = other.minute;
+	second = other.second;
+	fract = other.fract;
+}
+
+CTimestamp::CTimestamp(const nanodbc::timestamp& other) {
+	year = other.year;
+	month = other.month;
+	day = other.day;
+	hour = other.hour;
+	minute = other.min;
+	second = other.sec;
+	fract = other.fract;
+}

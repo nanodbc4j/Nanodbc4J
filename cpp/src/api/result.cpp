@@ -122,6 +122,21 @@ const char16_t* get_string_value_by_index(nanodbc::result* results, int index, N
     return nullptr;    
 }
 
+CDate* get_date_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    auto date = get_value_by_index<nanodbc::date>(results, index, error, {});
+    return new CDate(date);
+}
+
+CTime* get_time_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    auto time = get_value_by_index<nanodbc::time>(results, index, error, {});
+    return new CTime(time);
+}
+
+CTimestamp* get_timestamp_value_by_index(nanodbc::result* results, int index, NativeError* error) {
+    auto timestamp = get_value_by_index<nanodbc::timestamp>(results, index, error, {});
+    return new CTimestamp(timestamp);
+}
+
 int get_int_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
     return get_value_by_name<int>(results, to_wide_string(name), error, 0);
 }
@@ -178,6 +193,21 @@ const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_
     return nullptr;
 }
 
+CDate* get_date_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    auto date = get_value_by_name<nanodbc::date>(results, to_wide_string(name), error, {});
+    return new CDate(date);
+}
+
+CTime* get_time_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    auto time = get_value_by_name<nanodbc::time>(results, to_wide_string(name), error, {});
+    return new CTime(time);
+}
+
+CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    auto timestamp = get_value_by_name<nanodbc::timestamp>(results, to_wide_string(name), error, {});
+    return new CTimestamp(timestamp);
+}
+
 void close_result(nanodbc::result* results, NativeError* error) {
     LOG_DEBUG_W(L"Closing result: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
@@ -194,5 +224,29 @@ void close_result(nanodbc::result* results, NativeError* error) {
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown close result error");
         LOG_DEBUG_W(L"Unknown exception in close_result");
+    }
+}
+
+void delete_date(CDate* date) {
+    LOG_DEBUG_W(L"Deleting CDate object: {}", reinterpret_cast<uintptr_t>(date));
+    if (date) {
+        delete date;
+        LOG_DEBUG_W(L"CDate deleted");
+    }
+}
+
+void delete_time(CTime* time) {
+    LOG_DEBUG_W(L"Deleting CTime object: {}", reinterpret_cast<uintptr_t>(time));
+    if (time) {
+        delete time;
+        LOG_DEBUG_W(L"CTime deleted");
+    }
+}
+
+void delete_timestamp(CTimestamp* timestamp) {
+    LOG_DEBUG_W(L"Deleting CTimestamp object: {}", reinterpret_cast<uintptr_t>(timestamp));
+    if (timestamp) {
+        delete timestamp;
+        LOG_DEBUG_W(L"CTimestamp deleted");
     }
 }
