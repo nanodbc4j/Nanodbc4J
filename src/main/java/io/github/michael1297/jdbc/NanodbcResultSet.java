@@ -29,6 +29,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Result set from a query. Iterate with next(), read data with getX() methods.
@@ -36,6 +37,7 @@ import java.util.Map;
 public class NanodbcResultSet implements ResultSet {
     protected ResultSetPtr resultSetPtr;
     private final WeakReference<Statement> statement;
+    private ResultSetMetaData metaData = null;
 
     NanodbcResultSet(Statement statement, ResultSetPtr resultSetPtr) {
         this.resultSetPtr = resultSetPtr;
@@ -56,6 +58,7 @@ public class NanodbcResultSet implements ResultSet {
         try {
             ResultSetHandler.close(resultSetPtr);
             resultSetPtr = null;
+            metaData = null;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -324,7 +327,10 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         try {
-            return ResultSetHandler.getResultSetMetaData(resultSetPtr);
+            if (metaData == null) {
+                metaData = ResultSetHandler.getResultSetMetaData(resultSetPtr);
+            }
+            return metaData;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -332,17 +338,58 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        ResultSetMetaData metaData = getMetaData();
+        String className = metaData.getColumnClassName(columnIndex);
+
+        try {
+            return switch (className) {
+                case "java.lang.Boolean" -> getBoolean(columnIndex);
+                case "java.lang.Byte" -> getByte(columnIndex);
+                case "java.lang.Short" -> getShort(columnIndex);
+                case "java.lang.Integer" -> getInt(columnIndex);
+                case "java.lang.Long" -> getLong(columnIndex);
+                case "java.lang.Float" -> getFloat(columnIndex);
+                case "java.lang.Double" -> getDouble(columnIndex);
+                case "java.math.BigDecimal" -> getBigDecimal(columnIndex);
+                case "java.lang.String" -> getString(columnIndex);
+                case "java.sql.Date" -> getDate(columnIndex);
+                case "java.sql.Time" -> getTime(columnIndex);
+                case "java.sql.Timestamp" -> getTimestamp(columnIndex);
+                case "[B" -> // byte array
+                        getBytes(columnIndex);
+                case "java.util.UUID" -> {
+                    String uuidString = getString(columnIndex);
+                    try {
+                        yield uuidString != null ? UUID.fromString(uuidString) : null;
+                    } catch (IllegalArgumentException e) {
+                        throw new SQLException("Invalid UUID format: " + uuidString, e);
+                    }
+                }
+                default -> getString(columnIndex); // Fallback
+            };
+        } catch (SQLException e) {
+            throw new SQLException("Error getting object for column " + columnIndex + " (class: " + className + ")", e);
+        }
     }
 
     @Override
     public Object getObject(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        int index = findColumn(columnLabel);
+        if (index == -1) {
+            throw new SQLException("Column " + columnLabel + " not found");
+        }
+        return getObject(index);
     }
 
     @Override
     public int findColumn(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        ResultSetMetaData metaData = getMetaData();
+        for (int i = 1; i <= metaData.getColumnCount(); i++) {
+            if (metaData.getColumnLabel(i).equals(columnLabel)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
