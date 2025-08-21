@@ -110,6 +110,10 @@ public class NanodbcDriver implements Driver {
         return createConnection(url, null);
     }
 
+    public static void setLogLevel(SpdLogLevel level) {
+        Handler.setLogLevel(level);
+    }
+
     public static List<io.github.michael1297.core.metadata.Driver> driversList(){
         return Handler.driversList();
     }

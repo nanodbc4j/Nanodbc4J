@@ -2,6 +2,7 @@ package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import io.github.michael1297.core.SpdLogLevel;
 import io.github.michael1297.core.metadata.Datasource;
 import io.github.michael1297.core.metadata.Driver;
 import io.github.michael1297.internal.NativeDB;
@@ -16,6 +17,10 @@ public final class Handler {
 
     // Static methods only
     private Handler() {
+    }
+
+    public static void setLogLevel(SpdLogLevel level) {
+        NativeDB.INSTANCE.set_log_level(level.getValue());
     }
 
     public static List<Driver> driversList() {

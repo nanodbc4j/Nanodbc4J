@@ -1,4 +1,4 @@
-﻿#include "api/odbc.h"
+#include "api/odbc.h"
 #include <exception>
 #include "utils/string_utils.hpp"
 #include "utils/struct_converter.hpp"
@@ -19,6 +19,11 @@ const Datasource** datasources_list(int* count) {
     *count = static_cast<int>(datasources.size());
 	LOG_DEBUG_W(L"Found {} ODBC data sources", *count);
     return converter::convert(datasources);
+}
+
+void set_log_level(int level) {
+	auto result_level_name = set_spdlog_level(level);
+	LOG_DEBUG("Set log level: {}", result_level_name);
 }
  
 void std_free(void* ptr) {

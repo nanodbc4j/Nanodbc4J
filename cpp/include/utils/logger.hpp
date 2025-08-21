@@ -6,6 +6,9 @@
 // Объявление функции инициализации логгера
 void ensure_initialized();
 
+// Установка уровня логирования
+std::string set_spdlog_level(int level = SPDLOG_LEVEL_INFO);
+
 // Ensure initialization before logging
 #define LOG_WITH_INIT(level, ...) \
     do { \

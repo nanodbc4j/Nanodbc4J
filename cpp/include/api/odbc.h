@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <nanodbc/nanodbc.h>
 #include "struct/error_info.h"
 #include "struct/nanodbc_c.h"
@@ -11,6 +11,8 @@ extern "C" {
     ODBC_API const Datasource** datasources_list(int* count);
 
     ODBC_API void std_free(void* ptr);
+
+    ODBC_API void set_log_level(int level);
 
     ODBC_API void delete_datasource(Datasource* datasource);
 
