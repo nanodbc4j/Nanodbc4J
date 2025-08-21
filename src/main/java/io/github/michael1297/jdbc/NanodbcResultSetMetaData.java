@@ -135,7 +135,8 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public String getColumnClassName(int column) throws SQLException {
-        return "";
+        checkIndex(column);
+        return metaData.columnMetaData.get(column - 1).columnClassName;
     }
 
     @Override

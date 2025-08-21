@@ -1,4 +1,4 @@
-﻿#include "core/result_set_meta_data.hpp"
+#include "core/result_set_meta_data.hpp"
 #include <string>
 #include <algorithm>
 #include <locale>
@@ -10,6 +10,87 @@
 // Проверка успешности выполнени¤ ODBC операции
 inline static bool isOdbcSuccess(const SQLRETURN& ret) {
     return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
+}
+
+// Вспомогательный метод для определения по имени типа
+static const std::wstring determineClassNameByTypeName(int column, int sqlType, const std::wstring& typeName) {
+    try {
+        std::string lowerTypeName;
+        lowerTypeName.reserve(typeName.size());
+
+        // Преобразование wstring в string и в нижний регистр
+        for (wchar_t c : typeName) {
+            lowerTypeName += static_cast<char>(std::tolower(c));
+        }
+
+        if (lowerTypeName.find("bool") != std::string::npos ||
+            lowerTypeName.find("bit") != std::string::npos) {
+            return L"java.lang.Boolean";
+        }
+        else if (lowerTypeName.find("tinyint") != std::string::npos) {
+            return L"java.lang.Byte";
+        }
+        else if (lowerTypeName.find("smallint") != std::string::npos) {
+            return L"java.lang.Short";
+        }
+        else if (lowerTypeName.find("int") != std::string::npos ||
+            lowerTypeName.find("integer") != std::string::npos) {
+            return L"java.lang.Integer";
+        }
+        else if (lowerTypeName.find("bigint") != std::string::npos) {
+            return L"java.lang.Long";
+        }
+        else if (lowerTypeName.find("float") != std::string::npos) {
+            return L"java.lang.Float";
+        }
+        else if (lowerTypeName.find("real") != std::string::npos) {
+            return L"java.lang.Float";
+        }
+        else if (lowerTypeName.find("double") != std::string::npos) {
+            return L"java.lang.Double";
+        }
+        else if (lowerTypeName.find("decimal") != std::string::npos ||
+            lowerTypeName.find("numeric") != std::string::npos) {
+            return L"java.math.BigDecimal";
+        }
+        else if (lowerTypeName.find("date") != std::string::npos) {
+            return L"java.sql.Date";
+        }
+        else if (lowerTypeName.find("time") != std::string::npos) {
+            return L"java.sql.Time";
+        }
+        else if (lowerTypeName.find("timestamp") != std::string::npos ||
+            lowerTypeName.find("datetime") != std::string::npos) {
+            return L"java.sql.Timestamp";
+        }
+        else if (lowerTypeName.find("char") != std::string::npos ||
+            lowerTypeName.find("varchar") != std::string::npos ||
+            lowerTypeName.find("text") != std::string::npos ||
+            lowerTypeName.find("string") != std::string::npos) {
+            return L"java.lang.String";
+        }
+        else if (lowerTypeName.find("binary") != std::string::npos ||
+            lowerTypeName.find("varbinary") != std::string::npos ||
+            lowerTypeName.find("blob") != std::string::npos) {
+            return L"[B"; // byte array
+        }
+        else if (lowerTypeName.find("guid") != std::string::npos ||
+            lowerTypeName.find("uuid") != std::string::npos) {
+            return L"java.util.UUID";
+        }
+
+        // Fallback для неизвестных типов
+        if (sqlType == SQL_UNKNOWN_TYPE) {
+            return L"java.lang.Object";
+        }
+
+        // Для известных SQL типов без конкретного case
+        return L"java.lang.String";
+
+    }
+    catch (...) {
+        return L"java.lang.Object";
+    }
 }
 
 // Получение строкового атрибута колонки через ODBC
@@ -234,28 +315,28 @@ std::wstring ResultSetMetaData::getColumnTypeName(int column) const {
     // Fallback: сопоставление по типу данных
     int type = getColumnType(column);
     switch (type) {
-    case SQL_INTEGER: return L"INTEGER";
-    case SQL_VARCHAR: return L"VARCHAR";
-    case SQL_CHAR: return L"CHAR";
-    case SQL_DECIMAL: return L"DECIMAL";
-    case SQL_NUMERIC: return L"NUMERIC";
-    case SQL_TIMESTAMP: return L"TIMESTAMP";
-    case SQL_BIGINT: return L"BIGINT";
-    case SQL_SMALLINT: return L"SMALLINT";
-    case SQL_TINYINT: return L"TINYINT";
-    case SQL_REAL: return L"REAL";
-    case SQL_FLOAT: return L"FLOAT";
-    case SQL_DOUBLE: return L"DOUBLE";
-    case SQL_DATE: return L"DATE";
-    case SQL_TIME: return L"TIME";
-    case SQL_WVARCHAR: return L"NVARCHAR";
-    case SQL_WCHAR: return L"NCHAR";
-    case SQL_BIT: return L"BIT";
-    case SQL_BINARY: return L"BINARY";
-    case SQL_VARBINARY: return L"VARBINARY";
-    case SQL_LONGVARCHAR: return L"LONGVARCHAR";
-    case SQL_LONGVARBINARY: return L"LONGVARBINARY";
-    default: return L"UNKNOWN";
+        case SQL_INTEGER: return L"INTEGER";
+        case SQL_VARCHAR: return L"VARCHAR";
+        case SQL_CHAR: return L"CHAR";
+        case SQL_DECIMAL: return L"DECIMAL";
+        case SQL_NUMERIC: return L"NUMERIC";
+        case SQL_TIMESTAMP: return L"TIMESTAMP";
+        case SQL_BIGINT: return L"BIGINT";
+        case SQL_SMALLINT: return L"SMALLINT";
+        case SQL_TINYINT: return L"TINYINT";
+        case SQL_REAL: return L"REAL";
+        case SQL_FLOAT: return L"FLOAT";
+        case SQL_DOUBLE: return L"DOUBLE";
+        case SQL_DATE: return L"DATE";
+        case SQL_TIME: return L"TIME";
+        case SQL_WVARCHAR: return L"NVARCHAR";
+        case SQL_WCHAR: return L"NCHAR";
+        case SQL_BIT: return L"BIT";
+        case SQL_BINARY: return L"BINARY";
+        case SQL_VARBINARY: return L"VARBINARY";
+        case SQL_LONGVARCHAR: return L"LONGVARCHAR";
+        case SQL_LONGVARBINARY: return L"LONGVARBINARY";
+        default: return L"UNKNOWN";
     }
 }
 
@@ -273,3 +354,64 @@ bool ResultSetMetaData::isWritable(int column) const {
 bool ResultSetMetaData::isDefinitelyWritable(int column) const {
     return !isReadOnly(column) && !isAutoIncrement(column);
 }
+
+std::wstring ResultSetMetaData::getColumnClassName(int column) const {
+    int sqlType = getColumnType(column);
+
+    switch (sqlType) {
+#ifdef SQL_WCHAR
+        case SQL_WCHAR:
+#endif
+#ifdef SQL_WVARCHAR
+        case SQL_WVARCHAR:
+#endif
+#ifdef SQL_WLONGVARCHAR
+        case SQL_WLONGVARCHAR:
+#endif
+            return L"java.lang.String";
+
+        case SQL_DECIMAL:
+        case SQL_NUMERIC:
+            return L"java.math.BigDecimal";
+
+        case SQL_INTEGER:
+            return L"java.lang.Integer";
+
+        case SQL_BIGINT:
+            return L"java.lang.Long";
+
+        case SQL_SMALLINT:
+            return L"java.lang.Short";
+
+        case SQL_TINYINT:
+            return L"java.lang.Byte";
+
+        case SQL_REAL:
+            return L"java.lang.Float";
+
+        case SQL_FLOAT:
+        case SQL_DOUBLE:
+            return L"java.lang.Double";
+
+        case SQL_BIT:
+            return L"java.lang.Boolean";
+
+        case SQL_DATE:
+            return L"java.sql.Date";
+
+        case SQL_TIME:
+            return L"java.sql.Time";
+
+        case SQL_TIMESTAMP:
+            return L"java.sql.Timestamp";
+
+        case SQL_BINARY:
+        case SQL_VARBINARY:
+        case SQL_LONGVARBINARY:
+            return L"[B";    // byte array
+
+        default:
+            return determineClassNameByTypeName(column, sqlType, getColumnTypeName(column));
+    }
+}
+

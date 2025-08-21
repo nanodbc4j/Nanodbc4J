@@ -34,6 +34,7 @@ MetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) {
     tableName = dup(other.tableName);
     catalogName = dup(other.catalogName);
     columnTypeName = dup(other.columnTypeName);
+    columnClassName = dup(other.columnClassName);
 }
 
 MetaData::ColumnMetaData::~ColumnMetaData() {
@@ -43,6 +44,7 @@ MetaData::ColumnMetaData::~ColumnMetaData() {
     str_free(tableName);
     str_free(catalogName);
     str_free(columnTypeName);
+    str_free(columnClassName);
 
     isAutoIncrement = false;
     isCaseSensitive = false;
@@ -63,6 +65,7 @@ MetaData::ColumnMetaData::~ColumnMetaData() {
     tableName = nullptr;
     catalogName = nullptr;
     columnTypeName = nullptr;
+    columnClassName = nullptr;
 }
 
 MetaData::MetaData(const MetaData& other) {
@@ -104,6 +107,7 @@ MetaData::MetaData(const ResultSetMetaData& other) {
             data->tableName = convert(other.getTableName(i + 1));
             data->catalogName = convert(other.getCatalogName(i + 1));
             data->columnTypeName = convert(other.getColumnTypeName(i + 1));
+            data->columnClassName = convert(other.getColumnClassName(i + 1));
 
             column[i] = data;
         }

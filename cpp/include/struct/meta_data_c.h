@@ -28,6 +28,7 @@ extern "C" {
             const char16_t* tableName = nullptr;
             const char16_t* catalogName = nullptr;
             const char16_t* columnTypeName = nullptr;
+            const char16_t* columnClassName = nullptr;
 
             ColumnMetaData() = default;
             ColumnMetaData(const ColumnMetaData& other);

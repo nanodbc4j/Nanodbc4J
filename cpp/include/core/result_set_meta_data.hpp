@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <wtypes.h>
 #include <sqlext.h>
 #include <nanodbc/nanodbc.h>
@@ -50,4 +50,6 @@ public:
     bool isWritable(int column) const;    
 
     bool isDefinitelyWritable(int column) const;
+
+    std::wstring getColumnClassName(int column) const;
 };

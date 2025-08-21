@@ -51,6 +51,7 @@ public final class MetaDataHandler {
             columnMetaData.tableName             = getWideString(columnMetaDataStruct.tableName);
             columnMetaData.catalogName           = getWideString(columnMetaDataStruct.catalogName);
             columnMetaData.columnTypeName        = getWideString(columnMetaDataStruct.columnTypeName);
+            columnMetaData.columnClassName       = getWideString(columnMetaDataStruct.columnClassName);
 
             metaData.columnMetaData.add(columnMetaData);
         }

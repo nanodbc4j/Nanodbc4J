@@ -41,7 +41,9 @@ public final class MetaDataStruct extends Structure {
             "schemaName",
             "tableName",
             "catalogName",
-            "columnTypeName"})
+            "columnTypeName",
+            "columnClassName"
+    })
     public static class ColumnMetaDataStruct extends Structure {
         public byte isAutoIncrement;
         public byte isCaseSensitive;
@@ -62,6 +64,7 @@ public final class MetaDataStruct extends Structure {
         public Pointer tableName;
         public Pointer catalogName;
         public Pointer columnTypeName;
+        public Pointer columnClassName;
 
         public ColumnMetaDataStruct(){
         }

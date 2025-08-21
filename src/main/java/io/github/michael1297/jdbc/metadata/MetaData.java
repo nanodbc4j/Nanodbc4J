@@ -30,6 +30,7 @@ public final class MetaData {
         public String tableName = null;
         public String catalogName = null;
         public String columnTypeName = null;
+        public String columnClassName = null;
 
         @Override
         public boolean equals(Object o) {
@@ -65,6 +66,7 @@ public final class MetaData {
                     ", tableName='" + tableName + '\'' +
                     ", catalogName='" + catalogName + '\'' +
                     ", columnTypeName='" + columnTypeName + '\'' +
+                    ", columnClassName='" + columnClassName + '\'' +
                     '}';
         }
     }
