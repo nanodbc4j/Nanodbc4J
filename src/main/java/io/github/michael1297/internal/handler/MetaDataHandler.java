@@ -15,6 +15,10 @@ public final class MetaDataHandler {
     }
 
     public static MetaData processerMetaData(MetaDataPtr metaDataPtr){
+        if (metaDataPtr == null || metaDataPtr.getPointer() == null) {
+            throw new IllegalArgumentException("MetaDataPtr is null");
+        }
+
         MetaData metaData = new MetaData();
         MetaDataStruct metaDataStruct = new MetaDataStruct(metaDataPtr.getPointer());
         metaData.columnCount = metaDataStruct.columnCount;

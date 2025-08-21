@@ -29,8 +29,13 @@ public class NanodbcDriver implements Driver {
     }
 
     @Override
-    public Connection connect(String connection, Properties info) throws SQLException {
-        return new NanodbcConnection(connection);
+    public Connection connect(String url, Properties info) throws SQLException {
+        if (!acceptsURL(url)) {
+            return null;
+        }
+
+        String connectionString = extractAddress(url).trim(); // ← убираем jdbc:odbc:
+        return new NanodbcConnection(connectionString);
     }
 
     /** @see java.sql.Driver#acceptsURL(java.lang.String) */
@@ -95,8 +100,8 @@ public class NanodbcDriver implements Driver {
     public static NanodbcConnection createConnection(String url, Properties prop) throws SQLException {
         if (!isValidURL(url)) return null;
 
-        url = url.trim();
-        return new NanodbcConnection(extractAddress(url));
+        String connectionString = extractAddress(url).trim(); // ← убираем jdbc:odbc:
+        return new NanodbcConnection(connectionString);
     }
 
     /**
