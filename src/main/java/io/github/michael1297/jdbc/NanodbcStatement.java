@@ -1,4 +1,4 @@
-package io.github.michael1297.core;
+package io.github.michael1297.jdbc;
 
 import io.github.michael1297.exceptions.NanodbcSQLException;
 import io.github.michael1297.exceptions.NativeException;

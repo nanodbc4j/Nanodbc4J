@@ -2,9 +2,9 @@ package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import io.github.michael1297.core.SpdLogLevel;
-import io.github.michael1297.core.metadata.Datasource;
-import io.github.michael1297.core.metadata.Driver;
+import io.github.michael1297.jdbc.SpdLogLevel;
+import io.github.michael1297.jdbc.metadata.Datasource;
+import io.github.michael1297.jdbc.metadata.Driver;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.struct.DatasourceStruct;
 import io.github.michael1297.internal.struct.DriverStruct;

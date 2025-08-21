@@ -1,7 +1,7 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
-import io.github.michael1297.core.metadata.MetaData;
+import io.github.michael1297.jdbc.metadata.MetaData;
 import io.github.michael1297.internal.pointer.MetaDataPtr;
 import io.github.michael1297.internal.struct.MetaDataStruct;
 

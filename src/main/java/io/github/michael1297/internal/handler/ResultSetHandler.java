@@ -1,8 +1,8 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
-import io.github.michael1297.core.NanodbcResultSetMetaData;
-import io.github.michael1297.core.metadata.MetaData;
+import io.github.michael1297.jdbc.NanodbcResultSetMetaData;
+import io.github.michael1297.jdbc.metadata.MetaData;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.MetaDataPtr;

@@ -1,4 +1,4 @@
-package io.github.michael1297.core.metadata;
+package io.github.michael1297.jdbc.metadata;
 
 import java.util.ArrayList;
 import java.util.Objects;

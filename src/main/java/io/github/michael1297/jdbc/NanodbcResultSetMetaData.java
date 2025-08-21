@@ -1,6 +1,6 @@
-package io.github.michael1297.core;
+package io.github.michael1297.jdbc;
 
-import io.github.michael1297.core.metadata.MetaData;
+import io.github.michael1297.jdbc.metadata.MetaData;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

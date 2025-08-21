@@ -1,4 +1,4 @@
-package io.github.michael1297.core;
+package io.github.michael1297.jdbc;
 
 public enum SpdLogLevel {
     TRACE(0),

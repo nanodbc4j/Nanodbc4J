@@ -1,6 +1,6 @@
-package io.github.michael1297.core;
+package io.github.michael1297.jdbc;
 
-import io.github.michael1297.core.metadata.Datasource;
+import io.github.michael1297.jdbc.metadata.Datasource;
 import io.github.michael1297.internal.handler.Handler;
 
 import java.sql.Connection;
@@ -114,7 +114,7 @@ public class NanodbcDriver implements Driver {
         Handler.setLogLevel(level);
     }
 
-    public static List<io.github.michael1297.core.metadata.Driver> driversList(){
+    public static List<io.github.michael1297.jdbc.metadata.Driver> driversList(){
         return Handler.driversList();
     }
 
