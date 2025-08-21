@@ -30,6 +30,7 @@ public class NanodbcDriver implements Driver {
             DriverManager.registerDriver(new NanodbcDriver());
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Could not register driver", e);
+            throw new ExceptionInInitializerError(e);
         }
     }
 
@@ -43,7 +44,9 @@ public class NanodbcDriver implements Driver {
         return new NanodbcConnection(connectionString);
     }
 
-    /** @see java.sql.Driver#acceptsURL(java.lang.String) */
+    /**
+     * @see java.sql.Driver#acceptsURL(java.lang.String)
+     */
     @Override
     public boolean acceptsURL(String url) {
         return isValidURL(url);
@@ -74,7 +77,9 @@ public class NanodbcDriver implements Driver {
         return MINOR_VERSION;
     }
 
-    /** @see java.sql.Driver#jdbcCompliant() */
+    /**
+     * @see java.sql.Driver#jdbcCompliant()
+     */
     @Override
     public boolean jdbcCompliant() {
         return false;
@@ -98,7 +103,7 @@ public class NanodbcDriver implements Driver {
     /**
      * Creates a new database connection to a given URL.
      *
-     * @param url the URL
+     * @param url  the URL
      * @param prop the properties
      * @return a Connection object that represents a connection to the URL
      * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
@@ -125,11 +130,11 @@ public class NanodbcDriver implements Driver {
         Handler.setLogLevel(level);
     }
 
-    public static List<io.github.michael1297.jdbc.metadata.Driver> driversList(){
+    public static List<io.github.michael1297.jdbc.metadata.Driver> driversList() {
         return Handler.driversList();
     }
 
-    public static List<Datasource> datasourcesList(){
+    public static List<Datasource> datasourcesList() {
         return Handler.datasourcesList();
     }
 }

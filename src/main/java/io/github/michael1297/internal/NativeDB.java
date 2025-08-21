@@ -3,7 +3,6 @@ package io.github.michael1297.internal;
 import com.sun.jna.Function;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import io.github.michael1297.internal.pointer.*;
@@ -13,15 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface NativeDB extends Library {
-    NativeDB INSTANCE = Native.load(getLibraryName(), NativeDB.class, getOptions());
+    NativeDB INSTANCE = initialize();
 
-    private static String getLibraryName() {
-        if (Platform.isWindows()) {
-            return "odbc";
-        } else if (Platform.isLinux()) {
-            return "libodbc"; // или "libodbc.so" в зависимости от установки
+    static NativeDB initialize() {
+        try {
+            LibraryLoader.load();
+            return Native.load(NativeDB.class, getOptions());
+        } catch (Throwable t) {
+            throw new ExceptionInInitializerError(t);
         }
-        throw new UnsupportedOperationException("Unsupported platform");
     }
 
     private static Map<String, Object> getOptions() {
@@ -112,11 +111,11 @@ public interface NativeDB extends Library {
 
     Pointer get_string_value_by_name(ResultSetPtr results, String name, NativeError error);
 
-    DateStruct get_date_value_by_name(ResultSetPtr results,  String name, NativeError error);
+    DateStruct get_date_value_by_name(ResultSetPtr results, String name, NativeError error);
 
-    TimeStruct get_time_value_by_name(ResultSetPtr results,  String name, NativeError error);
+    TimeStruct get_time_value_by_name(ResultSetPtr results, String name, NativeError error);
 
-    TimestampStruct get_timestamp_value_by_name(ResultSetPtr results,  String name, NativeError error);
+    TimestampStruct get_timestamp_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     void delete_date(DateStruct date);
 
