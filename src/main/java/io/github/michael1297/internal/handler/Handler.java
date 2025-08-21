@@ -12,6 +12,9 @@ import io.github.michael1297.internal.struct.DriverStruct;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Main native interface. Loads odbc.dll and exposes ODBC functions via JNA.
+ */
 public final class Handler {
     public static final long POINTER_SIZE = System.getProperty("os.arch").endsWith("64") ? 8 : 4;
 

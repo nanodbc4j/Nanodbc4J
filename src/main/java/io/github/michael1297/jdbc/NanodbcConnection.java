@@ -26,6 +26,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+/**
+ * Connection to ODBC data source. Manages native connection handle.
+ * Closed via close() or garbage collection.
+ */
 public class NanodbcConnection implements Connection {
     protected ConnectionPtr connectionPtr;
     private static final long TIMEOUT = 5;

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 
 import static io.github.michael1297.internal.handler.Handler.POINTER_SIZE;
 
+/**
+ * Converts native ODBC metadata (pointer) to Java MetaData object.
+ */
 public final class MetaDataHandler {
     // Static methods only
     private MetaDataHandler(){

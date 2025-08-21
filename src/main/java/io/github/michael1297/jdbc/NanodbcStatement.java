@@ -13,6 +13,9 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
+/**
+ * Executes SQL statements. Forward-only, read-only result sets.
+ */
 public class NanodbcStatement implements Statement {
     protected StatementPtr statementPtr;
     private final WeakReference<Connection> connection;

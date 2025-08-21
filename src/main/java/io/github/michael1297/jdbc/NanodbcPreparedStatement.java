@@ -29,6 +29,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+/**
+ * Prepared SQL statement with parameter support (?). Use setX() methods to bind values.
+ */
 public class NanodbcPreparedStatement extends NanodbcStatement implements PreparedStatement {
 
     public NanodbcPreparedStatement(Connection connection, StatementPtr statementPtr) {

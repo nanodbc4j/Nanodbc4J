@@ -7,6 +7,9 @@
     <groupId>io.github.michael1297</groupId>
     <artifactId>nanodbc4j</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>Nanodbc4J</name>
+    <description>JDBC driver over ODBC using nanodbc</description>
+    <url>https://github.com/Michael1297/Nanodbc4J</url>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

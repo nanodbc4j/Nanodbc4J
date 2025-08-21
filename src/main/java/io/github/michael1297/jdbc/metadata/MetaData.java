@@ -3,6 +3,9 @@ package io.github.michael1297.jdbc.metadata;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Immutable container for column metadata from ODBC.
+ */
 public final class MetaData {
     public int columnCount = 0;
     public ArrayList<ColumnMetaData> columnMetaData = null;

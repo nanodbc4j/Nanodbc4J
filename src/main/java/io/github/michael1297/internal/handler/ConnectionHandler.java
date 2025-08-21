@@ -6,6 +6,9 @@ import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.struct.NativeError;
 
+/**
+ * Native ODBC connection operations: connect, disconnect, create statement.
+ */
 public final class ConnectionHandler {
     // Static methods only
     private ConnectionHandler() {

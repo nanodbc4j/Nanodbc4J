@@ -14,6 +14,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * JDBC Driver implementation over ODBC using nanodbc.
+ * <p>
+ * Usage: {@code DriverManager.getConnection("jdbc:odbc:Driver={...};...")}
+ */
 public class NanodbcDriver implements Driver {
     private static final Logger logger = Logger.getLogger(NanodbcDriver.class.getName());
     public static final String PREFIX = "jdbc:odbc:";
@@ -70,6 +75,7 @@ public class NanodbcDriver implements Driver {
     }
 
     /** @see java.sql.Driver#jdbcCompliant() */
+    @Override
     public boolean jdbcCompliant() {
         return false;
     }

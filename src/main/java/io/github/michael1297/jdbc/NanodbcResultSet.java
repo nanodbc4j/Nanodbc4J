@@ -30,6 +30,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+/**
+ * Result set from a query. Iterate with next(), read data with getX() methods.
+ */
 public class NanodbcResultSet implements ResultSet {
     protected ResultSetPtr resultSetPtr;
     private final WeakReference<Statement> statement;
