@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "struct/result_set_meta_data_c.h"
 #include "struct/error_info.h"
 #include "api/export.h"

@@ -7,112 +7,123 @@
 
 #define BUFFER_SIZE 1024
 
-// Проверка успешности выполнени¤ ODBC операции
-inline static bool isOdbcSuccess(const SQLRETURN& ret) {
-    return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
+// === Для строк: использует nanodbc::connection::get_info<T> ===
+template <class T>
+inline static T getInfoSafely(const nanodbc::connection& conn, SQLUSMALLINT attr, T defaultValue = T{}) {
+    // Статическая проверка: T должен быть строковым типом
+    static_assert(
+        std::is_same_v<T, std::string> ||
+        std::is_same_v<T, std::wstring> ||
+        std::is_same_v<T, nanodbc::string>,
+        "T must be a string type (std::string, std::wstring, nanodbc::string)"
+        );
+
+    try {
+        return conn.get_info<T>(attr);
+    } catch (...) {
+        return defaultValue;
+    }
 }
 
-// === Универсальный getAttribute для числовых типов ===
 template<typename T>
-static T getAttribute(SQLHDBC hdbc, SQLUSMALLINT attr) {
+inline T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = T{}) {
+    // Статическая проверка: T должен быть числовым типом
+    static_assert(
+        std::is_arithmetic_v<T>,
+        "T must be a numeric type (int, short, SQLUSMALLINT, etc.)"
+        );
+
     T value = 0;
     SQLRETURN ret = SQLGetInfo(hdbc, attr, &value, 0, nullptr);
-    return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) ? value : 0;
-}
-
-// === Получение строки ===
-static std::wstring getString(SQLHDBC hdbc, SQLUSMALLINT attr) {
-    SQLWCHAR buffer[BUFFER_SIZE] = { 0 };
-    SQLSMALLINT byteLength = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc, attr, buffer, sizeof(buffer), &byteLength);
-    if (!isOdbcSuccess(ret) || byteLength == 0) {
-        return std::wstring();
-    }
-
-    // Преобразуем байты в количество символов
-    SQLSMALLINT numChars = byteLength / sizeof(SQLWCHAR);
-    // Защита от переполнения
-    numChars = std::min(numChars, static_cast<SQLSMALLINT>(BUFFER_SIZE - 1));
-    return std::wstring(buffer, numChars);
+    return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) ? value : defaultValue;
 }
 
 // === Конструктор ===
-DatabaseMetaData::DatabaseMetaData(SQLHDBC hdbc) : hdbc_(hdbc) {}
+DatabaseMetaData::DatabaseMetaData(const nanodbc::connection& connection) 
+    : connection_ (connection)
+    , hdbc_ (static_cast<SQLHSTMT>(connection.native_dbc_handle()))
+{
+    if (!hdbc_) {
+        throw std::runtime_error("Invalid statement handle");
+    }
+}
 
 // === Строковые методы ===
 
 std::wstring DatabaseMetaData::getDatabaseProductName() const {
-    return getString(hdbc_, SQL_DBMS_NAME);
+    return connection_.dbms_name();
 }
 
 std::wstring DatabaseMetaData::getDatabaseProductVersion() const {
-    return getString(hdbc_, SQL_DBMS_VER);
+    return connection_.dbms_version();
 }
 
 std::wstring DatabaseMetaData::getDriverName() const {
-    return getString(hdbc_, SQL_DRIVER_NAME);
+    return connection_.driver_name();
 }
 
 std::wstring DatabaseMetaData::getDriverVersion() const {
-    return getString(hdbc_, SQL_DRIVER_VER);
+    return connection_.driver_version();
 }
 
 std::wstring DatabaseMetaData::getIdentifierQuoteString() const {
-    return getString(hdbc_, SQL_IDENTIFIER_QUOTE_CHAR);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_IDENTIFIER_QUOTE_CHAR);
 }
 
 std::wstring DatabaseMetaData::getSchemaTerm() const {
-    return getString(hdbc_, SQL_SCHEMA_TERM);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_SCHEMA_TERM);
 }
 
 std::wstring DatabaseMetaData::getProcedureTerm() const {
-    return getString(hdbc_, SQL_PROCEDURE_TERM);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_PROCEDURE_TERM);
 }
 
 std::wstring DatabaseMetaData::getCatalogTerm() const {
-    return getString(hdbc_, SQL_CATALOG_TERM);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_CATALOG_TERM);
 }
 
 std::wstring DatabaseMetaData::getCatalogSeparator() const {
-    return getString(hdbc_, SQL_CATALOG_NAME_SEPARATOR);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_CATALOG_NAME_SEPARATOR);
 }
 
 std::wstring DatabaseMetaData::getSQLKeywords() const {
-    return getString(hdbc_, SQL_KEYWORDS);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_KEYWORDS);
 }
 
 std::wstring DatabaseMetaData::getNumericFunctions() const {
-    return getString(hdbc_, SQL_NUMERIC_FUNCTIONS);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_NUMERIC_FUNCTIONS);
 }
 
 std::wstring DatabaseMetaData::getStringFunctions() const {
-    return getString(hdbc_, SQL_STRING_FUNCTIONS);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_STRING_FUNCTIONS);
 }
 
 std::wstring DatabaseMetaData::getSystemFunctions() const {
-    return getString(hdbc_, SQL_SYSTEM_FUNCTIONS);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_SYSTEM_FUNCTIONS);
 }
 
 std::wstring DatabaseMetaData::getTimeDateFunctions() const {
-    return getString(hdbc_, SQL_TIMEDATE_FUNCTIONS);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_TIMEDATE_FUNCTIONS);
 }
 
 std::wstring DatabaseMetaData::getSearchStringEscape() const {
-    return getString(hdbc_, SQL_SEARCH_PATTERN_ESCAPE);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_SEARCH_PATTERN_ESCAPE);
 }
 
 std::wstring DatabaseMetaData::getExtraNameCharacters() const {
-    return getString(hdbc_, SQL_SPECIAL_CHARACTERS);
+    return getInfoSafely<nanodbc::string>(connection_, SQL_SPECIAL_CHARACTERS);
 }
 
 // === Булевы методы ===
 
 bool DatabaseMetaData::isReadOnly() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_DATA_SOURCE_READ_ONLY) == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_DATA_SOURCE_READ_ONLY, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::supportsTransactions() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_TXN_CAPABLE) != SQL_TC_NONE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_TXN_CAPABLE, SQL_TC_NONE);
+    return val != SQL_TC_NONE;
 }
 
 bool DatabaseMetaData::supportsSavepoints() const {
@@ -124,48 +135,53 @@ bool DatabaseMetaData::supportsNamedParameters() const {
 }
 
 bool DatabaseMetaData::supportsBatchUpdates() const {
-    SQLUINTEGER caps = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_PARAM_ARRAY_ROW_COUNTS, &caps, 0, nullptr);
-    return ret == SQL_SUCCESS && caps == 0x0001; // 0x0001 = SQL_PARC_YES_ROW_COUNTS
+    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_PARAM_ARRAY_ROW_COUNTS, 0);
+    return val == 0x0001; // 0x0001 = SQL_PARC_YES_ROW_COUNTS
 }
 
 bool DatabaseMetaData::supportsUnion() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_UNION) == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_UNION, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::supportsUnionAll() const {
     // SQL_UNION_ALL не определён в некоторых SDK, но
     // если SQL_UNION == SQL_TRUE, то UNION ALL тоже поддерживается
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_UNION) == SQL_TRUE;
+    return supportsUnion();
 }
 
 bool DatabaseMetaData::supportsLikeEscapeClause() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_LIKE_ESCAPE_CLAUSE) == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_LIKE_ESCAPE_CLAUSE, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::supportsGroupBy() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_GROUP_BY) != SQL_GB_NOT_SUPPORTED;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_GROUP_BY, SQL_GB_NOT_SUPPORTED);
+    return val != SQL_GB_NOT_SUPPORTED;
 }
 
 bool DatabaseMetaData::supportsGroupByUnrelated() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_GROUP_BY) == SQL_GB_COLLATE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_GROUP_BY, SQL_GB_NOT_SUPPORTED);
+    return val == SQL_GB_COLLATE;
 }
 
 bool DatabaseMetaData::supportsGroupByBeyondSelect() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_GROUP_BY) == SQL_GB_COLLATE;
+    return supportsGroupByUnrelated(); // обычно то же самое
 }
 
 bool DatabaseMetaData::supportsOrderByUnrelated() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_ORDER_BY_COLUMNS_IN_SELECT) == SQL_FALSE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_ORDER_BY_COLUMNS_IN_SELECT, SQL_TRUE);
+    return val == SQL_FALSE;
 }
 
 bool DatabaseMetaData::supportsAlterTableWithAddColumn() const {
-    SQLUSMALLINT cap = getAttribute<SQLUSMALLINT>(hdbc_, SQL_ALTER_TABLE);
-    return (cap & SQL_AT_ADD_COLUMN) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_ALTER_TABLE, 0);
+    return (val & SQL_AT_ADD_COLUMN) != 0;
 }
 
 bool DatabaseMetaData::supportsColumnAliasing() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_COLUMN_ALIAS) == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_COLUMN_ALIAS, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::nullPlusNonNullIsNull() const {
@@ -179,114 +195,103 @@ bool DatabaseMetaData::supportsExpressionsInOrderBy() const {
 }
 
 bool DatabaseMetaData::supportsSelectForUpdate() const {
-    // SQL_SELECT_FOR_UPDATE может не быть
-    // Альтернатива: SQL_FOR_UPDATE — в некоторых драйверах
-    SQLUSMALLINT supports = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, 125 /* SQL_FOR_UPDATE */, &supports, 0, nullptr);
-    return ret == SQL_SUCCESS && supports == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, 125 /* SQL_FOR_UPDATE */, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::supportsStoredProcedures() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_PROCEDURES) == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_PROCEDURES, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::supportsSubqueriesInComparisons() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_SUBQUERIES) != SQL_SQ_COMPARISON;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SUBQUERIES, 0);
+    return (val & SQL_SQ_COMPARISON) != 0;
 }
 
 bool DatabaseMetaData::supportsSubqueriesInExists() const {
-    SQLUSMALLINT subs = getAttribute<SQLUSMALLINT>(hdbc_, SQL_SUBQUERIES);
-    return (subs & 0x00000010) != 0;  // 0x10 = SQL_SQ_CORRELATED
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SUBQUERIES, 0);
+    return (val & SQL_SQ_EXISTS) != 0;
 }
 
 bool DatabaseMetaData::supportsSubqueriesInIns() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_SUBQUERIES) != SQL_SQ_QUANTIFIED;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SUBQUERIES, 0);
+    return (val & SQL_SQ_IN) != 0;
 }
 
 bool DatabaseMetaData::supportsSubqueriesInQuantifieds() const {
-    SQLUSMALLINT subs = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_SUBQUERIES, &subs, 0, nullptr);
-    if (ret != SQL_SUCCESS) {
-        return false;
-    }
-    return (subs & 0x00000008) != 0;  // SQL_SQ_QUANTIFIED
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SUBQUERIES, 0);
+    return (val & SQL_SQ_QUANTIFIED) != 0;
 }
 
 bool DatabaseMetaData::supportsCorrelatedSubqueries() const {
-    SQLUSMALLINT subs = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_SUBQUERIES, &subs, 0, nullptr);
-    if (ret != SQL_SUCCESS) {
-        return false;
-    }
-    return (subs & 0x00000010) != 0;  // SQL_SQ_CORRELATED
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SUBQUERIES, 0);
+    return (val & 0x00000010) != 0; // 0x00000010 = SQL_SQ_CORRELATED
 }
 
 bool DatabaseMetaData::supportsIntegrityEnhancementFacility() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_INTEGRITY) == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_INTEGRITY, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::supportsOuterJoins() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_OUTER_JOINS) == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_OUTER_JOINS, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::supportsFullOuterJoins() const {
-    // SQL_FULL_OUTER_JOIN может не быть
-    // Проверим SQL_OJ_FULL_OUTER_JOIN через SQL_OUTER_JOINS
-    SQLUSMALLINT outerJoins = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_OUTER_JOINS, &outerJoins, 0, nullptr);
-    if (ret != SQL_SUCCESS) return false;
-    // SQL_OJ_FULL_OUTER_JOIN = 0x00000008
-    return (outerJoins & 0x00000008) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_OUTER_JOINS, 0);
+    return (val & 0x00000008) != 0; // SQL_OJ_FULL_OUTER_JOIN = 0x00000008
 }
 
 bool DatabaseMetaData::supportsSchemasInDataManipulation() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE);
-    return (usage & SQL_SU_DML_STATEMENTS) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE, 0);
+    return (val & SQL_SU_DML_STATEMENTS) != 0;
 }
 
 bool DatabaseMetaData::supportsSchemasInProcedureCalls() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE);
-    return (usage & SQL_SU_PROCEDURE_INVOCATION) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE, 0);
+    return (val & SQL_SU_PROCEDURE_INVOCATION) != 0;
 }
 
 bool DatabaseMetaData::supportsSchemasInTableDefinitions() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE);
-    return (usage & SQL_SU_TABLE_DEFINITION) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE, 0);
+    return (val & SQL_SU_TABLE_DEFINITION) != 0;
 }
 
 bool DatabaseMetaData::supportsSchemasInIndexDefinitions() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE);
-    return (usage & SQL_SU_INDEX_DEFINITION) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE);
+    return (val & SQL_SU_INDEX_DEFINITION) != 0;
 }
 
 bool DatabaseMetaData::supportsSchemasInPrivilegeDefinitions() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE);
-    return (usage & SQL_SU_PRIVILEGE_DEFINITION) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE);
+    return (val & SQL_SU_PRIVILEGE_DEFINITION) != 0;
 }
 
 bool DatabaseMetaData::supportsCatalogsInDataManipulation() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE);
-    return (usage & SQL_CU_DML_STATEMENTS) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE, 0);
+    return (val & SQL_CU_DML_STATEMENTS) != 0;
 }
 
 bool DatabaseMetaData::supportsCatalogsInProcedureCalls() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE);
-    return (usage & SQL_CU_PROCEDURE_INVOCATION) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE, 0);
+    return (val & SQL_CU_PROCEDURE_INVOCATION) != 0;
 }
 
 bool DatabaseMetaData::supportsCatalogsInTableDefinitions() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE);
-    return (usage & SQL_CU_TABLE_DEFINITION) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE, 0);
+    return (val & SQL_CU_TABLE_DEFINITION) != 0;
 }
 
 bool DatabaseMetaData::supportsCatalogsInIndexDefinitions() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE);
-    return (usage & SQL_CU_INDEX_DEFINITION) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE, 0);
+    return (val & SQL_CU_INDEX_DEFINITION) != 0;
 }
 
 bool DatabaseMetaData::supportsCatalogsInPrivilegeDefinitions() const {
-    SQLUSMALLINT usage = getAttribute<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE);
-    return (usage & SQL_CU_PRIVILEGE_DEFINITION) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_CATALOG_USAGE, 0);
+    return (val & SQL_CU_PRIVILEGE_DEFINITION) != 0;
 }
 
 bool DatabaseMetaData::supportsPositionedDelete() const {
@@ -298,11 +303,13 @@ bool DatabaseMetaData::supportsPositionedUpdate() const {
 }
 
 bool DatabaseMetaData::supportsOpenCursorsAcrossCommit() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_CURSOR_COMMIT_BEHAVIOR) == SQL_CB_PRESERVE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_CURSOR_COMMIT_BEHAVIOR, SQL_CB_CLOSE);
+    return val == SQL_CB_PRESERVE;
 }
 
 bool DatabaseMetaData::supportsOpenCursorsAcrossRollback() const {
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_CURSOR_ROLLBACK_BEHAVIOR) == SQL_CB_PRESERVE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_CURSOR_ROLLBACK_BEHAVIOR, SQL_CB_CLOSE);
+    return val == SQL_CB_PRESERVE;
 }
 
 bool DatabaseMetaData::supportsOpenStatementsAcrossCommit() const {
@@ -323,7 +330,8 @@ bool DatabaseMetaData::supportsStatementPooling() const {
 
 bool DatabaseMetaData::autoCommitFailureClosesAllResultSets() const {
     // SQL_MULT_RESULT_SETS: если поддерживает множественные результаты
-    return getAttribute<SQLUSMALLINT>(hdbc_, SQL_MULT_RESULT_SETS) == SQL_TRUE;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MULT_RESULT_SETS, SQL_FALSE);
+    return val == SQL_TRUE;
 }
 
 bool DatabaseMetaData::supportsStoredFunctionsUsingCallSyntax() const {
@@ -332,69 +340,70 @@ bool DatabaseMetaData::supportsStoredFunctionsUsingCallSyntax() const {
 
 bool DatabaseMetaData::generatedKeyAlwaysReturned() const {
     // SQL_GETDATA_EXTENSIONS: если поддерживает SQL_GD_OUTPUT_PARAMS
-    return (::getAttribute<SQLUSMALLINT>(hdbc_, SQL_GETDATA_EXTENSIONS) & SQL_GD_ANY_COLUMN) != 0;
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_GETDATA_EXTENSIONS, 0);
+    return (val & SQL_GD_ANY_COLUMN) != 0;
 }
 
 // === Целочисленные методы ===
 
 int DatabaseMetaData::getNullCollation() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_NULL_COLLATION));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_NULL_COLLATION, 0);
 }
 
 int DatabaseMetaData::getSQLStateType() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_SQL_CONFORMANCE));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SQL_CONFORMANCE, 0);
 }
 
 int DatabaseMetaData::getDefaultTransactionIsolation() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_DEFAULT_TXN_ISOLATION));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_DEFAULT_TXN_ISOLATION, 0);
 }
 
 int DatabaseMetaData::getResultSetHoldability() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_GETDATA_EXTENSIONS));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_GETDATA_EXTENSIONS, 0);
 }
 
 int DatabaseMetaData::getRowIdLifetime() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_ROW_UPDATES));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_ROW_UPDATES, 0);
 }
 
 int DatabaseMetaData::getMaxTableNameLength() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_TABLE_NAME_LEN));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_TABLE_NAME_LEN, 0);
 }
 
 int DatabaseMetaData::getMaxSchemaNameLength() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_SCHEMA_NAME_LEN));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_SCHEMA_NAME_LEN, 0);
 }
 
 int DatabaseMetaData::getMaxCatalogNameLength() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_CATALOG_NAME_LEN));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_CATALOG_NAME_LEN, 0);
 }
 
 int DatabaseMetaData::getMaxColumnNameLength() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMN_NAME_LEN));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMN_NAME_LEN, 0);
 }
 
 int DatabaseMetaData::getMaxColumnsInGroupBy() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_GROUP_BY));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_GROUP_BY, 0);
 }
 
 int DatabaseMetaData::getMaxColumnsInOrderBy() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_ORDER_BY));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_ORDER_BY, 0);
 }
 
 int DatabaseMetaData::getMaxColumnsInSelect() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_SELECT));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_SELECT, 0);
 }
 
 int DatabaseMetaData::getMaxColumnsInTable() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_TABLE));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_TABLE, 0);
 }
 
 int DatabaseMetaData::getMaxColumnsInIndex() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_INDEX));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_COLUMNS_IN_INDEX, 0);
 }
 
 int DatabaseMetaData::getMaxStatementLength() const {
-    return static_cast<int>(::getAttribute<SQLUINTEGER>(hdbc_, SQL_MAX_STATEMENT_LEN));
+    return getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_STATEMENT_LEN, 0);
 }
 
 int DatabaseMetaData::getMaxStatements() const {
@@ -402,16 +411,17 @@ int DatabaseMetaData::getMaxStatements() const {
 }
 
 int DatabaseMetaData::getMaxTablesInSelect() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_TABLES_IN_SELECT));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_TABLES_IN_SELECT, 0);
 }
 
 int DatabaseMetaData::getMaxUserNameLength() const {
-    return static_cast<int>(::getAttribute<SQLUSMALLINT>(hdbc_, SQL_MAX_USER_NAME_LEN));
+    return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_MAX_USER_NAME_LEN, 0);
 }
 
 int DatabaseMetaData::getMaxRowSize() const {
-    return static_cast<int>(::getAttribute<SQLUINTEGER>(hdbc_, SQL_MAX_ROW_SIZE));
+    return getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_ROW_SIZE, 0);
 }
+
 int DatabaseMetaData::getDatabaseMajorVersion() const {
     std::wstring ver = getDatabaseProductVersion();
     if (ver.empty()) return 0;
@@ -452,7 +462,7 @@ int DatabaseMetaData::getDriverMinorVersion() const {
     return minor;
 }
 
-/*
+
 
 // === Поддержка уровней изоляции ===
 bool DatabaseMetaData::supportsTransactionIsolationLevel(int level) const {
@@ -461,17 +471,17 @@ bool DatabaseMetaData::supportsTransactionIsolationLevel(int level) const {
     if (ret != SQL_SUCCESS) return false;
 
     switch (level) {
-    case 1:  return (supported & SQL_TXN_READ_UNCOMMITTED) != 0;
-    case 2:  return (supported & SQL_TXN_READ_COMMITTED) != 0;
-    case 4:  return (supported & SQL_TXN_REPEATABLE_READ) != 0;
-    case 8:  return (supported & SQL_TXN_SERIALIZABLE) != 0;
-    case 0:  return (supported & SQL_TXN_NONE) != 0;
-    default: return false;
+        case 1:  return (supported & SQL_TXN_READ_UNCOMMITTED) != 0;
+        case 2:  return (supported & SQL_TXN_READ_COMMITTED) != 0;
+        case 4:  return (supported & SQL_TXN_REPEATABLE_READ) != 0;
+        case 8:  return (supported & SQL_TXN_SERIALIZABLE) != 0;
+        case 0:  return (supported & 0x00000000) != 0;  // 0x00000000 = SQL_TXN_NONE
+        default: return false;
     }
 }
 
 // === Каталоги ===
-
+/*
 nanodbc::result DatabaseMetaData::getTables(const std::wstring& catalog, const std::wstring& schema,
     const std::wstring& table, const std::wstring& type) const {
     return nanodbc::catalog::tables(hdbc_,

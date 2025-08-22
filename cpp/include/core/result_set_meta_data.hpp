@@ -5,7 +5,7 @@
 
 class ResultSetMetaData {
 private:
-    nanodbc::result result_;
+    const nanodbc::result& result_;
     SQLHSTMT hStmt_;
 
 public:

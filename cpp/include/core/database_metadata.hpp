@@ -6,10 +6,11 @@
 
 class DatabaseMetaData {
 private:
+    const nanodbc::connection& connection_;
     SQLHDBC hdbc_;
 
 public:
-    explicit DatabaseMetaData(SQLHDBC hdbc);
+    DatabaseMetaData(const nanodbc::connection& connection);
 
     // === Строковые методы ===
     std::wstring getDatabaseProductName() const;
@@ -78,6 +79,7 @@ public:
     bool autoCommitFailureClosesAllResultSets() const;
     bool supportsStoredFunctionsUsingCallSyntax() const;
     bool generatedKeyAlwaysReturned() const;
+    bool supportsTransactionIsolationLevel(int level) const;
 
     // === Целочисленные методы ===
     int getNullCollation() const;

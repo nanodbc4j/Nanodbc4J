@@ -132,21 +132,17 @@ inline static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLU
     return isOdbcSuccess(ret) ? value : 0;
 }
 
-ResultSetMetaData::ResultSetMetaData(const nanodbc::result& result){
-    result_ = result;
-    hStmt_ = static_cast<SQLHSTMT>(result.native_statement_handle());
-
+ResultSetMetaData::ResultSetMetaData(const nanodbc::result& result) 
+    : result_ (result)
+    , hStmt_ (static_cast<SQLHSTMT>(result.native_statement_handle())) 
+{
     if (!hStmt_) {
         throw std::runtime_error("Invalid statement handle");
     }
 }
 
-int ResultSetMetaData::getColumnCount() const {
-    SQLSMALLINT count = 0;
-    if (SQLNumResultCols(hStmt_, &count) == SQL_SUCCESS) {
-        return count;
-    }
-    return result_.columns(); // fallback to nanodbc
+int ResultSetMetaData::getColumnCount() const {   
+    return result_.columns();
 }
 
 bool ResultSetMetaData::isAutoIncrement(int column) const {
@@ -220,14 +216,9 @@ bool ResultSetMetaData::isSigned(int column) const {
 }
 
 int ResultSetMetaData::getColumnDisplaySize(int column) const {
-    SQLLEN size = getColumnNumericAttribute(hStmt_, column, SQL_DESC_DISPLAY_SIZE);
-    if (size > 0) return static_cast<int>(size);
-
-    // Fallback через nanodbc
     try {
         return static_cast<int>(result_.column_size(column - 1));
-    }
-    catch (...) {
+    } catch (...) {
         return 0;
     }
 }
@@ -236,18 +227,13 @@ std::wstring ResultSetMetaData::getColumnLabel(int column) const {
     std::wstring label = getColumnStringAttribute(hStmt_, column, SQL_DESC_LABEL);
     if (!label.empty()) return label;
 
-    return getColumnName(column); // ≈сли нет специального label, используем им¤
+    return getColumnName(column); // если нет специального label, используем имя
 }
 
 std::wstring ResultSetMetaData::getColumnName(int column) const {
-    std::wstring name = getColumnStringAttribute(hStmt_, column, SQL_DESC_NAME);
-    if (!name.empty()) return name;
-
-    // Fallback через nanodbc
     try {
         return result_.column_name(column - 1);
-    }
-    catch (...) {
+    } catch (...) {
         return std::wstring();
     }
 }
@@ -271,14 +257,9 @@ int ResultSetMetaData::getPrecision(int column) const {
 }
 
 int ResultSetMetaData::getScale(int column) const {
-    SQLLEN scale = getColumnNumericAttribute(hStmt_, column, SQL_DESC_SCALE);
-    if (scale >= 0) return static_cast<int>(scale);
-
-    // Fallback через nanodbc
     try {
         return result_.column_decimal_digits(column - 1);
-    }
-    catch (...) {
+    } catch (...) {
         return 0;
     }
 }
@@ -292,17 +273,13 @@ std::wstring ResultSetMetaData::getCatalogName(int column) const {
 }
 
 int ResultSetMetaData::getColumnType(int column) const {
-    SQLSMALLINT type = 0;
-    SQLSMALLINT unused;
-    if (SQLDescribeColW(hStmt_, column, nullptr, 0, &unused, &type, nullptr, nullptr, nullptr) == SQL_SUCCESS) {
-        return type;
-    }
-
-    // Fallback через nanodbc
     try {
         return result_.column_datatype(column - 1);
-    }
-    catch (...) {
+    } catch (...) {
+        SQLSMALLINT type = 0;
+        if (SQLDescribeColW(hStmt_, column, nullptr, 0, nullptr, &type, nullptr, nullptr, nullptr) == SQL_SUCCESS) {
+            return type;
+        }
         return SQL_UNKNOWN_TYPE;
     }
 }
