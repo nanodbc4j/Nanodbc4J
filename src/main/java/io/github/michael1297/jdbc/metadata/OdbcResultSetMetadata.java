@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Immutable container for column metadata from ODBC.
  */
-public final class MetaData {
+public final class OdbcResultSetMetadata {
     public int columnCount = 0;
     public ArrayList<ColumnMetaData> columnMetaData = null;
 
@@ -74,7 +74,7 @@ public final class MetaData {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        MetaData metaData = (MetaData) o;
+        OdbcResultSetMetadata metaData = (OdbcResultSetMetadata) o;
         return columnCount == metaData.columnCount && Objects.equals(columnMetaData, metaData.columnMetaData);
     }
 
@@ -85,7 +85,7 @@ public final class MetaData {
 
     @Override
     public String toString() {
-        return "MetaData{" +
+        return "OdbcResultSetMetadata{" +
                 "columnCount=" + columnCount +
                 ", columnMetaData=" + columnMetaData +
                 '}';

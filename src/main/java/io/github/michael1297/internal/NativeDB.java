@@ -145,7 +145,7 @@ public interface NativeDB extends Library {
 
     void delete_driver_array(Pointer driver_array, int size);
 
-    MetaDataPtr get_meta_data(ResultSetPtr results, NativeError error);
+    OdbcResultSetMetaDataPtr get_meta_data(ResultSetPtr results, NativeError error);
 
-    void delete_meta_data(MetaDataPtr meta_data);
+    void delete_meta_data(OdbcResultSetMetaDataPtr meta_data);
 }

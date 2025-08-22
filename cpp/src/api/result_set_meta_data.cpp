@@ -1,7 +1,7 @@
-#include "api/meta_data.h"
+#include "api/result_set_meta_data.h"
 #include "utils/logger.hpp"
 
-MetaData* get_meta_data(nanodbc::result* results, NativeError* error) {
+CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) {
 	LOG_DEBUG("Getting metadata from result: {}", reinterpret_cast<uintptr_t>(results));
 	init_error(error);
 	try {
@@ -12,7 +12,7 @@ MetaData* get_meta_data(nanodbc::result* results, NativeError* error) {
 		}
 
 		const ResultSetMetaData result_set_meta_data(*results);
-		auto meta_data = new MetaData(result_set_meta_data);
+		auto meta_data = new CResultSetMetaData(result_set_meta_data);
 		LOG_DEBUG("Metadata created successfully: columns count = {}", meta_data->columnCount);
 		return meta_data;
 	} catch (const std::exception& e) {
@@ -25,7 +25,7 @@ MetaData* get_meta_data(nanodbc::result* results, NativeError* error) {
 	return nullptr;
 }
 
-void delete_meta_data(MetaData* meta_data) {
+void delete_meta_data(CResultSetMetaData* meta_data) {
 	LOG_DEBUG("Deleting metadata: {}", reinterpret_cast<uintptr_t>(meta_data));
 	if (meta_data) {
 		delete meta_data;

@@ -1,7 +1,8 @@
 package io.github.michael1297.jdbc;
 
-import io.github.michael1297.jdbc.metadata.Datasource;
+import io.github.michael1297.jdbc.metadata.OdbcDatasource;
 import io.github.michael1297.internal.handler.Handler;
+import io.github.michael1297.jdbc.metadata.OdbcDriver;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -27,6 +28,7 @@ public class NanodbcDriver implements Driver {
 
     static {
         try {
+            Handler.setLogLevel(SpdLogLevel.DEBUG);
             DriverManager.registerDriver(new NanodbcDriver());
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Could not register driver", e);
@@ -130,11 +132,11 @@ public class NanodbcDriver implements Driver {
         Handler.setLogLevel(level);
     }
 
-    public static List<io.github.michael1297.jdbc.metadata.Driver> driversList() {
+    public static List<OdbcDriver> driversList() {
         return Handler.driversList();
     }
 
-    public static List<Datasource> datasourcesList() {
+    public static List<OdbcDatasource> datasourcesList() {
         return Handler.datasourcesList();
     }
 }

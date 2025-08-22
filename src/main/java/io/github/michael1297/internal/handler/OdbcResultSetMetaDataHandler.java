@@ -1,8 +1,8 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
-import io.github.michael1297.jdbc.metadata.MetaData;
-import io.github.michael1297.internal.pointer.MetaDataPtr;
+import io.github.michael1297.jdbc.metadata.OdbcResultSetMetadata;
+import io.github.michael1297.internal.pointer.OdbcResultSetMetaDataPtr;
 import io.github.michael1297.internal.struct.MetaDataStruct;
 
 import java.util.ArrayList;
@@ -10,25 +10,25 @@ import java.util.ArrayList;
 import static io.github.michael1297.internal.handler.Handler.POINTER_SIZE;
 
 /**
- * Converts native ODBC metadata (pointer) to Java MetaData object.
+ * Converts native ODBC metadata (pointer) to Java OdbcResultSetMetadata object.
  */
-public final class MetaDataHandler {
+public final class OdbcResultSetMetaDataHandler {
     // Static methods only
-    private MetaDataHandler(){
+    private OdbcResultSetMetaDataHandler(){
     }
 
-    public static MetaData processerMetaData(MetaDataPtr metaDataPtr){
+    public static OdbcResultSetMetadata processerMetaData(OdbcResultSetMetaDataPtr metaDataPtr){
         if (metaDataPtr == null || metaDataPtr.getPointer() == null) {
             throw new IllegalArgumentException("MetaDataPtr is null");
         }
 
-        MetaData metaData = new MetaData();
+        OdbcResultSetMetadata metaData = new OdbcResultSetMetadata();
         MetaDataStruct metaDataStruct = new MetaDataStruct(metaDataPtr.getPointer());
         metaData.columnCount = metaDataStruct.columnCount;
         metaData.columnMetaData = new ArrayList<>(metaData.columnCount);
 
         for(int i = 0; i < metaDataStruct.columnCount; i++){
-            var columnMetaData = new MetaData.ColumnMetaData();
+            var columnMetaData = new OdbcResultSetMetadata.ColumnMetaData();
             var columnMetaDataStruct = new MetaDataStruct.ColumnMetaDataStruct(metaDataStruct.column.getPointer(POINTER_SIZE * i));
 
             columnMetaData.isAutoIncrement       = columnMetaDataStruct.isAutoIncrement != 0;

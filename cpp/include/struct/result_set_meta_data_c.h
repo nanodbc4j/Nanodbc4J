@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-	struct MetaData {
+	struct CResultSetMetaData {
 
         struct ColumnMetaData {
             bool isAutoIncrement = false;
@@ -38,10 +38,10 @@ extern "C" {
         int columnCount = 0;
         const ColumnMetaData** column = nullptr;
 
-        MetaData() = default;
-        MetaData(const MetaData& other);
-        MetaData(const ResultSetMetaData& other);
-        ~MetaData();
+        CResultSetMetaData() = default;
+        CResultSetMetaData(const CResultSetMetaData& other);
+        CResultSetMetaData(const ResultSetMetaData& other);
+        ~CResultSetMetaData();
 	};
 
 #ifdef __cplusplus

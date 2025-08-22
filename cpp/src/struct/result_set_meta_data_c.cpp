@@ -1,4 +1,4 @@
-#include "struct/meta_data_c.h"
+#include "struct/result_set_meta_data_c.h"
 #include "utils/string_utils.hpp"
 
 // Копируем строки через duplicate_string
@@ -14,7 +14,7 @@ inline static const char16_t* convert(const std::wstring& str) {
     return dup(u16str.c_str());
 }
 
-MetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) {
+CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) {
     isAutoIncrement = other.isAutoIncrement;
     isCaseSensitive = other.isCaseSensitive;
     isSearchable = other.isSearchable;
@@ -37,7 +37,7 @@ MetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) {
     columnClassName = dup(other.columnClassName);
 }
 
-MetaData::ColumnMetaData::~ColumnMetaData() {
+CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
     str_free(columnLabel);
     str_free(columnName);
     str_free(schemaName);
@@ -68,7 +68,7 @@ MetaData::ColumnMetaData::~ColumnMetaData() {
     columnClassName = nullptr;
 }
 
-MetaData::MetaData(const MetaData& other) {
+CResultSetMetaData::CResultSetMetaData(const CResultSetMetaData& other) {
     columnCount = other.columnCount;
 
     if (columnCount) {
@@ -79,7 +79,7 @@ MetaData::MetaData(const MetaData& other) {
     }
 }
 
-MetaData::MetaData(const ResultSetMetaData& other) {
+CResultSetMetaData::CResultSetMetaData(const ResultSetMetaData& other) {
     columnCount = other.getColumnCount();
 
     if (columnCount) {
@@ -114,7 +114,7 @@ MetaData::MetaData(const ResultSetMetaData& other) {
     }    
 }
 
-MetaData::~MetaData() {
+CResultSetMetaData::~CResultSetMetaData() {
     if (columnCount) {
         for (int i = 0; i < columnCount; ++i) {
             delete column[i];
