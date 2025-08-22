@@ -1,4 +1,4 @@
-﻿#include "api/connection.h"
+#include "api/connection.h"
 #include <exception>
 #include "utils/string_utils.hpp"
 #include "utils/struct_converter.hpp"
@@ -81,6 +81,7 @@ bool is_connected(const nanodbc::connection* conn, NativeError* error) {
     try {
         bool connected = conn && conn->connected();
         LOG_DEBUG_W(L"Connection status: {}", connected ? L"true" : L"false");
+        return connected;
     } catch (const exception& e) {
         set_error(error, 3, "ConnectionCheckError", e.what());
         LOG_DEBUG_W(L"Exception in is_connected: {}", utils::to_wstring(e.what()));
