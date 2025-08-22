@@ -5,7 +5,7 @@
 #include <codecvt>
 #include <sql.h>
 
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 1024
 
 // Проверка успешности выполнени¤ ODBC операции
 inline static bool isOdbcSuccess(const SQLRETURN& ret) {
@@ -114,7 +114,7 @@ inline static std::wstring getColumnStringAttribute(const SQLHSTMT& hStmt, const
         numChars = std::min(numChars, static_cast<SQLSMALLINT>(BUFFER_SIZE - 1));
         return std::wstring(buffer, numChars);
     }
-    return L"";
+    return std::wstring();
 }
 
 // Получение числового атрибута колонки через ODBC
@@ -248,7 +248,7 @@ std::wstring ResultSetMetaData::getColumnName(int column) const {
         return result_.column_name(column - 1);
     }
     catch (...) {
-        return L"";
+        return std::wstring();
     }
 }
 
