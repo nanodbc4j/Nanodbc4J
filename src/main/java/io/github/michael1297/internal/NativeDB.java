@@ -14,7 +14,7 @@ import java.util.Map;
 public interface NativeDB extends Library {
     NativeDB INSTANCE = initialize();
 
-    static NativeDB initialize() {
+    private static NativeDB initialize() {
         try {
             LibraryLoader.load();
             return Native.load(NativeDB.class, getOptions());

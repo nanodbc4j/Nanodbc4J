@@ -21,7 +21,7 @@ static Result get_value_with_error_handling(const function<Result()>& operation,
         LOG_DEBUG_W(L"Standard exception in get_value: {}", to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown error");
-        LOG_DEBUG_W(L"Unknown exception in get_value");
+        LOG_DEBUG("Unknown exception in get_value");
     }
     return Result{}; // Возвращаем значение по умолчанию
 }
@@ -48,22 +48,22 @@ static T get_value_by_index(nanodbc::result* results, int index, NativeError* er
 
 
 bool next_result(nanodbc::result* results, NativeError* error) {
-    LOG_DEBUG_W(L"Calling next() on result: {}", reinterpret_cast<uintptr_t>(results));
+    LOG_DEBUG("Calling next() on result: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
     try {
         if (!results) {
-            LOG_DEBUG_W(L"Result is null, next() returns false");
+            LOG_DEBUG("Result is null, next() returns false");
             return false;
         }
         bool has_next = results->next();
-        LOG_DEBUG_W(L"next() result: {}", has_next ? L"true" : L"false");
+        LOG_DEBUG("next() result: {}", has_next ? "true" : "false");
         return has_next;
     } catch (const exception& e) {
         set_error(error, 2, "ResultError", e.what());
         LOG_DEBUG_W(L"Exception in next_result: {}", to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown next result error");
-        LOG_DEBUG_W(L"Unknown exception in next_result");
+        LOG_DEBUG("Unknown exception in next_result");
     }
     return false;
 }
@@ -94,11 +94,11 @@ short get_short_value_by_index(nanodbc::result* results, int index, NativeError*
 }
 
 const char16_t* get_string_value_by_index(nanodbc::result* results, int index, NativeError* error) {
-    LOG_DEBUG_W(L"Getting string value by index: {}", index);
+    LOG_DEBUG("Getting string value by index: {}", index);
     init_error(error);
     try {
         if (!results) {
-            LOG_DEBUG_W(L"Result is null");
+            LOG_DEBUG("Result is null");
             set_error(error, 3, "ResultError", "Result is null");
             return nullptr;
         }
@@ -117,7 +117,7 @@ const char16_t* get_string_value_by_index(nanodbc::result* results, int index, N
         LOG_DEBUG_W(L"Exception in get_string_value_by_index {}: {}", index, to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown error");
-        LOG_DEBUG_W(L"Unknown exception in get_string_value_by_index {}", index);
+        LOG_DEBUG("Unknown exception in get_string_value_by_index {}", index);
     }
     return nullptr;    
 }
@@ -169,7 +169,7 @@ const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_
 
     try {
         if (!results) {
-            LOG_DEBUG_W(L"Result is null");
+            LOG_DEBUG("Result is null");
             set_error(error, 3, "ResultError", "Result is null");
             return nullptr;
         }
@@ -209,15 +209,15 @@ CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const char16_t
 }
 
 void close_result(nanodbc::result* results, NativeError* error) {
-    LOG_DEBUG_W(L"Closing result: {}", reinterpret_cast<uintptr_t>(results));
+    LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
     try {
         if (!results) {
-            LOG_DEBUG_W(L"Attempted to close null result");
+            LOG_DEBUG("Attempted to close null result");
             return;
         }
         delete results;
-        LOG_DEBUG_W(L"Result successfully closed and deleted");
+        LOG_DEBUG("Result successfully closed and deleted");
     } catch (const exception& e) {
         set_error(error, 2, "ResultError", e.what());
         LOG_DEBUG_W(L"Exception in close_result: {}", to_wstring(e.what()));
