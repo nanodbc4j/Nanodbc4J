@@ -12,16 +12,16 @@ static Result get_value_with_error_handling(const function<Result()>& operation,
         return operation();
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, 1, "IndexError", e.what());
-        LOG_DEBUG_W(L"Index range error in get_value: {}", to_wstring(e.what()));
+        LOG_ERROR_W(L"Index range error in get_value: {}", to_wstring(e.what()));
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, 2, "TypeError", e.what());
-        LOG_DEBUG_W(L"Type incompatible error in get_value: {}", to_wstring(e.what()));
+        LOG_ERROR_W(L"Type incompatible error in get_value: {}", to_wstring(e.what()));
     } catch (const std::exception& e) {
         set_error(error, 3, "DatabaseError", e.what());
-        LOG_DEBUG_W(L"Standard exception in get_value: {}", to_wstring(e.what()));
+        LOG_ERROR_W(L"Standard exception in get_value: {}", to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown error");
-        LOG_DEBUG("Unknown exception in get_value");
+        LOG_ERROR("Unknown exception in get_value");
     }
     return Result{}; // Возвращаем значение по умолчанию
 }
@@ -60,10 +60,10 @@ bool next_result(nanodbc::result* results, NativeError* error) {
         return has_next;
     } catch (const exception& e) {
         set_error(error, 2, "ResultError", e.what());
-        LOG_DEBUG_W(L"Exception in next_result: {}", to_wstring(e.what()));
+        LOG_ERROR_W(L"Exception in next_result: {}", to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown next result error");
-        LOG_DEBUG("Unknown exception in next_result");
+        LOG_ERROR("Unknown exception in next_result");
     }
     return false;
 }
@@ -108,16 +108,16 @@ const char16_t* get_string_value_by_index(nanodbc::result* results, int index, N
         return duplicate_string(u16_value.c_str());
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, 1, "IndexError", e.what());
-        LOG_DEBUG_W(L"Index range error at index {}: {}", index, to_wstring(e.what()));
+        LOG_ERROR_W(L"Index range error at index {}: {}", index, to_wstring(e.what()));
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, 2, "TypeError", e.what());
-        LOG_DEBUG_W(L"Type incompatible error at index {}: {}", index, to_wstring(e.what()));
+        LOG_ERROR_W(L"Type incompatible error at index {}: {}", index, to_wstring(e.what()));
     } catch (const std::exception& e) {
         set_error(error, 3, "DatabaseError", e.what());
-        LOG_DEBUG_W(L"Exception in get_string_value_by_index {}: {}", index, to_wstring(e.what()));
+        LOG_ERROR_W(L"Exception in get_string_value_by_index {}: {}", index, to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown error");
-        LOG_DEBUG("Unknown exception in get_string_value_by_index {}", index);
+        LOG_ERROR("Unknown exception in get_string_value_by_index {}", index);
     }
     return nullptr;    
 }
@@ -179,16 +179,16 @@ const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_
         return duplicate_string(u16_value.c_str());
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, 1, "IndexError", e.what());
-        LOG_DEBUG_W(L"Index range error for column '{}': {}", w_name, to_wstring(e.what()));
+        LOG_ERROR_W(L"Index range error for column '{}': {}", w_name, to_wstring(e.what()));
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, 2, "TypeError", e.what());
-        LOG_DEBUG_W(L"Type incompatible error for column '{}': {}", w_name, to_wstring(e.what()));
+        LOG_ERROR_W(L"Type incompatible error for column '{}': {}", w_name, to_wstring(e.what()));
     } catch (const std::exception& e) {
         set_error(error, 3, "DatabaseError", e.what());
-        LOG_DEBUG_W(L"Exception in get_string_value_by_name '{}': {}", w_name, to_wstring(e.what()));
+        LOG_ERROR_W(L"Exception in get_string_value_by_name '{}': {}", w_name, to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown error");
-        LOG_DEBUG_W(L"Unknown exception in get_string_value_by_name '{}'", w_name);
+        LOG_ERROR_W(L"Unknown exception in get_string_value_by_name '{}'", w_name);
     }
     return nullptr;
 }
@@ -220,10 +220,10 @@ void close_result(nanodbc::result* results, NativeError* error) {
         LOG_DEBUG("Result successfully closed and deleted");
     } catch (const exception& e) {
         set_error(error, 2, "ResultError", e.what());
-        LOG_DEBUG_W(L"Exception in close_result: {}", to_wstring(e.what()));
+        LOG_ERROR_W(L"Exception in close_result: {}", to_wstring(e.what()));
     } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown close result error");
-        LOG_DEBUG_W(L"Unknown exception in close_result");
+        LOG_ERROR("Unknown exception in close_result");
     }
 }
 

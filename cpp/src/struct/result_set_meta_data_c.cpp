@@ -1,8 +1,8 @@
 #include "struct/result_set_meta_data_c.h"
 #include "utils/string_utils.hpp"
+#include "utils/logger.hpp"
 
-// Копируем строки через duplicate_string
-static auto& dup = utils::duplicate_string<char16_t>;
+using namespace utils;
 
 // Освобождаем строки, выделенные через malloc в utils::duplicate_string
 static auto str_free = [](const char16_t* str) {
@@ -10,11 +10,15 @@ static auto str_free = [](const char16_t* str) {
 };
 
 inline static const char16_t* convert(const std::wstring& str) {
-    auto u16str = utils::to_u16string(str);
-    return dup(u16str.c_str());
+    LOG_TRACE_W(L"Converting wstring to char16_t*: '{}'", str);
+    auto u16str = to_u16string(str);
+    const char16_t* result = duplicate_string(u16str.c_str());
+    LOG_TRACE("Converted string duplicated at {}", (void*)result);
+    return result;
 }
 
 CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) {
+    LOG_TRACE("Copying ColumnMetaData from {}", (void*)&other);
     isAutoIncrement = other.isAutoIncrement;
     isCaseSensitive = other.isCaseSensitive;
     isSearchable = other.isSearchable;
@@ -28,13 +32,13 @@ CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) 
     isReadOnly = other.isReadOnly;
     isWritable = other.isWritable;
     isDefinitelyWritable = other.isDefinitelyWritable;
-    columnLabel = dup(other.columnLabel);
-    columnName = dup(other.columnName);
-    schemaName = dup(other.schemaName);
-    tableName = dup(other.tableName);
-    catalogName = dup(other.catalogName);
-    columnTypeName = dup(other.columnTypeName);
-    columnClassName = dup(other.columnClassName);
+    columnLabel = duplicate_string(other.columnLabel);
+    columnName = duplicate_string(other.columnName);
+    schemaName = duplicate_string(other.schemaName);
+    tableName = duplicate_string(other.tableName);
+    catalogName = duplicate_string(other.catalogName);
+    columnTypeName = duplicate_string(other.columnTypeName);
+    columnClassName = duplicate_string(other.columnClassName);
 }
 
 CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
@@ -69,6 +73,7 @@ CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
 }
 
 CResultSetMetaData::CResultSetMetaData(const CResultSetMetaData& other) {
+    LOG_TRACE("Copying CResultSetMetaData from {}", (void*)&other);
     columnCount = other.columnCount;
 
     if (columnCount) {
@@ -80,11 +85,14 @@ CResultSetMetaData::CResultSetMetaData(const CResultSetMetaData& other) {
 }
 
 CResultSetMetaData::CResultSetMetaData(const ResultSetMetaData& other) {
+    LOG_TRACE("Constructing CResultSetMetaData from ResultSetMetaData");
     columnCount = other.getColumnCount();
+    LOG_TRACE("Detected {} columns", columnCount);
 
     if (columnCount) {
         column = new const ColumnMetaData * [columnCount];
         for (int i = 0; i < columnCount; ++i) {
+            LOG_TRACE("Processing column [{}]", i);
             ColumnMetaData* data = new ColumnMetaData();
 
             // Отсчет начинается с 1
@@ -115,8 +123,11 @@ CResultSetMetaData::CResultSetMetaData(const ResultSetMetaData& other) {
 }
 
 CResultSetMetaData::~CResultSetMetaData() {
+    LOG_TRACE("Destroying CResultSetMetaData: columnCount={}", columnCount);
+
     if (columnCount) {
         for (int i = 0; i < columnCount; ++i) {
+            LOG_TRACE("Deleting ColumnMetaData [{}]", i);
             delete column[i];
         }
 
@@ -124,4 +135,5 @@ CResultSetMetaData::~CResultSetMetaData() {
         column = nullptr;
     }
     columnCount = 0;
+    LOG_TRACE("CResultSetMetaData destroyed");
 }
