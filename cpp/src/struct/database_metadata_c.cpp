@@ -205,9 +205,8 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
 }
 
 CDatabaseMetaData::~CDatabaseMetaData() {
-    auto str_free = [&](const char16_t*& str) {
-        if (str) free((void*)str);
-        str = nullptr;
+    auto str_free = [&](const char16_t* str) {
+        if (str) free(const_cast<char16_t*>(str));
     };
 
     // === Строковые значения ===
@@ -227,80 +226,4 @@ CDatabaseMetaData::~CDatabaseMetaData() {
     str_free(timeDateFunctions);
     str_free(searchStringEscape);
     str_free(extraNameCharacters);
-
-    // === Булевы значения ===
-    isReadOnly = false;
-    supportsTransactions = false;
-    supportsSavepoints = false;
-    supportsNamedParameters = false;
-    supportsBatchUpdates = false;
-    supportsUnion = false;
-    supportsUnionAll = false;
-    supportsLikeEscapeClause = false;
-    supportsGroupBy = false;
-    supportsGroupByUnrelated = false;
-    supportsGroupByBeyondSelect = false;
-    supportsOrderByUnrelated = false;
-    supportsAlterTableWithAddColumn = false;
-    supportsColumnAliasing = false;
-    nullPlusNonNullIsNull = false;
-    supportsExpressionsInOrderBy = false;
-    supportsSelectForUpdate = false;
-    supportsStoredProcedures = false;
-    supportsSubqueriesInComparisons = false;
-    supportsSubqueriesInExists = false;
-    supportsSubqueriesInIns = false;
-    supportsSubqueriesInQuantifieds = false;
-    supportsCorrelatedSubqueries = false;
-    supportsIntegrityEnhancementFacility = false;
-    supportsOuterJoins = false;
-    supportsFullOuterJoins = false;
-    supportsLimitedOuterJoins = false;
-    supportsSchemasInDataManipulation = false;
-    supportsSchemasInProcedureCalls = false;
-    supportsSchemasInTableDefinitions = false;
-    supportsSchemasInIndexDefinitions = false;
-    supportsSchemasInPrivilegeDefinitions = false;
-    supportsCatalogsInDataManipulation = false;
-    supportsCatalogsInProcedureCalls = false;
-    supportsCatalogsInTableDefinitions = false;
-    supportsCatalogsInIndexDefinitions = false;
-    supportsCatalogsInPrivilegeDefinitions = false;
-    supportsPositionedDelete = false;
-    supportsPositionedUpdate = false;
-    supportsOpenCursorsAcrossCommit = false;
-    supportsOpenCursorsAcrossRollback = false;
-    supportsOpenStatementsAcrossCommit = false;
-    supportsOpenStatementsAcrossRollback = false;
-    locatorsUpdateCopy = false;
-    supportsStatementPooling = false;
-    autoCommitFailureClosesAllResultSets = false;
-    supportsStoredFunctionsUsingCallSyntax = false;
-    generatedKeyAlwaysReturned = false;
-
-    // === Целочисленные значения ===
-    supportsTransactionIsolationLevel = 0;
-    nullCollation = 0;
-    sqlStateType = 0;
-    defaultTransactionIsolation = 0;
-    resultSetHoldability = 0;
-    rowIdLifetime = 0;
-    maxTableNameLength = 0;
-    maxSchemaNameLength = 0;
-    maxCatalogNameLength = 0;
-    maxColumnNameLength = 0;
-    maxColumnsInGroupBy = 0;
-    maxColumnsInOrderBy = 0;
-    maxColumnsInSelect = 0;
-    maxColumnsInTable = 0;
-    maxColumnsInIndex = 0;
-    maxStatementLength = 0;
-    maxStatements = 0;
-    maxTablesInSelect = 0;
-    maxUserNameLength = 0;
-    maxRowSize = 0;
-    databaseMajorVersion = 0;
-    databaseMinorVersion = 0;
-    driverMajorVersion = 0;
-    driverMinorVersion = 0;
 }

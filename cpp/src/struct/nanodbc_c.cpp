@@ -28,9 +28,6 @@ Driver::Attribute::~Attribute() {
 	if (value){
 		free((void*) value);		
 	}
-
-	keyword = nullptr;
-	value = nullptr;
 }
 
 Driver::Driver(const Driver& other) {
@@ -79,10 +76,6 @@ Driver::~Driver() {
 		}
 		delete[] attributes;
 	}
-
-	name = nullptr;
-	attributes = nullptr;
-	attribute_count = 0;
 }
 
 Datasource::Datasource(const Datasource& other) {
@@ -110,9 +103,6 @@ Datasource::~Datasource() {
 	if (driver) {
 		free((void*) driver);
 	}
-
-	name = nullptr;
-	driver = nullptr;
 }
 
 CDate::CDate(const CDate& other) {

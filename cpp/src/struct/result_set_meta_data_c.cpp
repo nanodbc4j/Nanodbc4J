@@ -37,9 +37,8 @@ CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) 
 }
 
 CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
-    auto str_free = [&](const char16_t*& str) {
-        if (str) free((void*)str);
-        str = nullptr;
+    auto str_free = [&](const char16_t* str) {
+        if (str) free(const_cast<char16_t*>(str));
     };
 
     str_free(columnLabel);
@@ -49,20 +48,6 @@ CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
     str_free(catalogName);
     str_free(columnTypeName);
     str_free(columnClassName);
-
-    isAutoIncrement = false;
-    isCaseSensitive = false;
-    isSearchable = false;
-    isCurrency = false;
-    isNullable = 0;
-    isSigned = false;
-    displaySize = 0;
-    precision = 0;
-    scale = 0;
-    columnType = 0;
-    isReadOnly = false;
-    isWritable = false;
-    isDefinitelyWritable = false;
 }
 
 CResultSetMetaData::CResultSetMetaData(const CResultSetMetaData& other) {
@@ -125,8 +110,6 @@ CResultSetMetaData::~CResultSetMetaData() {
         }
 
         delete[] column;
-        column = nullptr;
     }
-    columnCount = 0;
     LOG_TRACE("CResultSetMetaData destroyed");
 }
