@@ -79,9 +79,9 @@ public:
     bool autoCommitFailureClosesAllResultSets() const;
     bool supportsStoredFunctionsUsingCallSyntax() const;
     bool generatedKeyAlwaysReturned() const;
-    bool supportsTransactionIsolationLevel(int level) const;
 
     // === Целочисленные методы ===
+    int supportsTransactionIsolationLevel() const;
     int getNullCollation() const;
     int getSQLStateType() const;
     int getDefaultTransactionIsolation() const;

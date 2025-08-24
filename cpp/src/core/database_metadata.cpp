@@ -34,7 +34,7 @@ inline T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = T{}) {
         );
 
     T value = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc, attr, &value, 0, nullptr);
+    SQLRETURN ret = SQLGetInfo(hdbc, attr, &value, sizeof(T), nullptr);
     return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) ? value : defaultValue;
 }
 
@@ -244,6 +244,11 @@ bool DatabaseMetaData::supportsFullOuterJoins() const {
     return (val & 0x00000008) != 0; // SQL_OJ_FULL_OUTER_JOIN = 0x00000008
 }
 
+bool DatabaseMetaData::supportsLimitedOuterJoins() const {
+    auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_OUTER_JOINS, 0);
+    return val == SQL_TRUE;
+}
+
 bool DatabaseMetaData::supportsSchemasInDataManipulation() const {
     auto val = getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_SCHEMA_USAGE, 0);
     return (val & SQL_SU_DML_STATEMENTS) != 0;
@@ -345,6 +350,12 @@ bool DatabaseMetaData::generatedKeyAlwaysReturned() const {
 }
 
 // === Целочисленные методы ===
+int DatabaseMetaData::supportsTransactionIsolationLevel() const {   // === Поддержка уровней изоляции ===
+    SQLUINTEGER supported = 0;
+    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_TXN_ISOLATION_OPTION, &supported, 0, nullptr);
+    if (ret != SQL_SUCCESS) return 0x00000000;
+    return supported;
+}
 
 int DatabaseMetaData::getNullCollation() const {
     return getInfoSafely<SQLUSMALLINT>(hdbc_, SQL_NULL_COLLATION, 0);
@@ -463,7 +474,7 @@ int DatabaseMetaData::getDriverMinorVersion() const {
 }
 
 
-
+/*
 // === Поддержка уровней изоляции ===
 bool DatabaseMetaData::supportsTransactionIsolationLevel(int level) const {
     SQLUINTEGER supported = 0;
@@ -479,6 +490,7 @@ bool DatabaseMetaData::supportsTransactionIsolationLevel(int level) const {
         default: return false;
     }
 }
+*/
 
 // === Каталоги ===
 /*

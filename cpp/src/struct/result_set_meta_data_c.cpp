@@ -4,11 +4,6 @@
 
 using namespace utils;
 
-// Освобождаем строки, выделенные через malloc в utils::duplicate_string
-static auto str_free = [](const char16_t* str) {
-    if (str) free((void*) str);
-};
-
 inline static const char16_t* convert(const std::wstring& str) {
     LOG_TRACE_W(L"Converting wstring to char16_t*: '{}'", str);
     auto u16str = to_u16string(str);
@@ -42,6 +37,11 @@ CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) 
 }
 
 CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
+    auto str_free = [&](const char16_t*& str) {
+        if (str) free((void*)str);
+        str = nullptr;
+    };
+
     str_free(columnLabel);
     str_free(columnName);
     str_free(schemaName);
@@ -63,13 +63,6 @@ CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
     isReadOnly = false;
     isWritable = false;
     isDefinitelyWritable = false;
-    columnLabel = nullptr;
-    columnName = nullptr;
-    schemaName = nullptr;
-    tableName = nullptr;
-    catalogName = nullptr;
-    columnTypeName = nullptr;
-    columnClassName = nullptr;
 }
 
 CResultSetMetaData::CResultSetMetaData(const CResultSetMetaData& other) {
