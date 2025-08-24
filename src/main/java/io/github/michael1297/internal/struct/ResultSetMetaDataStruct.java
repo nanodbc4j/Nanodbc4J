@@ -3,16 +3,16 @@ package io.github.michael1297.internal.struct;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
-@Structure.FieldOrder ({"columnCount", "column"})
-public final class MetaDataStruct extends Structure {
+@Structure.FieldOrder({"columnCount", "column"})
+public final class ResultSetMetaDataStruct extends Structure {
 
     public int columnCount;
     public Pointer column;
 
-    public MetaDataStruct(){
+    public ResultSetMetaDataStruct() {
     }
 
-    public MetaDataStruct(Pointer p){
+    public ResultSetMetaDataStruct(Pointer p) {
         super(p);
         read();
     }
@@ -66,10 +66,10 @@ public final class MetaDataStruct extends Structure {
         public Pointer columnTypeName;
         public Pointer columnClassName;
 
-        public ColumnMetaDataStruct(){
+        public ColumnMetaDataStruct() {
         }
 
-        public ColumnMetaDataStruct(Pointer p){
+        public ColumnMetaDataStruct(Pointer p) {
             super(p);
             read();
         }
