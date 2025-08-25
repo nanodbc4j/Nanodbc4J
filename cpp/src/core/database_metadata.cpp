@@ -36,6 +36,11 @@ inline T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = T{}) {
 
     T value = 0;
     SQLRETURN ret = SQLGetInfo(hdbc, attr, &value, sizeof(T), nullptr);
+
+    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+        LOG_ERROR("SQLGetInfo(attr={}) failed with return code {}", attr, ret);
+    }
+
     return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) ? value : defaultValue;
 }
 
