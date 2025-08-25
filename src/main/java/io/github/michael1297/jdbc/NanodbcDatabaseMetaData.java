@@ -904,4 +904,11 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return iface.isInstance(this) || iface == DatabaseMetaData.class;
     }
+
+    @Override
+    public String toString() {
+        return "NanodbcDatabaseMetaData{" +
+                "metaData=" + metaData +
+                '}';
+    }
 }

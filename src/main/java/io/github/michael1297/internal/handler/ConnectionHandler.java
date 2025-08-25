@@ -1,10 +1,17 @@
 package io.github.michael1297.internal.handler;
 
+import com.sun.jna.Pointer;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
+import io.github.michael1297.internal.pointer.OdbcDatabaseMetaDataPrt;
 import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.cstruct.NativeError;
+import io.github.michael1297.jdbc.NanodbcDatabaseMetaData;
+import io.github.michael1297.jdbc.metadata.OdbcDatabaseMetaData;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 
 /**
  * Native ODBC connection operations: connect, disconnect, create statement.
@@ -99,4 +106,24 @@ public final class ConnectionHandler {
         }
     }
 
+    public static DatabaseMetaData getDatabaseSetMetaData(Connection connection, ConnectionPtr connectionPtr) {
+        NativeError nativeError = new NativeError();
+        OdbcDatabaseMetaDataPrt metaDataPtr = null;
+        try {
+            metaDataPtr = NativeDB.INSTANCE.get_database_meta_data(connectionPtr, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+
+            if (metaDataPtr == null || metaDataPtr.getPointer().equals(Pointer.NULL)) {
+                return null;
+            }
+
+            OdbcDatabaseMetaData metaData = OdbcDatabaseMetaDataHandler.processerMetaData(metaDataPtr);
+            return new NanodbcDatabaseMetaData(connection, metaData);
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+            NativeDB.INSTANCE.delete_database_meta_data(metaDataPtr);
+        }
+    }
 }

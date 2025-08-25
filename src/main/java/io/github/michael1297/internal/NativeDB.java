@@ -148,4 +148,8 @@ public interface NativeDB extends Library {
     OdbcResultSetMetaDataPtr get_meta_data(ResultSetPtr results, NativeError error);
 
     void delete_meta_data(OdbcResultSetMetaDataPtr meta_data);
+
+    OdbcDatabaseMetaDataPrt get_database_meta_data(ConnectionPtr conn, NativeError error);
+
+    void delete_database_meta_data(OdbcDatabaseMetaDataPrt meta_data);
 }

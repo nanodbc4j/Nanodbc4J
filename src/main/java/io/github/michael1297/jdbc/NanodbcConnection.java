@@ -33,6 +33,7 @@ import java.util.concurrent.Executor;
 public class NanodbcConnection implements Connection {
     protected ConnectionPtr connectionPtr;
     private static final long TIMEOUT = 5;
+    private DatabaseMetaData metaData = null;
 
     NanodbcConnection(String url) throws SQLException {
         try {
@@ -114,7 +115,14 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            if (metaData == null) {
+                metaData = ConnectionHandler.getDatabaseSetMetaData(this, connectionPtr);
+            }
+            return metaData;
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
