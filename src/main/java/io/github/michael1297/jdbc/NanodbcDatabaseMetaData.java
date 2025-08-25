@@ -8,6 +8,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
 public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     private final WeakReference<Connection> connection;
@@ -854,7 +855,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
@@ -869,22 +870,22 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getClientInfoProperties() throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern, String columnNamePattern) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
