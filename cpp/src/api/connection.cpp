@@ -106,7 +106,7 @@ void disconnect(nanodbc::connection* connection, NativeError* error) {
             delete connection;
             LOG_DEBUG("Connection object deleted");
         } else {
-            LOG_DEBUG("Attempted to disconnect null connection");
+            LOG_ERROR("Attempted to disconnect null connection");
         }
     } catch (const exception& e) {
         set_error(error, 2, "DisconnectError", e.what());

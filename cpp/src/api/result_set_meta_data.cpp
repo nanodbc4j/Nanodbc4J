@@ -6,7 +6,7 @@ CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) 
 	init_error(error);
 	try {
 		if (!results) {
-			LOG_DEBUG("Result pointer is null, cannot get metadata");
+			LOG_ERROR("Result pointer is null, cannot get metadata");
 			set_error(error, 2, "MetaDataError", "Result is null");
 			return nullptr;
 		}
@@ -32,5 +32,5 @@ void delete_meta_data(CResultSetMetaData* meta_data) {
 		LOG_DEBUG("Metadata deleted successfully");
 		return;
 	}	
-	LOG_DEBUG("Attempted to delete null metadata");
+	LOG_ERROR("Attempted to delete null metadata");
 }

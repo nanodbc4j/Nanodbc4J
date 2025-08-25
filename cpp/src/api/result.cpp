@@ -52,7 +52,7 @@ bool next_result(nanodbc::result* results, NativeError* error) {
     init_error(error);
     try {
         if (!results) {
-            LOG_DEBUG("Result is null, next() returns false");
+            LOG_ERROR("Result is null, next() returns false");
             return false;
         }
         bool has_next = results->next();
@@ -98,7 +98,7 @@ const char16_t* get_string_value_by_index(nanodbc::result* results, int index, N
     init_error(error);
     try {
         if (!results) {
-            LOG_DEBUG("Result is null");
+            LOG_ERROR("Result is null");
             set_error(error, 3, "ResultError", "Result is null");
             return nullptr;
         }
@@ -169,7 +169,7 @@ const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_
 
     try {
         if (!results) {
-            LOG_DEBUG("Result is null");
+            LOG_ERROR("Result is null");
             set_error(error, 3, "ResultError", "Result is null");
             return nullptr;
         }
@@ -213,7 +213,7 @@ void close_result(nanodbc::result* results, NativeError* error) {
     init_error(error);
     try {
         if (!results) {
-            LOG_DEBUG("Attempted to close null result");
+            LOG_ERROR("Attempted to close null result");
             return;
         }
         delete results;

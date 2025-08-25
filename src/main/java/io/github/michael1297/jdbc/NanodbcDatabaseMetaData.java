@@ -824,12 +824,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getJDBCMajorVersion() throws SQLException {
-        return 4; // Поддерживаем JDBC 4.x
+        return NanodbcDriver.MAJOR_VERSION;
     }
 
     @Override
     public int getJDBCMinorVersion() throws SQLException {
-        return 3;
+        return NanodbcDriver.MINOR_VERSION;
     }
 
     @Override

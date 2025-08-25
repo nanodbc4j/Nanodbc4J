@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 public class NanodbcDriver implements Driver {
     private static final Logger logger = Logger.getLogger(NanodbcDriver.class.getName());
     public static final String PREFIX = "jdbc:odbc:";
-    public static final int MAJOR_VERSION = 1;
-    public static final int MINOR_VERSION = 7;
+    static final int MAJOR_VERSION = 1;
+    static final int MINOR_VERSION = 7;
 
     static {
         try {

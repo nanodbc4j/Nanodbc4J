@@ -46,7 +46,7 @@ void delete_datasource(Datasource* datasource) {
 void delete_datasource_array(Datasource** datasource_array, int size) {
 	LOG_DEBUG("Deleting array of Datasource objects: {} elements, address: {}", size, reinterpret_cast<uintptr_t>(datasource_array));
 	if (!datasource_array) {
-		LOG_DEBUG("Datasource array is null, nothing to delete");
+		LOG_ERROR("Datasource array is null, nothing to delete");
 		return;
 	}
 
@@ -69,7 +69,7 @@ void delete_driver(Driver* driver) {
 void delete_driver_array(Driver** driver_array, int size) {
 	LOG_DEBUG("Deleting array of Driver objects: {} elements, address: {}", size, reinterpret_cast<uintptr_t>(driver_array));
 	if (!driver_array) {
-		LOG_DEBUG("Driver array is null, nothing to delete");
+		LOG_ERROR("Driver array is null, nothing to delete");
 		return;
 	}
 

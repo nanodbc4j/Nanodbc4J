@@ -6,7 +6,7 @@ CDatabaseMetaData* get_database_meta_data(nanodbc::connection* conn, NativeError
 	init_error(error);
 	try {
 		if (!conn) {
-			LOG_DEBUG("Connection pointer is null, cannot get metadata");
+			LOG_ERROR("Connection pointer is null, cannot get metadata");
 			set_error(error, 2, "DatabaseMetaData", "Result is null");
 			return nullptr;
 		}
@@ -32,5 +32,5 @@ void delete_database_meta_data(CDatabaseMetaData* meta_data) {
 		LOG_DEBUG("Metadata deleted successfully");
 		return;
 	}
-	LOG_DEBUG("Attempted to delete null metadata");
+	LOG_ERROR("Attempted to delete null metadata");
 }

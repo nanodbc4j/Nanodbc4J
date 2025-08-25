@@ -14,7 +14,7 @@ void prepare_statement(nanodbc::statement* stmt, const char16_t* sql, long timeo
     init_error(error);
     try {
         if (!stmt) {
-            LOG_DEBUG("Statement is null, cannot prepare");
+            LOG_ERROR("Statement is null, cannot prepare");
             set_error(error, 2, "StatementError", "Statement is null");
             return;
         }
@@ -36,7 +36,7 @@ nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {
     init_error(error);
     try {
         if (!stmt) {
-            LOG_DEBUG("Statement is null, cannot execute");
+            LOG_ERROR("Statement is null, cannot execute");
             set_error(error, 2, "ExecuteError", "Statement is null");
             return nullptr;
         }
@@ -62,7 +62,7 @@ int execute_update(nanodbc::statement* stmt, NativeError* error) {
     init_error(error);
     try {
         if (!stmt) {
-            LOG_DEBUG("Statement is null, cannot execute update");
+            LOG_ERROR("Statement is null, cannot execute update");
             set_error(error, 2, "ExecuteError", "Statement is null");
             return 0;
         }
@@ -89,7 +89,7 @@ void close_statement(nanodbc::statement* stmt, NativeError* error) {
     init_error(error);
     try {
         if (!stmt) {
-            LOG_DEBUG("Attempted to close null statement");
+            LOG_ERROR("Attempted to close null statement");
             return;
         }
         stmt->close();
