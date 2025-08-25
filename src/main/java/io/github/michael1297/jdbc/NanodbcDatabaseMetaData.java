@@ -1,5 +1,7 @@
 package io.github.michael1297.jdbc;
 
+import io.github.michael1297.jdbc.metadata.OdbcDatabaseMetaData;
+
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -9,9 +11,11 @@ import java.sql.SQLException;
 
 public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     private final WeakReference<Connection> connection;
+    private final OdbcDatabaseMetaData metaData;
 
-    public NanodbcDatabaseMetaData(Connection connection) {
+    public NanodbcDatabaseMetaData(Connection connection, OdbcDatabaseMetaData metaData) {
         this.connection = new WeakReference<>(connection);
+        this.metaData = metaData;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        return false;
+        return metaData.isReadOnly;
     }
 
     @Override
@@ -61,32 +65,32 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public String getDatabaseProductName() throws SQLException {
-        return "";
+        return metaData.databaseProductName;
     }
 
     @Override
     public String getDatabaseProductVersion() throws SQLException {
-        return "";
+        return metaData.databaseProductVersion;
     }
 
     @Override
     public String getDriverName() throws SQLException {
-        return "";
+        return metaData.driverName;
     }
 
     @Override
     public String getDriverVersion() throws SQLException {
-        return "";
+        return metaData.driverVersion;
     }
 
     @Override
     public int getDriverMajorVersion() {
-        return 0;
+        return metaData.driverMajorVersion;
     }
 
     @Override
     public int getDriverMinorVersion() {
-        return 0;
+        return metaData.driverMinorVersion;
     }
 
     @Override
@@ -141,47 +145,47 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public String getIdentifierQuoteString() throws SQLException {
-        return "";
+        return metaData.identifierQuoteString != null ? metaData.identifierQuoteString : "";
     }
 
     @Override
     public String getSQLKeywords() throws SQLException {
-        return "";
+        return metaData.sqlKeywords != null ? metaData.sqlKeywords : "";
     }
 
     @Override
     public String getNumericFunctions() throws SQLException {
-        return "";
+        return metaData.numericFunctions != null ? metaData.numericFunctions : "";
     }
 
     @Override
     public String getStringFunctions() throws SQLException {
-        return "";
+        return metaData.stringFunctions != null ? metaData.stringFunctions : "";
     }
 
     @Override
     public String getSystemFunctions() throws SQLException {
-        return "";
+        return metaData.systemFunctions != null ? metaData.systemFunctions : "";
     }
 
     @Override
     public String getTimeDateFunctions() throws SQLException {
-        return "";
+        return metaData.timeDateFunctions != null ? metaData.timeDateFunctions : "";
     }
 
     @Override
     public String getSearchStringEscape() throws SQLException {
-        return "";
+        return metaData.searchStringEscape != null ? metaData.searchStringEscape : "";
     }
 
     @Override
     public String getExtraNameCharacters() throws SQLException {
-        return "";
+        return metaData.extraNameCharacters != null ? metaData.extraNameCharacters : "";
     }
 
     @Override
     public boolean supportsAlterTableWithAddColumn() throws SQLException {
-        return false;
+        return metaData.supportsAlterTableWithAddColumn;
     }
 
     @Override
@@ -191,12 +195,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsColumnAliasing() throws SQLException {
-        return false;
+        return metaData.supportsColumnAliasing;
     }
 
     @Override
     public boolean nullPlusNonNullIsNull() throws SQLException {
-        return false;
+        return metaData.nullPlusNonNullIsNull;
     }
 
     @Override
@@ -221,32 +225,32 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsExpressionsInOrderBy() throws SQLException {
-        return false;
+        return metaData.supportsExpressionsInOrderBy;
     }
 
     @Override
     public boolean supportsOrderByUnrelated() throws SQLException {
-        return false;
+        return metaData.supportsOrderByUnrelated;
     }
 
     @Override
     public boolean supportsGroupBy() throws SQLException {
-        return false;
+        return metaData.supportsGroupBy;
     }
 
     @Override
     public boolean supportsGroupByUnrelated() throws SQLException {
-        return false;
+        return metaData.supportsGroupByUnrelated;
     }
 
     @Override
     public boolean supportsGroupByBeyondSelect() throws SQLException {
-        return false;
+        return metaData.supportsGroupByBeyondSelect;
     }
 
     @Override
     public boolean supportsLikeEscapeClause() throws SQLException {
-        return false;
+        return metaData.supportsLikeEscapeClause;
     }
 
     @Override
@@ -296,172 +300,173 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsIntegrityEnhancementFacility() throws SQLException {
-        return false;
+        return metaData.supportsIntegrityEnhancementFacility;
     }
 
     @Override
     public boolean supportsOuterJoins() throws SQLException {
-        return false;
+        return metaData.supportsOuterJoins;
     }
 
     @Override
     public boolean supportsFullOuterJoins() throws SQLException {
-        return false;
+        return metaData.supportsFullOuterJoins;
     }
 
     @Override
     public boolean supportsLimitedOuterJoins() throws SQLException {
-        return false;
+        return metaData.supportsLimitedOuterJoins;
     }
 
     @Override
     public String getSchemaTerm() throws SQLException {
-        return "";
+        return metaData.schemaTerm != null ? metaData.schemaTerm : "SCHEMA";
     }
 
     @Override
     public String getProcedureTerm() throws SQLException {
-        return "";
+        return metaData.procedureTerm != null ? metaData.procedureTerm : "PROCEDURE";
     }
 
     @Override
     public String getCatalogTerm() throws SQLException {
-        return "";
+        return metaData.catalogTerm != null ? metaData.catalogTerm : "CATALOG";
     }
 
     @Override
     public boolean isCatalogAtStart() throws SQLException {
-        return false;
+        // Обычно да: CATALOG.SCHEMA.TABLE
+        return true;
     }
 
     @Override
     public String getCatalogSeparator() throws SQLException {
-        return "";
+        return metaData.catalogSeparator != null ? metaData.catalogSeparator : ".";
     }
 
     @Override
     public boolean supportsSchemasInDataManipulation() throws SQLException {
-        return false;
+        return metaData.supportsSchemasInDataManipulation;
     }
 
     @Override
     public boolean supportsSchemasInProcedureCalls() throws SQLException {
-        return false;
+        return metaData.supportsSchemasInProcedureCalls;
     }
 
     @Override
     public boolean supportsSchemasInTableDefinitions() throws SQLException {
-        return false;
+        return metaData.supportsSchemasInTableDefinitions;
     }
 
     @Override
     public boolean supportsSchemasInIndexDefinitions() throws SQLException {
-        return false;
+        return metaData.supportsSchemasInIndexDefinitions;
     }
 
     @Override
     public boolean supportsSchemasInPrivilegeDefinitions() throws SQLException {
-        return false;
+        return metaData.supportsSchemasInPrivilegeDefinitions;
     }
 
     @Override
     public boolean supportsCatalogsInDataManipulation() throws SQLException {
-        return false;
+        return metaData.supportsCatalogsInDataManipulation;
     }
 
     @Override
     public boolean supportsCatalogsInProcedureCalls() throws SQLException {
-        return false;
+        return metaData.supportsCatalogsInProcedureCalls;
     }
 
     @Override
     public boolean supportsCatalogsInTableDefinitions() throws SQLException {
-        return false;
+        return metaData.supportsCatalogsInTableDefinitions;
     }
 
     @Override
     public boolean supportsCatalogsInIndexDefinitions() throws SQLException {
-        return false;
+        return metaData.supportsCatalogsInIndexDefinitions;
     }
 
     @Override
     public boolean supportsCatalogsInPrivilegeDefinitions() throws SQLException {
-        return false;
+        return metaData.supportsCatalogsInPrivilegeDefinitions;
     }
 
     @Override
     public boolean supportsPositionedDelete() throws SQLException {
-        return false;
+        return metaData.supportsPositionedDelete;
     }
 
     @Override
     public boolean supportsPositionedUpdate() throws SQLException {
-        return false;
+        return metaData.supportsPositionedUpdate;
     }
 
     @Override
     public boolean supportsSelectForUpdate() throws SQLException {
-        return false;
+        return metaData.supportsSelectForUpdate;
     }
 
     @Override
     public boolean supportsStoredProcedures() throws SQLException {
-        return false;
+        return metaData.supportsStoredProcedures;
     }
 
     @Override
     public boolean supportsSubqueriesInComparisons() throws SQLException {
-        return false;
+        return metaData.supportsSubqueriesInComparisons;
     }
 
     @Override
     public boolean supportsSubqueriesInExists() throws SQLException {
-        return false;
+        return metaData.supportsSubqueriesInExists;
     }
 
     @Override
     public boolean supportsSubqueriesInIns() throws SQLException {
-        return false;
+        return metaData.supportsSubqueriesInIns;
     }
 
     @Override
     public boolean supportsSubqueriesInQuantifieds() throws SQLException {
-        return false;
+        return metaData.supportsSubqueriesInQuantifieds;
     }
 
     @Override
     public boolean supportsCorrelatedSubqueries() throws SQLException {
-        return false;
+        return metaData.supportsCorrelatedSubqueries;
     }
 
     @Override
     public boolean supportsUnion() throws SQLException {
-        return false;
+        return metaData.supportsUnion;
     }
 
     @Override
     public boolean supportsUnionAll() throws SQLException {
-        return false;
+        return metaData.supportsUnionAll;
     }
 
     @Override
     public boolean supportsOpenCursorsAcrossCommit() throws SQLException {
-        return false;
+        return metaData.supportsOpenCursorsAcrossCommit;
     }
 
     @Override
     public boolean supportsOpenCursorsAcrossRollback() throws SQLException {
-        return false;
+        return metaData.supportsOpenCursorsAcrossRollback;
     }
 
     @Override
     public boolean supportsOpenStatementsAcrossCommit() throws SQLException {
-        return false;
+        return metaData.supportsOpenStatementsAcrossCommit;
     }
 
     @Override
     public boolean supportsOpenStatementsAcrossRollback() throws SQLException {
-        return false;
+        return metaData.supportsOpenStatementsAcrossRollback;
     }
 
     @Override
@@ -476,32 +481,32 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxColumnNameLength() throws SQLException {
-        return 0;
+        return metaData.maxColumnNameLength;
     }
 
     @Override
     public int getMaxColumnsInGroupBy() throws SQLException {
-        return 0;
+        return metaData.maxColumnsInGroupBy;
     }
 
     @Override
     public int getMaxColumnsInIndex() throws SQLException {
-        return 0;
+        return metaData.maxColumnsInIndex;
     }
 
     @Override
     public int getMaxColumnsInOrderBy() throws SQLException {
-        return 0;
+        return metaData.maxColumnsInOrderBy;
     }
 
     @Override
     public int getMaxColumnsInSelect() throws SQLException {
-        return 0;
+        return metaData.maxColumnsInSelect;
     }
 
     @Override
     public int getMaxColumnsInTable() throws SQLException {
-        return 0;
+        return metaData.maxColumnsInTable;
     }
 
     @Override
@@ -521,7 +526,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxSchemaNameLength() throws SQLException {
-        return 0;
+        return metaData.maxSchemaNameLength;
     }
 
     @Override
@@ -531,12 +536,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxCatalogNameLength() throws SQLException {
-        return 0;
+        return metaData.maxCatalogNameLength;
     }
 
     @Override
     public int getMaxRowSize() throws SQLException {
-        return 0;
+        return metaData.maxRowSize;
     }
 
     @Override
@@ -546,47 +551,47 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxStatementLength() throws SQLException {
-        return 0;
+        return metaData.maxStatementLength;
     }
 
     @Override
     public int getMaxStatements() throws SQLException {
-        return 0;
+        return metaData.maxStatements;
     }
 
     @Override
     public int getMaxTableNameLength() throws SQLException {
-        return 0;
+        return metaData.maxTableNameLength;
     }
 
     @Override
     public int getMaxTablesInSelect() throws SQLException {
-        return 0;
+        return metaData.maxTablesInSelect;
     }
 
     @Override
     public int getMaxUserNameLength() throws SQLException {
-        return 0;
+        return metaData.maxUserNameLength;
     }
 
     @Override
     public int getDefaultTransactionIsolation() throws SQLException {
-        return 0;
+        return metaData.defaultTransactionIsolation;
     }
 
     @Override
     public boolean supportsTransactions() throws SQLException {
-        return false;
+        return metaData.supportsTransactions;
     }
 
     @Override
     public boolean supportsTransactionIsolationLevel(int level) throws SQLException {
-        return false;
+        return (metaData.supportsTransactionIsolationLevel & level) != 0;
     }
 
     @Override
     public boolean supportsDataDefinitionAndDataManipulationTransactions() throws SQLException {
-        return false;
+        return true; // По умолчанию
     }
 
     @Override
@@ -691,12 +696,15 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsResultSetType(int type) throws SQLException {
-        return false;
+        return switch (type) {
+            case ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE -> true;
+            default -> false;
+        };
     }
 
     @Override
     public boolean supportsResultSetConcurrency(int type, int concurrency) throws SQLException {
-        return false;
+        return concurrency == ResultSet.CONCUR_READ_ONLY;
     }
 
     @Override
@@ -746,7 +754,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsBatchUpdates() throws SQLException {
-        return false;
+        return metaData.supportsBatchUpdates;
     }
 
     @Override
@@ -761,12 +769,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsSavepoints() throws SQLException {
-        return false;
+        return metaData.supportsSavepoints;
     }
 
     @Override
     public boolean supportsNamedParameters() throws SQLException {
-        return false;
+        return metaData.supportsNamedParameters;
     }
 
     @Override
@@ -796,47 +804,47 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsResultSetHoldability(int holdability) throws SQLException {
-        return false;
+        return holdability == ResultSet.HOLD_CURSORS_OVER_COMMIT;
     }
 
     @Override
     public int getResultSetHoldability() throws SQLException {
-        return 0;
+        return metaData.resultSetHoldability;
     }
 
     @Override
     public int getDatabaseMajorVersion() throws SQLException {
-        return 0;
+        return metaData.databaseMajorVersion;
     }
 
     @Override
     public int getDatabaseMinorVersion() throws SQLException {
-        return 0;
+        return metaData.databaseMinorVersion;
     }
 
     @Override
     public int getJDBCMajorVersion() throws SQLException {
-        return 0;
+        return 4; // Поддерживаем JDBC 4.x
     }
 
     @Override
     public int getJDBCMinorVersion() throws SQLException {
-        return 0;
+        return 3;
     }
 
     @Override
     public int getSQLStateType() throws SQLException {
-        return 0;
+        return metaData.sqlStateType;
     }
 
     @Override
     public boolean locatorsUpdateCopy() throws SQLException {
-        return false;
+        return metaData.locatorsUpdateCopy;
     }
 
     @Override
     public boolean supportsStatementPooling() throws SQLException {
-        return false;
+        return metaData.supportsStatementPooling;
     }
 
     @Override
@@ -851,12 +859,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException {
-        return false;
+        return metaData.supportsStoredFunctionsUsingCallSyntax;
     }
 
     @Override
     public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
-        return false;
+        return metaData.autoCommitFailureClosesAllResultSets;
     }
 
     @Override
@@ -881,16 +889,19 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean generatedKeyAlwaysReturned() throws SQLException {
-        return false;
+        return metaData.generatedKeyAlwaysReturned;
     }
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return null;
+        if (isWrapperFor(iface)) {
+            return iface.cast(this);
+        }
+        throw new SQLException("Cannot unwrap to " + iface.getName());
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return false;
+        return iface.isInstance(this) || iface == DatabaseMetaData.class;
     }
 }

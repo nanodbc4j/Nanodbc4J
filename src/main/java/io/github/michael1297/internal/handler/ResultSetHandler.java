@@ -7,10 +7,10 @@ import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.OdbcResultSetMetaDataPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
-import io.github.michael1297.internal.struct.DateStruct;
-import io.github.michael1297.internal.struct.NativeError;
-import io.github.michael1297.internal.struct.TimeStruct;
-import io.github.michael1297.internal.struct.TimestampStruct;
+import io.github.michael1297.internal.cstruct.DateStruct;
+import io.github.michael1297.internal.cstruct.NativeError;
+import io.github.michael1297.internal.cstruct.TimeStruct;
+import io.github.michael1297.internal.cstruct.TimestampStruct;
 
 import java.sql.Date;
 import java.sql.ResultSetMetaData;

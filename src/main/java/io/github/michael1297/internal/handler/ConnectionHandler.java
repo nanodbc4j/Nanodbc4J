@@ -4,7 +4,7 @@ import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
-import io.github.michael1297.internal.struct.NativeError;
+import io.github.michael1297.internal.cstruct.NativeError;
 
 /**
  * Native ODBC connection operations: connect, disconnect, create statement.

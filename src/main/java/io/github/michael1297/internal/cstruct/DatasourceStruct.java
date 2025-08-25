@@ -1,8 +1,7 @@
-package io.github.michael1297.internal.struct;
+package io.github.michael1297.internal.cstruct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import io.github.michael1297.internal.NativeDB;
 
 @Structure.FieldOrder({"name", "driver"})
 public final class DatasourceStruct extends Structure {

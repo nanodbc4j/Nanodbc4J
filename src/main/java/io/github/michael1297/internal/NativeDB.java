@@ -6,7 +6,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import io.github.michael1297.internal.pointer.*;
-import io.github.michael1297.internal.struct.*;
+import io.github.michael1297.internal.cstruct.*;
 
 import java.util.HashMap;
 import java.util.Map;

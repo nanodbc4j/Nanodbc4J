@@ -4,7 +4,7 @@ import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
-import io.github.michael1297.internal.struct.NativeError;
+import io.github.michael1297.internal.cstruct.NativeError;
 
 public final class StatementHandler {
     // Static methods only

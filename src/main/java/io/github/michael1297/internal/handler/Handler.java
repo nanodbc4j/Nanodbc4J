@@ -6,8 +6,8 @@ import io.github.michael1297.jdbc.SpdLogLevel;
 import io.github.michael1297.jdbc.metadata.OdbcDatasource;
 import io.github.michael1297.jdbc.metadata.OdbcDriver;
 import io.github.michael1297.internal.NativeDB;
-import io.github.michael1297.internal.struct.DatasourceStruct;
-import io.github.michael1297.internal.struct.DriverStruct;
+import io.github.michael1297.internal.cstruct.DatasourceStruct;
+import io.github.michael1297.internal.cstruct.DriverStruct;
 
 import java.util.ArrayList;
 import java.util.List;

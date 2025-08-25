@@ -1,4 +1,4 @@
-package io.github.michael1297.internal.struct;
+package io.github.michael1297.internal.cstruct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
