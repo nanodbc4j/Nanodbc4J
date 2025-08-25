@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <string>
 #include <iostream>
 
@@ -16,6 +16,8 @@ namespace utils {
 	wide_string_t to_wide_string(const char16_t* string);
 
 	std::wstring to_wstring(const char16_t* str);
+
+	std::wstring to_wstring(const char16_t* str, size_t length);
 
 	std::wstring to_wstring(const std::u16string& str);
 
@@ -37,4 +39,7 @@ namespace utils {
 
 	template <typename CharT>
 	CharT* duplicate_string(const CharT* src);
+
+	template <typename CharT>
+	CharT* duplicate_string(const CharT* src, size_t length);
 }

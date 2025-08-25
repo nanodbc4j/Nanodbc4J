@@ -13,6 +13,7 @@
 
 wide_string_t utils::to_wide_string(const char16_t* string) {
     LOG_TRACE("string={}", string ? reinterpret_cast<const char*>(string) : "(null)");
+    if (!string) return wide_string_t(); // Возвращаем пустую строку
     // Преобразуем входящую строку в wide_string (используется UTF-16LE)
     return std::basic_string<wide_char_t>(reinterpret_cast<const wide_char_t*>(string));
 }
@@ -20,22 +21,27 @@ wide_string_t utils::to_wide_string(const char16_t* string) {
 std::wstring utils::to_wstring(const char16_t* str) {
     LOG_TRACE("str={}", str ? reinterpret_cast<const char*>(str) : "(null)");
     if (!str) return std::wstring();
+    size_t length = std::char_traits<char16_t>::length(str);
+    return utils::to_wstring(str, length);
+}
 
-    size_t len = std::char_traits<char16_t>::length(str);
+std::wstring utils::to_wstring(const char16_t* str, size_t length) {
+    LOG_TRACE("str={}", str ? reinterpret_cast<const char*>(str) : "(null)");
+    if (!str) return std::wstring();
 
 #if defined(_WIN32) || defined(_WIN64)
     // На Windows wchar_t == 16 бит, можно копировать напрямую
     LOG_TRACE("Platform: Windows, direct cast (UTF-16 -> wchar_t)");
-    return std::wstring(reinterpret_cast<const wchar_t*>(str), len);
+    return std::wstring(reinterpret_cast<const wchar_t*>(str), length);
 #else
     // На Linux wchar_t == 32 бита, нужен конвертер с расширением surrogate pairs
     LOG_TRACE("Platform: Unix, converting UTF-16 to UTF-32 wchar_t");
     std::wstring result;
-    result.reserve(len);
-    for (size_t i = 0; i < len; ++i) {
+    result.reserve(length);
+    for (size_t i = 0; i < length; ++i) {
         char16_t ch = str[i];
         // Обработка суррогатных пар (UTF-16 -> UTF-32)
-        if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < len) {
+        if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < length) {
             char16_t ch2 = str[i + 1];
             if (ch2 >= 0xDC00 && ch2 <= 0xDFFF) {
                 // Парная суррогатная пара
@@ -53,7 +59,7 @@ std::wstring utils::to_wstring(const char16_t* str) {
 
 std::wstring utils::to_wstring(const std::u16string& str) {
     LOG_TRACE_W(L"str length = {}", str.length());
-    return to_wstring(str.c_str());
+    return to_wstring(str.c_str(), str.length());
 }
 
 std::wstring utils::to_wstring(const char* str) {
@@ -135,6 +141,14 @@ CharT* utils::duplicate_string(const CharT* src) {
 
     size_t length = std::char_traits<CharT>::length(src);
 
+    return utils::duplicate_string(src, length);
+}
+
+template <typename CharT>
+CharT* utils::duplicate_string(const CharT* src, size_t length) {
+    LOG_TRACE("src={}", src ? "non-null" : "null");
+    if (!src) return nullptr;
+
     // Защита от переполнения
     if (length > std::numeric_limits<size_t>::max() / sizeof(CharT)) {
         LOG_TRACE("String too long, potential overflow");
@@ -156,3 +170,6 @@ CharT* utils::duplicate_string(const CharT* src) {
 template char* utils::duplicate_string(const char* src);
 template char16_t* utils::duplicate_string(const char16_t* src);
 template wchar_t* utils::duplicate_string(const wchar_t* src);
+template char* utils::duplicate_string(const char* src, size_t length);
+template char16_t* utils::duplicate_string(const char16_t* src, size_t length);
+template wchar_t* utils::duplicate_string(const wchar_t* src, size_t length);

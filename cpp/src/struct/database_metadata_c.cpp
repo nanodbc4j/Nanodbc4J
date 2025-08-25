@@ -7,7 +7,7 @@ using namespace utils;
 inline static const char16_t* convert(const std::wstring& str) {
     LOG_TRACE_W(L"Converting wstring to char16_t*: '{}'", str);
     auto u16str = to_u16string(str);
-    const char16_t* result = duplicate_string(u16str.c_str());
+    const char16_t* result = duplicate_string(u16str.c_str(), u16str.length());
     LOG_TRACE("Converted string duplicated at {}", (void*)result);
     return result;
 }

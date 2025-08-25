@@ -105,7 +105,7 @@ const char16_t* get_string_value_by_index(nanodbc::result* results, int index, N
         auto value = results->get<nanodbc::string>(index);
         auto u16_value = to_u16string(value);
         LOG_DEBUG_W(L"String value retrieved from index {}: '{}'", index, to_wstring(u16_value));
-        return duplicate_string(u16_value.c_str());
+        return duplicate_string(u16_value.c_str(), u16_value.length());
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, 1, "IndexError", e.what());
         LOG_ERROR_W(L"Index range error at index {}: {}", index, to_wstring(e.what()));
@@ -176,7 +176,7 @@ const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_
         auto value = results->get<nanodbc::string>(to_wide_string(name));
         auto u16_value = to_u16string(value);
         LOG_DEBUG_W(L"String value retrieved by name '{}': '{}'", w_name, to_wstring(u16_value));
-        return duplicate_string(u16_value.c_str());
+        return duplicate_string(u16_value.c_str(), u16_value.length());
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, 1, "IndexError", e.what());
         LOG_ERROR_W(L"Index range error for column '{}': {}", w_name, to_wstring(e.what()));

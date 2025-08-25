@@ -14,10 +14,10 @@ Driver::Attribute::Attribute(const Driver::Attribute& other) {
 Driver::Attribute::Attribute(const nanodbc::driver::attribute& other) {
 	LOG_TRACE("Constructing Driver::Attribute from nanodbc::driver::attribute");
 	auto _keyword = to_u16string(other.keyword);
-	keyword = duplicate_string(_keyword.c_str());
+	keyword = duplicate_string(_keyword.c_str(), _keyword.length());
 
 	auto _value = to_u16string(other.value);
-	value = duplicate_string(_value.c_str());
+	value = duplicate_string(_value.c_str(), _value.length());
 }
 
 Driver::Attribute::~Attribute() {
@@ -34,7 +34,7 @@ Driver::Driver(const Driver& other) {
 	LOG_TRACE("Copying Driver from {}", (void*)&other);
 	attribute_count = static_cast<int>(other.attribute_count);
 	auto _name = to_u16string(other.name);
-	name = duplicate_string(_name.c_str());
+	name = duplicate_string(_name.c_str(), _name.length());
 	attributes = nullptr;
 	
 	if (attribute_count > 0) {
@@ -49,7 +49,7 @@ Driver::Driver(const nanodbc::driver& other) {
 	LOG_TRACE("Constructing Driver from nanodbc::driver");
 	attribute_count = static_cast<int>(other.attributes.size());
 	auto _name = to_u16string(other.name);
-	name = duplicate_string(_name.c_str());
+	name = duplicate_string(_name.c_str(), _name.length());
 	attributes = nullptr;
 
 	if (attribute_count > 0) {		
@@ -81,19 +81,19 @@ Driver::~Driver() {
 Datasource::Datasource(const Datasource& other) {
 	LOG_TRACE("Copying Datasource from {}", (void*)&other);
 	auto _name = to_u16string(other.name);
-	name = duplicate_string(_name.c_str());	
+	name = duplicate_string(_name.c_str(), _name.length());
 
 	auto _driver = to_u16string(other.driver);
-	driver = duplicate_string(_driver.c_str());
+	driver = duplicate_string(_driver.c_str(), _driver.length());
 }
 
 Datasource::Datasource(const nanodbc::datasource& other) {
 	LOG_TRACE("Constructing Datasource from nanodbc::datasource");
 	auto _name = to_u16string(other.name);
-	name = duplicate_string(_name.c_str());
+	name = duplicate_string(_name.c_str(), _name.length());
 
 	auto _driver = to_u16string(other.driver);
-	driver = duplicate_string(_driver.c_str());
+	driver = duplicate_string(_driver.c_str(), _driver.length());
 }
 
 Datasource::~Datasource() {
