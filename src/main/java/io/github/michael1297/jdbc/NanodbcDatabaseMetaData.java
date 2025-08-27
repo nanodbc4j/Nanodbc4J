@@ -11,10 +11,10 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
 public class NanodbcDatabaseMetaData implements DatabaseMetaData {
-    private final WeakReference<Connection> connection;
+    private final WeakReference<NanodbcConnection> connection;
     private final OdbcDatabaseMetaData metaData;
 
-    public NanodbcDatabaseMetaData(Connection connection, OdbcDatabaseMetaData metaData) {
+    public NanodbcDatabaseMetaData(NanodbcConnection connection, OdbcDatabaseMetaData metaData) {
         this.connection = new WeakReference<>(connection);
         this.metaData = metaData;
     }

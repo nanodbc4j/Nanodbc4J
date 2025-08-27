@@ -36,10 +36,10 @@ import java.util.UUID;
  */
 public class NanodbcResultSet implements ResultSet {
     protected ResultSetPtr resultSetPtr;
-    private final WeakReference<Statement> statement;
+    private final WeakReference<NanodbcStatement> statement;
     private ResultSetMetaData metaData = null;
 
-    NanodbcResultSet(Statement statement, ResultSetPtr resultSetPtr) {
+    NanodbcResultSet(NanodbcStatement statement, ResultSetPtr resultSetPtr) {
         this.resultSetPtr = resultSetPtr;
         this.statement = new WeakReference<>(statement);
     }

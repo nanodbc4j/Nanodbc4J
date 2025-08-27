@@ -3,6 +3,7 @@ package io.github.michael1297.jdbc;
 import io.github.michael1297.exceptions.NanodbcSQLException;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.handler.StatementHandler;
+import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
 
 import java.lang.ref.WeakReference;
@@ -18,28 +19,47 @@ import java.sql.Statement;
  */
 public class NanodbcStatement implements Statement {
     protected StatementPtr statementPtr;
-    private final WeakReference<Connection> connection;
+    protected final WeakReference<NanodbcConnection> connection;
+    protected NanodbcResultSet resultSet = null;
+    protected boolean closed = false;
 
-    NanodbcStatement(Connection connection, StatementPtr statementPtr) {
+    NanodbcStatement(NanodbcConnection connection, StatementPtr statementPtr) {
         this.statementPtr = statementPtr;
         this.connection = new WeakReference<>(connection);
     }
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            assert connection.get() != null;
+            ResultSetPtr resultSetPtr = StatementHandler.execute(connection.get().getConnectionPtr(), sql);
+            return new NanodbcResultSet(this, resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public int executeUpdate(String sql) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            assert connection.get() != null;
+            return StatementHandler.executeUpdate(connection.get().getConnectionPtr(), sql);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public void close() throws SQLException {
         try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
             StatementHandler.close(statementPtr);
             statementPtr = null;
+            closed = true;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -102,12 +122,22 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public boolean execute(String sql) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            assert connection.get() != null;
+            ResultSetPtr resultSetPtr = StatementHandler.execute(connection.get().getConnectionPtr(), sql);
+            resultSet = new NanodbcResultSet(this, resultSetPtr);
+            return true;
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public ResultSet getResultSet() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        ResultSet rs = resultSet;
+        resultSet = null;
+        return rs;
     }
 
     @Override
@@ -117,7 +147,7 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return resultSet != null;
     }
 
     @Override
@@ -167,9 +197,7 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public Connection getConnection() throws SQLException {
-        if (statementPtr == null) {
-            throw new NanodbcSQLException("Statement closed");
-        }
+        throwIfAlreadyClosed();
         return connection.get();
     }
 
@@ -220,7 +248,7 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return closed;
     }
 
     @Override
@@ -259,11 +287,22 @@ public class NanodbcStatement implements Statement {
     @Override
     protected void finalize() throws Throwable {
         try {
-            if (statementPtr != null) {
+            if (!isClosed()) {
                 close();
             }
         } finally {
             super.finalize();
+        }
+    }
+
+    /**
+     * Throws exception if statement is already closed.
+     *
+     * @throws SQLException if statement is already closed.
+     */
+    protected void throwIfAlreadyClosed() throws SQLException {
+        if (isClosed() || statementPtr == null) {
+            throw new SQLException("Statement: already closed");
         }
     }
 }

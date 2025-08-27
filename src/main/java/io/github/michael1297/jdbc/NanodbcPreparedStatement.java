@@ -34,12 +34,13 @@ import java.util.Calendar;
  */
 public class NanodbcPreparedStatement extends NanodbcStatement implements PreparedStatement {
 
-    public NanodbcPreparedStatement(Connection connection, StatementPtr statementPtr) {
+    public NanodbcPreparedStatement(NanodbcConnection connection, StatementPtr statementPtr) {
         super(connection, statementPtr);
     }
 
     @Override
     public ResultSet executeQuery() throws SQLException {
+        throwIfAlreadyClosed();
         try {
             ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr);
             return new NanodbcResultSet(this, resultSetPtr);
@@ -50,6 +51,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
 
     @Override
     public int executeUpdate() throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return StatementHandler.executeUpdate(statementPtr);
         } catch (NativeException e) {
@@ -159,7 +161,15 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
 
     @Override
     public boolean execute() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            assert connection.get() != null;
+            ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr);
+            resultSet = new NanodbcResultSet(this, resultSetPtr);
+            return true;
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

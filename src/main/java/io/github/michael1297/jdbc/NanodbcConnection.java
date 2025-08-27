@@ -31,7 +31,7 @@ import java.util.concurrent.Executor;
  * Closed via close() or garbage collection.
  */
 public class NanodbcConnection implements Connection {
-    protected ConnectionPtr connectionPtr;
+    private ConnectionPtr connectionPtr;
     private static final long TIMEOUT = 5;
     private DatabaseMetaData metaData = null;
 
@@ -272,7 +272,7 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public boolean isValid(int timeout) throws SQLException {
-        return false;
+        return !isClosed();
     }
 
     @Override
@@ -352,5 +352,9 @@ public class NanodbcConnection implements Connection {
         } finally {
             super.finalize();
         }
+    }
+
+    ConnectionPtr getConnectionPtr() {
+        return connectionPtr;
     }
 }

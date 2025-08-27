@@ -67,6 +67,10 @@ public interface NativeDB extends Library {
      */
     byte is_connected(ConnectionPtr conn, NativeError error);
 
+    ResultSetPtr execute_request(ConnectionPtr conn, String sql, NativeError error);
+
+    int execute_request_update(ConnectionPtr conn, String sql, NativeError error);
+
     StatementPtr create_statement(ConnectionPtr conn, NativeError error);
 
     void prepare_statement(StatementPtr stmt, String sql, long timeout, NativeError error);
