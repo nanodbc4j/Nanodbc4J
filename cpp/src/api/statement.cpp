@@ -49,20 +49,16 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
     init_error(error);
     try {
         stmt->bind_null(index);
-    }
-    catch (const nanodbc::index_range_error& e) {
+    } catch (const nanodbc::index_range_error& e) {
         set_error(error, 1, "IndexError", e.what());
         LOG_ERROR_W(L"Index range error (NULL): {}", to_wstring(e.what()));
-    }
-    catch (const nanodbc::type_incompatible_error& e) {
+    } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, 2, "TypeError", e.what());
         LOG_ERROR_W(L"Type incompatible error (NULL): {}", to_wstring(e.what()));
-    }
-    catch (const std::exception& e) {
+    } catch (const std::exception& e) {
         set_error(error, 3, "DatabaseError", e.what());
         LOG_ERROR_W(L"Standard exception (NULL): {}", to_wstring(e.what()));
-    }
-    catch (...) {
+    } catch (...) {
         set_error(error, -1, "UnknownError", "Unknown error setting NULL");
         LOG_ERROR("Unknown exception (NULL)");
     }
