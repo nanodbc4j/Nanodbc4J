@@ -334,12 +334,12 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return null;
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+
     }
 
     @Override
@@ -351,7 +351,7 @@ public class NanodbcResultSet implements ResultSet {
     public ResultSetMetaData getMetaData() throws SQLException {
         throwIfAlreadyClosed();
         try {
-            if (metaData == null) {
+            if (metaData == null && !isClosed()) {
                 metaData = ResultSetHandler.getResultSetMetaData(resultSetPtr);
             }
             return metaData;
@@ -521,7 +521,8 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public int getType() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return ResultSet.TYPE_FORWARD_ONLY;
+        //throw new SQLFeatureNotSupportedException(); todo
     }
 
     @Override

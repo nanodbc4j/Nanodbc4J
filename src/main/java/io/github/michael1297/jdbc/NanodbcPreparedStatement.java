@@ -141,7 +141,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setString(int parameterIndex, String x) throws SQLException {
         throwIfAlreadyClosed();
         try {
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, NativeDB.INSTANCE::set_string_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x + "\0", NativeDB.INSTANCE::set_string_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }

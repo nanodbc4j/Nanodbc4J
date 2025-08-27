@@ -67,22 +67,22 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public int getMaxFieldSize() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return 0;   // todo
     }
 
     @Override
     public void setMaxFieldSize(int max) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        // throw new SQLFeatureNotSupportedException();todo
     }
 
     @Override
     public int getMaxRows() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return 0;   // todo
     }
 
     @Override
     public void setMaxRows(int max) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        //throw new SQLFeatureNotSupportedException(); todo
     }
 
     @Override
@@ -107,12 +107,12 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return null;
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+
     }
 
     @Override
@@ -142,7 +142,8 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public int getUpdateCount() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return -1;
+        //throw new SQLFeatureNotSupportedException(); todo
     }
 
     @Override
@@ -162,12 +163,13 @@ public class NanodbcStatement implements Statement {
 
     @Override
     public void setFetchSize(int rows) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        //throw new SQLFeatureNotSupportedException(); todo
     }
 
     @Override
     public int getFetchSize() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return 0;
+        //throw new SQLFeatureNotSupportedException();
     }
 
     @Override

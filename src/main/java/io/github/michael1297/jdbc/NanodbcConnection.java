@@ -76,7 +76,7 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        //throw new SQLFeatureNotSupportedException(); TODO
     }
 
     @Override
@@ -127,12 +127,13 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        // throw new SQLFeatureNotSupportedException(); TODO
     }
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return true;
+        //throw new SQLFeatureNotSupportedException(); TODO
     }
 
     @Override
@@ -167,12 +168,14 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        return null; // TODO
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        // nothing to do
     }
 
     @Override
@@ -366,5 +369,16 @@ public class NanodbcConnection implements Connection {
 
     ConnectionPtr getConnectionPtr() {
         return connectionPtr;
+    }
+
+    /**
+     * Throws exception if Connection is already closed.
+     *
+     * @throws SQLException if Connection is already closed.
+     */
+    protected void throwIfAlreadyClosed() throws SQLException {
+        if (isClosed() || connectionPtr == null) {
+            throw new NanodbcSQLException("Connection: already closed");
+        }
     }
 }
