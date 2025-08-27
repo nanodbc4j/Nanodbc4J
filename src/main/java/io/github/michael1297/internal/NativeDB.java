@@ -75,6 +75,26 @@ public interface NativeDB extends Library {
 
     void prepare_statement(StatementPtr stmt, String sql, long timeout, NativeError error);
 
+    void set_int_value(StatementPtr stmt, int index, int value, NativeError error);
+
+    void set_long_value(StatementPtr stmt, int index, long value, NativeError error);
+
+    void set_double_value(StatementPtr stmt, int index, double value, NativeError error);
+
+    void set_bool_value(StatementPtr stmt, int index, byte value, NativeError error);
+
+    void set_float_value(StatementPtr stmt, int index, float value, NativeError error);
+
+    void set_short_value(StatementPtr stmt, int index, short value, NativeError error);
+
+    void set_string_value(StatementPtr stmt, int index, String value, NativeError error);
+
+    void set_date_value(StatementPtr stmt, int index, DateStruct value, NativeError error);
+
+    void set_time_value(StatementPtr stmt, int index, TimeStruct value, NativeError error);
+
+    void set_timestamp_value(StatementPtr stmt, int index, TimestampStruct value, NativeError error);
+
     ResultSetPtr execute(StatementPtr stmt, NativeError error);
 
     int execute_update(StatementPtr stmt, NativeError error);

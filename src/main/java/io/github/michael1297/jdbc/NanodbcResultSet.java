@@ -94,7 +94,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return (byte) getShort(columnIndex);
     }
 
     @Override
