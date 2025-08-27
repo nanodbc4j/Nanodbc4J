@@ -1,5 +1,6 @@
 package io.github.michael1297.jdbc;
 
+import io.github.michael1297.exceptions.NanodbcSQLException;
 import io.github.michael1297.jdbc.metadata.OdbcDatabaseMetaData;
 
 import java.lang.ref.WeakReference;
@@ -898,7 +899,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
         if (isWrapperFor(iface)) {
             return iface.cast(this);
         }
-        throw new SQLException("Cannot unwrap to " + iface.getName());
+        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
     }
 
     @Override

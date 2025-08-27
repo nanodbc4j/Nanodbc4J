@@ -204,7 +204,11 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        if (resultSet == null || resultSet.isClosed()) {
+            throw new NanodbcSQLException("ResultSet is null or already closed");
+        }
+        return resultSet.getMetaData();
     }
 
     @Override

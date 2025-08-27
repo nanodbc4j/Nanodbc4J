@@ -276,7 +276,7 @@ public class NanodbcStatement implements Statement {
         if (isWrapperFor(iface)) {
             return iface.cast(this);
         }
-        throw new SQLException("Cannot unwrap to " + iface.getName());
+        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
     }
 
     @Override
@@ -302,7 +302,7 @@ public class NanodbcStatement implements Statement {
      */
     protected void throwIfAlreadyClosed() throws SQLException {
         if (isClosed() || statementPtr == null) {
-            throw new SQLException("Statement: already closed");
+            throw new NanodbcSQLException("Statement: already closed");
         }
     }
 }

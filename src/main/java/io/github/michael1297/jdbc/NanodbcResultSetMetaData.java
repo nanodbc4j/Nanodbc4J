@@ -1,5 +1,6 @@
 package io.github.michael1297.jdbc;
 
+import io.github.michael1297.exceptions.NanodbcSQLException;
 import io.github.michael1297.jdbc.metadata.OdbcResultSetMetadata;
 
 import java.sql.ResultSetMetaData;
@@ -144,7 +145,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
         if (isWrapperFor(iface)) {
             return iface.cast(this);
         }
-        throw new SQLException("Cannot unwrap to " + iface.getName());
+        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
     }
 
     @Override
@@ -160,7 +161,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
     private void checkIndex (int index) throws SQLException {
         index -= 1;
         if (index < 0 || index > metaData.columnCount) {
-            throw new SQLException("column out of range");
+            throw new NanodbcSQLException("column out of range");
         }
     }
 }

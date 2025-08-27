@@ -38,6 +38,7 @@ public class NanodbcResultSet implements ResultSet {
     protected ResultSetPtr resultSetPtr;
     private final WeakReference<NanodbcStatement> statement;
     private ResultSetMetaData metaData = null;
+    private boolean closed = false;
 
     NanodbcResultSet(NanodbcStatement statement, ResultSetPtr resultSetPtr) {
         this.resultSetPtr = resultSetPtr;
@@ -46,6 +47,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public boolean next() throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.next(resultSetPtr);
         } catch (NativeException e) {
@@ -59,6 +61,7 @@ public class NanodbcResultSet implements ResultSet {
             ResultSetHandler.close(resultSetPtr);
             resultSetPtr = null;
             metaData = null;
+            closed = true;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -71,6 +74,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public String getString(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getStringValueByIndex(resultSetPtr, columnIndex);
         } catch (NativeException e) {
@@ -80,6 +84,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_bool_value_by_index) != 0;
         } catch (NativeException e) {
@@ -94,6 +99,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_short_value_by_index);
         } catch (NativeException e) {
@@ -103,6 +109,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_int_value_by_index);
         } catch (NativeException e) {
@@ -112,6 +119,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_long_value_by_index);
         } catch (NativeException e) {
@@ -121,6 +129,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_float_value_by_index);
         } catch (NativeException e) {
@@ -130,6 +139,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_double_value_by_index);
         } catch (NativeException e) {
@@ -149,6 +159,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getDateValueByIndex(resultSetPtr, columnIndex);
         } catch (NativeException e) {
@@ -158,6 +169,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getTimeValueByIndex(resultSetPtr, columnIndex);
         } catch (NativeException e) {
@@ -167,6 +179,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getTimestampValueByIndex(resultSetPtr, columnIndex);
         } catch (NativeException e) {
@@ -191,6 +204,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getStringValueByName(resultSetPtr, columnLabel);
         } catch (NativeException e) {
@@ -200,6 +214,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public boolean getBoolean(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_bool_value_by_name) != 0;
         } catch (NativeException e) {
@@ -214,6 +229,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_short_value_by_name);
         } catch (NativeException e) {
@@ -223,6 +239,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_int_value_by_name);
         } catch (NativeException e) {
@@ -232,6 +249,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public long getLong(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_long_value_by_name);
         } catch (NativeException e) {
@@ -241,6 +259,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public float getFloat(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_float_value_by_name);
         } catch (NativeException e) {
@@ -250,6 +269,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public double getDouble(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_double_value_by_name);
         } catch (NativeException e) {
@@ -269,6 +289,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Date getDate(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getDateValueByName(resultSetPtr, columnLabel);
         } catch (NativeException e) {
@@ -278,6 +299,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Time getTime(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getTimeValueByName(resultSetPtr, columnLabel);
         } catch (NativeException e) {
@@ -287,6 +309,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         try {
             return ResultSetHandler.getTimestampValueByName(resultSetPtr, columnLabel);
         } catch (NativeException e) {
@@ -326,6 +349,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
+        throwIfAlreadyClosed();
         try {
             if (metaData == null) {
                 metaData = ResultSetHandler.getResultSetMetaData(resultSetPtr);
@@ -338,6 +362,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
         ResultSetMetaData metaData = getMetaData();
         String className = metaData.getColumnClassName(columnIndex);
 
@@ -374,6 +399,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Object getObject(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         int index = findColumn(columnLabel);
         if (index == -1) {
             throw new SQLException("Column " + columnLabel + " not found");
@@ -383,6 +409,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public int findColumn(String columnLabel) throws SQLException {
+        throwIfAlreadyClosed();
         ResultSetMetaData metaData = getMetaData();
         for (int i = 1; i <= metaData.getColumnCount(); i++) {
             if (metaData.getColumnLabel(i).equals(columnLabel)) {
@@ -744,9 +771,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public Statement getStatement() throws SQLException {
-        if (resultSetPtr == null) {
-            throw new SQLFeatureNotSupportedException("ResultSet closed");
-        }
+        throwIfAlreadyClosed();
         return statement.get();
     }
 
@@ -907,7 +932,7 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return closed;
     }
 
     @Override
@@ -1135,11 +1160,22 @@ public class NanodbcResultSet implements ResultSet {
         if (isWrapperFor(iface)) {
             return iface.cast(this);
         }
-        throw new SQLException("Cannot unwrap to " + iface.getName());
+        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return iface.isInstance(this) || iface == ResultSet.class;
+    }
+
+    /**
+     * Throws exception if ResultSet is already closed.
+     *
+     * @throws SQLException if ResultSet is already closed.
+     */
+    protected void throwIfAlreadyClosed() throws SQLException {
+        if (isClosed() || resultSetPtr == null) {
+            throw new NanodbcSQLException("ResultSet: already closed");
+        }
     }
 }
