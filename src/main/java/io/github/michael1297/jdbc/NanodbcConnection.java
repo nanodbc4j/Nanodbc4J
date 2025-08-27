@@ -81,7 +81,7 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public boolean getAutoCommit() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return true; // TODO
     }
 
     @Override

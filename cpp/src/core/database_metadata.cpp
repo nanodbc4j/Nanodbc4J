@@ -27,7 +27,7 @@ inline static T getInfoSafely(const nanodbc::connection& conn, SQLUSMALLINT attr
 }
 
 template<typename T>
-inline T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = T{}) {
+inline static T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = T{}) {
     // Статическая проверка: T должен быть числовым типом
     static_assert(
         std::is_arithmetic_v<T>,
@@ -42,6 +42,16 @@ inline T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = T{}) {
     }
 
     return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) ? value : defaultValue;
+}
+
+template<class T>
+inline static T joinString(const std::vector<T>& vec, const T& delimiter) {
+    T result{};
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (i > 0) result += delimiter;
+        result += vec[i];
+    }
+    return result;
 }
 
 // === Конструктор ===
@@ -130,29 +140,150 @@ std::wstring DatabaseMetaData::getSQLKeywords() const {
 }
 
 std::wstring DatabaseMetaData::getNumericFunctions() const {
-    LOG_TRACE_W("Called");
-    auto result = getInfoSafely<nanodbc::string>(connection_, SQL_NUMERIC_FUNCTIONS);
+    LOG_TRACE("Called");
+    SQLUINTEGER mask = 0;
+    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_NUMERIC_FUNCTIONS, &mask, sizeof(mask), nullptr);
+    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+        LOG_ERROR("SQLGetInfo(SQL_NUMERIC_FUNCTIONS) failed: {}", ret);
+        LOG_TRACE_W("Returning: L\"\"");
+        return L"";
+    }
+
+    std::vector<std::wstring> funcs;
+
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(L##name)
+
+    ADD_IF_SET(SQL_FN_NUM_ABS, "ABS");
+    ADD_IF_SET(SQL_FN_NUM_ACOS, "ACOS");
+    ADD_IF_SET(SQL_FN_NUM_ASIN, "ASIN");
+    ADD_IF_SET(SQL_FN_NUM_ATAN, "ATAN");
+    ADD_IF_SET(SQL_FN_NUM_ATAN2, "ATAN2");
+    ADD_IF_SET(SQL_FN_NUM_CEILING, "CEILING");
+    ADD_IF_SET(SQL_FN_NUM_COS, "COS");
+    ADD_IF_SET(SQL_FN_NUM_COT, "COT");
+    ADD_IF_SET(SQL_FN_NUM_EXP, "EXP");
+    ADD_IF_SET(SQL_FN_NUM_FLOOR, "FLOOR");
+    ADD_IF_SET(SQL_FN_NUM_LOG, "LOG");
+    ADD_IF_SET(SQL_FN_NUM_MOD, "MOD");
+    ADD_IF_SET(SQL_FN_NUM_PI, "PI");
+    ADD_IF_SET(SQL_FN_NUM_RAND, "RAND");
+    ADD_IF_SET(SQL_FN_NUM_ROUND, "ROUND");
+    ADD_IF_SET(SQL_FN_NUM_SIGN, "SIGN");
+    ADD_IF_SET(SQL_FN_NUM_SIN, "SIN");
+    ADD_IF_SET(SQL_FN_NUM_SQRT, "SQRT");
+    ADD_IF_SET(SQL_FN_NUM_TAN, "TAN");
+    ADD_IF_SET(SQL_FN_NUM_TRUNCATE, "TRUNCATE");
+
+#undef ADD_IF_SET
+
+    std::wstring result = joinString<std::wstring>(funcs, L",");
+
     LOG_TRACE_W(L"Returning: {}", result);
     return result;
 }
 
 std::wstring DatabaseMetaData::getStringFunctions() const {
-    LOG_TRACE_W("Called");
-    auto result = getInfoSafely<nanodbc::string>(connection_, SQL_STRING_FUNCTIONS);
+    LOG_TRACE("Called");
+    SQLUINTEGER mask = 0;
+    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_STRING_FUNCTIONS, &mask, sizeof(mask), nullptr);
+    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+        LOG_ERROR("SQLGetInfo(SQL_STRING_FUNCTIONS) failed: {}", ret);
+        LOG_TRACE_W("Returning: L\"\"");
+        return L"";
+    }
+
+    std::vector<std::wstring> funcs;
+
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(L##name)
+
+    ADD_IF_SET(SQL_FN_STR_ASCII, "ASCII");
+    ADD_IF_SET(SQL_FN_STR_CHAR, "CHAR");
+    ADD_IF_SET(SQL_FN_STR_CONCAT, "CONCAT");
+    ADD_IF_SET(SQL_FN_STR_LCASE, "LCASE");
+    ADD_IF_SET(SQL_FN_STR_LEFT, "LEFT");
+    ADD_IF_SET(SQL_FN_STR_LENGTH, "LENGTH");
+    ADD_IF_SET(SQL_FN_STR_LTRIM, "LTRIM");
+    ADD_IF_SET(SQL_FN_STR_REPEAT, "REPEAT");
+    ADD_IF_SET(SQL_FN_STR_RIGHT, "RIGHT");
+    ADD_IF_SET(SQL_FN_STR_RTRIM, "RTRIM");
+    ADD_IF_SET(SQL_FN_STR_SPACE, "SPACE");
+    ADD_IF_SET(SQL_FN_STR_SUBSTRING, "SUBSTRING");
+    ADD_IF_SET(SQL_FN_STR_UCASE, "UCASE");
+    ADD_IF_SET(SQL_FN_STR_LOCATE, "LOCATE");
+    ADD_IF_SET(SQL_FN_STR_LTRIM, "LTRIM");
+    ADD_IF_SET(SQL_FN_STR_RTRIM, "RTRIM");
+
+#undef ADD_IF_SET
+
+    std::wstring result = joinString<std::wstring>(funcs, L",");
+
     LOG_TRACE_W(L"Returning: {}", result);
     return result;
 }
 
 std::wstring DatabaseMetaData::getSystemFunctions() const {
-    LOG_TRACE_W("Called");
-    auto result = getInfoSafely<nanodbc::string>(connection_, SQL_SYSTEM_FUNCTIONS);
+    LOG_TRACE("Called");
+    SQLUINTEGER mask = 0;
+    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_SYSTEM_FUNCTIONS, &mask, sizeof(mask), nullptr);
+    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+        LOG_ERROR("SQLGetInfo(SQL_SYSTEM_FUNCTIONS) failed: {}", ret);
+        LOG_TRACE_W("Returning: L\"\"");
+        return L"";
+    }
+
+    std::vector<std::wstring> funcs;
+
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(L##name)
+
+    ADD_IF_SET(SQL_FN_SYS_DBNAME, "DBNAME");
+    ADD_IF_SET(SQL_FN_SYS_IFNULL, "IFNULL");
+    ADD_IF_SET(SQL_FN_SYS_USERNAME, "USERNAME");
+
+#undef ADD_IF_SET
+
+    std::wstring result = joinString<std::wstring>(funcs, L",");
+
     LOG_TRACE_W(L"Returning: {}", result);
     return result;
 }
 
 std::wstring DatabaseMetaData::getTimeDateFunctions() const {
-    LOG_TRACE_W("Called");
-    auto result = getInfoSafely<nanodbc::string>(connection_, SQL_TIMEDATE_FUNCTIONS);
+    LOG_TRACE("Called");
+    SQLUINTEGER mask = 0;
+    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_TIMEDATE_FUNCTIONS, &mask, sizeof(mask), nullptr);
+    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+        LOG_ERROR("SQLGetInfo(SQL_TIMEDATE_FUNCTIONS) failed: {}", ret);
+        LOG_TRACE_W("Returning: L\"\"");
+        return L"";
+    }
+
+    std::vector<std::wstring> funcs;
+
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(L##name)
+
+    ADD_IF_SET(SQL_FN_TD_CURDATE, "CURDATE");
+    ADD_IF_SET(SQL_FN_TD_CURTIME, "CURTIME");
+    ADD_IF_SET(SQL_FN_TD_DAYNAME, "DAYNAME");
+    ADD_IF_SET(SQL_FN_TD_DAYOFMONTH, "DAYOFMONTH");
+    ADD_IF_SET(SQL_FN_TD_DAYOFWEEK, "DAYOFWEEK");
+    ADD_IF_SET(SQL_FN_TD_DAYOFYEAR, "DAYOFYEAR");
+    ADD_IF_SET(SQL_FN_TD_EXTRACT, "EXTRACT");
+    ADD_IF_SET(SQL_FN_TD_HOUR, "HOUR");
+    ADD_IF_SET(SQL_FN_TD_MINUTE, "MINUTE");
+    ADD_IF_SET(SQL_FN_TD_MONTH, "MONTH");
+    ADD_IF_SET(SQL_FN_TD_MONTHNAME, "MONTHNAME");
+    ADD_IF_SET(SQL_FN_TD_NOW, "NOW");
+    ADD_IF_SET(SQL_FN_TD_QUARTER, "QUARTER");
+    ADD_IF_SET(SQL_FN_TD_SECOND, "SECOND");
+    ADD_IF_SET(SQL_FN_TD_TIMESTAMPADD, "TIMESTAMPADD");
+    ADD_IF_SET(SQL_FN_TD_TIMESTAMPDIFF, "TIMESTAMPDIFF");
+    ADD_IF_SET(SQL_FN_TD_WEEK, "WEEK");
+    ADD_IF_SET(SQL_FN_TD_YEAR, "YEAR");  
+
+#undef ADD_IF_SET
+
+    std::wstring result = joinString<std::wstring>(funcs, L",");
+
     LOG_TRACE_W(L"Returning: {}", result);
     return result;
 }
