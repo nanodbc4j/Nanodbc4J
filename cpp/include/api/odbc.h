@@ -12,7 +12,7 @@ extern "C" {
 
     ODBC_API void std_free(void* ptr);
 
-    ODBC_API void set_log_level(int level);
+    ODBC_API int set_log_level(int level);
 
     ODBC_API void delete_datasource(Datasource* datasource);
 

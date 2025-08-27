@@ -135,7 +135,7 @@ public interface NativeDB extends Library {
 
     void clear_native_error(NativeError error);
 
-    void set_log_level(int level);
+    int set_log_level(int level);
 
     void delete_datasource(DatasourceStruct datasource);
 

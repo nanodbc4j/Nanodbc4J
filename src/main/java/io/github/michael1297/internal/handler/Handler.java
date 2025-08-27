@@ -23,7 +23,9 @@ public final class Handler {
     }
 
     public static void setLogLevel(SpdLogLevel level) {
-        NativeDB.INSTANCE.set_log_level(level.getValue());
+        if (NativeDB.INSTANCE.set_log_level(level.getValue()) != 0) {
+            throw new InternalError("set_log_level failed");
+        }
     }
 
     public static List<OdbcDriver> driversList() {
