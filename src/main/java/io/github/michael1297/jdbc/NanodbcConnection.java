@@ -152,7 +152,17 @@ public class NanodbcConnection implements Connection {
 
     @Override
     public int getTransactionIsolation() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        // Используем метаданные — они уже содержат SQL_DEFAULT_TXN_ISOLATION
+        int defaultIsolation = getMetaData().getDefaultTransactionIsolation();
+
+        // Проверим, поддерживается ли значение
+        return switch (defaultIsolation) {
+            case Connection.TRANSACTION_READ_UNCOMMITTED -> Connection.TRANSACTION_READ_UNCOMMITTED;
+            case Connection.TRANSACTION_READ_COMMITTED -> Connection.TRANSACTION_READ_COMMITTED;
+            case Connection.TRANSACTION_REPEATABLE_READ -> Connection.TRANSACTION_REPEATABLE_READ;
+            case Connection.TRANSACTION_SERIALIZABLE -> Connection.TRANSACTION_SERIALIZABLE;
+            default -> Connection.TRANSACTION_READ_COMMITTED; // Если драйвер вернул что-то странное — fallback
+        };
     }
 
     @Override
