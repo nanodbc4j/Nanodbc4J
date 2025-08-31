@@ -1,9 +1,9 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
+import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
 import io.github.michael1297.internal.pointer.OdbcDatabaseMetaDataPrt;
 import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
-import io.github.michael1297.jdbc.metadata.OdbcDatabaseMetaData;
 
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcDatabaseMetaData object.

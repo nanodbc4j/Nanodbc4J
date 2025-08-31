@@ -2,9 +2,9 @@ package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import io.github.michael1297.internal.dto.OdbcDatasource;
+import io.github.michael1297.internal.dto.OdbcDriver;
 import io.github.michael1297.jdbc.SpdLogLevel;
-import io.github.michael1297.jdbc.metadata.OdbcDatasource;
-import io.github.michael1297.jdbc.metadata.OdbcDriver;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.DatasourceStruct;
 import io.github.michael1297.internal.cstruct.DriverStruct;

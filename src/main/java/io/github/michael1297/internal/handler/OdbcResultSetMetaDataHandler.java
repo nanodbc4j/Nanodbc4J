@@ -1,7 +1,7 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
-import io.github.michael1297.jdbc.metadata.OdbcResultSetMetadata;
+import io.github.michael1297.internal.dto.OdbcResultSetMetadata;
 import io.github.michael1297.internal.pointer.OdbcResultSetMetaDataPtr;
 import io.github.michael1297.internal.cstruct.ResultSetMetaDataStruct;
 

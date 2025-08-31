@@ -1,7 +1,7 @@
 package io.github.michael1297.jdbc;
 
 import io.github.michael1297.exceptions.NanodbcSQLException;
-import io.github.michael1297.jdbc.metadata.OdbcResultSetMetadata;
+import io.github.michael1297.internal.dto.OdbcResultSetMetadata;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

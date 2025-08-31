@@ -1,7 +1,7 @@
 package io.github.michael1297.jdbc;
 
 import io.github.michael1297.exceptions.NanodbcSQLException;
-import io.github.michael1297.jdbc.metadata.OdbcDatabaseMetaData;
+import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
 
 import java.lang.ref.WeakReference;
 import java.sql.Connection;

@@ -1,8 +1,8 @@
 package io.github.michael1297.jdbc;
 
-import io.github.michael1297.jdbc.metadata.OdbcDatasource;
+import io.github.michael1297.internal.dto.OdbcDatasource;
+import io.github.michael1297.internal.dto.OdbcDriver;
 import io.github.michael1297.internal.handler.Handler;
-import io.github.michael1297.jdbc.metadata.OdbcDriver;
 
 import java.sql.Connection;
 import java.sql.Driver;

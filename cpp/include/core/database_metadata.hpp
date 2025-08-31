@@ -6,7 +6,7 @@
 
 class DatabaseMetaData {
 private:
-    const nanodbc::connection& connection_;
+    nanodbc::connection& connection_;
     SQLHDBC hdbc_;
 
 public:

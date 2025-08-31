@@ -3,6 +3,9 @@ package io.github.michael1297.internal.pointer;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
+/**
+ * nanodbc::connection pointer
+ */
 public final class ConnectionPtr extends PointerType {
     public ConnectionPtr() {
     }

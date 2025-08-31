@@ -1,8 +1,8 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
+import io.github.michael1297.internal.dto.OdbcResultSetMetadata;
 import io.github.michael1297.jdbc.NanodbcResultSetMetaData;
-import io.github.michael1297.jdbc.metadata.OdbcResultSetMetadata;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.OdbcResultSetMetaDataPtr;

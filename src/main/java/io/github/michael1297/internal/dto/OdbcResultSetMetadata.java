@@ -1,4 +1,4 @@
-package io.github.michael1297.jdbc.metadata;
+package io.github.michael1297.internal.dto;
 
 import java.util.ArrayList;
 import java.util.Objects;

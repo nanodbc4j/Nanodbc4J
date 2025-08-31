@@ -3,13 +3,13 @@ package io.github.michael1297.internal.handler;
 import com.sun.jna.Pointer;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
+import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.OdbcDatabaseMetaDataPrt;
 import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.cstruct.NativeError;
 import io.github.michael1297.jdbc.NanodbcConnection;
 import io.github.michael1297.jdbc.NanodbcDatabaseMetaData;
-import io.github.michael1297.jdbc.metadata.OdbcDatabaseMetaData;
 
 import java.sql.DatabaseMetaData;
 

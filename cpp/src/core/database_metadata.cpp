@@ -870,25 +870,6 @@ int DatabaseMetaData::getDriverMinorVersion() const {
     return minor;
 }
 
-
-/*
-// === Поддержка уровней изоляции ===
-bool DatabaseMetaData::supportsTransactionIsolationLevel(int level) const {
-    SQLUINTEGER supported = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_TXN_ISOLATION_OPTION, &supported, 0, nullptr);
-    if (ret != SQL_SUCCESS) return false;
-
-    switch (level) {
-        case 1:  return (supported & SQL_TXN_READ_UNCOMMITTED) != 0;
-        case 2:  return (supported & SQL_TXN_READ_COMMITTED) != 0;
-        case 4:  return (supported & SQL_TXN_REPEATABLE_READ) != 0;
-        case 8:  return (supported & SQL_TXN_SERIALIZABLE) != 0;
-        case 0:  return (supported & 0x00000000) != 0;  // 0x00000000 = SQL_TXN_NONE
-        default: return false;
-    }
-}
-*/
-
 // === Каталоги ===
 /*
 nanodbc::result DatabaseMetaData::getTables(const std::wstring& catalog, const std::wstring& schema,
