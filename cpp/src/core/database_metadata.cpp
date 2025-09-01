@@ -871,60 +871,49 @@ int DatabaseMetaData::getDriverMinorVersion() const {
 }
 
 // === Каталоги ===
-/*
+
 nanodbc::result DatabaseMetaData::getTables(const std::wstring& catalog, const std::wstring& schema,
-    const std::wstring& table, const std::wstring& type) const {
-    return nanodbc::catalog::tables(hdbc_,
-        catalog.empty() ? nullptr : catalog.c_str(),
-        schema.empty() ? nullptr : schema.c_str(),
-        table.empty() ? nullptr : table.c_str(),
-        type.empty() ? nullptr : type.c_str());
+        const std::wstring& table, const std::wstring& type) const {
+    auto tables_result = nanodbc::catalog(connection_).find_tables(table, type, schema, catalog);
+    nanodbc::result(tables_result);
+
+    return {};
 }
 
+
 nanodbc::result DatabaseMetaData::getColumns(const std::wstring& catalog, const std::wstring& schema,
-    const std::wstring& table, const std::wstring& column) const {
-    return nanodbc::catalog::columns(hdbc_,
-        catalog.empty() ? nullptr : catalog.c_str(),
-        schema.empty() ? nullptr : schema.c_str(),
-        table.empty() ? nullptr : table.c_str(),
-        column.empty() ? nullptr : column.c_str());
+        const std::wstring& table, const std::wstring& column) const {
+    auto columns_result = nanodbc::catalog(connection_).find_columns(column, table, schema, catalog);
+
+    return {};
 }
 
 nanodbc::result DatabaseMetaData::getPrimaryKeys(const std::wstring& catalog, const std::wstring& schema,
-    const std::wstring& table) const {
-    return nanodbc::catalog::primary_keys(hdbc_,
-        catalog.empty() ? nullptr : catalog.c_str(),
-        schema.empty() ? nullptr : schema.c_str(),
-        table.empty() ? nullptr : table.c_str());
+        const std::wstring& table) const {
+    auto primary_keys_result = nanodbc::catalog(connection_).find_primary_keys(table, schema, catalog);
+
+    return {};
 }
 
 nanodbc::result DatabaseMetaData::getImportedKeys(const std::wstring& catalog, const std::wstring& schema,
     const std::wstring& table) const {
-    return nanodbc::catalog::foreign_keys(hdbc_,
-        catalog.empty() ? nullptr : catalog.c_str(),
-        schema.empty() ? nullptr : schema.c_str(),
-        table.empty() ? nullptr : table.c_str(),
-        nullptr, nullptr, nullptr);
+    nanodbc::statement stmt(connection_);
+
+    return {};
 }
 
 nanodbc::result DatabaseMetaData::getTypeInfo(short sqlType) const {
-    return nanodbc::catalog::type_info(hdbc_, sqlType);
+    return {};
 }
 
 nanodbc::result DatabaseMetaData::getProcedures(const std::wstring& catalog, const std::wstring& schema,
     const std::wstring& procedure) const {
-    return nanodbc::catalog::procedures(hdbc_,
-        catalog.empty() ? nullptr : catalog.c_str(),
-        schema.empty() ? nullptr : schema.c_str(),
-        procedure.empty() ? nullptr : procedure.c_str());
+    auto procedures_keys_result = nanodbc::catalog(connection_).find_procedures (procedure, schema, catalog);
+    return {};
 }
 
 nanodbc::result DatabaseMetaData::getProcedureColumns(const std::wstring& catalog, const std::wstring& schema,
     const std::wstring& procedure, const std::wstring& column) const {
-    return nanodbc::catalog::procedure_columns(hdbc_,
-        catalog.empty() ? nullptr : catalog.c_str(),
-        schema.empty() ? nullptr : schema.c_str(),
-        procedure.empty() ? nullptr : procedure.c_str(),
-        column.empty() ? nullptr : column.c_str());
+    auto procedure_columns_result = nanodbc::catalog(connection_).find_procedure_columns (column, procedure, schema, catalog);
+    return {};
 }
-*/
