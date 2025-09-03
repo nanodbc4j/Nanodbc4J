@@ -55,7 +55,7 @@ inline static T joinString(const std::vector<T>& vec, const T& delimiter) {
 }
 
 // === Конструктор ===
-DatabaseMetaData::DatabaseMetaData(const nanodbc::connection& connection)
+DatabaseMetaData::DatabaseMetaData(nanodbc::connection& connection)
     : connection_(connection)
     , hdbc_(static_cast<SQLHDBC>(connection.native_dbc_handle()))
 {
@@ -875,8 +875,7 @@ int DatabaseMetaData::getDriverMinorVersion() const {
 nanodbc::result DatabaseMetaData::getTables(const std::wstring& catalog, const std::wstring& schema,
         const std::wstring& table, const std::wstring& type) const {
     auto tables_result = nanodbc::catalog(connection_).find_tables(table, type, schema, catalog);
-    nanodbc::result(tables_result);
-
+    
     return {};
 }
 
