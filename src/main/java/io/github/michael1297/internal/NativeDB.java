@@ -175,5 +175,14 @@ public interface NativeDB extends Library {
 
     DatabaseMetaDataStruct get_database_meta_data(ConnectionPtr conn, NativeError error);
 
+    ResultSetPtr get_database_meta_data_tables(ConnectionPtr conn, String catalog, String schema,
+                                               String table, String type, NativeError error);
+
+    ResultSetPtr get_database_meta_data_columns(ConnectionPtr conn, String catalog, String schema,
+                                                String table, String column, NativeError error);
+
+    ResultSetPtr get_database_meta_data_primary_keys(ConnectionPtr conn, String catalog, String schema,
+                                                     String table, NativeError error);
+
     void delete_database_meta_data(DatabaseMetaDataStruct meta_data);
 }

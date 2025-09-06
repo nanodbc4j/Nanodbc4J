@@ -1,7 +1,10 @@
 package io.github.michael1297.jdbc;
 
 import io.github.michael1297.exceptions.NanodbcSQLException;
+import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
+import io.github.michael1297.internal.handler.OdbcDatabaseMetaDataHandler;
+import io.github.michael1297.internal.pointer.ResultSetPtr;
 
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
@@ -10,6 +13,9 @@ import java.sql.ResultSet;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     private final WeakReference<NanodbcConnection> connection;
@@ -623,7 +629,18 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types) throws SQLException {
-        return null;
+        // https://msdn.microsoft.com/en-us/library/ms710171.aspx
+        String typePattern = types == null ? null : Arrays.stream(types)
+                .filter(Objects::nonNull)
+                .map(t -> "'" + t + "'")
+                .collect(Collectors.joining(","));
+        try {
+            ResultSetPtr resultSetPtr = OdbcDatabaseMetaDataHandler.getTables(connection.get().getConnectionPtr(), catalog, schemaPattern, tableNamePattern, typePattern);
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
+
     }
 
     @Override
@@ -643,7 +660,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = OdbcDatabaseMetaDataHandler.getColumns(connection.get().getConnectionPtr(), catalog, schemaPattern, tableNamePattern, columnNamePattern);
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
@@ -668,7 +690,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getPrimaryKeys(String catalog, String schema, String table) throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = OdbcDatabaseMetaDataHandler.getPrimaryKeys(connection.get().getConnectionPtr(), catalog, schema, table);
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

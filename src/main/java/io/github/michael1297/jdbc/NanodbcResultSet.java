@@ -40,6 +40,11 @@ public class NanodbcResultSet implements ResultSet {
     private ResultSetMetaData metaData = null;
     private boolean closed = false;
 
+    NanodbcResultSet(ResultSetPtr resultSetPtr) {
+        this.resultSetPtr = resultSetPtr;
+        this.statement = new WeakReference<>(null);
+    }
+
     NanodbcResultSet(NanodbcStatement statement, ResultSetPtr resultSetPtr) {
         this.resultSetPtr = resultSetPtr;
         this.statement = new WeakReference<>(statement);

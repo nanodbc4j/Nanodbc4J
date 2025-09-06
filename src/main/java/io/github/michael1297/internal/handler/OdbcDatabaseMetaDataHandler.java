@@ -1,10 +1,18 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
+import io.github.michael1297.exceptions.NativeException;
+import io.github.michael1297.internal.NativeDB;
+import io.github.michael1297.internal.cstruct.NativeError;
 import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
 import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
+import io.github.michael1297.internal.pointer.ConnectionPtr;
+import io.github.michael1297.internal.pointer.ResultSetPtr;
+import io.github.michael1297.jdbc.NanodbcResultSet;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+
+import java.sql.ResultSet;
 
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcDatabaseMetaData object.
@@ -12,7 +20,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class OdbcDatabaseMetaDataHandler {
 
-    public static OdbcDatabaseMetaData processerMetaData(@NonNull DatabaseMetaDataStruct metaDataStruct){
+    public static OdbcDatabaseMetaData processerMetaData(@NonNull DatabaseMetaDataStruct metaDataStruct) {
         OdbcDatabaseMetaData metaData = new OdbcDatabaseMetaData();
 
         // === Строковые значения ===
@@ -84,36 +92,75 @@ public class OdbcDatabaseMetaDataHandler {
         metaData.generatedKeyAlwaysReturned = metaDataStruct.generatedKeyAlwaysReturned != 0;
 
         // === Целочисленные значения ===
-        metaData.supportsTransactionIsolationLevel =  metaDataStruct.supportsTransactionIsolationLevel;
-        metaData.nullCollation =  metaDataStruct.nullCollation;
-        metaData.sqlStateType =  metaDataStruct.sqlStateType;
-        metaData.defaultTransactionIsolation =  metaDataStruct.defaultTransactionIsolation;
-        metaData.resultSetHoldability =  metaDataStruct.resultSetHoldability;
-        metaData.rowIdLifetime =  metaDataStruct.rowIdLifetime;
-        metaData.maxTableNameLength =  metaDataStruct.maxTableNameLength;
-        metaData.maxSchemaNameLength =  metaDataStruct.maxSchemaNameLength;
-        metaData.maxCatalogNameLength =  metaDataStruct.maxCatalogNameLength;
-        metaData.maxColumnNameLength =  metaDataStruct.maxColumnNameLength;
-        metaData.maxColumnsInGroupBy =  metaDataStruct.maxColumnsInGroupBy;
-        metaData.maxColumnsInOrderBy =  metaDataStruct.maxColumnsInOrderBy;
-        metaData.maxColumnsInSelect =  metaDataStruct.maxColumnsInSelect;
-        metaData.maxColumnsInTable =  metaDataStruct.maxColumnsInTable;
-        metaData.maxColumnsInIndex =  metaDataStruct.maxColumnsInIndex;
-        metaData.maxStatementLength =  metaDataStruct.maxStatementLength;
-        metaData.maxStatements =  metaDataStruct.maxStatements;
-        metaData.maxTablesInSelect =  metaDataStruct.maxTablesInSelect;
-        metaData.maxUserNameLength =  metaDataStruct.maxUserNameLength;
-        metaData.maxRowSize =  metaDataStruct.maxRowSize;
-        metaData.databaseMajorVersion =  metaDataStruct.databaseMajorVersion;
-        metaData.databaseMinorVersion =  metaDataStruct.databaseMinorVersion;
-        metaData.driverMajorVersion =  metaDataStruct.driverMajorVersion;
-        metaData.driverMinorVersion =  metaDataStruct.driverMinorVersion;
+        metaData.supportsTransactionIsolationLevel = metaDataStruct.supportsTransactionIsolationLevel;
+        metaData.nullCollation = metaDataStruct.nullCollation;
+        metaData.sqlStateType = metaDataStruct.sqlStateType;
+        metaData.defaultTransactionIsolation = metaDataStruct.defaultTransactionIsolation;
+        metaData.resultSetHoldability = metaDataStruct.resultSetHoldability;
+        metaData.rowIdLifetime = metaDataStruct.rowIdLifetime;
+        metaData.maxTableNameLength = metaDataStruct.maxTableNameLength;
+        metaData.maxSchemaNameLength = metaDataStruct.maxSchemaNameLength;
+        metaData.maxCatalogNameLength = metaDataStruct.maxCatalogNameLength;
+        metaData.maxColumnNameLength = metaDataStruct.maxColumnNameLength;
+        metaData.maxColumnsInGroupBy = metaDataStruct.maxColumnsInGroupBy;
+        metaData.maxColumnsInOrderBy = metaDataStruct.maxColumnsInOrderBy;
+        metaData.maxColumnsInSelect = metaDataStruct.maxColumnsInSelect;
+        metaData.maxColumnsInTable = metaDataStruct.maxColumnsInTable;
+        metaData.maxColumnsInIndex = metaDataStruct.maxColumnsInIndex;
+        metaData.maxStatementLength = metaDataStruct.maxStatementLength;
+        metaData.maxStatements = metaDataStruct.maxStatements;
+        metaData.maxTablesInSelect = metaDataStruct.maxTablesInSelect;
+        metaData.maxUserNameLength = metaDataStruct.maxUserNameLength;
+        metaData.maxRowSize = metaDataStruct.maxRowSize;
+        metaData.databaseMajorVersion = metaDataStruct.databaseMajorVersion;
+        metaData.databaseMinorVersion = metaDataStruct.databaseMinorVersion;
+        metaData.driverMajorVersion = metaDataStruct.driverMajorVersion;
+        metaData.driverMinorVersion = metaDataStruct.driverMinorVersion;
 
         return metaData;
     }
 
-    private static String getWideString(Pointer p){
-        if(p == null || p.equals(Pointer.NULL)) {
+    public ResultSetPtr getTables(ConnectionPtr conn, String catalog, String schema, String table, String type) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog, schema, table, type, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getColumns(ConnectionPtr conn, String catalog, String schema, String table, String column) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_columns(conn, catalog, schema, table, column, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getPrimaryKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_primary_keys(conn, catalog, schema, table, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    private static String getWideString(Pointer p) {
+        if (p == null || p.equals(Pointer.NULL)) {
             return null;
         }
         return p.getWideString(0);

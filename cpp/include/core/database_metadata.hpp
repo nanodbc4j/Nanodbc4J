@@ -112,7 +112,6 @@ public:
     // === Методы, возвращающие result (каталоги) ===
     nanodbc::result getTables(const std::wstring& catalog, const std::wstring& schema,
         const std::wstring& table, const std::wstring& type) const;
-
     
     nanodbc::result getColumns(const std::wstring& catalog, const std::wstring& schema,
         const std::wstring& table, const std::wstring& column) const;

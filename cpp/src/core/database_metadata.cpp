@@ -870,28 +870,61 @@ int DatabaseMetaData::getDriverMinorVersion() const {
     return minor;
 }
 
-// === Каталоги ===
+
+// === Tables ===
+namespace {
+    class ResultSetTables : public nanodbc::catalog::tables {
+    public:
+        explicit ResultSetTables(const nanodbc::catalog::tables& other) : nanodbc::catalog::tables(other) {
+        }
+        nanodbc::result& getResult() {
+            return get_result();
+        }
+    };
+}
 
 nanodbc::result DatabaseMetaData::getTables(const std::wstring& catalog, const std::wstring& schema,
         const std::wstring& table, const std::wstring& type) const {
     auto tables_result = nanodbc::catalog(connection_).find_tables(table, type, schema, catalog);
-    
-    return {};
+    return ResultSetTables(tables_result).getResult();
 }
 
+
+// === Columns ===
+namespace {
+    class ResultSetColumns : public nanodbc::catalog::columns {
+    public:
+        explicit ResultSetColumns(const nanodbc::catalog::columns& other) : nanodbc::catalog::columns(other) {
+        }
+        nanodbc::result& getResult() {
+            return get_result();
+        }
+    };
+}
 
 nanodbc::result DatabaseMetaData::getColumns(const std::wstring& catalog, const std::wstring& schema,
         const std::wstring& table, const std::wstring& column) const {
     auto columns_result = nanodbc::catalog(connection_).find_columns(column, table, schema, catalog);
+    return ResultSetColumns(columns_result).getResult();
+}
 
-    return {};
+
+// === Primary Keys ===
+namespace {
+    class ResultSetPrimaryKeys : public nanodbc::catalog::primary_keys {
+    public:
+        explicit ResultSetPrimaryKeys(const nanodbc::catalog::primary_keys& other) : nanodbc::catalog::primary_keys(other) {
+        }
+        nanodbc::result& getResult() {
+            return get_result();
+        }
+    };
 }
 
 nanodbc::result DatabaseMetaData::getPrimaryKeys(const std::wstring& catalog, const std::wstring& schema,
         const std::wstring& table) const {
     auto primary_keys_result = nanodbc::catalog(connection_).find_primary_keys(table, schema, catalog);
-
-    return {};
+    return ResultSetPrimaryKeys(primary_keys_result).getResult();
 }
 
 nanodbc::result DatabaseMetaData::getImportedKeys(const std::wstring& catalog, const std::wstring& schema,
@@ -905,14 +938,40 @@ nanodbc::result DatabaseMetaData::getTypeInfo(short sqlType) const {
     return {};
 }
 
+
+// === Procedures ===
+namespace {
+    class ResultSetProcedures : public nanodbc::catalog::procedures {
+    public:
+        explicit ResultSetProcedures(const nanodbc::catalog::procedures& other) : nanodbc::catalog::procedures(other) {
+        }
+        nanodbc::result& getResult() {
+            return get_result();
+        }
+    };
+}
+
 nanodbc::result DatabaseMetaData::getProcedures(const std::wstring& catalog, const std::wstring& schema,
     const std::wstring& procedure) const {
     auto procedures_keys_result = nanodbc::catalog(connection_).find_procedures (procedure, schema, catalog);
-    return {};
+    return ResultSetProcedures(procedures_keys_result).getResult();
+}
+
+
+// === Procedure Columns ===
+namespace {
+    class ResultSetProcedureColumns : public nanodbc::catalog::procedure_columns {
+    public:
+        explicit ResultSetProcedureColumns(const nanodbc::catalog::procedure_columns& other) : nanodbc::catalog::procedure_columns(other) {
+        }
+        nanodbc::result& getResult() {
+            return get_result();
+        }
+    };
 }
 
 nanodbc::result DatabaseMetaData::getProcedureColumns(const std::wstring& catalog, const std::wstring& schema,
     const std::wstring& procedure, const std::wstring& column) const {
     auto procedure_columns_result = nanodbc::catalog(connection_).find_procedure_columns (column, procedure, schema, catalog);
-    return {};
+    return ResultSetProcedureColumns(procedure_columns_result).getResult();
 }
