@@ -11,8 +11,6 @@
 namespace {
     class ResultSetTables : public nanodbc::catalog::tables {
     public:
-        explicit ResultSetTables(const nanodbc::catalog::tables& other) : nanodbc::catalog::tables(other) {
-        }
         nanodbc::result& getResult() {
             return get_result();
         }
@@ -20,8 +18,6 @@ namespace {
 
     class ResultSetColumns : public nanodbc::catalog::columns {
     public:
-        explicit ResultSetColumns(const nanodbc::catalog::columns& other) : nanodbc::catalog::columns(other) {
-        }
         nanodbc::result& getResult() {
             return get_result();
         }
@@ -29,8 +25,6 @@ namespace {
 
     class ResultSetPrimaryKeys : public nanodbc::catalog::primary_keys {
     public:
-        explicit ResultSetPrimaryKeys(const nanodbc::catalog::primary_keys& other) : nanodbc::catalog::primary_keys(other) {
-        }
         nanodbc::result& getResult() {
             return get_result();
         }
@@ -38,8 +32,6 @@ namespace {
 
     class ResultSetProcedures : public nanodbc::catalog::procedures {
     public:
-        explicit ResultSetProcedures(const nanodbc::catalog::procedures& other) : nanodbc::catalog::procedures(other) {
-        }
         nanodbc::result& getResult() {
             return get_result();
         }
@@ -47,8 +39,6 @@ namespace {
 
     class ResultSetProcedureColumns : public nanodbc::catalog::procedure_columns {
     public:
-        explicit ResultSetProcedureColumns(const nanodbc::catalog::procedure_columns& other) : nanodbc::catalog::procedure_columns(other) {
-        }
         nanodbc::result& getResult() {
             return get_result();
         }
