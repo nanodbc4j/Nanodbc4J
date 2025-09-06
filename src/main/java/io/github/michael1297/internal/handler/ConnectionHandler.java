@@ -1,25 +1,23 @@
 package io.github.michael1297.internal.handler;
 
-import com.sun.jna.Pointer;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
+import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
 import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
-import io.github.michael1297.internal.pointer.OdbcDatabaseMetaDataPrt;
 import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.cstruct.NativeError;
 import io.github.michael1297.jdbc.NanodbcConnection;
 import io.github.michael1297.jdbc.NanodbcDatabaseMetaData;
+import lombok.experimental.UtilityClass;
 
 import java.sql.DatabaseMetaData;
 
 /**
  * Native ODBC connection operations: connect, disconnect, create statement.
  */
+@UtilityClass
 public final class ConnectionHandler {
-    // Static methods only
-    private ConnectionHandler() {
-    }
 
     public static ConnectionPtr connect(String connection_string) {
         NativeError nativeError = new NativeError();
@@ -108,22 +106,22 @@ public final class ConnectionHandler {
 
     public static DatabaseMetaData getDatabaseSetMetaData(NanodbcConnection connection, ConnectionPtr connectionPtr) {
         NativeError nativeError = new NativeError();
-        OdbcDatabaseMetaDataPrt metaDataPtr = null;
+        DatabaseMetaDataStruct metaDataStruct = null;
         try {
-            metaDataPtr = NativeDB.INSTANCE.get_database_meta_data(connectionPtr, nativeError);
+            metaDataStruct = NativeDB.INSTANCE.get_database_meta_data(connectionPtr, nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
 
-            if (metaDataPtr == null || metaDataPtr.getPointer().equals(Pointer.NULL)) {
+            if (metaDataStruct == null) {
                 return null;
             }
 
-            OdbcDatabaseMetaData metaData = OdbcDatabaseMetaDataHandler.processerMetaData(metaDataPtr);
+            OdbcDatabaseMetaData metaData = OdbcDatabaseMetaDataHandler.processerMetaData(metaDataStruct);
             return new NanodbcDatabaseMetaData(connection, metaData);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_database_meta_data(metaDataPtr);
+            NativeDB.INSTANCE.delete_database_meta_data(metaDataStruct);
         }
     }
 }

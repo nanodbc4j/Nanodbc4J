@@ -8,6 +8,7 @@ import io.github.michael1297.jdbc.SpdLogLevel;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.DatasourceStruct;
 import io.github.michael1297.internal.cstruct.DriverStruct;
+import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +16,9 @@ import java.util.List;
 /**
  * Main native interface. Loads odbc.dll and exposes ODBC functions via JNA.
  */
+@UtilityClass
 public final class Handler {
     public static final long POINTER_SIZE = System.getProperty("os.arch").endsWith("64") ? 8 : 4;
-
-    // Static methods only
-    private Handler() {
-    }
 
     public static void setLogLevel(SpdLogLevel level) {
         if (NativeDB.INSTANCE.set_log_level(level.getValue()) != 0) {

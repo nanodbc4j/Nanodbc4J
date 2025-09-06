@@ -2,7 +2,9 @@ package io.github.michael1297.internal.cstruct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Structure.FieldOrder({
         // === Строковые значения ===
         "databaseProductName",
@@ -192,9 +194,6 @@ public class DatabaseMetaDataStruct extends Structure {
     public int databaseMinorVersion;
     public int driverMajorVersion;
     public int driverMinorVersion;
-
-    public DatabaseMetaDataStruct() {
-    }
 
     public DatabaseMetaDataStruct(Pointer p) {
         super(p);

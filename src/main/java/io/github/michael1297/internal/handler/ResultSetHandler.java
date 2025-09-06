@@ -1,16 +1,17 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
+import io.github.michael1297.internal.cstruct.ResultSetMetaDataStruct;
 import io.github.michael1297.internal.dto.OdbcResultSetMetadata;
 import io.github.michael1297.jdbc.NanodbcResultSetMetaData;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
-import io.github.michael1297.internal.pointer.OdbcResultSetMetaDataPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.cstruct.DateStruct;
 import io.github.michael1297.internal.cstruct.NativeError;
 import io.github.michael1297.internal.cstruct.TimeStruct;
 import io.github.michael1297.internal.cstruct.TimestampStruct;
+import lombok.experimental.UtilityClass;
 
 import java.sql.Date;
 import java.sql.ResultSetMetaData;
@@ -19,13 +20,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@UtilityClass
 public final class ResultSetHandler {
 
     private static final int MICROSECONDS_TO_NANOSECONDS = 1000;
-
-    // Static methods only
-    private ResultSetHandler() {
-    }
 
     public static boolean next(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
@@ -181,22 +179,22 @@ public final class ResultSetHandler {
 
     public static ResultSetMetaData getResultSetMetaData(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
-        OdbcResultSetMetaDataPtr metaDataPtr = null;
+        ResultSetMetaDataStruct metaDataStruct = null;
         try {
-            metaDataPtr = NativeDB.INSTANCE.get_meta_data(resultSet, nativeError);
+            metaDataStruct = NativeDB.INSTANCE.get_meta_data(resultSet, nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
 
-            if (metaDataPtr == null || metaDataPtr.getPointer().equals(Pointer.NULL)) {
+            if (metaDataStruct == null) {
                 return null;
             }
 
-            OdbcResultSetMetadata metaData = OdbcResultSetMetaDataHandler.processerMetaData(metaDataPtr);
+            OdbcResultSetMetadata metaData = OdbcResultSetMetaDataHandler.processerMetaData(metaDataStruct);
             return new NanodbcResultSetMetaData(metaData);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_meta_data(metaDataPtr);
+            NativeDB.INSTANCE.delete_meta_data(metaDataStruct);
         }
     }
 

@@ -2,15 +2,14 @@ package io.github.michael1297.internal.cstruct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Structure.FieldOrder({"columnCount", "column"})
 public final class ResultSetMetaDataStruct extends Structure {
 
     public int columnCount;
     public Pointer column;
-
-    public ResultSetMetaDataStruct() {
-    }
 
     public ResultSetMetaDataStruct(Pointer p) {
         super(p);
@@ -22,6 +21,7 @@ public final class ResultSetMetaDataStruct extends Structure {
         read();
     }
 
+    @NoArgsConstructor
     @Structure.FieldOrder({
             "isAutoIncrement",
             "isCaseSensitive",
@@ -65,9 +65,6 @@ public final class ResultSetMetaDataStruct extends Structure {
         public Pointer catalogName;
         public Pointer columnTypeName;
         public Pointer columnClassName;
-
-        public ColumnMetaDataStruct() {
-        }
 
         public ColumnMetaDataStruct(Pointer p) {
             super(p);

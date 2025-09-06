@@ -2,8 +2,9 @@ package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
 import io.github.michael1297.internal.dto.OdbcResultSetMetadata;
-import io.github.michael1297.internal.pointer.OdbcResultSetMetaDataPtr;
 import io.github.michael1297.internal.cstruct.ResultSetMetaDataStruct;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 
@@ -12,18 +13,11 @@ import static io.github.michael1297.internal.handler.Handler.POINTER_SIZE;
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcResultSetMetadata object.
  */
+@UtilityClass
 public final class OdbcResultSetMetaDataHandler {
-    // Static methods only
-    private OdbcResultSetMetaDataHandler() {
-    }
 
-    public static OdbcResultSetMetadata processerMetaData(OdbcResultSetMetaDataPtr metaDataPtr) {
-        if (metaDataPtr == null || metaDataPtr.getPointer() == null) {
-            throw new IllegalArgumentException("MetaDataPtr is null");
-        }
-
+    public static OdbcResultSetMetadata processerMetaData(@NonNull ResultSetMetaDataStruct metaDataStruct) {
         OdbcResultSetMetadata metaData = new OdbcResultSetMetadata();
-        ResultSetMetaDataStruct metaDataStruct = new ResultSetMetaDataStruct(metaDataPtr.getPointer());
         metaData.columnCount = metaDataStruct.columnCount;
         metaData.columnMetaData = new ArrayList<>(metaData.columnCount);
 

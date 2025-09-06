@@ -2,24 +2,18 @@ package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
 import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
-import io.github.michael1297.internal.pointer.OdbcDatabaseMetaDataPrt;
 import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcDatabaseMetaData object.
  */
+@UtilityClass
 public class OdbcDatabaseMetaDataHandler {
-    // Static methods only
-    private OdbcDatabaseMetaDataHandler(){
-    }
 
-    public static OdbcDatabaseMetaData processerMetaData(OdbcDatabaseMetaDataPrt metaDataPtr){
-        if (metaDataPtr == null || metaDataPtr.getPointer() == null) {
-            throw new IllegalArgumentException("MetaDataPtr is null");
-        }
-
+    public static OdbcDatabaseMetaData processerMetaData(@NonNull DatabaseMetaDataStruct metaDataStruct){
         OdbcDatabaseMetaData metaData = new OdbcDatabaseMetaData();
-        DatabaseMetaDataStruct metaDataStruct = new DatabaseMetaDataStruct(metaDataPtr.getPointer());
 
         // === Строковые значения ===
         metaData.databaseProductName = getWideString(metaDataStruct.databaseProductName);

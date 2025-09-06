@@ -9,6 +9,7 @@ import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.cstruct.NativeError;
+import lombok.experimental.UtilityClass;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -17,13 +18,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@UtilityClass
 public final class StatementHandler {
 
     private static final int NANOS_PER_MICRO = 1000;
-
-    // Static methods only
-    private StatementHandler() {
-    }
 
     public static ResultSetPtr execute(ConnectionPtr conn, String sql) {
         NativeError nativeError = new NativeError();

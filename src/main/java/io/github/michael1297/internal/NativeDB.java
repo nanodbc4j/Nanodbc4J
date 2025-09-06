@@ -169,11 +169,11 @@ public interface NativeDB extends Library {
 
     void delete_driver_array(Pointer driver_array, int size);
 
-    OdbcResultSetMetaDataPtr get_meta_data(ResultSetPtr results, NativeError error);
+    ResultSetMetaDataStruct get_meta_data(ResultSetPtr results, NativeError error);
 
-    void delete_meta_data(OdbcResultSetMetaDataPtr meta_data);
+    void delete_meta_data(ResultSetMetaDataStruct meta_data);
 
-    OdbcDatabaseMetaDataPrt get_database_meta_data(ConnectionPtr conn, NativeError error);
+    DatabaseMetaDataStruct get_database_meta_data(ConnectionPtr conn, NativeError error);
 
-    void delete_database_meta_data(OdbcDatabaseMetaDataPrt meta_data);
+    void delete_database_meta_data(DatabaseMetaDataStruct meta_data);
 }
