@@ -13,8 +13,8 @@ extern "C" {
             const char16_t* value = nullptr;   ///< Driver attribute value.
 
             Attribute() = default;
-            Attribute(const Attribute& other);
-            Attribute(const nanodbc::driver::attribute& other);
+            explicit Attribute(const Attribute& other);
+            explicit Attribute(const nanodbc::driver::attribute& other);
             ~Attribute();
         };
 
@@ -23,8 +23,8 @@ extern "C" {
         int attribute_count = 0;
 
         Driver() = default;
-        Driver(const Driver& other);
-        Driver(const nanodbc::driver& other);
+        explicit Driver(const Driver& other);
+        explicit Driver(const nanodbc::driver& other);
         ~Driver();
     };
 
@@ -33,8 +33,8 @@ extern "C" {
         const char16_t* driver = nullptr; ///< Driver description.
 
         Datasource() = default;
-        Datasource(const Datasource& other);
-        Datasource(const nanodbc::datasource& other);
+        explicit Datasource(const Datasource& other);
+        explicit Datasource(const nanodbc::datasource& other);
         ~Datasource();
     };
 
@@ -44,8 +44,8 @@ extern "C" {
         int16_t day = 1;   ///< Day of the month [1-31].
 
         CDate() = default;
-        CDate(const CDate& other);
-        CDate(const nanodbc::date& other);
+        explicit CDate(const CDate& other);
+        explicit CDate(const nanodbc::date& other);
     };
 
     struct CTime {
@@ -54,8 +54,8 @@ extern "C" {
         int16_t second = 0;  ///< Seconds after the minute.
 
         CTime() = default;
-        CTime(const CTime& other);
-        CTime(const nanodbc::time& other);
+        explicit CTime(const CTime& other);
+        explicit CTime(const nanodbc::time& other);
     };
 
     struct CTimestamp {
@@ -68,8 +68,8 @@ extern "C" {
         int32_t fract = 0;    ///< Fractional seconds.
 
         CTimestamp() = default;
-        CTimestamp(const CTimestamp& other);
-        CTimestamp(const nanodbc::timestamp& other);
+        explicit CTimestamp(const CTimestamp& other);
+        explicit CTimestamp(const nanodbc::timestamp& other);
     };    
 
 #ifdef __cplusplus

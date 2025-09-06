@@ -9,7 +9,7 @@ private:
     SQLHSTMT hStmt_;
 
 public:
-    ResultSetMetaData(const nanodbc::result& result);    
+    explicit ResultSetMetaData(const nanodbc::result& result);
 
     int getColumnCount() const;
 

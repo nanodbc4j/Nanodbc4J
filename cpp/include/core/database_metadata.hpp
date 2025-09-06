@@ -10,7 +10,7 @@ private:
     SQLHDBC hdbc_;
 
 public:
-    DatabaseMetaData(nanodbc::connection& connection);
+    explicit DatabaseMetaData(nanodbc::connection& connection);
 
     // === Строковые методы ===
     std::wstring getDatabaseProductName() const;

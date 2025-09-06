@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,7 +10,7 @@ extern "C" {
         char* error_type;
 
         NativeError();
-        NativeError(const NativeError& other);
+        explicit NativeError(const NativeError& other);
         ~NativeError();
     };
 

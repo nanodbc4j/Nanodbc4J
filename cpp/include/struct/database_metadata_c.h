@@ -101,8 +101,8 @@ extern "C" {
         int driverMinorVersion = 0;
 
         CDatabaseMetaData() = default;
-        CDatabaseMetaData(const CDatabaseMetaData& other);
-        CDatabaseMetaData(const DatabaseMetaData& other);
+        explicit CDatabaseMetaData(const CDatabaseMetaData& other);
+        explicit CDatabaseMetaData(const DatabaseMetaData& other);
         ~CDatabaseMetaData();
     };
 

@@ -31,7 +31,7 @@ extern "C" {
             const char16_t* columnClassName = nullptr;
 
             ColumnMetaData() = default;
-            ColumnMetaData(const ColumnMetaData& other);
+            explicit ColumnMetaData(const ColumnMetaData& other);
             ~ColumnMetaData();
         };
 
@@ -39,8 +39,8 @@ extern "C" {
         const ColumnMetaData** column = nullptr;
 
         CResultSetMetaData() = default;
-        CResultSetMetaData(const CResultSetMetaData& other);
-        CResultSetMetaData(const ResultSetMetaData& other);
+        explicit CResultSetMetaData(const CResultSetMetaData& other);
+        explicit CResultSetMetaData(const ResultSetMetaData& other);
         ~CResultSetMetaData();
 	};
 
