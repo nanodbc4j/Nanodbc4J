@@ -640,22 +640,36 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
-
     }
 
     @Override
     public ResultSet getSchemas() throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = OdbcDatabaseMetaDataHandler.getSchemas(connection.get().getConnectionPtr());
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public ResultSet getCatalogs() throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = OdbcDatabaseMetaDataHandler.getCatalogs(connection.get().getConnectionPtr());
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public ResultSet getTableTypes() throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = OdbcDatabaseMetaDataHandler.getTableTypes(connection.get().getConnectionPtr());
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

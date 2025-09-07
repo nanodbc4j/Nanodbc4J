@@ -107,9 +107,12 @@ public:
     int getDriverMajorVersion() const;
     int getDriverMinorVersion() const;
 
-   
+    nanodbc::result getSchemas() const;
 
-    // === Методы, возвращающие result (каталоги) ===
+    nanodbc::result getCatalogs() const;
+
+    nanodbc::result getTableTypes() const;
+
     nanodbc::result getTables(const std::wstring& catalog, const std::wstring& schema,
         const std::wstring& table, const std::wstring& type) const;
     

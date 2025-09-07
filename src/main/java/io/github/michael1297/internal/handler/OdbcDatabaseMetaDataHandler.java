@@ -8,11 +8,8 @@ import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
 import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
-import io.github.michael1297.jdbc.NanodbcResultSet;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-
-import java.sql.ResultSet;
 
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcDatabaseMetaData object.
@@ -124,6 +121,45 @@ public class OdbcDatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog, schema, table, type, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getSchemas(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_schemas(conn, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getCatalogs(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_catalogs(conn, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getTableTypes(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_table_types(conn, nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
