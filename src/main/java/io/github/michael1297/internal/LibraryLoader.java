@@ -1,6 +1,7 @@
 package io.github.michael1297.internal;
 
 import com.sun.jna.Platform;
+import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.logging.Logger;
 
+@UtilityClass
 public class LibraryLoader {
     private static final Logger logger = Logger.getLogger(LibraryLoader.class.getName());
     private static final String LIBRARY_NAME = "odbc";

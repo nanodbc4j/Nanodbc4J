@@ -1,5 +1,10 @@
 package io.github.michael1297.jdbc;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum SpdLogLevel {
     TRACE(0),
     DEBUG(1),
@@ -10,14 +15,6 @@ public enum SpdLogLevel {
     OFF(6);
 
     private final int value;
-
-    SpdLogLevel(int value) {
-        this.value = value;
-    }
-
-    public int getValue() {
-        return value;
-    }
 
     public static SpdLogLevel fromInt(int value) {
         for (SpdLogLevel level : values()) {
