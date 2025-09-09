@@ -13,6 +13,7 @@ import io.github.michael1297.internal.cstruct.TimeStruct;
 import io.github.michael1297.internal.cstruct.TimestampStruct;
 import lombok.experimental.UtilityClass;
 
+import java.io.InvalidClassException;
 import java.sql.Date;
 import java.sql.ResultSetMetaData;
 import java.sql.Time;
@@ -174,6 +175,43 @@ public final class ResultSetHandler {
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
             NativeDB.INSTANCE.delete_timestamp(timestampStruct);
+        }
+    }
+
+    public static boolean wasNull(ResultSetPtr resultSet, Object lastColumn) throws InvalidClassException {
+        if (lastColumn == null) {
+            return true;
+        }
+        NativeError nativeError = new NativeError();
+        try {
+            boolean isNull;
+            if (lastColumn instanceof Integer column) {
+                isNull =  NativeDB.INSTANCE.was_null_by_index(resultSet, column - 1, nativeError) != 0;
+            } else if (lastColumn instanceof String column) {
+                isNull = NativeDB.INSTANCE.was_null_by_name(resultSet, column + "\0", nativeError) != 0;
+            } else {
+                throw new InvalidClassException("lastColumn is not of type Integer or String");
+            }
+
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return isNull;
+        }  finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static int findColumn(ResultSetPtr resultSet, String name) {
+        NativeError nativeError = new NativeError();
+        try {
+            int col =  NativeDB.INSTANCE.find_column_by_name(resultSet, name + "\0", nativeError) + 1;
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return col;
+        }  finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
 

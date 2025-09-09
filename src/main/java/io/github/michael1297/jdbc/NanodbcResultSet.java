@@ -7,6 +7,7 @@ import io.github.michael1297.internal.handler.ResultSetHandler;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 
 import java.io.InputStream;
+import java.io.InvalidClassException;
 import java.io.Reader;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
@@ -39,6 +40,7 @@ public class NanodbcResultSet implements ResultSet {
     private final WeakReference<NanodbcStatement> statement;
     private ResultSetMetaData metaData = null;
     private boolean closed = false;
+    private Object lastColumn = null;
 
     NanodbcResultSet(ResultSetPtr resultSetPtr) {
         this.resultSetPtr = resultSetPtr;
@@ -66,6 +68,7 @@ public class NanodbcResultSet implements ResultSet {
             ResultSetHandler.close(resultSetPtr);
             resultSetPtr = null;
             metaData = null;
+            lastColumn = null;
             closed = true;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -74,13 +77,19 @@ public class NanodbcResultSet implements ResultSet {
 
     @Override
     public boolean wasNull() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            return ResultSetHandler.wasNull(resultSetPtr, lastColumn);
+        } catch (NativeException | InvalidClassException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public String getString(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getStringValueByIndex(resultSetPtr, columnIndex);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -91,6 +100,7 @@ public class NanodbcResultSet implements ResultSet {
     public boolean getBoolean(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_bool_value_by_index) != 0;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -106,6 +116,7 @@ public class NanodbcResultSet implements ResultSet {
     public short getShort(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_short_value_by_index);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -116,6 +127,7 @@ public class NanodbcResultSet implements ResultSet {
     public int getInt(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_int_value_by_index);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -126,6 +138,7 @@ public class NanodbcResultSet implements ResultSet {
     public long getLong(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_long_value_by_index);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -136,6 +149,7 @@ public class NanodbcResultSet implements ResultSet {
     public float getFloat(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_float_value_by_index);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -146,6 +160,7 @@ public class NanodbcResultSet implements ResultSet {
     public double getDouble(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getValueByIndex(resultSetPtr, columnIndex, NativeDB.INSTANCE::get_double_value_by_index);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -166,6 +181,7 @@ public class NanodbcResultSet implements ResultSet {
     public Date getDate(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getDateValueByIndex(resultSetPtr, columnIndex);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -176,6 +192,7 @@ public class NanodbcResultSet implements ResultSet {
     public Time getTime(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getTimeValueByIndex(resultSetPtr, columnIndex);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -186,6 +203,7 @@ public class NanodbcResultSet implements ResultSet {
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnIndex;
             return ResultSetHandler.getTimestampValueByIndex(resultSetPtr, columnIndex);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -211,6 +229,7 @@ public class NanodbcResultSet implements ResultSet {
     public String getString(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getStringValueByName(resultSetPtr, columnLabel);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -221,6 +240,7 @@ public class NanodbcResultSet implements ResultSet {
     public boolean getBoolean(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_bool_value_by_name) != 0;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -236,6 +256,7 @@ public class NanodbcResultSet implements ResultSet {
     public short getShort(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_short_value_by_name);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -246,6 +267,7 @@ public class NanodbcResultSet implements ResultSet {
     public int getInt(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_int_value_by_name);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -256,6 +278,7 @@ public class NanodbcResultSet implements ResultSet {
     public long getLong(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_long_value_by_name);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -266,6 +289,7 @@ public class NanodbcResultSet implements ResultSet {
     public float getFloat(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_float_value_by_name);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -276,6 +300,7 @@ public class NanodbcResultSet implements ResultSet {
     public double getDouble(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getValueByName(resultSetPtr, columnLabel, NativeDB.INSTANCE::get_double_value_by_name);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -296,6 +321,7 @@ public class NanodbcResultSet implements ResultSet {
     public Date getDate(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getDateValueByName(resultSetPtr, columnLabel);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -306,6 +332,7 @@ public class NanodbcResultSet implements ResultSet {
     public Time getTime(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getTimeValueByName(resultSetPtr, columnLabel);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -316,6 +343,7 @@ public class NanodbcResultSet implements ResultSet {
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         try {
+            lastColumn = columnLabel;
             return ResultSetHandler.getTimestampValueByName(resultSetPtr, columnLabel);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -368,6 +396,7 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public Object getObject(int columnIndex) throws SQLException {
         throwIfAlreadyClosed();
+        lastColumn = columnIndex;
         ResultSetMetaData metaData = getMetaData();
         String className = metaData.getColumnClassName(columnIndex);
 
@@ -406,6 +435,7 @@ public class NanodbcResultSet implements ResultSet {
     public Object getObject(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
         int index = findColumn(columnLabel);
+        lastColumn = columnLabel;
         if (index == -1) {
             throw new SQLException("Column " + columnLabel + " not found");
         }
@@ -415,13 +445,11 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public int findColumn(String columnLabel) throws SQLException {
         throwIfAlreadyClosed();
-        ResultSetMetaData metaData = getMetaData();
-        for (int i = 1; i <= metaData.getColumnCount(); i++) {
-            if (metaData.getColumnLabel(i).equals(columnLabel)) {
-                return i;
-            }
+        try {
+            return ResultSetHandler.findColumn(resultSetPtr, columnLabel);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
         }
-        return -1;
     }
 
     @Override

@@ -121,6 +121,8 @@ public interface NativeDB extends Library {
 
     TimestampStruct get_timestamp_value_by_index(ResultSetPtr results, int index, NativeError error);
 
+    byte was_null_by_index(ResultSetPtr results, int index, NativeError error);
+
     int get_int_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     long get_long_value_by_name(ResultSetPtr results, String name, NativeError error);
@@ -140,6 +142,10 @@ public interface NativeDB extends Library {
     TimeStruct get_time_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     TimestampStruct get_timestamp_value_by_name(ResultSetPtr results, String name, NativeError error);
+
+    int find_column_by_name(ResultSetPtr results, String name, NativeError error);
+
+    byte was_null_by_name(ResultSetPtr results, String name, NativeError error);
 
     void delete_date(DateStruct date);
 

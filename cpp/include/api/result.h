@@ -28,6 +28,10 @@ extern "C" {
 
     ODBC_API CTimestamp* get_timestamp_value_by_index(nanodbc::result* results, int index, NativeError* error);
 
+    ODBC_API int find_column_by_index(nanodbc::result* results, int index, NativeError* error);
+
+    ODBC_API bool was_null_by_index(nanodbc::result* results, int index, NativeError* error);
+
     ODBC_API int get_int_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
     ODBC_API long get_long_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
@@ -47,6 +51,10 @@ extern "C" {
     ODBC_API CTime* get_time_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
     ODBC_API CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
+
+    ODBC_API int find_column_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
+
+    ODBC_API bool was_null_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
     ODBC_API void close_result(nanodbc::result* results, NativeError* error);
 
