@@ -4,7 +4,9 @@
 #include "api/export.h"
 #include "struct/nanodbc_c.h"
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
     ODBC_API bool next_result(nanodbc::result* results, NativeError* error);
 
@@ -63,4 +65,7 @@ extern "C" {
     ODBC_API void delete_time(CTime* time);
 
     ODBC_API void delete_timestamp(CTimestamp* timestamp);
-}
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

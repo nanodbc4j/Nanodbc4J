@@ -4,7 +4,9 @@
 #include "struct/nanodbc_c.h"
 #include "api/export.h"
 
-extern "C" {    
+#ifdef __cplusplus
+extern "C" {
+#endif
     
     ODBC_API const Driver** drivers_list(int* count);
 
@@ -21,4 +23,7 @@ extern "C" {
     ODBC_API void delete_driver(Driver* driver);
 
     ODBC_API void delete_driver_array(Driver** driver_array, int size);
-}
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

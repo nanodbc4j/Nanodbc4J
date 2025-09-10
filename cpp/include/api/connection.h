@@ -3,7 +3,9 @@
 #include "struct/error_info.h"
 #include "api/export.h"
 
-extern "C" { 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
     ODBC_API nanodbc::connection* connection(const char16_t* connection_string, NativeError* error);
 
@@ -21,4 +23,6 @@ extern "C" {
 
     ODBC_API void disconnect(nanodbc::connection* conn, NativeError* error);
 
-}
+#ifdef __cplusplus
+} // extern "C"
+#endif

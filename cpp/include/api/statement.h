@@ -4,7 +4,9 @@
 #include "struct/nanodbc_c.h"
 #include "api/export.h"
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
     ODBC_API void prepare_statement(nanodbc::statement* stmt, const char16_t* sql, long timeout, NativeError* error);
 
@@ -34,4 +36,6 @@ extern "C" {
 
     ODBC_API void close_statement(nanodbc::statement* stmt, NativeError* error);
 
-}
+#ifdef __cplusplus
+} // extern "C"
+#endif
