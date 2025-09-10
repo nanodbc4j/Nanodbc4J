@@ -37,7 +37,7 @@ public class NanodbcConnection implements Connection {
 
     NanodbcConnection(String url) throws SQLException {
         try {
-            connectionPtr = ConnectionHandler.connect(url);
+            connectionPtr = ConnectionHandler.connect(url, 5);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }

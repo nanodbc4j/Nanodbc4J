@@ -57,6 +57,7 @@ void set_error(NativeError* error, int code, const char* type, const char* messa
 
     if (error) {
         clear_native_error(error);
+        error->error_code = code;
         error->error_type = strdup(type);
         error->error_message = strdup(message);
         return;

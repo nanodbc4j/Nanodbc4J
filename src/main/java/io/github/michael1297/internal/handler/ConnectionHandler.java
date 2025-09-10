@@ -34,11 +34,15 @@ public final class ConnectionHandler {
 
     public static ConnectionPtr connect(String connection_string, long timeout) {
         NativeError nativeError = new NativeError();
-        ConnectionPtr ptr = NativeDB.INSTANCE.connection_with_timeout(connection_string + '\0', timeout, nativeError);
-        if (nativeError.error_code != 0) {
-            throw new NativeException(nativeError);
+        try {
+            ConnectionPtr ptr = NativeDB.INSTANCE.connection_with_timeout(connection_string + '\0', timeout, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return ptr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
         }
-        return ptr;
     }
 
     public static ConnectionPtr connect(String dsn, String user, String pass, long timeout) {
