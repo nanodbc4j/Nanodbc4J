@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <locale>
 #include <codecvt>
+#include <sstream>
+#include <cwctype>
 #include <sql.h>
 #include "utils/logger.hpp"
 
@@ -107,6 +109,49 @@ inline static T joinString(const std::vector<T>& vec, const T& delimiter) {
         result += vec[i];
     }
     return result;
+}
+
+inline static std::pair<int, int> processingVersionString(std::wstring ver) {
+    // Пропускаем не-цифры и не-знаки в начале строки
+    auto it = ver.begin();
+    while (it != ver.end() && !std::iswdigit(*it) && *it != L'+' && *it != L'-' && *it != L'.') {
+        ++it;
+    }
+
+    if (it == ver.end()) {
+        LOG_TRACE("No version info found; returning {{0, 0}}");
+        return { 0, 0 };
+    }
+    // Если строка начинается с точки — значит, major = 0
+    bool leadingDot = (*it == L'.');
+    std::wstring cleaned = leadingDot ? (L"0" + std::wstring(it, ver.end())) : std::wstring(it, ver.end());
+    std::wistringstream wiss(cleaned);
+
+    int major = 0;
+    wchar_t dot = 0;
+    int minor = 0;
+
+    // Пробуем прочитать major
+    if (!(wiss >> major)) {
+        LOG_TRACE("Failed to parse major version; returning {{0, 0}}");
+        return { 0, 0 };
+    }
+
+    // Читаем точку и minor, если есть
+    if (wiss.peek() == L'.') {
+        wchar_t dot;
+        wiss >> dot;  // Пропускаем точку
+
+        if (!(wiss >> minor)) {
+            LOG_TRACE("Failed to parse minor version; minor set to 0");
+            minor = 0;  // не ошибка — minor может отсутствовать или быть некорректным
+        }
+    } else {
+        LOG_TRACE("No dot found after major; minor version is 0");
+        // minor уже 0 — ничего делать не нужно
+    }
+
+    return { major, minor };
 }
 
 // === Конструктор ===
@@ -872,11 +917,7 @@ int DatabaseMetaData::getDatabaseMajorVersion() const {
         LOG_TRACE("Version string is empty, returning 0");
         return 0;
     }
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-    std::string utf8 = conv.to_bytes(ver);
-    int major = 0, minor = 0;
-    sscanf(utf8.c_str(), "%d.%d", &major, &minor);
-    LOG_TRACE("Parsed major version: {}", major);
+    auto [major, minor] = processingVersionString(ver);
     return major;
 }
 
@@ -887,11 +928,7 @@ int DatabaseMetaData::getDatabaseMinorVersion() const {
         LOG_TRACE("Version string is empty, returning 0");
         return 0;
     }
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-    std::string utf8 = conv.to_bytes(ver);
-    int major = 0, minor = 0;
-    sscanf(utf8.c_str(), "%d.%d", &major, &minor);
-    LOG_TRACE("Parsed minor version: {}", minor);
+    auto [major, minor] = processingVersionString(ver);
     return minor;
 }
 
@@ -902,12 +939,8 @@ int DatabaseMetaData::getDriverMajorVersion() const {
         LOG_TRACE("Driver version string is empty, returning 0");
         return 0;
     }
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-    std::string utf8 = conv.to_bytes(ver);
-    int major = 0, minor = 0;
-    sscanf(utf8.c_str(), "%d.%d", &major, &minor);
-    LOG_TRACE("Parsed driver major version: {}", major);
-    return major;
+    auto [major, minor] = processingVersionString(ver);
+    return major;    
 }
 
 int DatabaseMetaData::getDriverMinorVersion() const {
@@ -917,11 +950,7 @@ int DatabaseMetaData::getDriverMinorVersion() const {
         LOG_TRACE("Driver version string is empty, returning 0");
         return 0;
     }
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-    std::string utf8 = conv.to_bytes(ver);
-    int major = 0, minor = 0;
-    sscanf(utf8.c_str(), "%d.%d", &major, &minor);
-    LOG_TRACE("Parsed driver minor version: {}", minor);
+    auto [major, minor] = processingVersionString(ver);
     return minor;
 }
 
