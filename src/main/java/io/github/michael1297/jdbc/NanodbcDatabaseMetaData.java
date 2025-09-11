@@ -897,7 +897,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        try {
+            ResultSetPtr resultSetPtr = OdbcDatabaseMetaDataHandler.getSchemas(connection.get().getConnectionPtr(), catalog, schemaPattern);
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

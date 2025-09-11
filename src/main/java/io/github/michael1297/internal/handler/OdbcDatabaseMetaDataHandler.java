@@ -120,7 +120,8 @@ public class OdbcDatabaseMetaDataHandler {
     public ResultSetPtr getTables(ConnectionPtr conn, String catalog, String schema, String table, String type) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog, schema, table, type, nativeError);
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog + "\0", schema + "\0", table + "\0", type + "\0", nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
@@ -134,6 +135,21 @@ public class OdbcDatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_schemas(conn, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getSchemas(ConnectionPtr conn, String catalog, String schemaPattern) {
+        NativeError nativeError = new NativeError();
+        try {
+            // используем get_database_meta_data_tables
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog + "\0", schemaPattern + "\0", "\0", "\0", nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
@@ -172,7 +188,8 @@ public class OdbcDatabaseMetaDataHandler {
     public ResultSetPtr getColumns(ConnectionPtr conn, String catalog, String schema, String table, String column) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_columns(conn, catalog, schema, table, column, nativeError);
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_columns(conn, catalog + "\0", schema + "\0", table + "\0", column + "\n", nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
@@ -185,7 +202,7 @@ public class OdbcDatabaseMetaDataHandler {
     public ResultSetPtr getPrimaryKeys(ConnectionPtr conn, String catalog, String schema, String table) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_primary_keys(conn, catalog, schema, table, nativeError);
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_primary_keys(conn, catalog + "\0", schema + "\0", table + "\0", nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }

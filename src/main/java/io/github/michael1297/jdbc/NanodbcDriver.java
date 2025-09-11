@@ -3,6 +3,7 @@ package io.github.michael1297.jdbc;
 import io.github.michael1297.internal.dto.OdbcDatasource;
 import io.github.michael1297.internal.dto.OdbcDriver;
 import io.github.michael1297.internal.handler.Handler;
+import lombok.extern.java.Log;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -20,8 +21,8 @@ import java.util.logging.Logger;
  * <p>
  * Usage: {@code DriverManager.getConnection("jdbc:odbc:Driver={...};...")}
  */
+@Log
 public class NanodbcDriver implements Driver {
-    private static final Logger logger = Logger.getLogger(NanodbcDriver.class.getName());
     public static final String PREFIX = "jdbc:odbc:";
     static final int MAJOR_VERSION = 1;
     static final int MINOR_VERSION = 7;
@@ -31,13 +32,14 @@ public class NanodbcDriver implements Driver {
             Handler.setLogLevel(SpdLogLevel.DEBUG);
             DriverManager.registerDriver(new NanodbcDriver());
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Could not register driver", e);
+            log.log(Level.SEVERE, "Could not register driver", e);
             throw new ExceptionInInitializerError(e);
         }
     }
 
     @Override
     public Connection connect(String url, Properties info) throws SQLException {
+        log.finest("connect");
         if (!acceptsURL(url)) {
             return null;
         }
@@ -51,6 +53,7 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public boolean acceptsURL(String url) {
+        log.finest("acceptsURL");
         return isValidURL(url);
     }
 
@@ -61,21 +64,25 @@ public class NanodbcDriver implements Driver {
      * @return true if the URL is valid, false otherwise
      */
     static boolean isValidURL(String url) {
+        log.finest("isValidURL");
         return url != null && url.toLowerCase().startsWith(PREFIX);
     }
 
     @Override
     public DriverPropertyInfo[] getPropertyInfo(String connection, Properties info) throws SQLException {
+        log.finest("getPropertyInfo");
         return new DriverPropertyInfo[0];
     }
 
     @Override
     public int getMajorVersion() {
+        log.finest("getMajorVersion");
         return MAJOR_VERSION;
     }
 
     @Override
     public int getMinorVersion() {
+        log.finest("getMinorVersion");
         return MINOR_VERSION;
     }
 
@@ -84,11 +91,13 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public boolean jdbcCompliant() {
+        log.finest("jdbcCompliant");
         return false;
     }
 
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        log.finest("getParentLogger");
         throw new SQLFeatureNotSupportedException();
     }
 
