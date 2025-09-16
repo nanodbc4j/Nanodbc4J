@@ -108,6 +108,55 @@ public final class ConnectionHandler {
         }
     }
 
+    public static void setAutoCommitTransaction(ConnectionPtr conn, boolean autoCommit) {
+        NativeError nativeError = new NativeError();
+        try {
+            NativeDB.INSTANCE.set_auto_commit_transaction(conn, (byte) (autoCommit ? 1 : 0), nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static void commitTransaction(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        try {
+            NativeDB.INSTANCE.commit_transaction(conn, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static void rollbackTransaction(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        try {
+            NativeDB.INSTANCE.rollback_transaction(conn, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static boolean getAutoCommitTransaction(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        try {
+            boolean result = NativeDB.INSTANCE.get_auto_commit_transaction(conn, nativeError) != 0;
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return result;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
     public static DatabaseMetaData getDatabaseSetMetaData(NanodbcConnection connection, ConnectionPtr connectionPtr) {
         NativeError nativeError = new NativeError();
         DatabaseMetaDataStruct metaDataStruct = null;

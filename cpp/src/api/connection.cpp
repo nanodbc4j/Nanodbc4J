@@ -8,7 +8,7 @@ using namespace std;
 using namespace utils;
 
 
-static nanodbc::connection* connection_with_error_handling(const function<nanodbc::connection* ()>& operation, NativeError* error) {
+static Connection* connection_with_error_handling(const function<Connection* ()>& operation, NativeError* error) {
     init_error(error);
     try {
         return operation();
@@ -25,40 +25,40 @@ static nanodbc::connection* connection_with_error_handling(const function<nanodb
     return nullptr;
 }
 
-nanodbc::connection* connection(const char16_t* connection_string, NativeError* error) {
+Connection* connection(const char16_t* connection_string, NativeError* error) {
     LOG_DEBUG_W(L"Сonnection_string={}", utils::to_wstring(connection_string));
     return connection_with_error_handling(
         [&]() {
-            return new nanodbc::connection(to_wide_string(connection_string));
+            return new Connection(to_wide_string(connection_string));
         },
         error
     );
 }
 
-nanodbc::connection* connection_with_timeout(const char16_t* connection_string, long timeout, NativeError* error) {
+Connection* connection_with_timeout(const char16_t* connection_string, long timeout, NativeError* error) {
     LOG_DEBUG_W(L"Сonnection_string={}, timeout={}", utils::to_wstring(connection_string), timeout);
     return connection_with_error_handling(
         [&]() {
-            return new nanodbc::connection(to_wide_string(connection_string), timeout);
+            return new Connection(to_wide_string(connection_string), timeout);
         },
         error
     );
 }
 
-nanodbc::connection* connection_with_user_pass_timeout(const char16_t* dsn, const char16_t* user, const char16_t* pass, long timeout, NativeError* error) {
+Connection* connection_with_user_pass_timeout(const char16_t* dsn, const char16_t* user, const char16_t* pass, long timeout, NativeError* error) {
     LOG_DEBUG_W(L"DSN={}, User={}, Pass=***, Timeout={}",
         utils::to_wstring(dsn),
         utils::to_wstring(user),
         timeout);
     return connection_with_error_handling(
         [&]() {
-            return new nanodbc::connection(to_wide_string(dsn), to_wide_string(user), to_wide_string(pass), timeout);
+            return new Connection(to_wide_string(dsn), to_wide_string(user), to_wide_string(pass), timeout);
         },
         error
     );
 }
 
-nanodbc::statement* create_statement(nanodbc::connection* conn, NativeError* error) {
+nanodbc::statement* create_statement(Connection* conn, NativeError* error) {
     LOG_DEBUG("Creating statement for connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -75,7 +75,93 @@ nanodbc::statement* create_statement(nanodbc::connection* conn, NativeError* err
     return nullptr;
 }
 
-bool is_connected(nanodbc::connection* conn, NativeError* error) {
+void set_auto_commit_transaction(Connection* conn, bool autoCommit, NativeError* error) {
+    LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
+    init_error(error);
+    try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot set auto commit transaction");
+            set_error(error, 2, "TransactionError", "Connection is null");            
+        }
+        conn->set_auto_commit(autoCommit);
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during set auto commit: {}", to_wstring(e.what()));
+    } catch (const exception& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during set auto commit: {}", to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown set auto commit error");
+        LOG_ERROR("Unknown exception during set auto commit transaction");
+    }
+}
+
+void commit_transaction(Connection* conn, NativeError* error) {
+    LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
+    init_error(error);
+    try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot commit transaction");
+            set_error(error, 2, "TransactionError", "Connection is null");
+        }
+        conn->commit();
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during commit transaction: {}", to_wstring(e.what()));
+    } catch (const exception& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during commit transaction: {}", to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown commit transaction error");
+        LOG_ERROR("Unknown exception during commit transaction");
+    }
+}
+
+void rollback_transaction(Connection* conn, NativeError* error) {
+    LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
+    init_error(error);
+    try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot rollback transaction");
+            set_error(error, 2, "TransactionError", "Connection is null");            
+        }
+        conn->rollback();
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during rollback transaction: {}", to_wstring(e.what()));
+    } catch (const exception& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during rollback transaction: {}", to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown rollback transaction error");
+        LOG_ERROR("Unknown exception during execute");
+    }
+}
+
+bool get_auto_commit_transaction(Connection* conn, NativeError* error) {
+    LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
+    init_error(error);
+    try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot get auto commit transaction");
+            set_error(error, 2, "TransactionError", "Connection is null");
+            return true;
+        }
+        return conn->get_auto_commit();
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during get auto commit transaction: {}", to_wstring(e.what()));
+    } catch (const exception& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during get auto commit transaction: {}", to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown get auto commit transaction error");
+        LOG_ERROR("Unknown exception during get auto commit transaction");
+    }
+    return true;
+}
+
+bool is_connected(Connection* conn, NativeError* error) {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -92,7 +178,7 @@ bool is_connected(nanodbc::connection* conn, NativeError* error) {
     return false;
 }
 
-nanodbc::result* execute_request(nanodbc::connection* conn, const char16_t* sql, NativeError* error) {
+nanodbc::result* execute_request(Connection* conn, const char16_t* sql, NativeError* error) {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -118,7 +204,7 @@ nanodbc::result* execute_request(nanodbc::connection* conn, const char16_t* sql,
     return nullptr;
 }
 
-int execute_request_update(nanodbc::connection* conn, const char16_t* sql, NativeError* error) {
+int execute_request_update(Connection* conn, const char16_t* sql, NativeError* error) {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -144,7 +230,7 @@ int execute_request_update(nanodbc::connection* conn, const char16_t* sql, Nativ
     return 0;
 }
 
-void disconnect(nanodbc::connection* connection, NativeError* error) {
+void disconnect(Connection* connection, NativeError* error) {
     LOG_DEBUG("Disconnecting connection: {}", reinterpret_cast<uintptr_t>(connection));
     init_error(error);
     try {

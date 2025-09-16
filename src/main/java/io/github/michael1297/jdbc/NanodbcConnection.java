@@ -84,25 +84,41 @@ public class NanodbcConnection implements Connection {
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         log.log(Level.FINEST, "setAutoCommit");
-        //throw new SQLFeatureNotSupportedException(); TODO
+        try {
+            ConnectionHandler.setAutoCommitTransaction(connectionPtr, autoCommit);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public boolean getAutoCommit() throws SQLException {
         log.log(Level.FINEST, "getAutoCommit");
-        return true; // TODO
+        try {
+            return ConnectionHandler.getAutoCommitTransaction(connectionPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public void commit() throws SQLException {
         log.log(Level.FINEST, "commit");
-        throw new SQLFeatureNotSupportedException();
+        try {
+            ConnectionHandler.commitTransaction(connectionPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public void rollback() throws SQLException {
         log.log(Level.FINEST, "rollback");
-        throw new SQLFeatureNotSupportedException();
+        try {
+            ConnectionHandler.rollbackTransaction(connectionPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

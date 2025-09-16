@@ -67,6 +67,14 @@ public interface NativeDB extends Library {
      */
     byte is_connected(ConnectionPtr conn, NativeError error);
 
+    void set_auto_commit_transaction(ConnectionPtr conn, byte autoCommit, NativeError error);
+
+    void commit_transaction(ConnectionPtr conn, NativeError error);
+
+    void rollback_transaction(ConnectionPtr conn, NativeError error);
+
+    byte get_auto_commit_transaction(ConnectionPtr conn, NativeError error);
+
     ResultSetPtr execute_request(ConnectionPtr conn, String sql, NativeError error);
 
     int execute_request_update(ConnectionPtr conn, String sql, NativeError error);
