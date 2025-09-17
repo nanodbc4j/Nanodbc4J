@@ -108,6 +108,31 @@ public final class ConnectionHandler {
         }
     }
 
+    public static void setTransactionIsolation(ConnectionPtr conn, int level) {
+        NativeError nativeError = new NativeError();
+        try {
+            NativeDB.INSTANCE.set_transaction_isolation_level(conn, level, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static int getTransactionIsolation(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        try {
+            int level = NativeDB.INSTANCE.get_transaction_isolation_level(conn, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return level;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
     public static void setAutoCommitTransaction(ConnectionPtr conn, boolean autoCommit) {
         NativeError nativeError = new NativeError();
         try {

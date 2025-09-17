@@ -183,23 +183,29 @@ public class NanodbcConnection implements Connection {
     @Override
     public void setTransactionIsolation(int level) throws SQLException {
         log.log(Level.FINEST, "setTransactionIsolation");
-        throw new SQLFeatureNotSupportedException();
+        try {
+            ConnectionHandler.setTransactionIsolation(connectionPtr, level);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public int getTransactionIsolation() throws SQLException {
         log.log(Level.FINEST, "getTransactionIsolation");
-        // Используем метаданные — они уже содержат SQL_DEFAULT_TXN_ISOLATION
-        int defaultIsolation = getMetaData().getDefaultTransactionIsolation();
-
-        // Проверим, поддерживается ли значение
-        return switch (defaultIsolation) {
-            case Connection.TRANSACTION_READ_UNCOMMITTED -> Connection.TRANSACTION_READ_UNCOMMITTED;
-            case Connection.TRANSACTION_READ_COMMITTED -> Connection.TRANSACTION_READ_COMMITTED;
-            case Connection.TRANSACTION_REPEATABLE_READ -> Connection.TRANSACTION_REPEATABLE_READ;
-            case Connection.TRANSACTION_SERIALIZABLE -> Connection.TRANSACTION_SERIALIZABLE;
-            default -> Connection.TRANSACTION_READ_COMMITTED; // Если драйвер вернул что-то странное — fallback
-        };
+        try {
+            int level = ConnectionHandler.getTransactionIsolation(connectionPtr);
+            // Проверим, поддерживается ли значение
+            return switch (level) {
+                case Connection.TRANSACTION_READ_UNCOMMITTED -> Connection.TRANSACTION_READ_UNCOMMITTED;
+                case Connection.TRANSACTION_READ_COMMITTED -> Connection.TRANSACTION_READ_COMMITTED;
+                case Connection.TRANSACTION_REPEATABLE_READ -> Connection.TRANSACTION_REPEATABLE_READ;
+                case Connection.TRANSACTION_SERIALIZABLE -> Connection.TRANSACTION_SERIALIZABLE;
+                default -> Connection.TRANSACTION_READ_COMMITTED; // Если драйвер вернул что-то странное — fallback
+            };
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

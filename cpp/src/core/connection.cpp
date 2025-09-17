@@ -1,4 +1,47 @@
 #include "core/connection.hpp"
+#include <wtypes.h>
+#include <sqlext.h>
+
+// Helper: Throws if ODBC call failed.
+inline static void check_odbc_result(SQLRETURN rc, const std::string& operation) {
+    if (!SQL_SUCCEEDED(rc)) {
+        throw std::runtime_error("ODBC error in " + operation);
+    }
+}
+void Connection::set_isolation_level(IsolationLevel level) {
+    if (!connected()) {
+        throw std::runtime_error("Cannot set isolation level: connection is not active");
+    }
+
+    SQLUINTEGER odbc_level = level.to_odbc();
+    SQLRETURN rc = SQLSetConnectAttr(
+        native_dbc_handle(),
+        SQL_ATTR_TXN_ISOLATION,
+        (SQLPOINTER)(std::intptr_t)odbc_level,
+        0
+    );
+
+    check_odbc_result(rc, "SQLSetConnectAttr(SQL_ATTR_TXN_ISOLATION)");
+}
+
+IsolationLevel Connection::get_isolation_level() const {
+    if (!connected()) {
+        throw std::runtime_error("Cannot get isolation level: connection is not active");
+    }
+
+    SQLUINTEGER current_level = 0;
+    SQLRETURN rc = SQLGetConnectAttr(
+        native_dbc_handle(),
+        SQL_ATTR_TXN_ISOLATION,
+        &current_level,
+        0,
+        nullptr
+    );
+
+    check_odbc_result(rc, "SQLGetConnectAttr(SQL_ATTR_TXN_ISOLATION)");
+
+    return IsolationLevel::from_odbc(current_level);
+}
 
 void Connection::set_auto_commit(bool auto_commit) {
     if (!this->connected()) {

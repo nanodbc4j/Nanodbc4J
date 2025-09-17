@@ -178,6 +178,53 @@ bool is_connected(Connection* conn, NativeError* error) {
     return false;
 }
 
+void set_transaction_isolation_level(Connection* conn, int level, NativeError* error) {
+    LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
+    init_error(error);
+    try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot rollback transaction");
+            set_error(error, 2, "TransactionError", "Connection is null");
+            return;
+        }
+
+        conn->set_isolation_level(IsolationLevel::from_odbc(level));
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during set transaction isolation level: {}", to_wstring(e.what()));
+    } catch (const exception& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during set transaction isolation level: {}", to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown set transaction isolation level error");
+        LOG_ERROR("Unknown exception during execute");
+    }
+}
+
+int get_transaction_isolation_level(Connection* conn, NativeError* error) {
+    LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
+    init_error(error);
+    try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot rollback transaction");
+            set_error(error, 2, "TransactionError", "Connection is null");
+            return 0;
+        }
+
+        return conn->get_isolation_level().to_odbc();
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during get transaction isolation level: {}", to_wstring(e.what()));
+    } catch (const exception& e) {
+        set_error(error, 2, "TransactionError", e.what());
+        LOG_ERROR_W(L"Database error during get transaction isolation level: {}", to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown get transaction isolation level error");
+        LOG_ERROR("Unknown exception during execute");
+    }
+    return 0;
+}
+
 nanodbc::result* execute_request(Connection* conn, const char16_t* sql, NativeError* error) {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);

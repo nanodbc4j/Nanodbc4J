@@ -15,6 +15,10 @@ extern "C" {
 
     ODBC_API bool is_connected(Connection* conn, NativeError* error);
 
+    ODBC_API void set_transaction_isolation_level(Connection* conn, int level, NativeError* error);
+
+    ODBC_API int get_transaction_isolation_level(Connection* conn, NativeError* error);
+
     ODBC_API void set_auto_commit_transaction(Connection* conn, bool autoCommit, NativeError* error);
 
     ODBC_API void commit_transaction(Connection* conn, NativeError* error);

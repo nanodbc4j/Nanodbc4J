@@ -1,12 +1,24 @@
 #pragma once
 
 #include <nanodbc/nanodbc.h>
+#include "core/isolation_level.hpp"
 
 class Connection : public nanodbc::connection {
     std::unique_ptr<nanodbc::transaction> transaction_;
 
 public:
     using nanodbc::connection::connection; // Inherit base constructors
+
+    /// \brief Sets the transaction isolation level using ODBC SQLSetConnectAttr.
+    /// Must be called before starting a transaction.
+    /// \param level The desired isolation level.
+    /// \throws std::runtime_error if connection is inactive or ODBC call fails.
+    void set_isolation_level(IsolationLevel level);
+
+    /// \brief Retrieves the current transaction isolation level using ODBC SQLGetConnectAttr.
+    /// \return The current isolation level.
+    /// \throws std::runtime_error if connection is inactive or ODBC call fails or value is unknown.
+    IsolationLevel get_isolation_level() const;
 
     /// \brief Enables or disables auto-commit mode
     /// \param autoCommit - true to enable auto-commit, false to start a transaction
