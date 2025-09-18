@@ -77,14 +77,14 @@ static const std::wstring determineClassNameByTypeName(int column, int sqlType, 
             LOG_TRACE("Mapping to java.sql.Date");
             return L"java.sql.Date";
         }
-        else if (lowerTypeName.find("time") != std::string::npos) {
-            LOG_TRACE("Mapping to java.sql.Time");
-            return L"java.sql.Time";
-        }
         else if (lowerTypeName.find("timestamp") != std::string::npos ||
             lowerTypeName.find("datetime") != std::string::npos) {
             LOG_TRACE("Mapping to java.sql.Timestamp");
             return L"java.sql.Timestamp";
+        }
+        else if (lowerTypeName.find("time") != std::string::npos) {
+            LOG_TRACE("Mapping to java.sql.Time");
+            return L"java.sql.Time";
         }
         else if (lowerTypeName.find("char") != std::string::npos ||
             lowerTypeName.find("varchar") != std::string::npos ||
