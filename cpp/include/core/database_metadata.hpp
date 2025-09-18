@@ -1,13 +1,10 @@
 #pragma once
 
-#include <wtypes.h>
-#include <sqlext.h>
 #include <nanodbc/nanodbc.h>
 
 class DatabaseMetaData {
 private:
     nanodbc::connection& connection_;
-    SQLHDBC hdbc_;
 
 public:
     explicit DatabaseMetaData(nanodbc::connection& connection);

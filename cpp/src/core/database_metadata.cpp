@@ -4,6 +4,8 @@
 #include <locale>
 #include <codecvt>
 #include <sstream>
+#include <wtypes.h>
+#include <sqlext.h>
 #include <cwctype>
 #include <sql.h>
 #include "utils/logger.hpp"
@@ -157,13 +159,7 @@ inline static std::pair<int, int> processingVersionString(std::wstring ver) {
 // === Конструктор ===
 DatabaseMetaData::DatabaseMetaData(nanodbc::connection& connection)
     : connection_(connection)
-    , hdbc_(static_cast<SQLHDBC>(connection.native_dbc_handle()))
-{
-    LOG_TRACE("Called");
-    if (!hdbc_) {
-        LOG_TRACE("Invalid statement handle");
-        throw std::runtime_error("Invalid statement handle");
-    }
+{    
     LOG_TRACE("Initialized successfully");
 }
 
@@ -242,7 +238,7 @@ std::wstring DatabaseMetaData::getSQLKeywords() const {
 std::wstring DatabaseMetaData::getNumericFunctions() const {
     LOG_TRACE("Called");
     SQLUINTEGER mask = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_NUMERIC_FUNCTIONS, &mask, sizeof(mask), nullptr);
+    SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_NUMERIC_FUNCTIONS, &mask, sizeof(mask), nullptr);
     if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
         LOG_ERROR("SQLGetInfo(SQL_NUMERIC_FUNCTIONS) failed: {}", ret);
         LOG_TRACE_W("Returning: L\"\"");
@@ -285,7 +281,7 @@ std::wstring DatabaseMetaData::getNumericFunctions() const {
 std::wstring DatabaseMetaData::getStringFunctions() const {
     LOG_TRACE("Called");
     SQLUINTEGER mask = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_STRING_FUNCTIONS, &mask, sizeof(mask), nullptr);
+    SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_STRING_FUNCTIONS, &mask, sizeof(mask), nullptr);
     if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
         LOG_ERROR("SQLGetInfo(SQL_STRING_FUNCTIONS) failed: {}", ret);
         LOG_TRACE_W("Returning: L\"\"");
@@ -324,7 +320,7 @@ std::wstring DatabaseMetaData::getStringFunctions() const {
 std::wstring DatabaseMetaData::getSystemFunctions() const {
     LOG_TRACE("Called");
     SQLUINTEGER mask = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_SYSTEM_FUNCTIONS, &mask, sizeof(mask), nullptr);
+    SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_SYSTEM_FUNCTIONS, &mask, sizeof(mask), nullptr);
     if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
         LOG_ERROR("SQLGetInfo(SQL_SYSTEM_FUNCTIONS) failed: {}", ret);
         LOG_TRACE_W("Returning: L\"\"");
@@ -350,7 +346,7 @@ std::wstring DatabaseMetaData::getSystemFunctions() const {
 std::wstring DatabaseMetaData::getTimeDateFunctions() const {
     LOG_TRACE("Called");
     SQLUINTEGER mask = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_TIMEDATE_FUNCTIONS, &mask, sizeof(mask), nullptr);
+    SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_TIMEDATE_FUNCTIONS, &mask, sizeof(mask), nullptr);
     if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
         LOG_ERROR("SQLGetInfo(SQL_TIMEDATE_FUNCTIONS) failed: {}", ret);
         LOG_TRACE_W("Returning: L\"\"");
@@ -406,7 +402,7 @@ std::wstring DatabaseMetaData::getExtraNameCharacters() const {
 
 bool DatabaseMetaData::isReadOnly() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_DATA_SOURCE_READ_ONLY, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_DATA_SOURCE_READ_ONLY, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -414,7 +410,7 @@ bool DatabaseMetaData::isReadOnly() const {
 
 bool DatabaseMetaData::supportsTransactions() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_TXN_CAPABLE, SQL_TC_NONE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_TXN_CAPABLE, SQL_TC_NONE);
     bool result = (val != SQL_TC_NONE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -434,7 +430,7 @@ bool DatabaseMetaData::supportsNamedParameters() const {
 
 bool DatabaseMetaData::supportsBatchUpdates() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_PARAM_ARRAY_ROW_COUNTS, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_PARAM_ARRAY_ROW_COUNTS, 0);
     bool result = (val == 0x0001); // 0x0001 = SQL_PARC_YES_ROW_COUNTS
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -442,7 +438,7 @@ bool DatabaseMetaData::supportsBatchUpdates() const {
 
 bool DatabaseMetaData::supportsUnion() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_UNION, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_UNION, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -459,7 +455,7 @@ bool DatabaseMetaData::supportsUnionAll() const {
 
 bool DatabaseMetaData::supportsLikeEscapeClause() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_LIKE_ESCAPE_CLAUSE, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_LIKE_ESCAPE_CLAUSE, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -467,7 +463,7 @@ bool DatabaseMetaData::supportsLikeEscapeClause() const {
 
 bool DatabaseMetaData::supportsGroupBy() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_GROUP_BY, SQL_GB_NOT_SUPPORTED);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_GROUP_BY, SQL_GB_NOT_SUPPORTED);
     bool result = (val != SQL_GB_NOT_SUPPORTED);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -475,7 +471,7 @@ bool DatabaseMetaData::supportsGroupBy() const {
 
 bool DatabaseMetaData::supportsGroupByUnrelated() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_GROUP_BY, SQL_GB_NOT_SUPPORTED);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_GROUP_BY, SQL_GB_NOT_SUPPORTED);
     bool result = (val == SQL_GB_COLLATE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -490,7 +486,7 @@ bool DatabaseMetaData::supportsGroupByBeyondSelect() const {
 
 bool DatabaseMetaData::supportsOrderByUnrelated() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_ORDER_BY_COLUMNS_IN_SELECT, SQL_TRUE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_ORDER_BY_COLUMNS_IN_SELECT, SQL_TRUE);
     bool result = (val == SQL_FALSE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -498,7 +494,7 @@ bool DatabaseMetaData::supportsOrderByUnrelated() const {
 
 bool DatabaseMetaData::supportsAlterTableWithAddColumn() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_ALTER_TABLE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_ALTER_TABLE, 0);
     bool result = (val & SQL_AT_ADD_COLUMN) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -506,7 +502,7 @@ bool DatabaseMetaData::supportsAlterTableWithAddColumn() const {
 
 bool DatabaseMetaData::supportsColumnAliasing() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_COLUMN_ALIAS, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_COLUMN_ALIAS, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -526,7 +522,7 @@ bool DatabaseMetaData::supportsExpressionsInOrderBy() const {
 
 bool DatabaseMetaData::supportsSelectForUpdate() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, 125 /* SQL_FOR_UPDATE */, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), 125 /* SQL_FOR_UPDATE */, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -534,7 +530,7 @@ bool DatabaseMetaData::supportsSelectForUpdate() const {
 
 bool DatabaseMetaData::supportsStoredProcedures() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_PROCEDURES, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_PROCEDURES, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -542,7 +538,7 @@ bool DatabaseMetaData::supportsStoredProcedures() const {
 
 bool DatabaseMetaData::supportsSubqueriesInComparisons() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SUBQUERIES, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SUBQUERIES, 0);
     bool result = (val & SQL_SQ_COMPARISON) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -550,7 +546,7 @@ bool DatabaseMetaData::supportsSubqueriesInComparisons() const {
 
 bool DatabaseMetaData::supportsSubqueriesInExists() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SUBQUERIES, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SUBQUERIES, 0);
     bool result = (val & SQL_SQ_EXISTS) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -558,7 +554,7 @@ bool DatabaseMetaData::supportsSubqueriesInExists() const {
 
 bool DatabaseMetaData::supportsSubqueriesInIns() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SUBQUERIES, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SUBQUERIES, 0);
     bool result = (val & SQL_SQ_IN) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -566,7 +562,7 @@ bool DatabaseMetaData::supportsSubqueriesInIns() const {
 
 bool DatabaseMetaData::supportsSubqueriesInQuantifieds() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SUBQUERIES, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SUBQUERIES, 0);
     bool result = (val & SQL_SQ_QUANTIFIED) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -574,7 +570,7 @@ bool DatabaseMetaData::supportsSubqueriesInQuantifieds() const {
 
 bool DatabaseMetaData::supportsCorrelatedSubqueries() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SUBQUERIES, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SUBQUERIES, 0);
     bool result = (val & 0x00000010) != 0; // 0x00000010 = SQL_SQ_CORRELATED
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -582,7 +578,7 @@ bool DatabaseMetaData::supportsCorrelatedSubqueries() const {
 
 bool DatabaseMetaData::supportsIntegrityEnhancementFacility() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_INTEGRITY, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_INTEGRITY, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -590,7 +586,7 @@ bool DatabaseMetaData::supportsIntegrityEnhancementFacility() const {
 
 bool DatabaseMetaData::supportsOuterJoins() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_OUTER_JOINS, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_OUTER_JOINS, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -598,7 +594,7 @@ bool DatabaseMetaData::supportsOuterJoins() const {
 
 bool DatabaseMetaData::supportsFullOuterJoins() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_OUTER_JOINS, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_OUTER_JOINS, 0);
     bool result = (val & 0x00000008) != 0; // SQL_OJ_FULL_OUTER_JOIN = 0x00000008
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -606,7 +602,7 @@ bool DatabaseMetaData::supportsFullOuterJoins() const {
 
 bool DatabaseMetaData::supportsLimitedOuterJoins() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_OUTER_JOINS, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_OUTER_JOINS, 0);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -614,7 +610,7 @@ bool DatabaseMetaData::supportsLimitedOuterJoins() const {
 
 bool DatabaseMetaData::supportsSchemasInDataManipulation() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SCHEMA_USAGE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SCHEMA_USAGE, 0);
     bool result = (val & SQL_SU_DML_STATEMENTS) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -622,7 +618,7 @@ bool DatabaseMetaData::supportsSchemasInDataManipulation() const {
 
 bool DatabaseMetaData::supportsSchemasInProcedureCalls() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SCHEMA_USAGE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SCHEMA_USAGE, 0);
     bool result = (val & SQL_SU_PROCEDURE_INVOCATION) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -630,7 +626,7 @@ bool DatabaseMetaData::supportsSchemasInProcedureCalls() const {
 
 bool DatabaseMetaData::supportsSchemasInTableDefinitions() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SCHEMA_USAGE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SCHEMA_USAGE, 0);
     bool result = (val & SQL_SU_TABLE_DEFINITION) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -638,7 +634,7 @@ bool DatabaseMetaData::supportsSchemasInTableDefinitions() const {
 
 bool DatabaseMetaData::supportsSchemasInIndexDefinitions() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SCHEMA_USAGE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SCHEMA_USAGE);
     bool result = (val & SQL_SU_INDEX_DEFINITION) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -646,7 +642,7 @@ bool DatabaseMetaData::supportsSchemasInIndexDefinitions() const {
 
 bool DatabaseMetaData::supportsSchemasInPrivilegeDefinitions() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SCHEMA_USAGE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SCHEMA_USAGE);
     bool result = (val & SQL_SU_PRIVILEGE_DEFINITION) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -654,7 +650,7 @@ bool DatabaseMetaData::supportsSchemasInPrivilegeDefinitions() const {
 
 bool DatabaseMetaData::supportsCatalogsInDataManipulation() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_CATALOG_USAGE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CATALOG_USAGE, 0);
     bool result = (val & SQL_CU_DML_STATEMENTS) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -662,7 +658,7 @@ bool DatabaseMetaData::supportsCatalogsInDataManipulation() const {
 
 bool DatabaseMetaData::supportsCatalogsInProcedureCalls() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_CATALOG_USAGE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CATALOG_USAGE, 0);
     bool result = (val & SQL_CU_PROCEDURE_INVOCATION) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -670,7 +666,7 @@ bool DatabaseMetaData::supportsCatalogsInProcedureCalls() const {
 
 bool DatabaseMetaData::supportsCatalogsInTableDefinitions() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_CATALOG_USAGE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CATALOG_USAGE, 0);
     bool result = (val & SQL_CU_TABLE_DEFINITION) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -678,7 +674,7 @@ bool DatabaseMetaData::supportsCatalogsInTableDefinitions() const {
 
 bool DatabaseMetaData::supportsCatalogsInIndexDefinitions() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_CATALOG_USAGE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CATALOG_USAGE, 0);
     bool result = (val & SQL_CU_INDEX_DEFINITION) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -686,7 +682,7 @@ bool DatabaseMetaData::supportsCatalogsInIndexDefinitions() const {
 
 bool DatabaseMetaData::supportsCatalogsInPrivilegeDefinitions() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_CATALOG_USAGE, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CATALOG_USAGE, 0);
     bool result = (val & SQL_CU_PRIVILEGE_DEFINITION) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -706,7 +702,7 @@ bool DatabaseMetaData::supportsPositionedUpdate() const {
 
 bool DatabaseMetaData::supportsOpenCursorsAcrossCommit() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_CURSOR_COMMIT_BEHAVIOR, SQL_CB_CLOSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CURSOR_COMMIT_BEHAVIOR, SQL_CB_CLOSE);
     bool result = (val == SQL_CB_PRESERVE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -714,7 +710,7 @@ bool DatabaseMetaData::supportsOpenCursorsAcrossCommit() const {
 
 bool DatabaseMetaData::supportsOpenCursorsAcrossRollback() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_CURSOR_ROLLBACK_BEHAVIOR, SQL_CB_CLOSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CURSOR_ROLLBACK_BEHAVIOR, SQL_CB_CLOSE);
     bool result = (val == SQL_CB_PRESERVE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -747,7 +743,7 @@ bool DatabaseMetaData::supportsStatementPooling() const {
 bool DatabaseMetaData::autoCommitFailureClosesAllResultSets() const {
     LOG_TRACE("Called");
     // SQL_MULT_RESULT_SETS: если поддерживает множественные результаты
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MULT_RESULT_SETS, SQL_FALSE);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MULT_RESULT_SETS, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -762,7 +758,7 @@ bool DatabaseMetaData::supportsStoredFunctionsUsingCallSyntax() const {
 bool DatabaseMetaData::generatedKeyAlwaysReturned() const {
     LOG_TRACE("Called");
     // SQL_GETDATA_EXTENSIONS: если поддерживает SQL_GD_OUTPUT_PARAMS
-    auto val = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_GETDATA_EXTENSIONS, 0);
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_GETDATA_EXTENSIONS, 0);
     bool result = (val & SQL_GD_ANY_COLUMN) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -772,7 +768,7 @@ bool DatabaseMetaData::generatedKeyAlwaysReturned() const {
 int DatabaseMetaData::supportsTransactionIsolationLevel() const {   // === Поддержка уровней изоляции ===
     LOG_TRACE("Called");
     SQLUINTEGER supported = 0;
-    SQLRETURN ret = SQLGetInfo(hdbc_, SQL_TXN_ISOLATION_OPTION, &supported, 0, nullptr);
+    SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_TXN_ISOLATION_OPTION, &supported, 0, nullptr);
     int result = (ret == SQL_SUCCESS) ? static_cast<int>(supported) : 0x00000000;
     LOG_TRACE("Returning: 0x{:08X}", result);
     return result;
@@ -780,105 +776,105 @@ int DatabaseMetaData::supportsTransactionIsolationLevel() const {   // === По�
 
 int DatabaseMetaData::getNullCollation() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_NULL_COLLATION, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getSQLStateType() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_SQL_CONFORMANCE, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SQL_CONFORMANCE, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getDefaultTransactionIsolation() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_DEFAULT_TXN_ISOLATION, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_DEFAULT_TXN_ISOLATION, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getResultSetHoldability() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_GETDATA_EXTENSIONS, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_GETDATA_EXTENSIONS, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getRowIdLifetime() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_ROW_UPDATES, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_ROW_UPDATES, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxTableNameLength() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_TABLE_NAME_LEN, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_TABLE_NAME_LEN, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxSchemaNameLength() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_SCHEMA_NAME_LEN, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_SCHEMA_NAME_LEN, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxCatalogNameLength() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_CATALOG_NAME_LEN, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_CATALOG_NAME_LEN, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxColumnNameLength() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_COLUMN_NAME_LEN, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_COLUMN_NAME_LEN, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxColumnsInGroupBy() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_COLUMNS_IN_GROUP_BY, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_COLUMNS_IN_GROUP_BY, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxColumnsInOrderBy() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_COLUMNS_IN_ORDER_BY, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_COLUMNS_IN_ORDER_BY, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxColumnsInSelect() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_COLUMNS_IN_SELECT, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_COLUMNS_IN_SELECT, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxColumnsInTable() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_COLUMNS_IN_TABLE, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_COLUMNS_IN_TABLE, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxColumnsInIndex() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_COLUMNS_IN_INDEX, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_COLUMNS_IN_INDEX, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxStatementLength() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_STATEMENT_LEN, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_STATEMENT_LEN, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
@@ -891,21 +887,21 @@ int DatabaseMetaData::getMaxStatements() const {
 
 int DatabaseMetaData::getMaxTablesInSelect() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_TABLES_IN_SELECT, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_TABLES_IN_SELECT, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxUserNameLength() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_USER_NAME_LEN, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_USER_NAME_LEN, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }
 
 int DatabaseMetaData::getMaxRowSize() const {
     LOG_TRACE("Called");
-    auto result = getInfoSafely<SQLUINTEGER>(hdbc_, SQL_MAX_ROW_SIZE, 0);
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_ROW_SIZE, 0);
     LOG_TRACE("Returning: {}", result);
     return result;
 }

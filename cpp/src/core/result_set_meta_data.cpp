@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <locale>
 #include <codecvt>
+#include <wtypes.h>
+#include <sqlext.h>
 #include <sql.h>
 #include "utils/logger.hpp"
 
@@ -178,13 +180,7 @@ inline static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLU
 
 ResultSetMetaData::ResultSetMetaData(const nanodbc::result& result) 
     : result_ (result)
-    , hStmt_ (static_cast<SQLHSTMT>(result.native_statement_handle())) 
 {
-    LOG_TRACE("Constructing ResultSetMetaData");
-    if (!hStmt_) {
-        LOG_DEBUG("Invalid statement handle");
-        throw std::runtime_error("Invalid statement handle");
-    }
     LOG_DEBUG("ResultSetMetaData initialized successfully with {} columns", result.columns());
 }
 
@@ -196,15 +192,15 @@ int ResultSetMetaData::getColumnCount() const {
 
 bool ResultSetMetaData::isAutoIncrement(int column) const {
     LOG_TRACE("column={}", column);
-    SQLLEN value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_AUTO_UNIQUE_VALUE);
+    SQLLEN value = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_AUTO_UNIQUE_VALUE);
     if (value == SQL_TRUE) {
         LOG_DEBUG("Column {} is auto-increment (SQL_DESC_AUTO_UNIQUE_VALUE)", column);
         return true;
     }
 
     // Дополнительные проверки через другие атрибуты
-    value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_BASE_COLUMN_NAME);
-    std::wstring name = getColumnStringAttribute(hStmt_, column, SQL_DESC_BASE_COLUMN_NAME);
+    value = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
+    std::wstring name = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
 
     // Ёвристика: если им¤ содержит "id" или "identity", возможно это автоинкремент
     std::wstring lowerName = name;
@@ -219,7 +215,7 @@ bool ResultSetMetaData::isAutoIncrement(int column) const {
 
 bool ResultSetMetaData::isCaseSensitive(int column) const {
     LOG_TRACE("column={}", column);
-    SQLLEN value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_CASE_SENSITIVE);
+    SQLLEN value = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_CASE_SENSITIVE);
     if (value == SQL_TRUE) return true;
     if (value == SQL_FALSE) return false;
 
@@ -233,7 +229,7 @@ bool ResultSetMetaData::isCaseSensitive(int column) const {
 
 bool ResultSetMetaData::isSearchable(int column) const {
     LOG_TRACE("column={}", column);
-    SQLLEN value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_SEARCHABLE);
+    SQLLEN value = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_SEARCHABLE);
     if (value == SQL_PRED_NONE) return false;
     if (value == SQL_PRED_BASIC || value == SQL_PRED_CHAR || value == SQL_SEARCHABLE) return true;
 
@@ -246,7 +242,7 @@ bool ResultSetMetaData::isSearchable(int column) const {
 
 bool ResultSetMetaData::isCurrency(int column) const {
     LOG_TRACE("column={}", column);
-    SQLLEN value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_FIXED_PREC_SCALE);
+    SQLLEN value = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_FIXED_PREC_SCALE);
     if (value == SQL_TRUE) {
         LOG_DEBUG("Column {} has fixed precision scale -> currency", column);
         return true;
@@ -267,7 +263,7 @@ int ResultSetMetaData::isNullable(int column) const {
     LOG_TRACE("column={}", column);
 
     SQLSMALLINT nullable = SQL_NULLABLE_UNKNOWN;
-    SQLRETURN ret = SQLDescribeColW(hStmt_, column, nullptr, 0, nullptr, nullptr, nullptr, nullptr, &nullable);
+    SQLRETURN ret = SQLDescribeColW(result_.native_statement_handle(), column, nullptr, 0, nullptr, nullptr, nullptr, nullptr, &nullable);
 
     if (isOdbcSuccess(ret)) {
         LOG_DEBUG("isNullable: column {} -> {}", column, nullable);
@@ -280,7 +276,7 @@ int ResultSetMetaData::isNullable(int column) const {
 
 bool ResultSetMetaData::isSigned(int column) const {
     LOG_TRACE("column={}", column);
-    SQLLEN value = getColumnNumericAttribute(hStmt_, column, SQL_DESC_UNSIGNED);
+    SQLLEN value = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_UNSIGNED);
     if (value == SQL_FALSE) return true;
     if (value == SQL_TRUE) return false;
 
@@ -309,7 +305,7 @@ int ResultSetMetaData::getColumnDisplaySize(int column) const {
 
 std::wstring ResultSetMetaData::getColumnLabel(int column) const {
     LOG_TRACE("column={}", column);
-    std::wstring label = getColumnStringAttribute(hStmt_, column, SQL_DESC_LABEL);
+    std::wstring label = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_LABEL);
     if (!label.empty()) {
         LOG_DEBUG_W(L"Column {} label: '{}'", column, label);
         return label;
@@ -338,7 +334,7 @@ std::wstring ResultSetMetaData::getColumnName(int column) const {
 
 std::wstring ResultSetMetaData::getSchemaName(int column) const {
     LOG_TRACE("column={}", column);
-    std::wstring schema = getColumnStringAttribute(hStmt_, column, SQL_DESC_SCHEMA_NAME);
+    std::wstring schema = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_SCHEMA_NAME);
     if (!schema.empty()) {
         LOG_DEBUG_W(L"Column {} schema: '{}'", column, schema);
     }
@@ -348,7 +344,7 @@ std::wstring ResultSetMetaData::getSchemaName(int column) const {
 int ResultSetMetaData::getPrecision(int column) const {
     LOG_TRACE("column={}", column);
 
-    SQLLEN precision = getColumnNumericAttribute(hStmt_, column, SQL_DESC_PRECISION);
+    SQLLEN precision = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_PRECISION);
     if (precision > 0) {
         LOG_DEBUG("Column {} precision: {}", column, precision);
         return static_cast<int>(precision);
@@ -383,7 +379,7 @@ int ResultSetMetaData::getScale(int column) const {
 
 std::wstring ResultSetMetaData::getTableName(int column) const {
     LOG_TRACE("column={}", column);
-    std::wstring table = getColumnStringAttribute(hStmt_, column, SQL_DESC_TABLE_NAME);
+    std::wstring table = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TABLE_NAME);
     if (!table.empty()) {
         LOG_DEBUG_W(L"Column {} table: '{}'", column, table);
     }
@@ -392,7 +388,7 @@ std::wstring ResultSetMetaData::getTableName(int column) const {
 
 std::wstring ResultSetMetaData::getCatalogName(int column) const {
     LOG_TRACE("column={}", column);
-    std::wstring catalog = getColumnStringAttribute(hStmt_, column, SQL_DESC_CATALOG_NAME);
+    std::wstring catalog = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_CATALOG_NAME);
     if (!catalog.empty()) {
         LOG_DEBUG_W(L"Column {} catalog: '{}'", column, catalog);
     }
@@ -411,7 +407,7 @@ int ResultSetMetaData::getColumnType(int column) const {
     }
 
     SQLSMALLINT type = 0;
-    SQLRETURN ret = SQLDescribeColW(hStmt_, column, nullptr, 0, nullptr, &type, nullptr, nullptr, nullptr);
+    SQLRETURN ret = SQLDescribeColW(result_.native_statement_handle(), column, nullptr, 0, nullptr, &type, nullptr, nullptr, nullptr);
     if (isOdbcSuccess(ret)) {
         LOG_DEBUG("Column {} type (via SQLDescribeColW): {}", column, type);
         return type;
@@ -424,7 +420,7 @@ int ResultSetMetaData::getColumnType(int column) const {
 std::wstring ResultSetMetaData::getColumnTypeName(int column) const {
     LOG_TRACE("column={}", column);
     // Сначала пробуем получить им¤ типа через ODBC
-    std::wstring typeName = getColumnStringAttribute(hStmt_, column, SQL_DESC_TYPE_NAME);
+    std::wstring typeName = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TYPE_NAME);
     if (!typeName.empty()) {
         LOG_DEBUG_W(L"Column {} type name: '{}'", column, typeName);
         return typeName;
@@ -468,7 +464,7 @@ std::wstring ResultSetMetaData::getColumnTypeName(int column) const {
 bool ResultSetMetaData::isReadOnly(int column) const {
     LOG_TRACE("column={}", column);
 
-    SQLLEN updatable = getColumnNumericAttribute(hStmt_, column, SQL_DESC_UPDATABLE);
+    SQLLEN updatable = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_UPDATABLE);
     bool readOnly = (updatable == SQL_ATTR_READONLY || updatable == SQL_ATTR_READWRITE_UNKNOWN);
     LOG_DEBUG("Column {} updatable status: {}, readOnly={}", column, updatable, readOnly);
     return readOnly;

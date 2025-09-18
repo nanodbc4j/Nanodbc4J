@@ -1,12 +1,9 @@
 #pragma once
-#include <wtypes.h>
-#include <sqlext.h>
 #include <nanodbc/nanodbc.h>
 
 class ResultSetMetaData {
 private:
     const nanodbc::result& result_;
-    SQLHSTMT hStmt_;
 
 public:
     explicit ResultSetMetaData(const nanodbc::result& result);
