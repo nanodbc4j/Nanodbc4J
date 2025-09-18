@@ -160,8 +160,8 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
 
     private void checkIndex (int index) throws SQLException {
         index -= 1;
-        if (index < 0 || index > metaData.columnCount) {
-            throw new NanodbcSQLException("column out of range");
+        if (index < 0 || index >= metaData.columnCount) {
+            throw new NanodbcSQLException("Column " + index + " out of range");
         }
     }
 }
