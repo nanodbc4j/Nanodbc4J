@@ -26,7 +26,7 @@ public final class StatementHandler {
     public static ResultSetPtr execute(ConnectionPtr conn, String sql) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute_request(conn, sql, nativeError);
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute_request(conn, sql + "\0", nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
@@ -39,7 +39,7 @@ public final class StatementHandler {
     public static int executeUpdate(ConnectionPtr conn, String sql) {
         NativeError nativeError = new NativeError();
         try {
-            int result = NativeDB.INSTANCE.execute_request_update(conn, sql, nativeError);
+            int result = NativeDB.INSTANCE.execute_request_update(conn, sql + "\0", nativeError);
             if (nativeError.error_code != 0) {
                 throw new NativeException(nativeError);
             }
