@@ -1,7 +1,7 @@
 package io.github.michael1297.jdbc;
 
 import io.github.michael1297.exceptions.NanodbcSQLException;
-import io.github.michael1297.internal.dto.OdbcResultSetMetadata;
+import io.github.michael1297.internal.dto.ResultSetMetadataDto;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -10,8 +10,8 @@ import java.sql.SQLException;
  * Metadata about result columns: name, type, size, nullability, etc.
  */
 public class NanodbcResultSetMetaData implements ResultSetMetaData {
-    private final OdbcResultSetMetadata metaData;
-    public NanodbcResultSetMetaData(OdbcResultSetMetadata metaData){
+    private final ResultSetMetadataDto metaData;
+    public NanodbcResultSetMetaData(ResultSetMetadataDto metaData){
         this.metaData = metaData;
     }
 

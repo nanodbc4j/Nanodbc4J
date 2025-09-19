@@ -5,7 +5,7 @@ import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode
-public class OdbcDatabaseMetaData {
+public class DatabaseMetaDataDto {
     // === Строковые значения ===
     public String databaseProductName;
     public String databaseProductVersion;

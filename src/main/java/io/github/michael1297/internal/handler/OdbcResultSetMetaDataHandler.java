@@ -1,7 +1,7 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
-import io.github.michael1297.internal.dto.OdbcResultSetMetadata;
+import io.github.michael1297.internal.dto.ResultSetMetadataDto;
 import io.github.michael1297.internal.cstruct.ResultSetMetaDataStruct;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -16,13 +16,13 @@ import static io.github.michael1297.internal.handler.Handler.POINTER_SIZE;
 @UtilityClass
 public final class OdbcResultSetMetaDataHandler {
 
-    public static OdbcResultSetMetadata processerMetaData(@NonNull ResultSetMetaDataStruct metaDataStruct) {
-        OdbcResultSetMetadata metaData = new OdbcResultSetMetadata();
+    public static ResultSetMetadataDto processerMetaData(@NonNull ResultSetMetaDataStruct metaDataStruct) {
+        ResultSetMetadataDto metaData = new ResultSetMetadataDto();
         metaData.columnCount = metaDataStruct.columnCount;
         metaData.columnMetaData = new ArrayList<>(metaData.columnCount);
 
         for (int i = 0; i < metaDataStruct.columnCount; i++) {
-            var columnMetaData = new OdbcResultSetMetadata.ColumnMetaData();
+            var columnMetaData = new ResultSetMetadataDto.ColumnMetaData();
             var columnMetaDataStruct = new ResultSetMetaDataStruct.ColumnMetaDataStruct(metaDataStruct.column.getPointer(POINTER_SIZE * i));
 
             columnMetaData.isAutoIncrement = columnMetaDataStruct.isAutoIncrement != 0;

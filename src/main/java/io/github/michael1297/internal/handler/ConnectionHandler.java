@@ -4,7 +4,7 @@ import com.sun.jna.Pointer;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
-import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
+import io.github.michael1297.internal.dto.DatabaseMetaDataDto;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.StatementPtr;
 import io.github.michael1297.internal.cstruct.NativeError;
@@ -223,7 +223,7 @@ public final class ConnectionHandler {
                 return null;
             }
 
-            OdbcDatabaseMetaData metaData = OdbcDatabaseMetaDataHandler.processerMetaData(metaDataStruct);
+            DatabaseMetaDataDto metaData = OdbcDatabaseMetaDataHandler.processerMetaData(metaDataStruct);
             return new NanodbcDatabaseMetaData(connection, metaData);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);

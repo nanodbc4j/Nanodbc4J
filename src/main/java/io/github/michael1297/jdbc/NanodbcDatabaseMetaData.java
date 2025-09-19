@@ -2,7 +2,7 @@ package io.github.michael1297.jdbc;
 
 import io.github.michael1297.exceptions.NanodbcSQLException;
 import io.github.michael1297.exceptions.NativeException;
-import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
+import io.github.michael1297.internal.dto.DatabaseMetaDataDto;
 import io.github.michael1297.internal.handler.OdbcDatabaseMetaDataHandler;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 
@@ -15,13 +15,14 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     private final WeakReference<NanodbcConnection> connection;
-    private final OdbcDatabaseMetaData metaData;
+    private final DatabaseMetaDataDto metaData;
 
-    public NanodbcDatabaseMetaData(NanodbcConnection connection, OdbcDatabaseMetaData metaData) {
+    public NanodbcDatabaseMetaData(NanodbcConnection connection, DatabaseMetaDataDto metaData) {
         this.connection = new WeakReference<>(connection);
         this.metaData = metaData;
     }
@@ -630,8 +631,10 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     @Override
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types) throws SQLException {
         // https://msdn.microsoft.com/en-us/library/ms710171.aspx
-        String typePattern = types == null ? null : Arrays.stream(types)
+        String typePattern = types == null ? "" : Arrays.stream(types)
                 .filter(Objects::nonNull)
+                .filter(Predicate.not(String::isBlank))
+                .map(String::trim)
                 .map(t -> "'" + t + "'")
                 .collect(Collectors.joining(","));
         try {

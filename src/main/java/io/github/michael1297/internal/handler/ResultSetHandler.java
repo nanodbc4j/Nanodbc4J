@@ -2,7 +2,7 @@ package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
 import io.github.michael1297.internal.cstruct.ResultSetMetaDataStruct;
-import io.github.michael1297.internal.dto.OdbcResultSetMetadata;
+import io.github.michael1297.internal.dto.ResultSetMetadataDto;
 import io.github.michael1297.jdbc.NanodbcResultSetMetaData;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
@@ -228,7 +228,7 @@ public final class ResultSetHandler {
                 return null;
             }
 
-            OdbcResultSetMetadata metaData = OdbcResultSetMetaDataHandler.processerMetaData(metaDataStruct);
+            ResultSetMetadataDto metaData = OdbcResultSetMetaDataHandler.processerMetaData(metaDataStruct);
             return new NanodbcResultSetMetaData(metaData);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);

@@ -1,7 +1,7 @@
 package io.github.michael1297.jdbc;
 
-import io.github.michael1297.internal.dto.OdbcDatasource;
-import io.github.michael1297.internal.dto.OdbcDriver;
+import io.github.michael1297.internal.dto.DatasourceDto;
+import io.github.michael1297.internal.dto.DriverDto;
 import io.github.michael1297.internal.handler.Handler;
 import lombok.extern.java.Log;
 
@@ -141,11 +141,11 @@ public class NanodbcDriver implements Driver {
         Handler.setLogLevel(level);
     }
 
-    public static List<OdbcDriver> driversList() {
+    public static List<DriverDto> driversList() {
         return Handler.driversList();
     }
 
-    public static List<OdbcDatasource> datasourcesList() {
+    public static List<DatasourceDto> datasourcesList() {
         return Handler.datasourcesList();
     }
 }

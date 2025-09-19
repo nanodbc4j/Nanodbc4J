@@ -2,8 +2,8 @@ package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import io.github.michael1297.internal.dto.OdbcDatasource;
-import io.github.michael1297.internal.dto.OdbcDriver;
+import io.github.michael1297.internal.dto.DatasourceDto;
+import io.github.michael1297.internal.dto.DriverDto;
 import io.github.michael1297.jdbc.SpdLogLevel;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.DatasourceStruct;
@@ -26,24 +26,24 @@ public final class Handler {
         }
     }
 
-    public static List<OdbcDriver> driversList() {
-        List<OdbcDriver> drivers = new ArrayList<>();
+    public static List<DriverDto> driversList() {
+        List<DriverDto> drivers = new ArrayList<>();
         IntByReference count = new IntByReference();
         Pointer driversListPtrs = NativeDB.INSTANCE.drivers_list(count);
         try {
             for (int i = 0; i < count.getValue(); i++) {
                 DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(POINTER_SIZE * i));
-                List<OdbcDriver.Attribute> driverAttributes = new ArrayList<>(ds.attribute_count);
+                List<DriverDto.Attribute> driverAttributes = new ArrayList<>(ds.attribute_count);
                 String name = ds.name.getWideString(0);
 
                 for (int j = 0; j < ds.attribute_count; j++) {
                     DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ds.attributes.getPointer(POINTER_SIZE * j));
                     String keyword = attr.keyword.getWideString(0);
                     String value = attr.value.getWideString(0);
-                    driverAttributes.add(new OdbcDriver.Attribute(keyword, value));
+                    driverAttributes.add(new DriverDto.Attribute(keyword, value));
                 }
 
-                drivers.add(new OdbcDriver(name, driverAttributes));
+                drivers.add(new DriverDto(name, driverAttributes));
             }
         } finally {
             NativeDB.INSTANCE.delete_driver_array(driversListPtrs, count.getValue());
@@ -51,8 +51,8 @@ public final class Handler {
         return drivers;
     }
 
-    public static List<OdbcDatasource> datasourcesList() {
-        List<OdbcDatasource> datasources = new ArrayList<>();
+    public static List<DatasourceDto> datasourcesList() {
+        List<DatasourceDto> datasources = new ArrayList<>();
         IntByReference count = new IntByReference();
         Pointer datasourcesListPtrs = NativeDB.INSTANCE.datasources_list(count);
         try {
@@ -60,7 +60,7 @@ public final class Handler {
                 DatasourceStruct ds = new DatasourceStruct(datasourcesListPtrs.getPointer(POINTER_SIZE * i));
                 String name = ds.name.getWideString(0);
                 String driver = ds.driver.getWideString(0);
-                datasources.add(new OdbcDatasource(name, driver));
+                datasources.add(new DatasourceDto(name, driver));
             }
         } finally {
             NativeDB.INSTANCE.delete_datasource_array(datasourcesListPtrs, count.getValue());

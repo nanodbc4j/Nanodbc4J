@@ -4,7 +4,7 @@ import com.sun.jna.Pointer;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.NativeError;
-import io.github.michael1297.internal.dto.OdbcDatabaseMetaData;
+import io.github.michael1297.internal.dto.DatabaseMetaDataDto;
 import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
 import io.github.michael1297.internal.pointer.ConnectionPtr;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
@@ -17,8 +17,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class OdbcDatabaseMetaDataHandler {
 
-    public static OdbcDatabaseMetaData processerMetaData(@NonNull DatabaseMetaDataStruct metaDataStruct) {
-        OdbcDatabaseMetaData metaData = new OdbcDatabaseMetaData();
+    public static DatabaseMetaDataDto processerMetaData(@NonNull DatabaseMetaDataStruct metaDataStruct) {
+        DatabaseMetaDataDto metaData = new DatabaseMetaDataDto();
 
         // === Строковые значения ===
         metaData.databaseProductName = getWideString(metaDataStruct.databaseProductName);

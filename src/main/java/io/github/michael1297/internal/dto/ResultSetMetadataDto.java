@@ -4,14 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Immutable container for column metadata from ODBC.
  */
 @ToString
 @EqualsAndHashCode
-public final class OdbcResultSetMetadata {
+public final class ResultSetMetadataDto {
     public int columnCount = 0;
     public ArrayList<ColumnMetaData> columnMetaData = null;
 
