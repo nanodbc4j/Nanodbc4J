@@ -23,9 +23,6 @@ import java.time.LocalTime;
 
 @UtilityClass
 public final class ResultSetHandler {
-
-    private static final int MICROSECONDS_TO_NANOSECONDS = 1000;
-
     public static boolean next(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
@@ -304,8 +301,7 @@ public final class ResultSetHandler {
         // Создаём Timestamp
         Timestamp timestamp = Timestamp.valueOf(localDateTime);
 
-        // Устанавливаем наносекунды: микросекунды × 1000
-        timestamp.setNanos(timestampStruct.fract * MICROSECONDS_TO_NANOSECONDS); // микросекунды → наносекунды
+        timestamp.setNanos(timestampStruct.fract);
 
         return timestamp;
     }

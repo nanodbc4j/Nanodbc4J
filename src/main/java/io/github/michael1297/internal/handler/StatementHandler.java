@@ -21,8 +21,6 @@ import java.time.LocalTime;
 @UtilityClass
 public final class StatementHandler {
 
-    private static final int NANOS_PER_MICRO = 1000;
-
     public static ResultSetPtr execute(ConnectionPtr conn, String sql) {
         NativeError nativeError = new NativeError();
         try {
@@ -129,7 +127,7 @@ public final class StatementHandler {
         struct.hour   = (short) localDateTime.getHour();
         struct.minute = (short) localDateTime.getMinute();
         struct.second = (short) localDateTime.getSecond();
-        struct.fract = localDateTime.getNano() / NANOS_PER_MICRO;
+        struct.fract = localDateTime.getNano();
         return struct;
     }
 
