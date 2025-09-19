@@ -2,12 +2,40 @@
 #include <wtypes.h>
 #include <sqlext.h>
 
+#ifdef NANODBC_ENABLE_UNICODE
+#define NANODBC_FUNC(f) f##W
+#define NANODBC_SQLCHAR SQLWCHAR
+#else
+#define NANODBC_FUNC(f) f
+#define NANODBC_SQLCHAR SQLCHAR
+#endif
+
 // Helper: Throws if ODBC call failed.
 inline static void check_odbc_result(SQLRETURN rc, const std::string& operation) {
     if (!SQL_SUCCEEDED(rc)) {
         throw std::runtime_error("ODBC error in " + operation);
     }
 }
+
+void Connection::set_catalog(const nanodbc::string& catalog) {
+    if (!connected()) {
+        throw std::runtime_error("Cannot set isolation level: connection is not active");
+    }
+
+    if (catalog.empty()) {
+        throw std::runtime_error("Catalog name cannot be empty.");
+    }
+
+    SQLRETURN ret = ::SQLSetConnectAttr(
+        this->native_dbc_handle(),
+        SQL_ATTR_CURRENT_CATALOG,
+        (NANODBC_SQLCHAR*) catalog.c_str(),
+        SQL_NTS
+    );
+
+    check_odbc_result(ret, "SQLSetConnectAttr(SQL_ATTR_CURRENT_CATALOG) - Driver may not support changing catalog at runtime.");
+}
+
 void Connection::set_isolation_level(IsolationLevel level) {
     if (!connected()) {
         throw std::runtime_error("Cannot set isolation level: connection is not active");

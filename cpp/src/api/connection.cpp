@@ -161,6 +161,54 @@ bool get_auto_commit_transaction(Connection* conn, NativeError* error) {
     return true;
 }
 
+const char16_t* get_catalog_name(Connection* conn, NativeError* error) {
+    LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
+    init_error(error);
+    try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot get catalog name");
+            set_error(error, 2, "ConnectionError", "Connection is null");
+            return nullptr;
+        }
+        auto catalog = conn->catalog_name();
+        auto u16_catalog = to_u16string(catalog);
+        LOG_DEBUG_W(L"Catalog name: '{}'", to_wstring(catalog));
+        return duplicate_string(u16_catalog.c_str(), u16_catalog.length());
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 2, "ConnectionError", e.what());
+        LOG_ERROR_W(L"Database error during get catalog name: {}", to_wstring(e.what()));
+    } catch (const exception& e) {
+        set_error(error, 2, "ConnectionError", e.what());
+        LOG_ERROR_W(L"Database error during get catalog name: {}", to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown get catalog name error");
+        LOG_ERROR("Unknown exception during get catalog name");
+    }
+    return nullptr;
+}
+
+void set_catalog_name(Connection* conn, const char16_t* catalog, NativeError* error) {
+    LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
+    init_error(error);
+    try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot set catalog name");
+            set_error(error, 2, "ConnectionError", "Connection is null");            
+        }
+        auto w_catalog = to_wide_string(catalog);
+        conn->set_catalog(w_catalog);
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, 2, "ConnectionError", e.what());
+        LOG_ERROR_W(L"Database error during set catalog name: {}", to_wstring(e.what()));
+    } catch (const exception& e) {
+        set_error(error, 2, "ConnectionError", e.what());
+        LOG_ERROR_W(L"Database error during set catalog name: {}", to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, -1, "UnknownError", "Unknown set catalog name error");
+        LOG_ERROR("Unknown exception during set catalog name");
+    }
+}
+
 bool is_connected(Connection* conn, NativeError* error) {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);

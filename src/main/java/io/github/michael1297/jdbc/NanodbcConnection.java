@@ -171,13 +171,21 @@ public class NanodbcConnection implements Connection {
     @Override
     public void setCatalog(String catalog) throws SQLException {
         log.log(Level.FINEST, "setCatalog");
-        throw new SQLFeatureNotSupportedException();
+        try {
+            ConnectionHandler.setCatalog(connectionPtr, catalog);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public String getCatalog() throws SQLException {
         log.log(Level.FINEST, "getCatalog");
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return ConnectionHandler.getCatalog(connectionPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
@@ -380,25 +388,24 @@ public class NanodbcConnection implements Connection {
     @Override
     public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
         log.log(Level.FINEST, "createArrayOf");
-        throw new SQLFeatureNotSupportedException();
+        return null;
     }
 
     @Override
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
         log.log(Level.FINEST, "createStruct");
-        throw new SQLFeatureNotSupportedException();
+        return null;
     }
 
     @Override
     public void setSchema(String schema) throws SQLException {
         log.log(Level.FINEST, "setSchema");
-        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
     public String getSchema() throws SQLException {
         log.log(Level.FINEST, "getSchema");
-        throw new SQLFeatureNotSupportedException();
+        return null;
     }
 
     @Override

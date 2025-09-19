@@ -9,6 +9,12 @@ class Connection : public nanodbc::connection {
 public:
     using nanodbc::connection::connection; // Inherit base constructors
 
+    /// \brief Sets the current catalog (database) using ODBC SQLSetConnectAttr.
+    /// Behavior depends on ODBC driver — some may require reconnect or execute USE/SET commands internally.
+    /// \param catalog The name of the catalog (database) to set.
+    /// \throws std::runtime_error if connection is inactive or ODBC call fails.
+    void set_catalog(const nanodbc::string& catalog);
+
     /// \brief Sets the transaction isolation level using ODBC SQLSetConnectAttr.
     /// Must be called before starting a transaction.
     /// \param level The desired isolation level.

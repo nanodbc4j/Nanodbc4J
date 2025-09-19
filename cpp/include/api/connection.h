@@ -15,6 +15,10 @@ extern "C" {
 
     ODBC_API bool is_connected(Connection* conn, NativeError* error);
 
+    ODBC_API const char16_t* get_catalog_name(Connection* conn, NativeError* error);
+
+    ODBC_API void set_catalog_name(Connection* conn, const char16_t* catalog, NativeError* error);
+
     ODBC_API void set_transaction_isolation_level(Connection* conn, int level, NativeError* error);
 
     ODBC_API int get_transaction_isolation_level(Connection* conn, NativeError* error);

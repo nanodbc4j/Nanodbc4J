@@ -1,5 +1,6 @@
 package io.github.michael1297.internal.handler;
 
+import com.sun.jna.Pointer;
 import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
@@ -108,6 +109,33 @@ public final class ConnectionHandler {
         }
     }
 
+    public static void setCatalog(ConnectionPtr conn, String catalog) {
+        NativeError nativeError = new NativeError();
+        try {
+            NativeDB.INSTANCE.set_catalog_name(conn, catalog, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static String getCatalog(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        Pointer catalogPtr = Pointer.NULL;
+        try {
+            catalogPtr = NativeDB.INSTANCE.get_catalog_name(conn, nativeError);
+            if (nativeError.error_code != 0) {
+                throw new NativeException(nativeError);
+            }
+            return getWideString(catalogPtr);
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+            NativeDB.INSTANCE.std_free(catalogPtr);
+        }
+    }
+
     public static void setTransactionIsolation(ConnectionPtr conn, int level) {
         NativeError nativeError = new NativeError();
         try {
@@ -201,5 +229,12 @@ public final class ConnectionHandler {
             NativeDB.INSTANCE.clear_native_error(nativeError);
             NativeDB.INSTANCE.delete_database_meta_data(metaDataStruct);
         }
+    }
+
+    private static String getWideString(Pointer p) {
+        if (p == null || p.equals(Pointer.NULL)) {
+            return null;
+        }
+        return p.getWideString(0);
     }
 }

@@ -67,6 +67,10 @@ public interface NativeDB extends Library {
      */
     byte is_connected(ConnectionPtr conn, NativeError error);
 
+    Pointer get_catalog_name(ConnectionPtr conn, NativeError error);
+
+    void set_catalog_name(ConnectionPtr conn, String catalog, NativeError error);
+
     void set_transaction_isolation_level(ConnectionPtr conn, int level, NativeError error);
 
     int get_transaction_isolation_level(ConnectionPtr conn, NativeError error);
