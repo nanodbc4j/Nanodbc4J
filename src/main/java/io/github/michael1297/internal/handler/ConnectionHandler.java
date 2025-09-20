@@ -1,7 +1,6 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
-import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.DatabaseMetaDataStruct;
 import io.github.michael1297.internal.dto.DatabaseMetaDataDto;
@@ -14,6 +13,8 @@ import lombok.experimental.UtilityClass;
 
 import java.sql.DatabaseMetaData;
 
+import static io.github.michael1297.internal.handler.Handler.*;
+
 /**
  * Native ODBC connection operations: connect, disconnect, create statement.
  */
@@ -23,10 +24,8 @@ public final class ConnectionHandler {
     public static ConnectionPtr connect(String connection_string) {
         NativeError nativeError = new NativeError();
         try {
-            ConnectionPtr ptr = NativeDB.INSTANCE.connection(connection_string + '\0', nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            ConnectionPtr ptr = NativeDB.INSTANCE.connection(connection_string + NUL_CHAR, nativeError);
+            throwIfNativeError(nativeError);
             return ptr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -36,10 +35,9 @@ public final class ConnectionHandler {
     public static ConnectionPtr connect(String connection_string, long timeout) {
         NativeError nativeError = new NativeError();
         try {
-            ConnectionPtr ptr = NativeDB.INSTANCE.connection_with_timeout(connection_string + '\0', timeout, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            ConnectionPtr ptr =
+                    NativeDB.INSTANCE.connection_with_timeout(connection_string + NUL_CHAR, timeout, nativeError);
+            throwIfNativeError(nativeError);
             return ptr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -49,10 +47,9 @@ public final class ConnectionHandler {
     public static ConnectionPtr connect(String dsn, String user, String pass, long timeout) {
         NativeError nativeError = new NativeError();
         try {
-            ConnectionPtr ptr = NativeDB.INSTANCE.connection_with_user_pass_timeout(dsn + '\0', user + '\0', pass + '\0', timeout, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            ConnectionPtr ptr =
+                    NativeDB.INSTANCE.connection_with_user_pass_timeout(dsn + NUL_CHAR, user + NUL_CHAR, pass + NUL_CHAR, timeout, nativeError);
+            throwIfNativeError(nativeError);
             return ptr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -63,9 +60,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             StatementPtr ptr = NativeDB.INSTANCE.create_statement(connectionPtr, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return ptr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -75,10 +70,8 @@ public final class ConnectionHandler {
     public static void prepared(StatementPtr statementPtr, String sql, long timeout) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.prepare_statement(statementPtr, sql + '\0', timeout, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            NativeDB.INSTANCE.prepare_statement(statementPtr, sql + NUL_CHAR, timeout, nativeError);
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -88,9 +81,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.disconnect(ptr, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -100,9 +91,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             boolean result = NativeDB.INSTANCE.is_connected(ptr, nativeError) != 0;
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return result;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -113,9 +102,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.set_catalog_name(conn, catalog, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -126,9 +113,7 @@ public final class ConnectionHandler {
         Pointer catalogPtr = Pointer.NULL;
         try {
             catalogPtr = NativeDB.INSTANCE.get_catalog_name(conn, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return getWideString(catalogPtr);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -140,9 +125,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.set_transaction_isolation_level(conn, level, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -152,9 +135,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             int level = NativeDB.INSTANCE.get_transaction_isolation_level(conn, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return level;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -165,9 +146,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.set_auto_commit_transaction(conn, (byte) (autoCommit ? 1 : 0), nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -177,9 +156,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.commit_transaction(conn, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -189,9 +166,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.rollback_transaction(conn, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -201,9 +176,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             boolean result = NativeDB.INSTANCE.get_auto_commit_transaction(conn, nativeError) != 0;
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return result;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -215,26 +188,17 @@ public final class ConnectionHandler {
         DatabaseMetaDataStruct metaDataStruct = null;
         try {
             metaDataStruct = NativeDB.INSTANCE.get_database_meta_data(connectionPtr, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
 
             if (metaDataStruct == null) {
                 return null;
             }
 
-            DatabaseMetaDataDto metaData = OdbcDatabaseMetaDataHandler.processerMetaData(metaDataStruct);
+            DatabaseMetaDataDto metaData = DatabaseMetaDataHandler.processerMetaData(metaDataStruct);
             return new NanodbcDatabaseMetaData(connection, metaData);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
             NativeDB.INSTANCE.delete_database_meta_data(metaDataStruct);
         }
-    }
-
-    private static String getWideString(Pointer p) {
-        if (p == null || p.equals(Pointer.NULL)) {
-            return null;
-        }
-        return p.getWideString(0);
     }
 }

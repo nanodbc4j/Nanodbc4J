@@ -1,7 +1,5 @@
 package io.github.michael1297.internal.handler;
 
-import com.sun.jna.Pointer;
-import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.NativeError;
 import io.github.michael1297.internal.dto.DatabaseMetaDataDto;
@@ -11,11 +9,13 @@ import io.github.michael1297.internal.pointer.ResultSetPtr;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
+import static io.github.michael1297.internal.handler.Handler.*;
+
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcDatabaseMetaData object.
  */
 @UtilityClass
-public class OdbcDatabaseMetaDataHandler {
+public class DatabaseMetaDataHandler {
 
     public static DatabaseMetaDataDto processerMetaData(@NonNull DatabaseMetaDataStruct metaDataStruct) {
         DatabaseMetaDataDto metaData = new DatabaseMetaDataDto();
@@ -121,10 +121,8 @@ public class OdbcDatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog + "\0", schema + "\0", table + "\0", type + "\0", nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+                    NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog + NUL_CHAR, schema + NUL_CHAR, table + NUL_CHAR, type + NUL_CHAR, nativeError);
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -135,9 +133,7 @@ public class OdbcDatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_schemas(conn, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -149,10 +145,8 @@ public class OdbcDatabaseMetaDataHandler {
         try {
             // используем get_database_meta_data_tables
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog + "\0", schemaPattern + "\0", "\0", "\0", nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+                    NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog + NUL_CHAR, schemaPattern + NUL_CHAR, NUL_TERMINATOR, NUL_TERMINATOR, nativeError);
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -163,9 +157,7 @@ public class OdbcDatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_catalogs(conn, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -176,9 +168,7 @@ public class OdbcDatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_table_types(conn, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -189,10 +179,8 @@ public class OdbcDatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_columns(conn, catalog + "\0", schema + "\0", table + "\0", column + "\n", nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+                    NativeDB.INSTANCE.get_database_meta_data_columns(conn, catalog + NUL_CHAR, schema + NUL_CHAR, table + NUL_CHAR, column + NUL_CHAR, nativeError);
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -202,20 +190,12 @@ public class OdbcDatabaseMetaDataHandler {
     public ResultSetPtr getPrimaryKeys(ConnectionPtr conn, String catalog, String schema, String table) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_primary_keys(conn, catalog + "\0", schema + "\0", table + "\0", nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_primary_keys(conn, catalog + NUL_CHAR, schema + NUL_CHAR, table + NUL_CHAR, nativeError);
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
-    }
-
-    private static String getWideString(Pointer p) {
-        if (p == null || p.equals(Pointer.NULL)) {
-            return null;
-        }
-        return p.getWideString(0);
     }
 }

@@ -1,71 +1,39 @@
 package io.github.michael1297.internal.handler;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
-import io.github.michael1297.internal.dto.DatasourceDto;
-import io.github.michael1297.internal.dto.DriverDto;
-import io.github.michael1297.jdbc.SpdLogLevel;
-import io.github.michael1297.internal.NativeDB;
-import io.github.michael1297.internal.cstruct.DatasourceStruct;
-import io.github.michael1297.internal.cstruct.DriverStruct;
+import io.github.michael1297.exceptions.NativeException;
+import io.github.michael1297.internal.cstruct.NativeError;
 import lombok.experimental.UtilityClass;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Main native interface. Loads odbc.dll and exposes ODBC functions via JNA.
+ * Utility handler
  */
 @UtilityClass
-public final class Handler {
+public class Handler {
     public static final long POINTER_SIZE = System.getProperty("os.arch").endsWith("64") ? 8 : 4;
+    public static final char NUL_CHAR = '\0';
+    public static final String NUL_TERMINATOR = "" + NUL_CHAR;
 
-    public static void setLogLevel(SpdLogLevel level) {
-        if (NativeDB.INSTANCE.set_log_level(level.getValue()) != 0) {
-            throw new InternalError("set_log_level failed");
+    public static String getWideString(Pointer p) {
+        if (p == null || p.equals(Pointer.NULL)) {
+            return null;
+        }
+        return p.getWideString(0);
+    }
+
+    public static void throwIfNativeError(NativeError nativeError) {
+        if (nativeError.error_code != 0) {
+            throw new NativeException(nativeError);
         }
     }
 
-    public static List<DriverDto> driversList() {
-        List<DriverDto> drivers = new ArrayList<>();
-        IntByReference count = new IntByReference();
-        Pointer driversListPtrs = NativeDB.INSTANCE.drivers_list(count);
-        try {
-            for (int i = 0; i < count.getValue(); i++) {
-                DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(POINTER_SIZE * i));
-                List<DriverDto.Attribute> driverAttributes = new ArrayList<>(ds.attribute_count);
-                String name = ds.name.getWideString(0);
-
-                for (int j = 0; j < ds.attribute_count; j++) {
-                    DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ds.attributes.getPointer(POINTER_SIZE * j));
-                    String keyword = attr.keyword.getWideString(0);
-                    String value = attr.value.getWideString(0);
-                    driverAttributes.add(new DriverDto.Attribute(keyword, value));
-                }
-
-                drivers.add(new DriverDto(name, driverAttributes));
-            }
-        } finally {
-            NativeDB.INSTANCE.delete_driver_array(driversListPtrs, count.getValue());
-        }
-        return drivers;
+    @FunctionalInterface
+    public interface TriFunction<T, U, V, R> {
+        R apply(T t, U u, V v);
     }
 
-    public static List<DatasourceDto> datasourcesList() {
-        List<DatasourceDto> datasources = new ArrayList<>();
-        IntByReference count = new IntByReference();
-        Pointer datasourcesListPtrs = NativeDB.INSTANCE.datasources_list(count);
-        try {
-            for (int i = 0; i < count.getValue(); i++) {
-                DatasourceStruct ds = new DatasourceStruct(datasourcesListPtrs.getPointer(POINTER_SIZE * i));
-                String name = ds.name.getWideString(0);
-                String driver = ds.driver.getWideString(0);
-                datasources.add(new DatasourceDto(name, driver));
-            }
-        } finally {
-            NativeDB.INSTANCE.delete_datasource_array(datasourcesListPtrs, count.getValue());
-        }
-
-        return datasources;
+    @FunctionalInterface
+    public interface QuadConsumer<T, U, V, W> {
+        void accept(T t, U u, V v, W w);
     }
 }

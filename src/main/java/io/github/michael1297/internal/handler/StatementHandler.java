@@ -1,6 +1,5 @@
 package io.github.michael1297.internal.handler;
 
-import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.cstruct.DateStruct;
 import io.github.michael1297.internal.cstruct.TimeStruct;
@@ -18,16 +17,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static io.github.michael1297.internal.handler.Handler.*;
+
 @UtilityClass
 public final class StatementHandler {
 
     public static ResultSetPtr execute(ConnectionPtr conn, String sql) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute_request(conn, sql + "\0", nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute_request(conn, sql + NUL_CHAR, nativeError);
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -37,10 +36,8 @@ public final class StatementHandler {
     public static int executeUpdate(ConnectionPtr conn, String sql) {
         NativeError nativeError = new NativeError();
         try {
-            int result = NativeDB.INSTANCE.execute_request_update(conn, sql + "\0", nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            int result = NativeDB.INSTANCE.execute_request_update(conn, sql + NUL_CHAR, nativeError);
+            throwIfNativeError(nativeError);
             return result;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -51,9 +48,7 @@ public final class StatementHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute(statementPtr, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -64,22 +59,18 @@ public final class StatementHandler {
         NativeError nativeError = new NativeError();
         try {
             int result = NativeDB.INSTANCE.execute_update(statementPtr, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return result;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
 
-    public static <T> void setValueByIndex(StatementPtr statementPtr, int index, T value, QuadConsumer<StatementPtr, Integer, T, NativeError> function) {
+    public static <T> void setValueByIndex(StatementPtr statementPtr, int index, T value, Handler.QuadConsumer<StatementPtr, Integer, T, NativeError> function) {
         NativeError nativeError = new NativeError();
         try {
             function.accept(statementPtr, index - 1, value,  nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -89,9 +80,7 @@ public final class StatementHandler {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.close_statement(statement, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
@@ -129,10 +118,5 @@ public final class StatementHandler {
         struct.second = (short) localDateTime.getSecond();
         struct.fract = localDateTime.getNano();
         return struct;
-    }
-
-    @FunctionalInterface
-    public interface QuadConsumer<T, U, V, W> {
-        void accept(T t, U u, V v, W w);
     }
 }

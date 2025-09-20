@@ -4,7 +4,6 @@ import com.sun.jna.Pointer;
 import io.github.michael1297.internal.cstruct.ResultSetMetaDataStruct;
 import io.github.michael1297.internal.dto.ResultSetMetadataDto;
 import io.github.michael1297.jdbc.NanodbcResultSetMetaData;
-import io.github.michael1297.exceptions.NativeException;
 import io.github.michael1297.internal.NativeDB;
 import io.github.michael1297.internal.pointer.ResultSetPtr;
 import io.github.michael1297.internal.cstruct.DateStruct;
@@ -21,41 +20,37 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static io.github.michael1297.internal.handler.Handler.*;
+
 @UtilityClass
 public final class ResultSetHandler {
     public static boolean next(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
             boolean hasNext = NativeDB.INSTANCE.next_result(resultSet, nativeError) != 0;
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return hasNext;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
 
-    public static <T> T getValueByIndex(ResultSetPtr resultSet, int index, TriFunction<ResultSetPtr, Integer, NativeError, T> function) {
+    public static <T> T getValueByIndex(ResultSetPtr resultSet, int index, Handler.TriFunction<ResultSetPtr, Integer, NativeError, T> function) {
         NativeError nativeError = new NativeError();
         try {
             T value = function.apply(resultSet, index - 1, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return value;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
 
-    public static <T> T getValueByName(ResultSetPtr resultSet, String name, TriFunction<ResultSetPtr, String, NativeError, T> function) {
+    public static <T> T getValueByName(ResultSetPtr resultSet, String name, Handler.TriFunction<ResultSetPtr, String, NativeError, T> function) {
         NativeError nativeError = new NativeError();
         try {
             T value = function.apply(resultSet, name + '\0', nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return value;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -67,15 +62,9 @@ public final class ResultSetHandler {
         Pointer strPtr = null;
         try {
             strPtr = NativeDB.INSTANCE.get_string_value_by_index(resultSet, index - 1, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
 
-            if (strPtr == null || strPtr.equals(Pointer.NULL)) {
-                return null;
-            }
-
-            return strPtr.getWideString(0);
+            return getWideString(strPtr);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
             NativeDB.INSTANCE.std_free(strPtr);
@@ -123,15 +112,8 @@ public final class ResultSetHandler {
         Pointer strPtr = null;
         try {
             strPtr = NativeDB.INSTANCE.get_string_value_by_name(resultSet, name + '\0', nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
-
-            if (strPtr == null || strPtr.equals(Pointer.NULL)) {
-                return null;
-            }
-
-            return strPtr.getWideString(0);
+            throwIfNativeError(nativeError);
+            return getWideString(strPtr);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
             NativeDB.INSTANCE.std_free(strPtr);
@@ -183,18 +165,16 @@ public final class ResultSetHandler {
         try {
             boolean isNull;
             if (lastColumn instanceof Integer column) {
-                isNull =  NativeDB.INSTANCE.was_null_by_index(resultSet, column - 1, nativeError) != 0;
+                isNull = NativeDB.INSTANCE.was_null_by_index(resultSet, column - 1, nativeError) != 0;
             } else if (lastColumn instanceof String column) {
-                isNull = NativeDB.INSTANCE.was_null_by_name(resultSet, column + "\0", nativeError) != 0;
+                isNull = NativeDB.INSTANCE.was_null_by_name(resultSet, column + NUL_CHAR, nativeError) != 0;
             } else {
                 throw new InvalidClassException("lastColumn is not of type Integer or String");
             }
 
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
             return isNull;
-        }  finally {
+        } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
@@ -202,12 +182,10 @@ public final class ResultSetHandler {
     public static int findColumn(ResultSetPtr resultSet, String name) {
         NativeError nativeError = new NativeError();
         try {
-            int col =  NativeDB.INSTANCE.find_column_by_name(resultSet, name + "\0", nativeError) + 1;
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            int col = NativeDB.INSTANCE.find_column_by_name(resultSet, name + NUL_CHAR, nativeError) + 1;
+            throwIfNativeError(nativeError);
             return col;
-        }  finally {
+        } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
@@ -217,15 +195,13 @@ public final class ResultSetHandler {
         ResultSetMetaDataStruct metaDataStruct = null;
         try {
             metaDataStruct = NativeDB.INSTANCE.get_meta_data(resultSet, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
 
             if (metaDataStruct == null) {
                 return null;
             }
 
-            ResultSetMetadataDto metaData = OdbcResultSetMetaDataHandler.processerMetaData(metaDataStruct);
+            ResultSetMetadataDto metaData = ResultSetMetaDataHandler.processerMetaData(metaDataStruct);
             return new NanodbcResultSetMetaData(metaData);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -237,18 +213,14 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.close_result(resultSet, nativeError);
-            if (nativeError.error_code != 0) {
-                throw new NativeException(nativeError);
-            }
+            throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     private static Date convert(DateStruct dateStruct, NativeError nativeError) {
-        if (nativeError.error_code != 0) {
-            throw new NativeException(nativeError);
-        }
+        throwIfNativeError(nativeError);
 
         if (dateStruct == null || dateStruct.getPointer().equals(Pointer.NULL)) {
             return null;
@@ -263,9 +235,7 @@ public final class ResultSetHandler {
     }
 
     private static Time convert(TimeStruct timeStruct, NativeError nativeError) {
-        if (nativeError.error_code != 0) {
-            throw new NativeException(nativeError);
-        }
+        throwIfNativeError(nativeError);
 
         if (timeStruct == null || timeStruct.getPointer().equals(Pointer.NULL)) {
             return null;
@@ -280,9 +250,7 @@ public final class ResultSetHandler {
     }
 
     private static Timestamp convert(TimestampStruct timestampStruct, NativeError nativeError) {
-        if (nativeError.error_code != 0) {
-            throw new NativeException(nativeError);
-        }
+        throwIfNativeError(nativeError);
 
         if (timestampStruct == null || timestampStruct.getPointer().equals(Pointer.NULL)) {
             return null;
@@ -304,10 +272,5 @@ public final class ResultSetHandler {
         timestamp.setNanos(timestampStruct.fract);
 
         return timestamp;
-    }
-
-    @FunctionalInterface
-    public interface TriFunction<T, U, V, R> {
-        R apply(T t, U u, V v);
     }
 }

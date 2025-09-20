@@ -2,7 +2,7 @@ package io.github.michael1297.jdbc;
 
 import io.github.michael1297.internal.dto.DatasourceDto;
 import io.github.michael1297.internal.dto.DriverDto;
-import io.github.michael1297.internal.handler.Handler;
+import io.github.michael1297.internal.handler.DriverHandler;
 import lombok.extern.java.Log;
 
 import java.sql.Connection;
@@ -29,7 +29,7 @@ public class NanodbcDriver implements Driver {
 
     static {
         try {
-            Handler.setLogLevel(SpdLogLevel.DEBUG);
+            DriverHandler.setLogLevel(SpdLogLevel.DEBUG);
             DriverManager.registerDriver(new NanodbcDriver());
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Could not register driver", e);
@@ -138,14 +138,14 @@ public class NanodbcDriver implements Driver {
     }
 
     public static void setLogLevel(SpdLogLevel level) {
-        Handler.setLogLevel(level);
+        DriverHandler.setLogLevel(level);
     }
 
     public static List<DriverDto> driversList() {
-        return Handler.driversList();
+        return DriverHandler.driversList();
     }
 
     public static List<DatasourceDto> datasourcesList() {
-        return Handler.datasourcesList();
+        return DriverHandler.datasourcesList();
     }
 }

@@ -1,6 +1,5 @@
 package io.github.michael1297.internal.handler;
 
-import com.sun.jna.Pointer;
 import io.github.michael1297.internal.dto.ResultSetMetadataDto;
 import io.github.michael1297.internal.cstruct.ResultSetMetaDataStruct;
 import lombok.NonNull;
@@ -8,13 +7,13 @@ import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 
-import static io.github.michael1297.internal.handler.Handler.POINTER_SIZE;
+import static io.github.michael1297.internal.handler.Handler.*;
 
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcResultSetMetadata object.
  */
 @UtilityClass
-public final class OdbcResultSetMetaDataHandler {
+public final class ResultSetMetaDataHandler {
 
     public static ResultSetMetadataDto processerMetaData(@NonNull ResultSetMetaDataStruct metaDataStruct) {
         ResultSetMetadataDto metaData = new ResultSetMetadataDto();
@@ -51,12 +50,5 @@ public final class OdbcResultSetMetaDataHandler {
         }
 
         return metaData;
-    }
-
-    private static String getWideString(Pointer p) {
-        if (p == null || p.equals(Pointer.NULL)) {
-            return null;
-        }
-        return p.getWideString(0);
     }
 }
