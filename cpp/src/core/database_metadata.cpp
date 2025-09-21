@@ -10,8 +10,6 @@
 #include <sql.h>
 #include "utils/logger.hpp"
 
-#define BUFFER_SIZE 1024
-
 namespace {
     class DatabaseCatalog : public nanodbc::catalog {
     public:
@@ -430,8 +428,8 @@ bool DatabaseMetaData::supportsNamedParameters() const {
 
 bool DatabaseMetaData::supportsBatchUpdates() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_PARAM_ARRAY_ROW_COUNTS, 0);
-    bool result = (val == 0x0001); // 0x0001 = SQL_PARC_YES_ROW_COUNTS
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_BATCH_SUPPORT, 0);
+    bool result = (val != 0); // Любое ненулевое значение — поддержка есть
     LOG_TRACE("Returning: {}", result);
     return result;
 }
@@ -522,10 +520,8 @@ bool DatabaseMetaData::supportsExpressionsInOrderBy() const {
 
 bool DatabaseMetaData::supportsSelectForUpdate() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), 125 /* SQL_FOR_UPDATE */, SQL_FALSE);
-    bool result = (val == SQL_TRUE);
-    LOG_TRACE("Returning: {}", result);
-    return result;
+    LOG_TRACE("Returning: false (ODBC does not standardly support SELECT FOR UPDATE)");
+    return false;
 }
 
 bool DatabaseMetaData::supportsStoredProcedures() const {
