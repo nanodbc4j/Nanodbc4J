@@ -1,0 +1,10 @@
+package io.github.nanodbc4j.internal.cstruct;
+
+import com.sun.jna.Structure;
+
+@Structure.FieldOrder({"hour", "minute", "second"})
+public final class TimeStruct extends Structure {
+    public short hour;    ///< Hours since midnight [0-23].
+    public short minute;  ///< Minutes after the hour [0-59].
+    public short second;  ///< Seconds after the minute.
+}
