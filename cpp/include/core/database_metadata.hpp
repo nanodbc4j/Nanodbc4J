@@ -110,24 +110,20 @@ public:
 
     nanodbc::result getTableTypes() const;
 
-    nanodbc::result getTables(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& table, const std::wstring& type) const;
+    nanodbc::result getTables(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table, const std::wstring& type) const;
     
-    nanodbc::result getColumns(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& table, const std::wstring& column) const;
+    nanodbc::result getColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, const std::wstring& column) const;
 
-    nanodbc::result getPrimaryKeys(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& table) const;
+    nanodbc::result getPrimaryKeys(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table) const;
 
-    nanodbc::result getImportedKeys(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& table) const;
+    nanodbc::result getImportedKeys(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table) const;
 
-    nanodbc::result getTypeInfo(short sqlType = 0) const;
+    nanodbc::result getExportedKeys(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table) const;
 
-    nanodbc::result getProcedures(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& procedure) const;
+    nanodbc::result getTypeInfo() const;
 
-    nanodbc::result getProcedureColumns(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& procedure, const std::wstring& column) const;
+    nanodbc::result getProcedures(const std::wstring& catalog, const std::wstring& schema, const std::wstring& procedure) const;
+
+    nanodbc::result getProcedureColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& procedure, const std::wstring& column) const;
      
 };

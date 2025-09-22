@@ -12,7 +12,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -835,17 +834,17 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getSuperTypes(String catalog, String schemaPattern, String typeNamePattern) throws SQLException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ResultSet getSuperTables(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ResultSet getAttributes(String catalog, String schemaPattern, String typeNamePattern, String attributeNamePattern) throws SQLException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -920,22 +919,22 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getClientInfoProperties() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throw new UnsupportedOperationException("Operation not yet supported");
     }
 
     @Override
     public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern, String columnNamePattern) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throw new UnsupportedOperationException("Operation not yet supported");
     }
 
     @Override
     public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throw new UnsupportedOperationException("Operation not yet supported");
     }
 
     @Override

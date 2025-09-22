@@ -1,14 +1,7 @@
 #include "core/connection.hpp"
 #include <wtypes.h>
 #include <sqlext.h>
-
-#ifdef NANODBC_ENABLE_UNICODE
-#define NANODBC_FUNC(f) f##W
-#define NANODBC_SQLCHAR SQLWCHAR
-#else
-#define NANODBC_FUNC(f) f
-#define NANODBC_SQLCHAR SQLCHAR
-#endif
+#include "core/nanodbc_defs.h"
 
 // Helper: Throws if ODBC call failed.
 inline static void check_odbc_result(SQLRETURN rc, const std::string& operation) {

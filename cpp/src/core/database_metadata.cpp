@@ -9,6 +9,7 @@
 #include <cwctype>
 #include <sql.h>
 #include "utils/logger.hpp"
+#include "core/nanodbc_defs.h"
 
 namespace {
     class DatabaseCatalog : public nanodbc::catalog {
@@ -62,6 +63,11 @@ namespace {
         nanodbc::result& getResult() {
             return get_result();
         }
+    };
+
+    class ResultSet : public nanodbc::result {
+    public:
+        ResultSet(nanodbc::statement&& statement, long rowset_size) : nanodbc::result(std::move(statement), rowset_size) {};
     };
 }
 
@@ -962,49 +968,88 @@ nanodbc::result DatabaseMetaData::getTableTypes() const {
 }
 
 // === Tables ===
-nanodbc::result DatabaseMetaData::getTables(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& table, const std::wstring& type) const {
+nanodbc::result DatabaseMetaData::getTables(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, const std::wstring& type) const {
     auto tables_result = nanodbc::catalog(connection_).find_tables(table, type, schema, catalog);
     return DatabaseTables(tables_result).getResult();
 }
 
 
 // === Columns ===
-nanodbc::result DatabaseMetaData::getColumns(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& table, const std::wstring& column) const {
+nanodbc::result DatabaseMetaData::getColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, const std::wstring& column) const {
     auto columns_result = nanodbc::catalog(connection_).find_columns(column, table, schema, catalog);
     return DatabaseColumns(columns_result).getResult();
 }
 
 
 // === Primary Keys ===
-nanodbc::result DatabaseMetaData::getPrimaryKeys(const std::wstring& catalog, const std::wstring& schema,
-        const std::wstring& table) const {
+nanodbc::result DatabaseMetaData::getPrimaryKeys(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table) const {
     auto primary_keys_result = nanodbc::catalog(connection_).find_primary_keys(table, schema, catalog);
     return DatabasePrimaryKeys(primary_keys_result).getResult();
 }
 
-nanodbc::result DatabaseMetaData::getImportedKeys(const std::wstring& catalog, const std::wstring& schema,
-    const std::wstring& table) const {
+// === Imported Keys ===
+nanodbc::result DatabaseMetaData::getImportedKeys(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table) const {
     nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLForeignKeys),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? nullptr : catalog.c_str()), (catalog.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(schema.empty() ? nullptr : schema.c_str()),(schema.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(table.empty() ? nullptr : table.c_str()), (table.empty() ? 0 : SQL_NTS),
+        nullptr, 0,   // fkCatalogName — nullptr = все
+        nullptr, 0,   // fkSchemaName — nullptr = все
+        nullptr, 0    // fkTableName — nullptr = все → imported keys;
+    );
 
-    return {};
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+    return ResultSet(std::move(stmt), 1);
 }
 
-nanodbc::result DatabaseMetaData::getTypeInfo(short sqlType) const {
-    return {};
+// === Exported Keys ===
+nanodbc::result DatabaseMetaData::getExportedKeys(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table) const {
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLForeignKeys),
+        rc,
+        stmt.native_statement_handle(),
+        nullptr, 0,   // pkCatalog — все
+        nullptr, 0,   // pkSchema — все
+        nullptr, 0,   // pkTable — все
+        (NANODBC_SQLCHAR*)(catalog.empty() ? nullptr : catalog.c_str()), (catalog.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(schema.empty() ? nullptr : schema.c_str()), (schema.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(table.empty() ? nullptr : table.c_str()), (table.empty() ? 0 : SQL_NTS)
+    );
+
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+    return ResultSet(std::move(stmt), 1);
+}
+
+nanodbc::result DatabaseMetaData::getTypeInfo() const {
+    nanodbc::statement stmt(connection_);
+    RETCODE rc = NANODBC_FUNC(SQLGetTypeInfo)(
+        stmt.native_statement_handle(),
+        SQL_ALL_TYPES
+    );
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+    return ResultSet(std::move(stmt), 1);
 }
 
 // === Procedures ===
-nanodbc::result DatabaseMetaData::getProcedures(const std::wstring& catalog, const std::wstring& schema,
-    const std::wstring& procedure) const {
+nanodbc::result DatabaseMetaData::getProcedures(const std::wstring& catalog, const std::wstring& schema, const std::wstring& procedure) const {
     auto procedures_keys_result = nanodbc::catalog(connection_).find_procedures (procedure, schema, catalog);
     return DatabaseProcedures(procedures_keys_result).getResult();
 }
 
 // === Procedure Columns ===
-nanodbc::result DatabaseMetaData::getProcedureColumns(const std::wstring& catalog, const std::wstring& schema,
-    const std::wstring& procedure, const std::wstring& column) const {
+nanodbc::result DatabaseMetaData::getProcedureColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& procedure, const std::wstring& column) const {
     auto procedure_columns_result = nanodbc::catalog(connection_).find_procedure_columns (column, procedure, schema, catalog);
     return DatabaseProcedureColumns(procedure_columns_result).getResult();
 }
