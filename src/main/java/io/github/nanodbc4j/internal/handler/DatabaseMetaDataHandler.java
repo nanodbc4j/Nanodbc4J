@@ -121,7 +121,11 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog + NUL_CHAR, schema + NUL_CHAR, table + NUL_CHAR, type + NUL_CHAR, nativeError);
+                    NativeDB.INSTANCE.get_database_meta_data_tables(conn,
+                            catalog + NUL_CHAR, schema + NUL_CHAR,
+                            table + NUL_CHAR,
+                            type + NUL_CHAR,
+                            nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
@@ -145,7 +149,12 @@ public class DatabaseMetaDataHandler {
         try {
             // используем get_database_meta_data_tables
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_tables(conn, catalog + NUL_CHAR, schemaPattern + NUL_CHAR, NUL_TERMINATOR, NUL_TERMINATOR, nativeError);
+                    NativeDB.INSTANCE.get_database_meta_data_tables(conn,
+                            catalog + NUL_CHAR,
+                            schemaPattern + NUL_CHAR,
+                            NUL_TERMINATOR,
+                            NUL_TERMINATOR,
+                            nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
@@ -179,7 +188,12 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_columns(conn, catalog + NUL_CHAR, schema + NUL_CHAR, table + NUL_CHAR, column + NUL_CHAR, nativeError);
+                    NativeDB.INSTANCE.get_database_meta_data_columns(conn,
+                            catalog + NUL_CHAR,
+                            schema + NUL_CHAR,
+                            table + NUL_CHAR,
+                            column + NUL_CHAR,
+                            nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
@@ -191,7 +205,88 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_primary_keys(conn, catalog + NUL_CHAR, schema + NUL_CHAR, table + NUL_CHAR, nativeError);
+                    NativeDB.INSTANCE.get_database_meta_data_primary_keys(conn,
+                            catalog + NUL_CHAR,
+                            schema + NUL_CHAR,
+                            table + NUL_CHAR,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getImportedKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_imported_keys(conn,
+                            catalog + NUL_CHAR,
+                            schema + NUL_CHAR,
+                            table + NUL_CHAR,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getExportedKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_exported_keys(conn,
+                            catalog + NUL_CHAR,
+                            schema + NUL_CHAR,
+                            table + NUL_CHAR,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getTypeInfo(ConnectionPtr conn) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_type_info(conn, nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getProcedures(ConnectionPtr conn, String catalog, String schemaPattern, String procedureNamePattern) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_procedures(conn,
+                            catalog + NUL_CHAR,
+                            schemaPattern + NUL_CHAR,
+                            procedureNamePattern + NUL_CHAR,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getProcedureColumns(ConnectionPtr conn, String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_procedure_columns(conn,
+                            catalog + NUL_CHAR,
+                            schemaPattern + NUL_CHAR,
+                            procedureNamePattern + NUL_CHAR,
+                            columnNamePattern + NUL_CHAR,
+                            nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {

@@ -619,12 +619,22 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getProcedures(String catalog, String schemaPattern, String procedureNamePattern) throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getProcedures(connection.get().getConnectionPtr(), catalog, schemaPattern, procedureNamePattern);
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public ResultSet getProcedureColumns(String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getProcedureColumns(connection.get().getConnectionPtr(), catalog, schemaPattern, procedureNamePattern,  columnNamePattern);
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
@@ -716,12 +726,22 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getImportedKeys(String catalog, String schema, String table) throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getImportedKeys(connection.get().getConnectionPtr(), catalog, schema, table);
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
     public ResultSet getExportedKeys(String catalog, String schema, String table) throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getExportedKeys(connection.get().getConnectionPtr(), catalog, schema, table);
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
@@ -731,7 +751,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getTypeInfo() throws SQLException {
-        return null;
+        try {
+            ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getTypeInfo(connection.get().getConnectionPtr());
+            return new NanodbcResultSet(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override
