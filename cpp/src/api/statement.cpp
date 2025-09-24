@@ -180,7 +180,7 @@ nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {
             return nullptr;
         }
         auto results = stmt->execute();
-        auto result_ptr = new nanodbc::result(results);
+        auto result_ptr = new nanodbc::result(std::move(results));
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
     } catch (const nanodbc::database_error& e) {

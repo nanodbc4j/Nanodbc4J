@@ -17,7 +17,7 @@ static nanodbc::result* execute_metadata_query(nanodbc::connection* conn, Func&&
 
         const DatabaseMetaData database_meta_data(*conn);
         auto result = func(database_meta_data); // Вызываем нужный метод
-        auto result_ptr = new nanodbc::result(result);
+        auto result_ptr = new nanodbc::result(std::move(result));
 
         LOG_DEBUG("ResultSet for '{}' created successfully: {}", operation_name, reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
