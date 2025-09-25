@@ -73,6 +73,10 @@ public:
     bool supportsOpenStatementsAcrossRollback() const;
     bool locatorsUpdateCopy() const;
     bool supportsStatementPooling() const;
+    bool allProceduresAreCallable() const;
+    bool allTablesAreSelectable() const;
+    bool supportsMultipleResultSets() const;
+    bool supportsMultipleTransactions() const;
     bool autoCommitFailureClosesAllResultSets() const;
     bool supportsStoredFunctionsUsingCallSyntax() const;
     bool generatedKeyAlwaysReturned() const;

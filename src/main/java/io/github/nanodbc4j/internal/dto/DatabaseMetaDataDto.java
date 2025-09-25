@@ -70,6 +70,10 @@ public class DatabaseMetaDataDto {
     public boolean supportsOpenStatementsAcrossRollback;
     public boolean locatorsUpdateCopy;
     public boolean supportsStatementPooling;
+    public boolean allProceduresAreCallable;
+    public boolean allTablesAreSelectable;
+    public boolean supportsMultipleResultSets;
+    public boolean supportsMultipleTransactions;
     public boolean autoCommitFailureClosesAllResultSets;
     public boolean supportsStoredFunctionsUsingCallSyntax;
     public boolean generatedKeyAlwaysReturned;

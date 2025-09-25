@@ -70,6 +70,10 @@ import lombok.NoArgsConstructor;
         "supportsOpenStatementsAcrossRollback",
         "locatorsUpdateCopy",
         "supportsStatementPooling",
+        "allProceduresAreCallable",
+        "allTablesAreSelectable",
+        "supportsMultipleResultSets",
+        "supportsMultipleTransactions",
         "autoCommitFailureClosesAllResultSets",
         "supportsStoredFunctionsUsingCallSyntax",
         "generatedKeyAlwaysReturned",
@@ -165,6 +169,10 @@ public class DatabaseMetaDataStruct extends Structure {
     public byte supportsOpenStatementsAcrossRollback;
     public byte locatorsUpdateCopy;
     public byte supportsStatementPooling;
+    public byte allProceduresAreCallable;
+    public byte allTablesAreSelectable;
+    public byte supportsMultipleResultSets;
+    public byte supportsMultipleTransactions;
     public byte autoCommitFailureClosesAllResultSets;
     public byte supportsStoredFunctionsUsingCallSyntax;
     public byte generatedKeyAlwaysReturned;

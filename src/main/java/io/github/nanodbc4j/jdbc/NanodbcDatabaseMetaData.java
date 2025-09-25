@@ -28,12 +28,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean allProceduresAreCallable() throws SQLException {
-        return false;
+        return metaData.allProceduresAreCallable;
     }
 
     @Override
     public boolean allTablesAreSelectable() throws SQLException {
-        return false;
+        return metaData.allTablesAreSelectable;
     }
 
     @Override
@@ -263,12 +263,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsMultipleResultSets() throws SQLException {
-        return false;
+        return metaData.supportsMultipleResultSets;
     }
 
     @Override
     public boolean supportsMultipleTransactions() throws SQLException {
-        return false;
+        return metaData.supportsMultipleTransactions;
     }
 
     @Override

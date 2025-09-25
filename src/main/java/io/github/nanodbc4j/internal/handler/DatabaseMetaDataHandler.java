@@ -84,6 +84,10 @@ public class DatabaseMetaDataHandler {
         metaData.supportsOpenStatementsAcrossRollback = metaDataStruct.supportsOpenStatementsAcrossRollback != 0;
         metaData.locatorsUpdateCopy = metaDataStruct.locatorsUpdateCopy != 0;
         metaData.supportsStatementPooling = metaDataStruct.supportsStatementPooling != 0;
+        metaData.allProceduresAreCallable = metaDataStruct.allProceduresAreCallable != 0;
+        metaData.allTablesAreSelectable = metaDataStruct.allTablesAreSelectable != 0;
+        metaData.supportsMultipleResultSets = metaDataStruct.supportsMultipleResultSets != 0;
+        metaData.supportsMultipleTransactions = metaDataStruct.supportsMultipleTransactions != 0;
         metaData.autoCommitFailureClosesAllResultSets = metaDataStruct.autoCommitFailureClosesAllResultSets != 0;
         metaData.supportsStoredFunctionsUsingCallSyntax = metaDataStruct.supportsStoredFunctionsUsingCallSyntax != 0;
         metaData.generatedKeyAlwaysReturned = metaDataStruct.generatedKeyAlwaysReturned != 0;

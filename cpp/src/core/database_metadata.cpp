@@ -100,11 +100,12 @@ inline static T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = 
     T value = 0;
     SQLRETURN ret = SQLGetInfo(hdbc, attr, &value, sizeof(T), nullptr);
 
-    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+    if (!SQL_SUCCEEDED(ret)) {
         LOG_ERROR("SQLGetInfo(attr={}) failed with return code {}", attr, ret);
+        return defaultValue;
     }
 
-    return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) ? value : defaultValue;
+    return value;
 }
 
 template<class T>
@@ -573,7 +574,7 @@ bool DatabaseMetaData::supportsSubqueriesInQuantifieds() const {
 bool DatabaseMetaData::supportsCorrelatedSubqueries() const {
     LOG_TRACE("Called");
     auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_SUBQUERIES, 0);
-    bool result = (val & 0x00000010) != 0; // 0x00000010 = SQL_SQ_CORRELATED
+    bool result = (val & SQL_SQ_CORRELATED_SUBQUERIES) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
 }
@@ -597,7 +598,7 @@ bool DatabaseMetaData::supportsOuterJoins() const {
 bool DatabaseMetaData::supportsFullOuterJoins() const {
     LOG_TRACE("Called");
     auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_OUTER_JOINS, 0);
-    bool result = (val & 0x00000008) != 0; // SQL_OJ_FULL_OUTER_JOIN = 0x00000008
+    bool result = (val & SQL_SRJO_FULL_OUTER_JOIN) != 0;
     LOG_TRACE("Returning: {}", result);
     return result;
 }
@@ -740,6 +741,38 @@ bool DatabaseMetaData::supportsStatementPooling() const {
     LOG_TRACE("Called");
     LOG_TRACE("Returning: false");
     return false;
+}
+
+bool DatabaseMetaData::allProceduresAreCallable() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_ACCESSIBLE_PROCEDURES, SQL_FALSE);
+    bool result = (val == SQL_TRUE);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::allTablesAreSelectable() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_ACCESSIBLE_TABLES, SQL_FALSE);
+    bool result = (val == SQL_TRUE);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsMultipleResultSets() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MULT_RESULT_SETS, SQL_FALSE);
+    bool result = (val == SQL_TRUE);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsMultipleTransactions() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MULTIPLE_ACTIVE_TXN, SQL_FALSE);
+    bool result = (val == SQL_TRUE);
+    LOG_TRACE("Returning: {}", result);
+    return result;
 }
 
 bool DatabaseMetaData::autoCommitFailureClosesAllResultSets() const {

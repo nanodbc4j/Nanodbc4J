@@ -70,6 +70,10 @@ extern "C" {
         bool supportsOpenStatementsAcrossRollback = false;
         bool locatorsUpdateCopy = false;
         bool supportsStatementPooling = false;
+        bool allProceduresAreCallable = false;
+        bool allTablesAreSelectable = false;
+        bool supportsMultipleResultSets = false;
+        bool supportsMultipleTransactions = false;
         bool autoCommitFailureClosesAllResultSets = false;
         bool supportsStoredFunctionsUsingCallSyntax = false;
         bool generatedKeyAlwaysReturned = false;

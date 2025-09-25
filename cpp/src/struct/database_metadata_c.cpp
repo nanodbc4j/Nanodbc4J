@@ -77,6 +77,10 @@ CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
     supportsOpenStatementsAcrossRollback = other.supportsOpenStatementsAcrossRollback;
     locatorsUpdateCopy = other.locatorsUpdateCopy;
     supportsStatementPooling = other.supportsStatementPooling;
+    allProceduresAreCallable = other.allProceduresAreCallable;
+    allTablesAreSelectable = other.allTablesAreSelectable;
+    supportsMultipleResultSets = other.supportsMultipleResultSets;
+    supportsMultipleTransactions = other.supportsMultipleTransactions;
     autoCommitFailureClosesAllResultSets = other.autoCommitFailureClosesAllResultSets;
     supportsStoredFunctionsUsingCallSyntax = other.supportsStoredFunctionsUsingCallSyntax;
     generatedKeyAlwaysReturned = other.generatedKeyAlwaysReturned;
@@ -173,6 +177,10 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     supportsOpenStatementsAcrossRollback = other.supportsOpenStatementsAcrossRollback();
     locatorsUpdateCopy = other.locatorsUpdateCopy();
     supportsStatementPooling = other.supportsStatementPooling();
+    allProceduresAreCallable = other.allProceduresAreCallable();
+    allTablesAreSelectable = other.allTablesAreSelectable();
+    supportsMultipleResultSets = other.supportsMultipleResultSets();
+    supportsMultipleTransactions = other.supportsMultipleTransactions();
     autoCommitFailureClosesAllResultSets = other.autoCommitFailureClosesAllResultSets();
     supportsStoredFunctionsUsingCallSyntax = other.supportsStoredFunctionsUsingCallSyntax();
     generatedKeyAlwaysReturned = other.generatedKeyAlwaysReturned();
