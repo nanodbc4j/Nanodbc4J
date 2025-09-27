@@ -77,6 +77,37 @@ extern "C" {
         bool autoCommitFailureClosesAllResultSets = false;
         bool supportsStoredFunctionsUsingCallSyntax = false;
         bool generatedKeyAlwaysReturned = false;
+        bool nullsAreSortedHigh = false;
+        bool nullsAreSortedLow = false;
+        bool nullsAreSortedAtStart = false;
+        bool nullsAreSortedAtEnd = false;
+        bool usesLocalFiles = false;
+        bool usesLocalFilePerTable = false;
+        bool supportsMixedCaseIdentifiers = false;
+        bool storesUpperCaseIdentifiers = false;
+        bool storesLowerCaseIdentifiers = false;
+        bool storesMixedCaseIdentifiers = false;
+        bool supportsMixedCaseQuotedIdentifiers = false;
+        bool storesUpperCaseQuotedIdentifiers = false;
+        bool storesLowerCaseQuotedIdentifiers = false;
+        bool storesMixedCaseQuotedIdentifiers = false;
+        bool supportsAlterTableWithDropColumn = false;
+        bool supportsConvert = false;
+        bool supportsTableCorrelationNames = false;
+        bool supportsDifferentTableCorrelationNames = false;
+        bool supportsNonNullableColumns = false;
+        bool supportsMinimumSQLGrammar = false;
+        bool supportsCoreSQLGrammar = false;
+        bool supportsExtendedSQLGrammar = false;
+        bool supportsANSI92EntryLevelSQL = false;
+        bool supportsANSI92IntermediateSQL = false;
+        bool supportsANSI92FullSQL = false;
+        bool supportsDataDefinitionAndDataManipulationTransactions = false;
+        bool supportsDataManipulationTransactionsOnly = false;
+        bool dataDefinitionCausesTransactionCommit = false;
+        bool dataDefinitionIgnoredInTransactions = false;
+        bool supportsMultipleOpenResults = false;
+        bool supportsGetGeneratedKeys = false;
 
         // === Целочисленные значения ===
         int supportsTransactionIsolationLevel = 0;

@@ -799,6 +799,245 @@ bool DatabaseMetaData::generatedKeyAlwaysReturned() const {
     return result;
 }
 
+bool DatabaseMetaData::nullsAreSortedHigh() const {
+    LOG_TRACE_W(L"Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
+    bool result = (val == SQL_NC_HIGH);
+    LOG_TRACE_W(L"Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::nullsAreSortedLow() const {
+    LOG_TRACE_W(L"Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
+    bool result = (val == SQL_NC_LOW);
+    LOG_TRACE_W(L"Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::nullsAreSortedAtStart() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
+    bool result = (val == SQL_NC_START);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::nullsAreSortedAtEnd() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
+    bool result = (val == SQL_NC_END);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::usesLocalFiles() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_FILE_USAGE, 0);
+    bool result = (val == SQL_FILE_QUALIFIER);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+    return false;
+}
+
+bool DatabaseMetaData::usesLocalFilePerTable() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_FILE_USAGE, 0);
+    bool result = (val == SQL_FILE_TABLE);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsMixedCaseIdentifiers() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_IDENTIFIER_CASE, 0);
+    bool result = (val == SQL_IC_MIXED);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::storesUpperCaseIdentifiers() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_IDENTIFIER_CASE, 0);
+    bool result = (val == SQL_IC_UPPER);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::storesLowerCaseIdentifiers() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_IDENTIFIER_CASE, 0);
+    bool result = (val == SQL_IC_LOWER);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::storesMixedCaseIdentifiers() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_IDENTIFIER_CASE, 0);
+    bool result = (val == SQL_IC_MIXED);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsMixedCaseQuotedIdentifiers() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_QUOTED_IDENTIFIER_CASE, 0);
+    bool result = (val == SQL_IC_SENSITIVE);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::storesUpperCaseQuotedIdentifiers() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_QUOTED_IDENTIFIER_CASE, 0);
+    bool result = (val == SQL_IC_UPPER);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::storesLowerCaseQuotedIdentifiers() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_QUOTED_IDENTIFIER_CASE, 0);
+    bool result = (val == SQL_IC_LOWER);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::storesMixedCaseQuotedIdentifiers() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_QUOTED_IDENTIFIER_CASE, 0);
+    bool result = (val == SQL_IC_MIXED);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsAlterTableWithDropColumn() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_ALTER_TABLE, 0);
+    bool result = (val & SQL_AT_DROP_COLUMN) != 0;
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsConvert() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CONVERT_FUNCTIONS, 0);
+    bool result = (val == 1);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsTableCorrelationNames() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_CORRELATION_NAME, 0);
+    bool result = (val == SQL_CN_ANY || val == SQL_CN_DIFFERENT);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsDifferentTableCorrelationNames() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_CORRELATION_NAME, 0);
+    bool result = (val == SQL_CN_DIFFERENT);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsNonNullableColumns() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NON_NULLABLE_COLUMNS, 0);
+    bool result = (val == SQL_NNC_NON_NULL);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsMinimumSQLGrammar() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_ODBC_SQL_CONFORMANCE, 0);
+    bool result = (val == SQL_OSC_MINIMUM || val == SQL_OSC_CORE || val == SQL_OSC_EXTENDED);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsCoreSQLGrammar() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_ODBC_SQL_CONFORMANCE, 0);
+    bool result = (val == SQL_OSC_CORE || val == SQL_OSC_EXTENDED);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsExtendedSQLGrammar() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_ODBC_SQL_CONFORMANCE, 0);
+    bool result = (val == SQL_OSC_EXTENDED);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsANSI92EntryLevelSQL() const {
+    LOG_TRACE("Called");
+    LOG_TRACE("Returning: {}", true);
+    return false;
+}
+
+bool DatabaseMetaData::supportsANSI92IntermediateSQL() const {
+    LOG_TRACE("Called");
+    LOG_TRACE("Returning: {}", false);
+    return false;
+}
+
+bool DatabaseMetaData::supportsANSI92FullSQL() const {
+    LOG_TRACE("Called");
+    LOG_TRACE("Returning: {}", false);
+    return false;
+}
+
+bool DatabaseMetaData::supportsDataDefinitionAndDataManipulationTransactions() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_TXN_CAPABLE, 0);
+    bool result = (val & SQL_TC_ALL) != 0;
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsDataManipulationTransactionsOnly() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_TXN_CAPABLE, 0);
+    bool result = (val & SQL_TC_DML) != 0;
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::dataDefinitionCausesTransactionCommit() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_TXN_CAPABLE, 0);
+    bool result = (val & SQL_TC_DDL_COMMIT) != 0;
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::dataDefinitionIgnoredInTransactions() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_TXN_CAPABLE, 0);
+    bool result = (val & SQL_TC_DDL_IGNORE) != 0;
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsMultipleOpenResults() const {
+    LOG_TRACE("Called");
+    LOG_TRACE("Returning: {}", false);
+    return false;
+}
+
+bool DatabaseMetaData::supportsGetGeneratedKeys() const {
+    LOG_TRACE("Called");
+    LOG_TRACE("Returning: {}", false);
+    return false;
+}
+
 // === Целочисленные методы ===
 int DatabaseMetaData::supportsTransactionIsolationLevel() const {   // === Поддержка уровней изоляции ===
     LOG_TRACE("Called");

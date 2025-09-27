@@ -91,6 +91,37 @@ public class DatabaseMetaDataHandler {
         metaData.autoCommitFailureClosesAllResultSets = metaDataStruct.autoCommitFailureClosesAllResultSets != 0;
         metaData.supportsStoredFunctionsUsingCallSyntax = metaDataStruct.supportsStoredFunctionsUsingCallSyntax != 0;
         metaData.generatedKeyAlwaysReturned = metaDataStruct.generatedKeyAlwaysReturned != 0;
+        metaData.nullsAreSortedHigh = metaDataStruct.nullsAreSortedHigh != 0;
+        metaData.nullsAreSortedLow = metaDataStruct.nullsAreSortedLow != 0;
+        metaData.nullsAreSortedAtStart = metaDataStruct.nullsAreSortedAtStart != 0;
+        metaData.nullsAreSortedAtEnd = metaDataStruct.nullsAreSortedAtEnd != 0;
+        metaData.usesLocalFiles = metaDataStruct.usesLocalFiles != 0;
+        metaData.usesLocalFilePerTable = metaDataStruct.usesLocalFilePerTable != 0;
+        metaData.supportsMixedCaseIdentifiers = metaDataStruct.supportsMixedCaseIdentifiers != 0;
+        metaData.storesUpperCaseIdentifiers = metaDataStruct.storesUpperCaseIdentifiers != 0;
+        metaData.storesLowerCaseIdentifiers = metaDataStruct.storesLowerCaseIdentifiers != 0;
+        metaData.storesMixedCaseIdentifiers = metaDataStruct.storesMixedCaseIdentifiers != 0;
+        metaData.supportsMixedCaseQuotedIdentifiers = metaDataStruct.supportsMixedCaseQuotedIdentifiers != 0;
+        metaData.storesUpperCaseQuotedIdentifiers = metaDataStruct.storesUpperCaseQuotedIdentifiers != 0;
+        metaData.storesLowerCaseQuotedIdentifiers = metaDataStruct.storesLowerCaseQuotedIdentifiers != 0;
+        metaData.storesMixedCaseQuotedIdentifiers = metaDataStruct.storesMixedCaseQuotedIdentifiers != 0;
+        metaData.supportsAlterTableWithDropColumn = metaDataStruct.supportsAlterTableWithDropColumn != 0;
+        metaData.supportsConvert = metaDataStruct.supportsConvert != 0;
+        metaData.supportsTableCorrelationNames = metaDataStruct.supportsTableCorrelationNames != 0;
+        metaData.supportsDifferentTableCorrelationNames = metaDataStruct.supportsDifferentTableCorrelationNames != 0;
+        metaData.supportsNonNullableColumns = metaDataStruct.supportsNonNullableColumns != 0;
+        metaData.supportsMinimumSQLGrammar = metaDataStruct.supportsMinimumSQLGrammar != 0;
+        metaData.supportsCoreSQLGrammar = metaDataStruct.supportsCoreSQLGrammar != 0;
+        metaData.supportsExtendedSQLGrammar = metaDataStruct.supportsExtendedSQLGrammar != 0;
+        metaData.supportsANSI92EntryLevelSQL = metaDataStruct.supportsANSI92EntryLevelSQL != 0;
+        metaData.supportsANSI92IntermediateSQL = metaDataStruct.supportsANSI92IntermediateSQL != 0;
+        metaData.supportsANSI92FullSQL = metaDataStruct.supportsANSI92FullSQL != 0;
+        metaData.supportsDataDefinitionAndDataManipulationTransactions = metaDataStruct.supportsDataDefinitionAndDataManipulationTransactions != 0;
+        metaData.supportsDataManipulationTransactionsOnly = metaDataStruct.supportsDataManipulationTransactionsOnly != 0;
+        metaData.dataDefinitionCausesTransactionCommit = metaDataStruct.dataDefinitionCausesTransactionCommit != 0;
+        metaData.dataDefinitionIgnoredInTransactions = metaDataStruct.dataDefinitionIgnoredInTransactions != 0;
+        metaData.supportsMultipleOpenResults = metaDataStruct.supportsMultipleOpenResults != 0;
+        metaData.supportsGetGeneratedKeys = metaDataStruct.supportsGetGeneratedKeys != 0;
 
         // === Целочисленные значения ===
         metaData.supportsTransactionIsolationLevel = metaDataStruct.supportsTransactionIsolationLevel;

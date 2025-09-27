@@ -77,6 +77,37 @@ public class DatabaseMetaDataDto {
     public boolean autoCommitFailureClosesAllResultSets;
     public boolean supportsStoredFunctionsUsingCallSyntax;
     public boolean generatedKeyAlwaysReturned;
+    public boolean nullsAreSortedHigh;
+    public boolean nullsAreSortedLow;
+    public boolean nullsAreSortedAtStart;
+    public boolean nullsAreSortedAtEnd;
+    public boolean usesLocalFiles;
+    public boolean usesLocalFilePerTable;
+    public boolean supportsMixedCaseIdentifiers;
+    public boolean storesUpperCaseIdentifiers;
+    public boolean storesLowerCaseIdentifiers;
+    public boolean storesMixedCaseIdentifiers;
+    public boolean supportsMixedCaseQuotedIdentifiers;
+    public boolean storesUpperCaseQuotedIdentifiers;
+    public boolean storesLowerCaseQuotedIdentifiers;
+    public boolean storesMixedCaseQuotedIdentifiers;
+    public boolean supportsAlterTableWithDropColumn;
+    public boolean supportsConvert;
+    public boolean supportsTableCorrelationNames;
+    public boolean supportsDifferentTableCorrelationNames;
+    public boolean supportsNonNullableColumns;
+    public boolean supportsMinimumSQLGrammar;
+    public boolean supportsCoreSQLGrammar;
+    public boolean supportsExtendedSQLGrammar;
+    public boolean supportsANSI92EntryLevelSQL;
+    public boolean supportsANSI92IntermediateSQL;
+    public boolean supportsANSI92FullSQL;
+    public boolean supportsDataDefinitionAndDataManipulationTransactions;
+    public boolean supportsDataManipulationTransactionsOnly;
+    public boolean dataDefinitionCausesTransactionCommit;
+    public boolean dataDefinitionIgnoredInTransactions;
+    public boolean supportsMultipleOpenResults;
+    public boolean supportsGetGeneratedKeys;
 
     // === Целочисленные значения ===
     public int supportsTransactionIsolationLevel;

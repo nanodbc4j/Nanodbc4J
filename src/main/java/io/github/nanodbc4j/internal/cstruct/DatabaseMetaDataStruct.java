@@ -77,6 +77,37 @@ import lombok.NoArgsConstructor;
         "autoCommitFailureClosesAllResultSets",
         "supportsStoredFunctionsUsingCallSyntax",
         "generatedKeyAlwaysReturned",
+        "nullsAreSortedHigh",
+        "nullsAreSortedLow",
+        "nullsAreSortedAtStart",
+        "nullsAreSortedAtEnd",
+        "usesLocalFiles",
+        "usesLocalFilePerTable",
+        "supportsMixedCaseIdentifiers",
+        "storesUpperCaseIdentifiers",
+        "storesLowerCaseIdentifiers",
+        "storesMixedCaseIdentifiers",
+        "supportsMixedCaseQuotedIdentifiers",
+        "storesUpperCaseQuotedIdentifiers",
+        "storesLowerCaseQuotedIdentifiers",
+        "storesMixedCaseQuotedIdentifiers",
+        "supportsAlterTableWithDropColumn",
+        "supportsConvert",
+        "supportsTableCorrelationNames",
+        "supportsDifferentTableCorrelationNames",
+        "supportsNonNullableColumns",
+        "supportsMinimumSQLGrammar",
+        "supportsCoreSQLGrammar",
+        "supportsExtendedSQLGrammar",
+        "supportsANSI92EntryLevelSQL",
+        "supportsANSI92IntermediateSQL",
+        "supportsANSI92FullSQL",
+        "supportsDataDefinitionAndDataManipulationTransactions",
+        "supportsDataManipulationTransactionsOnly",
+        "dataDefinitionCausesTransactionCommit",
+        "dataDefinitionIgnoredInTransactions",
+        "supportsMultipleOpenResults",
+        "supportsGetGeneratedKeys",
 
         // === Целочисленные значения ===
         "supportsTransactionIsolationLevel",
@@ -176,6 +207,37 @@ public class DatabaseMetaDataStruct extends Structure {
     public byte autoCommitFailureClosesAllResultSets;
     public byte supportsStoredFunctionsUsingCallSyntax;
     public byte generatedKeyAlwaysReturned;
+    public byte nullsAreSortedHigh;
+    public byte nullsAreSortedLow;
+    public byte nullsAreSortedAtStart;
+    public byte nullsAreSortedAtEnd;
+    public byte usesLocalFiles;
+    public byte usesLocalFilePerTable;
+    public byte supportsMixedCaseIdentifiers;
+    public byte storesUpperCaseIdentifiers;
+    public byte storesLowerCaseIdentifiers;
+    public byte storesMixedCaseIdentifiers;
+    public byte supportsMixedCaseQuotedIdentifiers;
+    public byte storesUpperCaseQuotedIdentifiers;
+    public byte storesLowerCaseQuotedIdentifiers;
+    public byte storesMixedCaseQuotedIdentifiers;
+    public byte supportsAlterTableWithDropColumn;
+    public byte supportsConvert;
+    public byte supportsTableCorrelationNames;
+    public byte supportsDifferentTableCorrelationNames;
+    public byte supportsNonNullableColumns;
+    public byte supportsMinimumSQLGrammar;
+    public byte supportsCoreSQLGrammar;
+    public byte supportsExtendedSQLGrammar;
+    public byte supportsANSI92EntryLevelSQL;
+    public byte supportsANSI92IntermediateSQL;
+    public byte supportsANSI92FullSQL;
+    public byte supportsDataDefinitionAndDataManipulationTransactions;
+    public byte supportsDataManipulationTransactionsOnly;
+    public byte dataDefinitionCausesTransactionCommit;
+    public byte dataDefinitionIgnoredInTransactions;
+    public byte supportsMultipleOpenResults;
+    public byte supportsGetGeneratedKeys;
 
     // === Целочисленные значения ===
     public int supportsTransactionIsolationLevel;

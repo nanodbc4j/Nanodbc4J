@@ -80,6 +80,37 @@ public:
     bool autoCommitFailureClosesAllResultSets() const;
     bool supportsStoredFunctionsUsingCallSyntax() const;
     bool generatedKeyAlwaysReturned() const;
+    bool nullsAreSortedHigh() const;
+    bool nullsAreSortedLow() const;
+    bool nullsAreSortedAtStart() const;
+    bool nullsAreSortedAtEnd() const;
+    bool usesLocalFiles() const;
+    bool usesLocalFilePerTable() const;
+    bool supportsMixedCaseIdentifiers() const;
+    bool storesUpperCaseIdentifiers() const;
+    bool storesLowerCaseIdentifiers() const;
+    bool storesMixedCaseIdentifiers() const;
+    bool supportsMixedCaseQuotedIdentifiers() const;
+    bool storesUpperCaseQuotedIdentifiers() const;
+    bool storesLowerCaseQuotedIdentifiers() const;
+    bool storesMixedCaseQuotedIdentifiers() const;
+    bool supportsAlterTableWithDropColumn() const;
+    bool supportsConvert() const;
+    bool supportsTableCorrelationNames() const;
+    bool supportsDifferentTableCorrelationNames() const;
+    bool supportsNonNullableColumns() const;
+    bool supportsMinimumSQLGrammar() const;
+    bool supportsCoreSQLGrammar() const;
+    bool supportsExtendedSQLGrammar() const;
+    bool supportsANSI92EntryLevelSQL() const;
+    bool supportsANSI92IntermediateSQL() const;
+    bool supportsANSI92FullSQL() const;
+    bool supportsDataDefinitionAndDataManipulationTransactions() const;
+    bool supportsDataManipulationTransactionsOnly() const;
+    bool dataDefinitionCausesTransactionCommit() const;
+    bool dataDefinitionIgnoredInTransactions() const;
+    bool supportsMultipleOpenResults() const;
+    bool supportsGetGeneratedKeys() const;
 
     // === Целочисленные методы ===
     int supportsTransactionIsolationLevel() const;

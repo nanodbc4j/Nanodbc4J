@@ -53,22 +53,22 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean nullsAreSortedHigh() throws SQLException {
-        return false;
+        return metaData.nullsAreSortedHigh;
     }
 
     @Override
     public boolean nullsAreSortedLow() throws SQLException {
-        return false;
+        return metaData.nullsAreSortedLow;
     }
 
     @Override
     public boolean nullsAreSortedAtStart() throws SQLException {
-        return false;
+        return metaData.nullsAreSortedAtStart;
     }
 
     @Override
     public boolean nullsAreSortedAtEnd() throws SQLException {
-        return false;
+        return metaData.nullsAreSortedAtEnd;
     }
 
     @Override
@@ -103,52 +103,52 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean usesLocalFiles() throws SQLException {
-        return false;
+        return metaData.usesLocalFiles;
     }
 
     @Override
     public boolean usesLocalFilePerTable() throws SQLException {
-        return false;
+        return metaData.usesLocalFilePerTable;
     }
 
     @Override
     public boolean supportsMixedCaseIdentifiers() throws SQLException {
-        return false;
+        return metaData.supportsMixedCaseIdentifiers;
     }
 
     @Override
     public boolean storesUpperCaseIdentifiers() throws SQLException {
-        return false;
+        return metaData.storesUpperCaseIdentifiers;
     }
 
     @Override
     public boolean storesLowerCaseIdentifiers() throws SQLException {
-        return false;
+        return metaData.storesLowerCaseIdentifiers;
     }
 
     @Override
     public boolean storesMixedCaseIdentifiers() throws SQLException {
-        return false;
+        return metaData.storesMixedCaseIdentifiers;
     }
 
     @Override
     public boolean supportsMixedCaseQuotedIdentifiers() throws SQLException {
-        return false;
+        return metaData.supportsMixedCaseQuotedIdentifiers;
     }
 
     @Override
     public boolean storesUpperCaseQuotedIdentifiers() throws SQLException {
-        return false;
+        return metaData.storesUpperCaseQuotedIdentifiers;
     }
 
     @Override
     public boolean storesLowerCaseQuotedIdentifiers() throws SQLException {
-        return false;
+        return metaData.storesLowerCaseQuotedIdentifiers;
     }
 
     @Override
     public boolean storesMixedCaseQuotedIdentifiers() throws SQLException {
-        return false;
+        return metaData.storesMixedCaseQuotedIdentifiers;
     }
 
     @Override
@@ -198,7 +198,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsAlterTableWithDropColumn() throws SQLException {
-        return false;
+        return metaData.supportsAlterTableWithDropColumn;
     }
 
     @Override
@@ -213,7 +213,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsConvert() throws SQLException {
-        return false;
+        return metaData.supportsConvert;
     }
 
     @Override
@@ -223,12 +223,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsTableCorrelationNames() throws SQLException {
-        return false;
+        return metaData.supportsTableCorrelationNames;
     }
 
     @Override
     public boolean supportsDifferentTableCorrelationNames() throws SQLException {
-        return false;
+        return metaData.supportsDifferentTableCorrelationNames;
     }
 
     @Override
@@ -273,37 +273,37 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsNonNullableColumns() throws SQLException {
-        return false;
+        return metaData.supportsNonNullableColumns;
     }
 
     @Override
     public boolean supportsMinimumSQLGrammar() throws SQLException {
-        return false;
+        return metaData.supportsMinimumSQLGrammar;
     }
 
     @Override
     public boolean supportsCoreSQLGrammar() throws SQLException {
-        return false;
+        return metaData.supportsCoreSQLGrammar;
     }
 
     @Override
     public boolean supportsExtendedSQLGrammar() throws SQLException {
-        return false;
+        return metaData.supportsExtendedSQLGrammar;
     }
 
     @Override
     public boolean supportsANSI92EntryLevelSQL() throws SQLException {
-        return false;
+        return metaData.supportsANSI92EntryLevelSQL;
     }
 
     @Override
     public boolean supportsANSI92IntermediateSQL() throws SQLException {
-        return false;
+        return metaData.supportsANSI92IntermediateSQL;
     }
 
     @Override
     public boolean supportsANSI92FullSQL() throws SQLException {
-        return false;
+        return metaData.supportsANSI92FullSQL;
     }
 
     @Override
@@ -599,22 +599,22 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsDataDefinitionAndDataManipulationTransactions() throws SQLException {
-        return true; // По умолчанию
+        return metaData.supportsDataDefinitionAndDataManipulationTransactions;
     }
 
     @Override
     public boolean supportsDataManipulationTransactionsOnly() throws SQLException {
-        return false;
+        return metaData.supportsDataManipulationTransactionsOnly;
     }
 
     @Override
     public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
-        return false;
+        return metaData.dataDefinitionCausesTransactionCommit;
     }
 
     @Override
     public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
-        return false;
+        return metaData.dataDefinitionIgnoredInTransactions;
     }
 
     @Override
@@ -630,7 +630,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     @Override
     public ResultSet getProcedureColumns(String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) throws SQLException {
         try {
-            ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getProcedureColumns(connection.get().getConnectionPtr(), catalog, schemaPattern, procedureNamePattern,  columnNamePattern);
+            ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getProcedureColumns(connection.get().getConnectionPtr(), catalog, schemaPattern, procedureNamePattern, columnNamePattern);
             return new NanodbcResultSet(resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -849,12 +849,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsMultipleOpenResults() throws SQLException {
-        return false;
+        return metaData.supportsMultipleOpenResults;
     }
 
     @Override
     public boolean supportsGetGeneratedKeys() throws SQLException {
-        return false;
+        return metaData.supportsGetGeneratedKeys;
     }
 
     @Override
