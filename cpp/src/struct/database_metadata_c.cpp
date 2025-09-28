@@ -170,7 +170,6 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     timeDateFunctions = convert(other.getTimeDateFunctions());
     searchStringEscape = convert(other.getSearchStringEscape());
     extraNameCharacters = convert(other.getExtraNameCharacters());
-    userName = convert(other.getUserName());
 
     // === Булевы значения ===
     isReadOnly = other.isReadOnly();
