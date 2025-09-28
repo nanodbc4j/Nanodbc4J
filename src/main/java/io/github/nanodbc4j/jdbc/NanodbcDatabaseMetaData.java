@@ -38,12 +38,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public String getURL() throws SQLException {
-        return "";
+        return connection.get().getUrl();
     }
 
     @Override
     public String getUserName() throws SQLException {
-        return "";
+        return metaData.userName != null ? metaData.userName : null;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public String getDriverName() throws SQLException {
-        return metaData.driverName;
+        return "JDBC-ODBC Bridge (" + metaData.driverName + ")";
     }
 
     @Override
@@ -343,8 +343,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean isCatalogAtStart() throws SQLException {
-        // Обычно да: CATALOG.SCHEMA.TABLE
-        return true;
+        return metaData.isCatalogAtStart;
     }
 
     @Override
@@ -479,12 +478,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxBinaryLiteralLength() throws SQLException {
-        return 0;
+        return metaData.getMaxBinaryLiteralLength;
     }
 
     @Override
     public int getMaxCharLiteralLength() throws SQLException {
-        return 0;
+        return metaData.getMaxCharLiteralLength;
     }
 
     @Override
@@ -519,17 +518,17 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxConnections() throws SQLException {
-        return 0;
+        return metaData.getMaxConnections;
     }
 
     @Override
     public int getMaxCursorNameLength() throws SQLException {
-        return 0;
+        return metaData.getMaxCursorNameLength;
     }
 
     @Override
     public int getMaxIndexLength() throws SQLException {
-        return 0;
+        return metaData.getMaxIndexLength;
     }
 
     @Override
@@ -539,7 +538,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxProcedureNameLength() throws SQLException {
-        return 0;
+        return metaData.getMaxProcedureNameLength;
     }
 
     @Override
@@ -554,7 +553,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
-        return false;
+        return metaData.doesMaxRowSizeIncludeBlobs;
     }
 
     @Override
@@ -696,21 +695,25 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern) throws SQLException {
+        // todo
         return null;
     }
 
     @Override
     public ResultSet getTablePrivileges(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
+        // todo
         return null;
     }
 
     @Override
     public ResultSet getBestRowIdentifier(String catalog, String schema, String table, int scope, boolean nullable) throws SQLException {
+        // todo
         return null;
     }
 
     @Override
     public ResultSet getVersionColumns(String catalog, String schema, String table) throws SQLException {
+        // todo
         return null;
     }
 
@@ -746,6 +749,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getCrossReference(String parentCatalog, String parentSchema, String parentTable, String foreignCatalog, String foreignSchema, String foreignTable) throws SQLException {
+        // todo
         return null;
     }
 
@@ -761,6 +765,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getIndexInfo(String catalog, String schema, String table, boolean unique, boolean approximate) throws SQLException {
+        // TODO
         return null;
     }
 
@@ -859,16 +864,19 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getSuperTypes(String catalog, String schemaPattern, String typeNamePattern) throws SQLException {
+        // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
 
     @Override
     public ResultSet getSuperTables(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
+        // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
 
     @Override
     public ResultSet getAttributes(String catalog, String schemaPattern, String typeNamePattern, String attributeNamePattern) throws SQLException {
+        // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
 
@@ -919,7 +927,8 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public RowIdLifetime getRowIdLifetime() throws SQLException {
-        return null;
+        // sun.jdbc.odbc does not support this
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -944,21 +953,25 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getClientInfoProperties() throws SQLException {
+        // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
 
     @Override
     public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
+        // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException("Operation not yet supported");
     }
 
     @Override
     public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern, String columnNamePattern) throws SQLException {
+        // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException("Operation not yet supported");
     }
 
     @Override
     public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+        // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException("Operation not yet supported");
     }
 

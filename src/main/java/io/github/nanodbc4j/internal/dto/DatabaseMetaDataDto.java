@@ -23,6 +23,7 @@ public class DatabaseMetaDataDto {
     public String timeDateFunctions;
     public String searchStringEscape;
     public String extraNameCharacters;
+    public String userName;
 
     // === Булевы значения ===
     public boolean isReadOnly;
@@ -108,6 +109,8 @@ public class DatabaseMetaDataDto {
     public boolean dataDefinitionIgnoredInTransactions;
     public boolean supportsMultipleOpenResults;
     public boolean supportsGetGeneratedKeys;
+    public boolean doesMaxRowSizeIncludeBlobs;
+    public boolean isCatalogAtStart;
 
     // === Целочисленные значения ===
     public int supportsTransactionIsolationLevel;
@@ -134,4 +137,10 @@ public class DatabaseMetaDataDto {
     public int databaseMinorVersion;
     public int driverMajorVersion;
     public int driverMinorVersion;
+    public int getMaxBinaryLiteralLength;
+    public int getMaxCharLiteralLength;
+    public int getMaxConnections;
+    public int getMaxCursorNameLength;
+    public int getMaxIndexLength;
+    public int getMaxProcedureNameLength;
 }

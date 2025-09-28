@@ -30,6 +30,7 @@ CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
     timeDateFunctions = duplicate_string(other.timeDateFunctions);
     searchStringEscape = duplicate_string(other.searchStringEscape);
     extraNameCharacters = duplicate_string(other.extraNameCharacters);
+    userName = duplicate_string(other.userName);
 
     // === Булевы значения ===
     isReadOnly = other.isReadOnly;
@@ -115,6 +116,8 @@ CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
     dataDefinitionIgnoredInTransactions = other.dataDefinitionIgnoredInTransactions;
     supportsMultipleOpenResults = other.supportsMultipleOpenResults;
     supportsGetGeneratedKeys = other.supportsGetGeneratedKeys;
+    doesMaxRowSizeIncludeBlobs = other.doesMaxRowSizeIncludeBlobs;
+    isCatalogAtStart = other.isCatalogAtStart;
 
     // === Целочисленные значения ===
     supportsTransactionIsolationLevel = other.supportsTransactionIsolationLevel;
@@ -141,6 +144,12 @@ CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
     databaseMinorVersion = other.databaseMinorVersion;
     driverMajorVersion = other.driverMajorVersion;
     driverMinorVersion = other.driverMinorVersion;
+    getMaxBinaryLiteralLength = other.getMaxBinaryLiteralLength;
+    getMaxCharLiteralLength = other.getMaxCharLiteralLength;
+    getMaxConnections = other.getMaxConnections;
+    getMaxCursorNameLength = other.getMaxCursorNameLength;
+    getMaxIndexLength = other.getMaxIndexLength;
+    getMaxProcedureNameLength = other.getMaxProcedureNameLength;
 }
 
 CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
@@ -161,6 +170,7 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     timeDateFunctions = convert(other.getTimeDateFunctions());
     searchStringEscape = convert(other.getSearchStringEscape());
     extraNameCharacters = convert(other.getExtraNameCharacters());
+    userName = convert(other.getUserName());
 
     // === Булевы значения ===
     isReadOnly = other.isReadOnly();
@@ -246,6 +256,8 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     dataDefinitionIgnoredInTransactions = other.dataDefinitionIgnoredInTransactions();
     supportsMultipleOpenResults = other.supportsMultipleOpenResults();
     supportsGetGeneratedKeys = other.supportsGetGeneratedKeys();
+    doesMaxRowSizeIncludeBlobs = other.doesMaxRowSizeIncludeBlobs();
+    isCatalogAtStart = other.isCatalogAtStart();
 
     // === Целочисленные значения ===
     supportsTransactionIsolationLevel = other.supportsTransactionIsolationLevel();
@@ -272,6 +284,12 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     databaseMinorVersion = other.getDatabaseMinorVersion();
     driverMajorVersion = other.getDriverMajorVersion();
     driverMinorVersion = other.getDriverMinorVersion();
+    getMaxBinaryLiteralLength = other.getMaxBinaryLiteralLength();
+    getMaxCharLiteralLength = other.getMaxCharLiteralLength();
+    getMaxConnections = other.getMaxConnections();
+    getMaxCursorNameLength = other.getMaxCursorNameLength();
+    getMaxIndexLength = other.getMaxIndexLength();
+    getMaxProcedureNameLength = other.getMaxProcedureNameLength();
 }
 
 CDatabaseMetaData::~CDatabaseMetaData() {
@@ -296,4 +314,5 @@ CDatabaseMetaData::~CDatabaseMetaData() {
     str_free(timeDateFunctions);
     str_free(searchStringEscape);
     str_free(extraNameCharacters);
+    str_free(userName);
 }

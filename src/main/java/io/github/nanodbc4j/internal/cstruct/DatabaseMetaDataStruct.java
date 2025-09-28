@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
         "timeDateFunctions",
         "searchStringEscape",
         "extraNameCharacters",
+        "userName",
 
         // === Булевы значения ===
         "isReadOnly",
@@ -108,6 +109,8 @@ import lombok.NoArgsConstructor;
         "dataDefinitionIgnoredInTransactions",
         "supportsMultipleOpenResults",
         "supportsGetGeneratedKeys",
+        "doesMaxRowSizeIncludeBlobs",
+        "isCatalogAtStart",
 
         // === Целочисленные значения ===
         "supportsTransactionIsolationLevel",
@@ -133,7 +136,13 @@ import lombok.NoArgsConstructor;
         "databaseMajorVersion",
         "databaseMinorVersion",
         "driverMajorVersion",
-        "driverMinorVersion"
+        "driverMinorVersion",
+        "getMaxBinaryLiteralLength",
+        "getMaxCharLiteralLength",
+        "getMaxConnections",
+        "getMaxCursorNameLength",
+        "getMaxIndexLength",
+        "getMaxProcedureNameLength"
 })
 public class DatabaseMetaDataStruct extends Structure {
     // === Строковые значения ===
@@ -153,6 +162,7 @@ public class DatabaseMetaDataStruct extends Structure {
     public Pointer timeDateFunctions;
     public Pointer searchStringEscape;
     public Pointer extraNameCharacters;
+    public Pointer userName;
 
     // === Булевы значения ===
     public byte isReadOnly;
@@ -238,6 +248,8 @@ public class DatabaseMetaDataStruct extends Structure {
     public byte dataDefinitionIgnoredInTransactions;
     public byte supportsMultipleOpenResults;
     public byte supportsGetGeneratedKeys;
+    public byte doesMaxRowSizeIncludeBlobs;
+    public byte isCatalogAtStart;
 
     // === Целочисленные значения ===
     public int supportsTransactionIsolationLevel;
@@ -264,6 +276,12 @@ public class DatabaseMetaDataStruct extends Structure {
     public int databaseMinorVersion;
     public int driverMajorVersion;
     public int driverMinorVersion;
+    public int getMaxBinaryLiteralLength;
+    public int getMaxCharLiteralLength;
+    public int getMaxConnections;
+    public int getMaxCursorNameLength;
+    public int getMaxIndexLength;
+    public int getMaxProcedureNameLength;
 
     public DatabaseMetaDataStruct(Pointer p) {
         super(p);

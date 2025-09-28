@@ -23,6 +23,7 @@ extern "C" {
         const char16_t* timeDateFunctions = nullptr;
         const char16_t* searchStringEscape = nullptr;
         const char16_t* extraNameCharacters = nullptr;
+        const char16_t* userName = nullptr;
 
         // === Булевы значения ===
         bool isReadOnly = false;
@@ -108,6 +109,8 @@ extern "C" {
         bool dataDefinitionIgnoredInTransactions = false;
         bool supportsMultipleOpenResults = false;
         bool supportsGetGeneratedKeys = false;
+        bool doesMaxRowSizeIncludeBlobs = false;
+        bool isCatalogAtStart = false;
 
         // === Целочисленные значения ===
         int supportsTransactionIsolationLevel = 0;
@@ -134,6 +137,12 @@ extern "C" {
         int databaseMinorVersion = 0;
         int driverMajorVersion = 0;
         int driverMinorVersion = 0;
+        int getMaxBinaryLiteralLength = 0;
+        int getMaxCharLiteralLength = 0;
+        int getMaxConnections = 0;
+        int getMaxCursorNameLength = 0;
+        int getMaxIndexLength = 0;
+        int getMaxProcedureNameLength = 0;
 
         CDatabaseMetaData() = default;
         explicit CDatabaseMetaData(const CDatabaseMetaData& other);

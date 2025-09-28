@@ -5,6 +5,8 @@ import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.handler.ConnectionHandler;
 import io.github.nanodbc4j.internal.pointer.ConnectionPtr;
 import io.github.nanodbc4j.internal.pointer.StatementPtr;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.java.Log;
 
 import java.sql.Array;
@@ -34,13 +36,21 @@ import java.util.logging.Level;
  */
 @Log
 public class NanodbcConnection implements Connection {
+
+    @Getter(AccessLevel.PACKAGE)
     private ConnectionPtr connectionPtr;
+
     private static final long TIMEOUT = 5;
+
     private DatabaseMetaData metaData = null;
+
+    @Getter(AccessLevel.PACKAGE)
+    private String url = null;
 
     NanodbcConnection(String url) throws SQLException {
         try {
             connectionPtr = ConnectionHandler.connect(url, 5);
+            this.url = url;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -127,6 +137,7 @@ public class NanodbcConnection implements Connection {
         try {
             ConnectionHandler.disconnect(connectionPtr);
             connectionPtr = null;
+            url = null;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -450,10 +461,6 @@ public class NanodbcConnection implements Connection {
         } finally {
             super.finalize();
         }
-    }
-
-    ConnectionPtr getConnectionPtr() {
-        return connectionPtr;
     }
 
     /**
