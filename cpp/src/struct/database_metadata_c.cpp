@@ -141,6 +141,12 @@ CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
     databaseMinorVersion = other.databaseMinorVersion;
     driverMajorVersion = other.driverMajorVersion;
     driverMinorVersion = other.driverMinorVersion;
+    getMaxBinaryLiteralLength = other.getMaxBinaryLiteralLength;
+    getMaxCharLiteralLength = other.getMaxCharLiteralLength;
+    getMaxConnections = other.getMaxConnections;
+    getMaxCursorNameLength = other.getMaxCursorNameLength;
+    getMaxIndexLength = other.getMaxIndexLength;
+    getMaxProcedureNameLength = other.getMaxProcedureNameLength;
 }
 
 CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
@@ -246,6 +252,7 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     dataDefinitionIgnoredInTransactions = other.dataDefinitionIgnoredInTransactions();
     supportsMultipleOpenResults = other.supportsMultipleOpenResults();
     supportsGetGeneratedKeys = other.supportsGetGeneratedKeys();
+    doesMaxRowSizeIncludeBlobs = other.doesMaxRowSizeIncludeBlobs();
 
     // === Целочисленные значения ===
     supportsTransactionIsolationLevel = other.supportsTransactionIsolationLevel();
@@ -272,6 +279,12 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     databaseMinorVersion = other.getDatabaseMinorVersion();
     driverMajorVersion = other.getDriverMajorVersion();
     driverMinorVersion = other.getDriverMinorVersion();
+    getMaxBinaryLiteralLength = other.getMaxBinaryLiteralLength();
+    getMaxCharLiteralLength = other.getMaxCharLiteralLength();
+    getMaxConnections = other.getMaxConnections();
+    getMaxCursorNameLength = other.getMaxCursorNameLength();
+    getMaxIndexLength = other.getMaxIndexLength();
+    getMaxProcedureNameLength = other.getMaxProcedureNameLength();
 }
 
 CDatabaseMetaData::~CDatabaseMetaData() {

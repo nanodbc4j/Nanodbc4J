@@ -122,6 +122,7 @@ public class DatabaseMetaDataHandler {
         metaData.dataDefinitionIgnoredInTransactions = metaDataStruct.dataDefinitionIgnoredInTransactions != 0;
         metaData.supportsMultipleOpenResults = metaDataStruct.supportsMultipleOpenResults != 0;
         metaData.supportsGetGeneratedKeys = metaDataStruct.supportsGetGeneratedKeys != 0;
+        metaData.doesMaxRowSizeIncludeBlobs =  metaDataStruct.doesMaxRowSizeIncludeBlobs != 0;
 
         // === Целочисленные значения ===
         metaData.supportsTransactionIsolationLevel = metaDataStruct.supportsTransactionIsolationLevel;
@@ -148,6 +149,12 @@ public class DatabaseMetaDataHandler {
         metaData.databaseMinorVersion = metaDataStruct.databaseMinorVersion;
         metaData.driverMajorVersion = metaDataStruct.driverMajorVersion;
         metaData.driverMinorVersion = metaDataStruct.driverMinorVersion;
+        metaData.getMaxBinaryLiteralLength = metaDataStruct.getMaxBinaryLiteralLength;
+        metaData.getMaxCharLiteralLength = metaDataStruct.getMaxCharLiteralLength;
+        metaData.getMaxConnections = metaDataStruct.getMaxConnections;
+        metaData.getMaxCursorNameLength = metaDataStruct.getMaxCursorNameLength;
+        metaData.getMaxIndexLength = metaDataStruct.getMaxIndexLength;
+        metaData.getMaxProcedureNameLength = metaDataStruct.getMaxProcedureNameLength;
 
         return metaData;
     }

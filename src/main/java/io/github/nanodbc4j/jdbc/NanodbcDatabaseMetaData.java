@@ -38,7 +38,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public String getURL() throws SQLException {
-        return "";
+        return connection.get().getUrl();
     }
 
     @Override
@@ -479,12 +479,12 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxBinaryLiteralLength() throws SQLException {
-        return 0;
+        return metaData.getMaxBinaryLiteralLength;
     }
 
     @Override
     public int getMaxCharLiteralLength() throws SQLException {
-        return 0;
+        return metaData.getMaxCharLiteralLength;
     }
 
     @Override
@@ -519,17 +519,17 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxConnections() throws SQLException {
-        return 0;
+        return metaData.getMaxConnections;
     }
 
     @Override
     public int getMaxCursorNameLength() throws SQLException {
-        return 0;
+        return metaData.getMaxCursorNameLength;
     }
 
     @Override
     public int getMaxIndexLength() throws SQLException {
-        return 0;
+        return metaData.getMaxIndexLength;
     }
 
     @Override
@@ -539,7 +539,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public int getMaxProcedureNameLength() throws SQLException {
-        return 0;
+        return metaData.getMaxProcedureNameLength;
     }
 
     @Override
@@ -554,7 +554,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
-        return false;
+        return metaData.doesMaxRowSizeIncludeBlobs;
     }
 
     @Override

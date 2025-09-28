@@ -108,6 +108,7 @@ import lombok.NoArgsConstructor;
         "dataDefinitionIgnoredInTransactions",
         "supportsMultipleOpenResults",
         "supportsGetGeneratedKeys",
+        "doesMaxRowSizeIncludeBlobs",
 
         // === Целочисленные значения ===
         "supportsTransactionIsolationLevel",
@@ -133,7 +134,13 @@ import lombok.NoArgsConstructor;
         "databaseMajorVersion",
         "databaseMinorVersion",
         "driverMajorVersion",
-        "driverMinorVersion"
+        "driverMinorVersion",
+        "getMaxBinaryLiteralLength",
+        "getMaxCharLiteralLength",
+        "getMaxConnections",
+        "getMaxCursorNameLength",
+        "getMaxIndexLength",
+        "getMaxProcedureNameLength"
 })
 public class DatabaseMetaDataStruct extends Structure {
     // === Строковые значения ===
@@ -238,6 +245,7 @@ public class DatabaseMetaDataStruct extends Structure {
     public byte dataDefinitionIgnoredInTransactions;
     public byte supportsMultipleOpenResults;
     public byte supportsGetGeneratedKeys;
+    public byte doesMaxRowSizeIncludeBlobs;
 
     // === Целочисленные значения ===
     public int supportsTransactionIsolationLevel;
@@ -264,6 +272,12 @@ public class DatabaseMetaDataStruct extends Structure {
     public int databaseMinorVersion;
     public int driverMajorVersion;
     public int driverMinorVersion;
+    public int getMaxBinaryLiteralLength;
+    public int getMaxCharLiteralLength;
+    public int getMaxConnections;
+    public int getMaxCursorNameLength;
+    public int getMaxIndexLength;
+    public int getMaxProcedureNameLength;
 
     public DatabaseMetaDataStruct(Pointer p) {
         super(p);

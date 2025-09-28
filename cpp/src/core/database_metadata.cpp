@@ -1038,6 +1038,14 @@ bool DatabaseMetaData::supportsGetGeneratedKeys() const {
     return false;
 }
 
+bool DatabaseMetaData::doesMaxRowSizeIncludeBlobs() const {
+    LOG_TRACE("Called");
+    auto val = getInfoSafely<nanodbc::string>(connection_, SQL_MAX_ROW_SIZE_INCLUDES_LONG, L"");
+    bool result = (val == L"Y" || val == L"y");
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
 // === Целочисленные методы ===
 int DatabaseMetaData::supportsTransactionIsolationLevel() const {   // === Поддержка уровней изоляции ===
     LOG_TRACE("Called");
@@ -1222,6 +1230,48 @@ int DatabaseMetaData::getDriverMinorVersion() const {
     }
     auto [major, minor] = processingVersionString(ver);
     return minor;
+}
+
+int DatabaseMetaData::getMaxBinaryLiteralLength() const {
+    LOG_TRACE("Called");
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_BINARY_LITERAL_LEN, 0);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+int DatabaseMetaData::getMaxCharLiteralLength() const {
+    LOG_TRACE("Called");
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_CHAR_LITERAL_LEN, 0);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+int DatabaseMetaData::getMaxConnections() const {
+    LOG_TRACE("Called");
+    auto result = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_MAX_DRIVER_CONNECTIONS, 0);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+int DatabaseMetaData::getMaxCursorNameLength() const {
+    LOG_TRACE("Called");
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_CURSOR_NAME_LEN, 0);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+int DatabaseMetaData::getMaxIndexLength() const {
+    LOG_TRACE("Called");
+    auto result = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MAX_INDEX_SIZE, 0);
+    LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+int DatabaseMetaData::getMaxProcedureNameLength() const {
+    LOG_TRACE("Called");
+    auto result = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_MAX_PROCEDURE_NAME_LEN, 0);
+    LOG_TRACE("Returning: {}", result);
+    return result;
 }
 
 // === Schemas ===

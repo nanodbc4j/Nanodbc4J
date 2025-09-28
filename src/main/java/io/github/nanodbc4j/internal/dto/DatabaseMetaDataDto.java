@@ -108,6 +108,7 @@ public class DatabaseMetaDataDto {
     public boolean dataDefinitionIgnoredInTransactions;
     public boolean supportsMultipleOpenResults;
     public boolean supportsGetGeneratedKeys;
+    public boolean doesMaxRowSizeIncludeBlobs;
 
     // === Целочисленные значения ===
     public int supportsTransactionIsolationLevel;
@@ -134,4 +135,10 @@ public class DatabaseMetaDataDto {
     public int databaseMinorVersion;
     public int driverMajorVersion;
     public int driverMinorVersion;
+    public int getMaxBinaryLiteralLength;
+    public int getMaxCharLiteralLength;
+    public int getMaxConnections;
+    public int getMaxCursorNameLength;
+    public int getMaxIndexLength;
+    public int getMaxProcedureNameLength;
 }

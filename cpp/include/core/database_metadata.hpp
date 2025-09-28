@@ -111,6 +111,7 @@ public:
     bool dataDefinitionIgnoredInTransactions() const;
     bool supportsMultipleOpenResults() const;
     bool supportsGetGeneratedKeys() const;
+    bool doesMaxRowSizeIncludeBlobs() const;
 
     // === Целочисленные методы ===
     int supportsTransactionIsolationLevel() const;
@@ -138,6 +139,12 @@ public:
     int getDatabaseMinorVersion() const;
     int getDriverMajorVersion() const;
     int getDriverMinorVersion() const;
+    int getMaxBinaryLiteralLength() const;
+    int getMaxCharLiteralLength() const;
+    int getMaxConnections() const;
+    int getMaxCursorNameLength() const;
+    int getMaxIndexLength() const;
+    int getMaxProcedureNameLength() const;
 
     nanodbc::result getSchemas() const;
 
