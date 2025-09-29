@@ -97,6 +97,7 @@ public:
     bool storesMixedCaseQuotedIdentifiers() const;
     bool supportsAlterTableWithDropColumn() const;
     bool supportsConvert() const;
+    bool supportsConvert(int fromType, int toType) const;
     bool supportsTableCorrelationNames() const;
     bool supportsDifferentTableCorrelationNames() const;
     bool supportsNonNullableColumns() const;

@@ -177,6 +177,17 @@ public class DatabaseMetaDataHandler {
         }
     }
 
+    public boolean supportsConvert(ConnectionPtr conn, int fromType, int toType) {
+        NativeError nativeError = new NativeError();
+        try {
+            boolean result = NativeDB.INSTANCE.database_meta_data_support_convert(conn, fromType, toType, nativeError) != 0;
+            throwIfNativeError(nativeError);
+            return result;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
     public ResultSetPtr getSchemas(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {

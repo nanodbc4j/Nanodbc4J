@@ -197,6 +197,8 @@ public interface NativeDB extends Library {
 
     DatabaseMetaDataStruct get_database_meta_data(ConnectionPtr conn, NativeError error);
 
+    byte database_meta_data_support_convert(ConnectionPtr conn, int from_type, int to_type, NativeError error);
+
     ResultSetPtr get_database_meta_data_schemas(ConnectionPtr conn, NativeError error);
 
     ResultSetPtr get_database_meta_data_catalogs(ConnectionPtr conn, NativeError error);

@@ -10,6 +10,8 @@ extern "C" {
 
 	ODBC_API CDatabaseMetaData* get_database_meta_data(nanodbc::connection* conn, NativeError* error);
 
+	ODBC_API bool database_meta_data_support_convert(nanodbc::connection* conn, int from_type, int to_type, NativeError* error);
+
 	ODBC_API nanodbc::result* get_database_meta_data_schemas(nanodbc::connection* conn, NativeError* error);
 
 	ODBC_API nanodbc::result* get_database_meta_data_catalogs(nanodbc::connection* conn, NativeError* error);

@@ -218,7 +218,11 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean supportsConvert(int fromType, int toType) throws SQLException {
-        return false;
+        try {
+            return DatabaseMetaDataHandler.supportsConvert(connection.get().getConnectionPtr(), fromType, toType);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     @Override

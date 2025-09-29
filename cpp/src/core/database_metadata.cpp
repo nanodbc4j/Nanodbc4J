@@ -930,8 +930,149 @@ bool DatabaseMetaData::supportsAlterTableWithDropColumn() const {
 bool DatabaseMetaData::supportsConvert() const {
     LOG_TRACE("Called");
     auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_CONVERT_FUNCTIONS, 0);
-    bool result = (val == 1);
+    bool result = (val == SQL_FN_CVT_CONVERT);
     LOG_TRACE("Returning: {}", result);
+    return result;
+}
+
+bool DatabaseMetaData::supportsConvert(int fromType, int toType) const {
+    LOG_TRACE("Called with fromType: {}, toType: {}", fromType, toType);
+
+    SQLUSMALLINT odbcInfoType = 0;
+
+    // Mapping JDBC type to ODBC information type
+    switch (fromType) {
+        case SQL_BIT:
+            odbcInfoType = SQL_CONVERT_BIT;
+            break;
+        case SQL_TINYINT:
+            odbcInfoType = SQL_CONVERT_TINYINT;
+            break;
+        case SQL_BIGINT:
+            odbcInfoType = SQL_CONVERT_BIGINT;
+            break;
+        case SQL_LONGVARBINARY:
+            odbcInfoType = SQL_CONVERT_LONGVARBINARY;
+            break;
+        case SQL_VARBINARY:
+            odbcInfoType = SQL_CONVERT_VARBINARY;
+            break;
+        case SQL_BINARY:
+            odbcInfoType = SQL_CONVERT_BINARY;
+            break;
+        case SQL_LONGVARCHAR:
+            odbcInfoType = SQL_CONVERT_LONGVARCHAR;
+            break;
+        case SQL_CHAR:
+            odbcInfoType = SQL_CONVERT_CHAR;
+            break;
+        case SQL_NUMERIC:
+            odbcInfoType = SQL_CONVERT_NUMERIC;
+            break;
+        case SQL_DECIMAL:
+            odbcInfoType = SQL_CONVERT_DECIMAL;
+            break;
+        case SQL_INTEGER:
+            odbcInfoType = SQL_CONVERT_INTEGER;
+            break;
+        case SQL_SMALLINT:
+            odbcInfoType = SQL_CONVERT_SMALLINT;
+            break;
+        case SQL_FLOAT:
+            odbcInfoType = SQL_CONVERT_FLOAT;
+            break;
+        case SQL_REAL:
+            odbcInfoType = SQL_CONVERT_REAL;
+            break;
+        case SQL_DOUBLE:
+            odbcInfoType = SQL_CONVERT_DOUBLE;
+            break;
+        case SQL_VARCHAR:
+            odbcInfoType = SQL_CONVERT_VARCHAR;
+            break;
+        case SQL_TYPE_DATE:
+            odbcInfoType = SQL_CONVERT_DATE;
+            break;
+        case SQL_TYPE_TIME:
+            odbcInfoType = SQL_CONVERT_TIME;
+            break;
+        case SQL_TYPE_TIMESTAMP:
+            odbcInfoType = SQL_CONVERT_TIMESTAMP;
+            break;
+        default:
+            LOG_TRACE("Unsupported fromType: {}, returning false", fromType);
+            return false;
+    }
+
+    // Mapping target JDBC type to bitmask
+    SQLUINTEGER bitmask = 0;
+    switch (toType) {
+        case SQL_BIT:
+            bitmask = SQL_CVT_BIT;
+            break;
+        case SQL_TINYINT:
+            bitmask = SQL_CVT_TINYINT;
+            break;
+        case SQL_BIGINT:
+            bitmask = SQL_CVT_BIGINT;
+            break;
+        case SQL_LONGVARBINARY:
+            bitmask = SQL_CVT_LONGVARBINARY;
+            break;
+        case SQL_VARBINARY:
+            bitmask = SQL_CVT_VARBINARY;
+            break;
+        case SQL_BINARY:
+            bitmask = SQL_CVT_BINARY;
+            break;
+        case SQL_LONGVARCHAR:
+            bitmask = SQL_CVT_LONGVARCHAR;
+            break;
+        case SQL_CHAR:
+            bitmask = SQL_CVT_CHAR;
+            break;
+        case SQL_NUMERIC:
+            bitmask = SQL_CVT_NUMERIC;
+            break;
+        case SQL_DECIMAL:
+            bitmask = SQL_CVT_DECIMAL;
+            break;
+        case SQL_INTEGER:
+            bitmask = SQL_CVT_INTEGER;
+            break;
+        case SQL_SMALLINT:
+            bitmask = SQL_CVT_SMALLINT;
+            break;
+        case SQL_FLOAT:
+            bitmask = SQL_CVT_FLOAT;
+            break;
+        case SQL_REAL:
+            bitmask = SQL_CVT_REAL;
+            break;
+        case SQL_DOUBLE:
+            bitmask = SQL_CVT_DOUBLE;
+            break;
+        case SQL_VARCHAR:
+            bitmask = SQL_CVT_VARCHAR;
+            break;
+        case SQL_TYPE_DATE:
+            bitmask = SQL_CVT_DATE;
+            break;
+        case SQL_TYPE_TIME:
+            bitmask = SQL_CVT_TIME;
+            break;
+        case SQL_TYPE_TIMESTAMP:
+            bitmask = SQL_CVT_TIMESTAMP;
+            break;
+        default:
+            LOG_TRACE("Unsupported toType: {}, returning false", toType);
+            return false;
+    }
+    // Get information from ODBC
+    auto conversionInfo = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), odbcInfoType, 0);
+    bool result = (conversionInfo & bitmask) != 0;
+
+    LOG_TRACE("Returning: {} (conversionInfo: 0x{:X}, bitmask: 0x{:X})",  result, conversionInfo, bitmask);
     return result;
 }
 

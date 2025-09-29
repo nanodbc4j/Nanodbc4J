@@ -60,20 +60,44 @@ CDatabaseMetaData* get_database_meta_data(nanodbc::connection* conn, NativeError
 	return nullptr;
 }
 
-ODBC_API nanodbc::result* get_database_meta_data_schemas(nanodbc::connection* conn, NativeError* error) {
+bool database_meta_data_support_convert (nanodbc::connection* conn, int from_type, int to_type, NativeError* error) {
+	LOG_TRACE("Support convert fromType: {}, toType: {}", from_type, to_type);
+	init_error(error);
+	try {
+		if (!conn) {
+			LOG_ERROR("Connection pointer is null");
+			set_error(error, 2, "DatabaseMetaData", "Result false");
+			return false;
+		}
+
+		const DatabaseMetaData database_meta_data(*conn);
+		bool result = database_meta_data.supportsConvert(from_type, to_type);
+		LOG_TRACE("Result: {}", result);
+		return result;
+	} catch (const std::exception& e) {
+		set_error(error, 2, "DatabaseMetaData", e.what());
+		LOG_ERROR_W(L"Exception in database_meta_data_support_convert: {}", to_wstring(e.what()));
+	} catch (...) {
+		set_error(error, -1, "UnknownError", "Unknown get meta data error");
+		LOG_ERROR("Unknown exception in database_meta_data_support_convert");
+	}
+	return false;
+}
+
+nanodbc::result* get_database_meta_data_schemas(nanodbc::connection* conn, NativeError* error) {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta){
 		return meta.getSchemas();
 	}, error, "getSchemas");
 }
 
-ODBC_API nanodbc::result* get_database_meta_data_catalogs(nanodbc::connection* conn, NativeError* error) {
+nanodbc::result* get_database_meta_data_catalogs(nanodbc::connection* conn, NativeError* error) {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
 		return meta.getCatalogs();
 	}, error, "getCatalogs");
 	
 }
 
-ODBC_API nanodbc::result* get_database_meta_data_table_types(nanodbc::connection* conn, NativeError* error) {
+nanodbc::result* get_database_meta_data_table_types(nanodbc::connection* conn, NativeError* error) {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
 		return meta.getTableTypes();
 	}, error, "getTableTypes");
