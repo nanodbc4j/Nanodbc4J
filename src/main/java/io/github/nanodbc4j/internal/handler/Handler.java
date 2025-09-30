@@ -1,5 +1,6 @@
 package io.github.nanodbc4j.internal.handler;
 
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
@@ -10,7 +11,7 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Handler {
-    public static final long POINTER_SIZE = System.getProperty("os.arch").endsWith("64") ? 8 : 4;
+    public static final long POINTER_SIZE = Platform.is64Bit() ? 8 : 4;
     public static final char NUL_CHAR = '\0';
     public static final String NUL_TERMINATOR = "" + NUL_CHAR;
 
