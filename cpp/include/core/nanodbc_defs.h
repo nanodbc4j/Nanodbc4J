@@ -1,4 +1,6 @@
 #pragma once
+#include <fmt/format.h>
+#include "utils/path_utils.h"
 
 #ifdef NANODBC_ENABLE_UNICODE
 #define NANODBC_FUNC(f) f##W
@@ -16,4 +18,4 @@
 
 #define NANODBC_THROW_DATABASE_ERROR(handle, handle_type)                                          \
     throw nanodbc::database_error(                                                                 \
-        handle, handle_type, __FILE__ ":" NANODBC_STRINGIZE(__LINE__) ": ") /**/
+        handle, handle_type, fmt::format("{}:{}:", utils::extract_filename(__FILE__), __LINE__)) /**/

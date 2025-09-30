@@ -158,6 +158,49 @@ nanodbc::result* get_database_meta_data_procedure_columns(nanodbc::connection* c
 	}, error, "getProcedureColumns");
 }
 
+nanodbc::result* get_database_meta_data_column_privileges(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema,
+	const char16_t* table, const char16_t* columnNamePattern, NativeError* error) {
+	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
+		return meta.getColumnPrivileges(to_wstring(catalog), to_wstring(schema), to_wstring(table), to_wstring(columnNamePattern));
+	}, error, "getColumnPrivileges");
+}
+
+nanodbc::result* get_database_meta_data_table_privileges(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema_pattern,
+	const char16_t* table_name_pattern, NativeError* error) {
+	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
+		return meta.getTablePrivileges(to_wstring(catalog), to_wstring(schema_pattern), to_wstring(table_name_pattern));
+	}, error, "getTablePrivileges");
+}
+
+nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema,
+	const char16_t* table, int scope, bool nullable, NativeError* error) {
+	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
+		return meta.getBestRowIdentifier(to_wstring(catalog), to_wstring(schema), to_wstring(table), scope, nullable);
+	}, error, "getBestRowIdentifier");
+}
+
+nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema,
+	const char16_t* table, NativeError* error) {
+	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
+		return meta.getVersionColumns(to_wstring(catalog), to_wstring(schema), to_wstring(table));
+	}, error, "getVersionColumns");
+}
+
+nanodbc::result* get_database_meta_data_cross_reference(nanodbc::connection* conn, const char16_t* parent_catalog, const char16_t* parent_schema,
+	const char16_t* parent_table, const char16_t* foreign_catalog, const char16_t* foreign_schema, const char16_t* foreign_table, NativeError* error) {
+	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
+		return meta.getCrossReference(to_wstring(parent_catalog), to_wstring(parent_schema), to_wstring(parent_table), 
+			to_wstring(foreign_catalog), to_wstring(foreign_schema), to_wstring(foreign_table));
+	}, error, "getCrossReference");
+}
+
+nanodbc::result* get_database_meta_data_index_info(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema,
+	const char16_t* table, bool unique, bool approximate, NativeError* error) {
+	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
+		return meta.getIndexInfo(to_wstring(catalog), to_wstring(schema), to_wstring(table), unique, approximate);
+	}, error, "getIndexInfo");
+}
+
 void delete_database_meta_data(CDatabaseMetaData* meta_data) {
 	LOG_DEBUG("Deleting metadata: {}", reinterpret_cast<uintptr_t>(meta_data));
 	if (meta_data) {

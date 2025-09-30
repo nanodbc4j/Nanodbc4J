@@ -228,5 +228,23 @@ public interface NativeDB extends Library {
     ResultSetPtr get_database_meta_data_procedure_columns(ConnectionPtr conn, String catalog, String schema,
                                                           String procedure, String column, NativeError error);
 
+    ResultSetPtr get_database_meta_data_column_privileges(ConnectionPtr conn, String catalog, String schema,
+                                                          String table, String column_name_pattern, NativeError error);
+
+    ResultSetPtr get_database_meta_data_table_privileges(ConnectionPtr conn, String catalog, String schema_pattern,
+                                                         String table_name_pattern, NativeError error);
+
+    ResultSetPtr get_database_meta_data_best_row_identifier(ConnectionPtr conn, String catalog, String schema,
+                                                            String table, int scope, byte nullable, NativeError error);
+
+    ResultSetPtr get_database_meta_data_version_columns(ConnectionPtr conn, String catalog, String schema,
+                                                        String table, NativeError error);
+
+    ResultSetPtr get_database_meta_data_cross_reference(ConnectionPtr conn, String parent_catalog, String parent_schema,
+                                                        String parent_table, String foreign_catalog, String foreign_schema, String foreign_table, NativeError error);
+
+    ResultSetPtr get_database_meta_data_index_info(ConnectionPtr conn, String catalog, String schema,
+                                                   String table, byte unique, byte approximate, NativeError error);
+
     void delete_database_meta_data(DatabaseMetaDataStruct meta_data);
 }

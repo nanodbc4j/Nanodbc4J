@@ -161,7 +161,7 @@ public class DatabaseMetaDataHandler {
         return metaData;
     }
 
-    public ResultSetPtr getTables(ConnectionPtr conn, String catalog, String schema, String table, String type) {
+    public static ResultSetPtr getTables(ConnectionPtr conn, String catalog, String schema, String table, String type) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -177,7 +177,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public boolean supportsConvert(ConnectionPtr conn, int fromType, int toType) {
+    public static boolean supportsConvert(ConnectionPtr conn, int fromType, int toType) {
         NativeError nativeError = new NativeError();
         try {
             boolean result = NativeDB.INSTANCE.database_meta_data_support_convert(conn, fromType, toType, nativeError) != 0;
@@ -188,7 +188,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getSchemas(ConnectionPtr conn) {
+    public static ResultSetPtr getSchemas(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_schemas(conn, nativeError);
@@ -199,7 +199,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getSchemas(ConnectionPtr conn, String catalog, String schemaPattern) {
+    public static ResultSetPtr getSchemas(ConnectionPtr conn, String catalog, String schemaPattern) {
         NativeError nativeError = new NativeError();
         try {
             // используем get_database_meta_data_tables
@@ -217,7 +217,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getCatalogs(ConnectionPtr conn) {
+    public static ResultSetPtr getCatalogs(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_catalogs(conn, nativeError);
@@ -228,7 +228,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getTableTypes(ConnectionPtr conn) {
+    public static ResultSetPtr getTableTypes(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_table_types(conn, nativeError);
@@ -239,7 +239,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getColumns(ConnectionPtr conn, String catalog, String schema, String table, String column) {
+    public static ResultSetPtr getColumns(ConnectionPtr conn, String catalog, String schema, String table, String column) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -256,7 +256,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getPrimaryKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+    public static ResultSetPtr getPrimaryKeys(ConnectionPtr conn, String catalog, String schema, String table) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -272,7 +272,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getImportedKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+    public static ResultSetPtr getImportedKeys(ConnectionPtr conn, String catalog, String schema, String table) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -288,7 +288,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getExportedKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+    public static ResultSetPtr getExportedKeys(ConnectionPtr conn, String catalog, String schema, String table) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -304,7 +304,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getTypeInfo(ConnectionPtr conn) {
+    public static ResultSetPtr getTypeInfo(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -316,7 +316,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getProcedures(ConnectionPtr conn, String catalog, String schemaPattern, String procedureNamePattern) {
+    public static ResultSetPtr getProcedures(ConnectionPtr conn, String catalog, String schemaPattern, String procedureNamePattern) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -332,7 +332,7 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public ResultSetPtr getProcedureColumns(ConnectionPtr conn, String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) {
+    public static ResultSetPtr getProcedureColumns(ConnectionPtr conn, String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -341,6 +341,113 @@ public class DatabaseMetaDataHandler {
                             schemaPattern + NUL_CHAR,
                             procedureNamePattern + NUL_CHAR,
                             columnNamePattern + NUL_CHAR,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getColumnPrivileges(ConnectionPtr conn, String catalog, String schema, String table, String columnNamePattern) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_column_privileges(conn,
+                            catalog + NUL_CHAR,
+                            schema + NUL_CHAR,
+                            table + NUL_CHAR,
+                            columnNamePattern + NUL_CHAR,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getTablePrivileges(ConnectionPtr conn, String catalog, String schemaPattern, String tableNamePattern) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_table_privileges(conn,
+                            catalog + NUL_CHAR,
+                            schemaPattern + NUL_CHAR,
+                            tableNamePattern + NUL_CHAR,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getBestRowIdentifier(ConnectionPtr conn, String catalog, String schema, String table, int scope, boolean nullable) {
+        byte isNullable = (byte) (nullable ? 1 : 0);
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_best_row_identifier(conn,
+                            catalog + NUL_CHAR,
+                            schema + NUL_CHAR,
+                            table + NUL_CHAR,
+                            scope,
+                            isNullable,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getVersionColumns(ConnectionPtr conn, String catalog, String schema, String table) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_version_columns(conn,
+                            catalog + NUL_CHAR,
+                            schema + NUL_CHAR,
+                            table + NUL_CHAR, nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getCrossReference(ConnectionPtr conn, String parentCatalog, String parentSchema, String parentTable,
+                                          String foreignCatalog, String foreignSchema, String foreignTable) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_cross_reference(conn,
+                            parentCatalog + NUL_CHAR,
+                            parentSchema + NUL_CHAR,
+                            parentTable + NUL_CHAR,
+                            foreignCatalog + NUL_CHAR,
+                            foreignSchema + NUL_CHAR,
+                            foreignTable + NUL_CHAR,
+                            nativeError);
+            throwIfNativeError(nativeError);
+            return resultSetPtr;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public ResultSetPtr getIndexInfo(ConnectionPtr conn, String catalog, String schema, String table, boolean unique, boolean approximate) {
+        byte isUnique = (byte) (unique ? 1 : 0);
+        byte isApproximate = (byte) (approximate ? 1 : 0);
+        NativeError nativeError = new NativeError();
+        try {
+            ResultSetPtr resultSetPtr =
+                    NativeDB.INSTANCE.get_database_meta_data_index_info(conn,
+                            catalog + NUL_CHAR,
+                            schema + NUL_CHAR,
+                            table + NUL_CHAR,
+                            isUnique,
+                            isApproximate,
                             nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;

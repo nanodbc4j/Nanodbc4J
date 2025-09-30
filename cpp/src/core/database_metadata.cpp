@@ -1203,7 +1203,7 @@ bool DatabaseMetaData::isCatalogAtStart() const {
 }
 
 // === Целочисленные методы ===
-int DatabaseMetaData::supportsTransactionIsolationLevel() const {   // === Поддержка уровней изоляции ===
+int DatabaseMetaData::supportsTransactionIsolationLevel() const {
     LOG_TRACE("Called");
     SQLUINTEGER supported = 0;
     SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_TXN_ISOLATION_OPTION, &supported, 0, nullptr);
@@ -1509,6 +1509,7 @@ nanodbc::result DatabaseMetaData::getExportedKeys(const std::wstring& catalog, c
     return ResultSet(std::move(stmt), 1);
 }
 
+// === TypeInfo ===
 nanodbc::result DatabaseMetaData::getTypeInfo() const {
     nanodbc::statement stmt(connection_);
     RETCODE rc = NANODBC_FUNC(SQLGetTypeInfo)(
@@ -1517,6 +1518,128 @@ nanodbc::result DatabaseMetaData::getTypeInfo() const {
     );
     if (!SQL_SUCCEEDED(rc))
         NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+    return ResultSet(std::move(stmt), 1);
+}
+
+nanodbc::result DatabaseMetaData::getColumnPrivileges(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, const std::wstring& columnNamePattern) const {
+    LOG_TRACE_W(L"Called getColumnPrivileges({}, {}, {}, {})", catalog, schema, table, columnNamePattern);
+
+    nanodbc::statement stmt(connection_);
+    RETCODE rc = NANODBC_FUNC(SQLColumnPrivileges)(
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? NANODBC_TEXT("") : catalog.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(schema.empty() ? NANODBC_TEXT("") : schema.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(table.empty() ? NANODBC_TEXT("") : table.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(columnNamePattern.empty() ? NANODBC_TEXT("") : columnNamePattern.c_str()), SQL_NTS
+        );
+
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    LOG_TRACE_W(L"Returning column privileges result set");
+    return ResultSet(std::move(stmt), 1);
+}
+
+nanodbc::result DatabaseMetaData::getTablePrivileges(const std::wstring& catalog, const std::wstring& schemaPattern, const std::wstring& tableNamePattern) const {
+    LOG_TRACE_W(L"Called getTablePrivileges({}, {}, {})", catalog, schemaPattern, tableNamePattern);
+
+    nanodbc::statement stmt(connection_);
+    RETCODE rc = NANODBC_FUNC(SQLTablePrivileges)(
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? NANODBC_TEXT("") : catalog.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(schemaPattern.empty() ? NANODBC_TEXT("") : schemaPattern.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(tableNamePattern.empty() ? NANODBC_TEXT("") : tableNamePattern.c_str()), SQL_NTS
+        );
+
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    LOG_TRACE_W(L"Returning table privileges result set");
+    return ResultSet(std::move(stmt), 1);
+}
+
+nanodbc::result DatabaseMetaData::getBestRowIdentifier(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, int scope, bool nullable) const {
+    LOG_TRACE_W(L"Called getBestRowIdentifier({}, {}, {}, {}, {})", catalog, schema, table, scope, nullable);
+
+    nanodbc::statement stmt(connection_);
+    RETCODE rc = NANODBC_FUNC(SQLSpecialColumns)(
+        stmt.native_statement_handle(),
+        SQL_BEST_ROWID,
+        (NANODBC_SQLCHAR*)(catalog.empty() ? NANODBC_TEXT("") : catalog.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(schema.empty() ? NANODBC_TEXT("") : schema.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(table.empty() ? NANODBC_TEXT("") : table.c_str()), SQL_NTS,
+        static_cast<SQLUSMALLINT>(scope),
+        static_cast<SQLUSMALLINT>(nullable ? SQL_TRUE : SQL_FALSE)
+        );
+
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    LOG_TRACE_W(L"Returning best row identifier result set");
+    return ResultSet(std::move(stmt), 1);
+}
+
+nanodbc::result DatabaseMetaData::getVersionColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table) const {
+    LOG_TRACE_W(L"Called getVersionColumns({}, {}, {})", catalog, schema, table);
+
+    nanodbc::statement stmt(connection_);
+    RETCODE rc = NANODBC_FUNC(SQLSpecialColumns)(
+        stmt.native_statement_handle(),
+        SQL_ROWVER,
+        (NANODBC_SQLCHAR*)(catalog.empty() ? NANODBC_TEXT("") : catalog.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(schema.empty() ? NANODBC_TEXT("") : schema.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(table.empty() ? NANODBC_TEXT("") : table.c_str()), SQL_NTS,
+        0, // scope - not used for SQL_ROWVER
+        SQL_FALSE // nullable - not used for SQL_ROWVER
+        );
+
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    LOG_TRACE_W(L"Returning version columns result set");
+    return ResultSet(std::move(stmt), 1);
+}
+
+nanodbc::result DatabaseMetaData::getCrossReference(const std::wstring& parentCatalog, const std::wstring& parentSchema, const std::wstring& parentTable,
+                                                    const std::wstring& foreignCatalog, const std::wstring& foreignSchema, const std::wstring& foreignTable) const {
+    LOG_TRACE_W(L"Called getCrossReference({}, {}, {}, {}, {}, {})",
+        parentCatalog, parentSchema, parentTable, foreignCatalog, foreignSchema, foreignTable);
+
+    nanodbc::statement stmt(connection_);
+    RETCODE rc = NANODBC_FUNC(SQLForeignKeys)(
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(parentCatalog.empty() ? NANODBC_TEXT("") : parentCatalog.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(parentSchema.empty() ? NANODBC_TEXT("") : parentSchema.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(parentTable.empty() ? NANODBC_TEXT("") : parentTable.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(foreignCatalog.empty() ? NANODBC_TEXT("") : foreignCatalog.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(foreignSchema.empty() ? NANODBC_TEXT("") : foreignSchema.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(foreignTable.empty() ? NANODBC_TEXT("") : foreignTable.c_str()), SQL_NTS
+        );
+
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    LOG_TRACE_W(L"Returning cross reference result set");
+    return ResultSet(std::move(stmt), 1);
+}
+
+nanodbc::result DatabaseMetaData::getIndexInfo(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, bool unique, bool approximate) const {
+    LOG_TRACE_W(L"Called getIndexInfo({}, {}, {}, {}, {})", catalog, schema, table, unique, approximate);
+
+    nanodbc::statement stmt(connection_);
+    RETCODE rc = NANODBC_FUNC(SQLStatistics)(
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? NANODBC_TEXT("") : catalog.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(schema.empty() ? NANODBC_TEXT("") : schema.c_str()), SQL_NTS,
+        (NANODBC_SQLCHAR*)(table.empty() ? NANODBC_TEXT("") : table.c_str()), SQL_NTS,
+        static_cast<SQLUSMALLINT>(unique ? SQL_INDEX_UNIQUE : SQL_INDEX_ALL),
+        static_cast<SQLUSMALLINT>(approximate ? SQL_QUICK : SQL_ENSURE)
+        );
+
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    LOG_TRACE_W(L"Returning index info result set");
     return ResultSet(std::move(stmt), 1);
 }
 

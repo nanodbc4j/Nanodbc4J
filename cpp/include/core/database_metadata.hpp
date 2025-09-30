@@ -150,25 +150,22 @@ public:
     int getMaxProcedureNameLength() const;
 
     nanodbc::result getSchemas() const;
-
     nanodbc::result getCatalogs() const;
-
     nanodbc::result getTableTypes() const;
-
-    nanodbc::result getTables(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table, const std::wstring& type) const;
-    
+    nanodbc::result getTables(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table, const std::wstring& type) const;    
     nanodbc::result getColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, const std::wstring& column) const;
-
     nanodbc::result getPrimaryKeys(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table) const;
-
     nanodbc::result getImportedKeys(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table) const;
-
     nanodbc::result getExportedKeys(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table) const;
-
     nanodbc::result getTypeInfo() const;
-
+    nanodbc::result getColumnPrivileges(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, const std::wstring& columnNamePattern) const;
+    nanodbc::result getTablePrivileges(const std::wstring& catalog, const std::wstring& schemaPattern, const std::wstring& tableNamePattern) const;
+    nanodbc::result getBestRowIdentifier(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, int scope, bool nullable) const;
+    nanodbc::result getVersionColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table) const;
+    nanodbc::result getCrossReference(const std::wstring& parentCatalog, const std::wstring& parentSchema, const std::wstring& parentTable,
+                                      const std::wstring& foreignCatalog, const std::wstring& foreignSchema, const std::wstring& foreignTable) const;
+    nanodbc::result getIndexInfo(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, bool unique, bool approximate) const;
     nanodbc::result getProcedures(const std::wstring& catalog, const std::wstring& schema, const std::wstring& procedure) const;
-
     nanodbc::result getProcedureColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& procedure, const std::wstring& column) const;
-     
+
 };

@@ -41,6 +41,24 @@ extern "C" {
 	ODBC_API nanodbc::result* get_database_meta_data_procedure_columns(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema,
 		const char16_t* procedure, const char16_t* column, NativeError* error);
 
+	ODBC_API nanodbc::result* get_database_meta_data_column_privileges(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema,
+		const char16_t* table, const char16_t* column_name_pattern, NativeError* error);
+	
+	ODBC_API nanodbc::result* get_database_meta_data_table_privileges(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema_pattern,
+		const char16_t* table_name_pattern, NativeError* error);
+	
+	ODBC_API nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema, 
+		const char16_t* table, int scope, bool nullable, NativeError* error);
+	
+	ODBC_API nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema, 
+		const char16_t* table, NativeError* error);
+	
+	ODBC_API nanodbc::result* get_database_meta_data_cross_reference(nanodbc::connection* conn, const char16_t* parent_catalog, const char16_t* parent_schema,
+		const char16_t* parent_table, const char16_t* foreign_catalog, const char16_t* foreign_schema, const char16_t* foreign_table, NativeError* error);
+	
+	ODBC_API nanodbc::result* get_database_meta_data_index_info(nanodbc::connection* conn, const char16_t* catalog, const char16_t* schema, 
+		const char16_t* table, bool unique, bool approximate, NativeError* error);
+
 	ODBC_API void delete_database_meta_data(CDatabaseMetaData* meta_data);
 
 #ifdef __cplusplus
