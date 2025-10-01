@@ -645,9 +645,8 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
         // https://msdn.microsoft.com/en-us/library/ms710171.aspx
         String typePattern = types == null ? "" : Arrays.stream(types)
                 .filter(Objects::nonNull)
-                .filter(Predicate.not(String::isBlank))
                 .map(String::trim)
-                .map(t -> "'" + t + "'")
+                .filter(Predicate.not(String::isEmpty))
                 .collect(Collectors.joining(","));
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getTables(connection.get().getConnectionPtr(), catalog, schemaPattern, tableNamePattern, typePattern);

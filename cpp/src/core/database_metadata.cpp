@@ -1473,13 +1473,13 @@ nanodbc::result DatabaseMetaData::getImportedKeys(const std::wstring& catalog, c
     NANODBC_CALL_RC(
         NANODBC_FUNC(SQLForeignKeys),
         rc,
-        stmt.native_statement_handle(),
+        stmt.native_statement_handle(),        
+        nullptr, 0,
+        nullptr, 0,
+        nullptr, 0,
         (NANODBC_SQLCHAR*)(catalog.empty() ? NANODBC_TEXT("") : catalog.c_str()), SQL_NTS,
         (NANODBC_SQLCHAR*)(schema.empty() ? NANODBC_TEXT("") : schema.c_str()), SQL_NTS,
-        (NANODBC_SQLCHAR*)(table.empty() ? NANODBC_TEXT("") : table.c_str()), SQL_NTS,
-        nullptr, 0,   // fkCatalogName — nullptr = все
-        nullptr, 0,   // fkSchemaName — nullptr = все
-        nullptr, 0    // fkTableName — nullptr = все → imported keys;
+        (NANODBC_SQLCHAR*)(table.empty() ? NANODBC_TEXT("") : table.c_str()), SQL_NTS
     );
 
     if (!SQL_SUCCEEDED(rc))
@@ -1496,12 +1496,12 @@ nanodbc::result DatabaseMetaData::getExportedKeys(const std::wstring& catalog, c
         NANODBC_FUNC(SQLForeignKeys),
         rc,
         stmt.native_statement_handle(),
-        nullptr, 0,   // pkCatalog — все
-        nullptr, 0,   // pkSchema — все
-        nullptr, 0,   // pkTable — все
         (NANODBC_SQLCHAR*)(catalog.empty() ? NANODBC_TEXT("") : catalog.c_str()), SQL_NTS,
         (NANODBC_SQLCHAR*)(schema.empty() ? NANODBC_TEXT("") : schema.c_str()), SQL_NTS,
-        (NANODBC_SQLCHAR*)(table.empty() ? NANODBC_TEXT("") : table.c_str()), SQL_NTS
+        (NANODBC_SQLCHAR*)(table.empty() ? NANODBC_TEXT("") : table.c_str()), SQL_NTS,
+        nullptr, 0,
+        nullptr, 0,
+        nullptr, 0
     );
 
     if (!SQL_SUCCEEDED(rc))
