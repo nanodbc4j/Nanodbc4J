@@ -199,24 +199,6 @@ public class DatabaseMetaDataHandler {
         }
     }
 
-    public static ResultSetPtr getSchemas(ConnectionPtr conn, String catalog, String schemaPattern) {
-        NativeError nativeError = new NativeError();
-        try {
-            // используем get_database_meta_data_tables
-            ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_tables(conn,
-                            catalog + NUL_CHAR,
-                            schemaPattern + NUL_CHAR,
-                            NUL_TERMINATOR,
-                            NUL_TERMINATOR,
-                            nativeError);
-            throwIfNativeError(nativeError);
-            return resultSetPtr;
-        } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-        }
-    }
-
     public static ResultSetPtr getCatalogs(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {

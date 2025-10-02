@@ -971,12 +971,8 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
-        try {
-            ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getSchemas(connection.get().getConnectionPtr(), catalog, schemaPattern);
-            return new NanodbcResultSet(resultSetPtr);
-        } catch (NativeException e) {
-            throw new NanodbcSQLException(e);
-        }
+        // sun.jdbc.odbc does not support this
+        throw new UnsupportedOperationException("getSchemas with parameters is not supported");
     }
 
     @Override
