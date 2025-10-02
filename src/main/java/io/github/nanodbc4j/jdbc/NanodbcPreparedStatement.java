@@ -41,6 +41,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         super(connection, statementPtr);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultSet executeQuery() throws SQLException {
         log.finest("executeQuery");
@@ -53,6 +56,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int executeUpdate() throws SQLException {
         log.finest("executeUpdate");
@@ -64,12 +70,18 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNull(int parameterIndex, int sqlType) throws SQLException {
         log.finest("setNull");
         setString(parameterIndex, null);    // Используем String метод
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBoolean(int parameterIndex, boolean x) throws SQLException {
         log.finest("setBoolean");
@@ -82,6 +94,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setByte(int parameterIndex, byte x) throws SQLException {
         log.finest("setByte");
@@ -89,6 +104,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         setShort(parameterIndex, (short) x);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setShort(int parameterIndex, short x) throws SQLException {
         log.finest("setShort");
@@ -100,6 +118,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setInt(int parameterIndex, int x) throws SQLException {
         log.finest("setInt");
@@ -111,6 +132,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setLong(int parameterIndex, long x) throws SQLException {
         log.finest("setLong");
@@ -122,6 +146,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setFloat(int parameterIndex, float x) throws SQLException {
         log.finest("setFloat");
@@ -133,6 +160,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDouble(int parameterIndex, double x) throws SQLException {
         log.finest("setDouble");
@@ -144,12 +174,18 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBigDecimal(int parameterIndex, BigDecimal x) throws SQLException {
         log.finest("setBigDecimal");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setString(int parameterIndex, String x) throws SQLException {
         log.finest("setString");
@@ -161,12 +197,18 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBytes(int parameterIndex, byte[] x) throws SQLException {
         log.finest("setBytes");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDate(int parameterIndex, Date x) throws SQLException {
         log.finest("setDate");
@@ -179,6 +221,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTime(int parameterIndex, Time x) throws SQLException {
         log.finest("setTime");
@@ -191,6 +236,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
         log.finest("setTimestamp");
@@ -203,36 +251,54 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x, int length) throws SQLException {
         log.finest("setAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
         log.finest("setUnicodeStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x, int length) throws SQLException {
         log.finest("setBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clearParameters() throws SQLException {
         log.finest("clearParameters");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
         log.finest("setObject");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setObject(int parameterIndex, Object x) throws SQLException {
         log.finest("setObject");
@@ -272,6 +338,9 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean execute() throws SQLException {
         log.finest("execute");
@@ -286,42 +355,63 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addBatch() throws SQLException {
         log.finest("addBatch");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCharacterStream(int parameterIndex, Reader reader, int length) throws SQLException {
         log.finest("setCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRef(int parameterIndex, Ref x) throws SQLException {
         log.finest("setRef");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBlob(int parameterIndex, Blob x) throws SQLException {
         log.finest("setBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setClob(int parameterIndex, Clob x) throws SQLException {
         log.finest("setClob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setArray(int parameterIndex, Array x) throws SQLException {
         log.finest("setArray");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         log.finest("getMetaData");
@@ -332,150 +422,225 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         return resultSet.getMetaData();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDate(int parameterIndex, Date x, Calendar cal) throws SQLException {
         log.finest("setDate");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTime(int parameterIndex, Time x, Calendar cal) throws SQLException {
         log.finest("setTime");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal) throws SQLException {
         log.finest("setTimestamp");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNull(int parameterIndex, int sqlType, String typeName) throws SQLException {
         log.finest("setNull");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setURL(int parameterIndex, URL x) throws SQLException {
         log.finest("setURL");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ParameterMetaData getParameterMetaData() throws SQLException {
         log.finest("getParameterMetaData");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRowId(int parameterIndex, RowId x) throws SQLException {
         log.finest("setRowId");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNString(int parameterIndex, String value) throws SQLException {
         log.finest("setNString");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException {
         log.finest("setNCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNClob(int parameterIndex, NClob value) throws SQLException {
         log.finest("setNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setClob(int parameterIndex, Reader reader, long length) throws SQLException {
         log.finest("setClob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException {
         log.finest("setBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException {
         log.finest("setNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException {
         log.finest("setSQLXML");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setObject(int parameterIndex, Object x, int targetSqlType, int scaleOrLength) throws SQLException {
         log.finest("setObject");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException {
         log.finest("setAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException {
         log.finest("setBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException {
         log.finest("setCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
         log.finest("setAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
         log.finest("setBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
         log.finest("setCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
         log.finest("setNCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setClob(int parameterIndex, Reader reader) throws SQLException {
         log.finest("setClob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException {
         log.finest("setBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNClob(int parameterIndex, Reader reader) throws SQLException {
         log.finest("setNClob");

@@ -30,6 +30,9 @@ public class NanodbcStatement implements Statement {
         this.connection = new WeakReference<>(connection);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
         log.finest("executeQuery");
@@ -43,6 +46,9 @@ public class NanodbcStatement implements Statement {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int executeUpdate(String sql) throws SQLException {
         log.finest("executeUpdate");
@@ -55,6 +61,9 @@ public class NanodbcStatement implements Statement {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws SQLException {
         log.finest("close");
@@ -70,72 +79,108 @@ public class NanodbcStatement implements Statement {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMaxFieldSize() throws SQLException {
         log.finest("getMaxFieldSize");
         return 0;   // todo
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setMaxFieldSize(int max) throws SQLException {
         log.finest("setMaxFieldSize");
         // throw new SQLFeatureNotSupportedException();todo
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMaxRows() throws SQLException {
         log.finest("getMaxRows");
         return 0;   // todo
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setMaxRows(int max) throws SQLException {
         log.finest("setMaxRows");
         //throw new SQLFeatureNotSupportedException(); todo
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setEscapeProcessing(boolean enable) throws SQLException {
         log.finest("setEscapeProcessing");
         //throw new SQLFeatureNotSupportedException(); todo
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getQueryTimeout() throws SQLException {
         log.finest("getQueryTimeout");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setQueryTimeout(int seconds) throws SQLException {
         log.finest("setQueryTimeout");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void cancel() throws SQLException {
         log.finest("cancel");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SQLWarning getWarnings() throws SQLException {
         log.finest("getWarnings");
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clearWarnings() throws SQLException {
         log.finest("clearWarnings");
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCursorName(String name) throws SQLException {
         log.finest("setCursorName");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean execute(String sql) throws SQLException {
         log.finest("execute");
@@ -150,6 +195,9 @@ public class NanodbcStatement implements Statement {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultSet getResultSet() throws SQLException {
         log.finest("getResultSet");
@@ -158,6 +206,9 @@ public class NanodbcStatement implements Statement {
         return rs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getUpdateCount() throws SQLException {
         log.finest("getUpdateCount");
@@ -165,30 +216,45 @@ public class NanodbcStatement implements Statement {
         //throw new SQLFeatureNotSupportedException(); todo
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean getMoreResults() throws SQLException {
         log.finest("getMoreResults");
         return resultSet != null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setFetchDirection(int direction) throws SQLException {
         log.finest("setFetchDirection");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getFetchDirection() throws SQLException {
         log.finest("getFetchDirection");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setFetchSize(int rows) throws SQLException {
         log.finest("setFetchSize");
         //throw new SQLFeatureNotSupportedException(); todo
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getFetchSize() throws SQLException {
         log.finest("getFetchSize");
@@ -196,36 +262,54 @@ public class NanodbcStatement implements Statement {
         //throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getResultSetConcurrency() throws SQLException {
         log.finest("getResultSetConcurrency");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getResultSetType() throws SQLException {
         log.finest("getResultSetType");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addBatch(String sql) throws SQLException {
         log.finest("addBatch");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clearBatch() throws SQLException {
         log.finest("clearBatch");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int[] executeBatch() throws SQLException {
         log.finest("executeBatch");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Connection getConnection() throws SQLException {
         log.finest("getConnection");
@@ -233,90 +317,135 @@ public class NanodbcStatement implements Statement {
         return connection.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean getMoreResults(int current) throws SQLException {
         log.finest("getMoreResults");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultSet getGeneratedKeys() throws SQLException {
         log.finest("getGeneratedKeys");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
         log.finest("executeUpdate");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
         log.finest("executeUpdate");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int executeUpdate(String sql, String[] columnNames) throws SQLException {
         log.finest("executeUpdate");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean execute(String sql, int autoGeneratedKeys) throws SQLException {
         log.finest("execute");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean execute(String sql, int[] columnIndexes) throws SQLException {
         log.finest("execute");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean execute(String sql, String[] columnNames) throws SQLException {
         log.finest("execute");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getResultSetHoldability() throws SQLException {
         log.finest("getResultSetHoldability");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isClosed() throws SQLException {
         log.finest("isClosed");
         return closed;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setPoolable(boolean poolable) throws SQLException {
         log.finest("setPoolable");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isPoolable() throws SQLException {
         log.finest("isPoolable");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void closeOnCompletion() throws SQLException {
         log.finest("closeOnCompletion");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isCloseOnCompletion() throws SQLException {
         log.finest("isCloseOnCompletion");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
         log.finest("unwrap");
@@ -326,6 +455,9 @@ public class NanodbcStatement implements Statement {
         throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         log.finest("isWrapperFor");

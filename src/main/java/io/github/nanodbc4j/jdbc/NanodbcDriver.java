@@ -37,6 +37,9 @@ public class NanodbcDriver implements Driver {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Connection connect(String url, Properties info) throws SQLException {
         log.finest("connect");
@@ -50,6 +53,9 @@ public class NanodbcDriver implements Driver {
 
     /**
      * @see java.sql.Driver#acceptsURL(java.lang.String)
+     */
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean acceptsURL(String url) {
@@ -68,18 +74,27 @@ public class NanodbcDriver implements Driver {
         return url != null && url.toLowerCase().startsWith(PREFIX);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(String connection, Properties info) throws SQLException {
         log.finest("getPropertyInfo");
         return new DriverPropertyInfo[0];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMajorVersion() {
         log.finest("getMajorVersion");
         return MAJOR_VERSION;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMinorVersion() {
         log.finest("getMinorVersion");
@@ -89,12 +104,18 @@ public class NanodbcDriver implements Driver {
     /**
      * @see java.sql.Driver#jdbcCompliant()
      */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean jdbcCompliant() {
         log.finest("jdbcCompliant");
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         log.finest("getParentLogger");

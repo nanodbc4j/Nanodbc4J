@@ -56,6 +56,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Statement createStatement() throws SQLException {
         log.log(Level.FINEST, "createStatement");
@@ -67,6 +70,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         log.log(Level.FINEST, "prepareStatement");
@@ -79,18 +85,27 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
         log.log(Level.FINEST, "prepareCall");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String nativeSQL(String sql) throws SQLException {
         log.log(Level.FINEST, "nativeSQL");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         log.log(Level.FINEST, "setAutoCommit");
@@ -101,6 +116,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean getAutoCommit() throws SQLException {
         log.log(Level.FINEST, "getAutoCommit");
@@ -111,6 +129,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void commit() throws SQLException {
         log.log(Level.FINEST, "commit");
@@ -121,6 +142,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void rollback() throws SQLException {
         log.log(Level.FINEST, "rollback");
@@ -131,6 +155,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws SQLException {
         log.log(Level.FINEST, "close");
@@ -143,6 +170,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isClosed() throws SQLException {
         log.log(Level.FINEST, "isClosed");
@@ -153,6 +183,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
         log.log(Level.FINEST, "getMetaData");
@@ -166,12 +199,18 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
         log.log(Level.FINEST, "setReadOnly");
         // throw new SQLFeatureNotSupportedException(); TODO
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isReadOnly() throws SQLException {
         log.log(Level.FINEST, "isReadOnly");
@@ -179,6 +218,9 @@ public class NanodbcConnection implements Connection {
         //throw new SQLFeatureNotSupportedException(); TODO
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCatalog(String catalog) throws SQLException {
         log.log(Level.FINEST, "setCatalog");
@@ -189,6 +231,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCatalog() throws SQLException {
         log.log(Level.FINEST, "getCatalog");
@@ -199,6 +244,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTransactionIsolation(int level) throws SQLException {
         log.log(Level.FINEST, "setTransactionIsolation");
@@ -209,6 +257,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getTransactionIsolation() throws SQLException {
         log.log(Level.FINEST, "getTransactionIsolation");
@@ -227,6 +278,9 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SQLWarning getWarnings() throws SQLException {
         log.log(Level.FINEST, "getWarnings");
@@ -234,6 +288,9 @@ public class NanodbcConnection implements Connection {
         return null; // TODO
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clearWarnings() throws SQLException {
         log.log(Level.FINEST, "clearWarnings");
@@ -241,202 +298,304 @@ public class NanodbcConnection implements Connection {
         // nothing to do
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
         log.log(Level.FINEST, "createStatement");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
         log.log(Level.FINEST, "prepareStatement");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
         log.log(Level.FINEST, "prepareCall");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Class<?>> getTypeMap() throws SQLException {
         log.log(Level.FINEST, "getTypeMap");
         return Map.of();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
         log.log(Level.FINEST, "setTypeMap");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setHoldability(int holdability) throws SQLException {
         log.log(Level.FINEST, "setHoldability");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getHoldability() throws SQLException {
         log.log(Level.FINEST, "getHoldability");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Savepoint setSavepoint() throws SQLException {
         log.log(Level.FINEST, "setSavepoint");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Savepoint setSavepoint(String name) throws SQLException {
         log.log(Level.FINEST, "setSavepoint");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void rollback(Savepoint savepoint) throws SQLException {
         log.log(Level.FINEST, "rollback");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
         log.log(Level.FINEST, "releaseSavepoint");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
         log.log(Level.FINEST, "createStatement");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
         log.log(Level.FINEST, "prepareStatement");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
         log.log(Level.FINEST, "prepareCall");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
         log.log(Level.FINEST, "prepareStatement");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
         log.log(Level.FINEST, "prepareStatement");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
         log.log(Level.FINEST, "prepareStatement");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Clob createClob() throws SQLException {
         log.log(Level.FINEST, "createClob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Blob createBlob() throws SQLException {
         log.log(Level.FINEST, "createBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NClob createNClob() throws SQLException {
         log.log(Level.FINEST, "createNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SQLXML createSQLXML() throws SQLException {
         log.log(Level.FINEST, "createSQLXML");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isValid(int timeout) throws SQLException {
         log.log(Level.FINEST, "isValid");
         return !isClosed();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setClientInfo(String name, String value) throws SQLClientInfoException {
         log.log(Level.FINEST, "setClientInfo");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setClientInfo(Properties properties) throws SQLClientInfoException {
         log.log(Level.FINEST, "setClientInfo");
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getClientInfo(String name) throws SQLException {
         log.log(Level.FINEST, "getClientInfo");
         return "";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Properties getClientInfo() throws SQLException {
         log.log(Level.FINEST, "getClientInfo");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
         log.log(Level.FINEST, "createArrayOf");
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
         log.log(Level.FINEST, "createStruct");
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setSchema(String schema) throws SQLException {
         log.log(Level.FINEST, "setSchema");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getSchema() throws SQLException {
         log.log(Level.FINEST, "getSchema");
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void abort(Executor executor) throws SQLException {
         log.log(Level.FINEST, "abort");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
         log.log(Level.FINEST, "setNetworkTimeout");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNetworkTimeout() throws SQLException {
         log.log(Level.FINEST, "getNetworkTimeout");
         throw new SQLFeatureNotSupportedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
         log.log(Level.FINEST, "unwrap");
@@ -446,6 +605,9 @@ public class NanodbcConnection implements Connection {
         throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         log.log(Level.FINEST, "isWrapperFor");
