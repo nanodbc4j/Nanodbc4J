@@ -29,7 +29,7 @@ public class NanodbcDriver implements Driver {
 
     static {
         try {
-            DriverHandler.setLogLevel(SpdLogLevel.DEBUG);
+            DriverHandler.setLogLevel(SpdLogLevel.INFO);
             DriverManager.registerDriver(new NanodbcDriver());
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Could not register driver", e);
@@ -42,7 +42,7 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public Connection connect(String url, Properties info) throws SQLException {
-        log.finest("connect");
+        log.log(Level.FINEST, "NanodbcDriver.connect");
         if (!acceptsURL(url)) {
             return null;
         }
@@ -59,7 +59,7 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public boolean acceptsURL(String url) {
-        log.finest("acceptsURL");
+        log.log(Level.FINEST, "NanodbcDriver.acceptsURL");
         return isValidURL(url);
     }
 
@@ -70,7 +70,7 @@ public class NanodbcDriver implements Driver {
      * @return true if the URL is valid, false otherwise
      */
     static boolean isValidURL(String url) {
-        log.finest("isValidURL");
+        log.log(Level.FINEST, "NanodbcDriver.isValidURL");
         return url != null && url.toLowerCase().startsWith(PREFIX);
     }
 
@@ -79,7 +79,7 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(String connection, Properties info) throws SQLException {
-        log.finest("getPropertyInfo");
+        log.log(Level.FINEST, "NanodbcDriver.getPropertyInfo");
         return new DriverPropertyInfo[0];
     }
 
@@ -88,7 +88,7 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public int getMajorVersion() {
-        log.finest("getMajorVersion");
+        log.log(Level.FINEST, "NanodbcDriver.getMajorVersion");
         return MAJOR_VERSION;
     }
 
@@ -97,7 +97,7 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public int getMinorVersion() {
-        log.finest("getMinorVersion");
+        log.log(Level.FINEST, "NanodbcDriver.getMinorVersion");
         return MINOR_VERSION;
     }
 
@@ -109,7 +109,7 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public boolean jdbcCompliant() {
-        log.finest("jdbcCompliant");
+        log.log(Level.FINEST, "NanodbcDriver.jdbcCompliant");
         return false;
     }
 
@@ -118,7 +118,8 @@ public class NanodbcDriver implements Driver {
      */
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        log.finest("getParentLogger");
+        log.log(Level.FINEST, "NanodbcDriver.getParentLogger");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -159,14 +160,17 @@ public class NanodbcDriver implements Driver {
     }
 
     public static void setLogLevel(SpdLogLevel level) {
+        log.log(Level.FINEST, "NanodbcDriver.setLogLevel");
         DriverHandler.setLogLevel(level);
     }
 
     public static List<DriverDto> driversList() {
+        log.log(Level.FINEST, "NanodbcDriver.driversList");
         return DriverHandler.driversList();
     }
 
     public static List<DatasourceDto> datasourcesList() {
+        log.log(Level.FINEST, "NanodbcDriver.datasourcesList");
         return DriverHandler.datasourcesList();
     }
 }

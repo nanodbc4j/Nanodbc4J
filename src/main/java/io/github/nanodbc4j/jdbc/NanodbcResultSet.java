@@ -59,7 +59,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean next() throws SQLException {
-        log.finest("next");
+        log.finest("NanodbcResultSet.next");
         throwIfAlreadyClosed();
         try {
             return ResultSetHandler.next(resultSetPtr);
@@ -73,7 +73,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void close() throws SQLException {
-        log.finest("close");
+        log.finest("NanodbcResultSet.close");
         try {
             ResultSetHandler.close(resultSetPtr);
             resultSetPtr = null;
@@ -90,7 +90,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean wasNull() throws SQLException {
-        log.finest("wasNull");
+        log.finest("NanodbcResultSet.wasNull");
         throwIfAlreadyClosed();
         try {
             return ResultSetHandler.wasNull(resultSetPtr, lastColumn);
@@ -104,7 +104,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public String getString(int columnIndex) throws SQLException {
-        log.finest("getString");
+        log.finest("NanodbcResultSet.getString");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -119,7 +119,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
-        log.finest("getBoolean");
+        log.finest("NanodbcResultSet.getBoolean");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -134,7 +134,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public byte getByte(int columnIndex) throws SQLException {
-        log.finest("getByte");
+        log.finest("NanodbcResultSet.getByte");
         return (byte) getShort(columnIndex);
     }
 
@@ -143,7 +143,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        log.finest("getShort");
+        log.finest("NanodbcResultSet.getShort");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -158,7 +158,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int getInt(int columnIndex) throws SQLException {
-        log.finest("getInt");
+        log.finest("NanodbcResultSet.getInt");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -173,7 +173,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        log.finest("getLong");
+        log.finest("NanodbcResultSet.getLong");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -188,7 +188,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public float getFloat(int columnIndex) throws SQLException {
-        log.finest("getFloat");
+        log.finest("NanodbcResultSet.getFloat");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -203,7 +203,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public double getDouble(int columnIndex) throws SQLException {
-        log.finest("getDouble");
+        log.finest("NanodbcResultSet.getDouble");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -218,7 +218,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
-        log.finest("getBigDecimal");
+        log.finest("NanodbcResultSet.getBigDecimal");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -227,7 +228,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
-        log.finest("getBytes");
+        log.finest("NanodbcResultSet.getBytes");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -236,7 +238,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        log.finest("getDate");
+        log.finest("NanodbcResultSet.getDate");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -251,7 +253,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Time getTime(int columnIndex) throws SQLException {
-        log.finest("getTime");
+        log.finest("NanodbcResultSet.getTime");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -266,7 +268,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        log.finest("getTimestamp");
+        log.finest("NanodbcResultSet.getTimestamp");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnIndex;
@@ -281,7 +283,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
-        log.finest("getAsciiStream");
+        log.finest("NanodbcResultSet.getAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -290,7 +292,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public InputStream getUnicodeStream(int columnIndex) throws SQLException {
-        log.finest("getUnicodeStream");
+        log.finest("NanodbcResultSet.getUnicodeStream");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -299,7 +302,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public InputStream getBinaryStream(int columnIndex) throws SQLException {
-        log.finest("getBinaryStream");
+        log.finest("NanodbcResultSet.getBinaryStream");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -308,7 +312,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public String getString(String columnLabel) throws SQLException {
-        log.finest("getString");
+        log.finest("NanodbcResultSet.getString");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -323,7 +327,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean getBoolean(String columnLabel) throws SQLException {
-        log.finest("getBoolean");
+        log.finest("NanodbcResultSet.getBoolean");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -338,7 +342,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public byte getByte(String columnLabel) throws SQLException {
-        log.finest("getByte");
+        log.finest("NanodbcResultSet.getByte");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -347,7 +352,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public short getShort(String columnLabel) throws SQLException {
-        log.finest("getShort");
+        log.finest("NanodbcResultSet.getShort");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -362,7 +367,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int getInt(String columnLabel) throws SQLException {
-        log.finest("getInt");
+        log.finest("NanodbcResultSet.getInt");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -377,7 +382,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public long getLong(String columnLabel) throws SQLException {
-        log.finest("getLong");
+        log.finest("NanodbcResultSet.getLong");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -392,7 +397,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public float getFloat(String columnLabel) throws SQLException {
-        log.finest("getFloat");
+        log.finest("NanodbcResultSet.getFloat");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -407,7 +412,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public double getDouble(String columnLabel) throws SQLException {
-        log.finest("getDouble");
+        log.finest("NanodbcResultSet.getDouble");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -422,7 +427,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
-        log.finest("getBigDecimal");
+        log.finest("NanodbcResultSet.getBigDecimal");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -431,7 +437,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public byte[] getBytes(String columnLabel) throws SQLException {
-        log.finest("getBytes");
+        log.finest("NanodbcResultSet.getBytes");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -440,7 +447,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Date getDate(String columnLabel) throws SQLException {
-        log.finest("getDate");
+        log.finest("NanodbcResultSet.getDate");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -455,7 +462,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Time getTime(String columnLabel) throws SQLException {
-        log.finest("getTime");
+        log.finest("NanodbcResultSet.getTime");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -470,7 +477,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
-        log.finest("getTimestamp");
+        log.finest("NanodbcResultSet.getTimestamp");
         throwIfAlreadyClosed();
         try {
             lastColumn = columnLabel;
@@ -485,7 +492,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public InputStream getAsciiStream(String columnLabel) throws SQLException {
-        log.finest("getAsciiStream");
+        log.finest("NanodbcResultSet.getAsciiStream");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -494,7 +502,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public InputStream getUnicodeStream(String columnLabel) throws SQLException {
-        log.finest("getUnicodeStream");
+        log.finest("NanodbcResultSet.getUnicodeStream");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -503,7 +512,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public InputStream getBinaryStream(String columnLabel) throws SQLException {
-        log.finest("getBinaryStream");
+        log.finest("NanodbcResultSet.getBinaryStream");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -512,7 +522,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        log.finest("getWarnings");
+        log.finest("NanodbcResultSet.getWarnings");
         return null;
     }
 
@@ -521,8 +531,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void clearWarnings() throws SQLException {
-        log.finest("clearWarnings");
-
+        log.finest("NanodbcResultSet.clearWarnings");
     }
 
     /**
@@ -530,7 +539,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public String getCursorName() throws SQLException {
-        log.finest("getCursorName");
+        log.finest("NanodbcResultSet.getCursorName");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -539,7 +549,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        log.finest("getMetaData");
+        log.finest("NanodbcResultSet.getMetaData");
         throwIfAlreadyClosed();
         try {
             if (metaData == null && !isClosed()) {
@@ -556,7 +566,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        log.finest("getObject");
+        log.finest("NanodbcResultSet.getObject");
         throwIfAlreadyClosed();
         lastColumn = columnIndex;
         ResultSetMetaData metaData = getMetaData();
@@ -598,7 +608,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Object getObject(String columnLabel) throws SQLException {
-        log.finest("getObject");
+        log.finest("NanodbcResultSet.getObject");
         throwIfAlreadyClosed();
         int index = findColumn(columnLabel);
         lastColumn = columnLabel;
@@ -613,7 +623,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int findColumn(String columnLabel) throws SQLException {
-        log.finest("findColumn");
+        log.finest("NanodbcResultSet.findColumn");
         throwIfAlreadyClosed();
         try {
             return ResultSetHandler.findColumn(resultSetPtr, columnLabel);
@@ -627,7 +637,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Reader getCharacterStream(int columnIndex) throws SQLException {
-        log.finest("getCharacterStream");
+        log.finest("NanodbcResultSet.getCharacterStream");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -636,7 +647,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Reader getCharacterStream(String columnLabel) throws SQLException {
-        log.finest("getCharacterStream");
+        log.finest("NanodbcResultSet.getCharacterStream");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -645,7 +657,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        log.finest("getBigDecimal");
+        log.finest("NanodbcResultSet.getBigDecimal");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -654,7 +667,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-        log.finest("getBigDecimal");
+        log.finest("NanodbcResultSet.getBigDecimal");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -663,7 +677,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean isBeforeFirst() throws SQLException {
-        log.finest("isBeforeFirst");
+        log.finest("NanodbcResultSet.isBeforeFirst");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -672,7 +687,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean isAfterLast() throws SQLException {
-        log.finest("isAfterLast");
+        log.finest("NanodbcResultSet.isAfterLast");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -681,7 +697,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean isFirst() throws SQLException {
-        log.finest("isFirst");
+        log.finest("NanodbcResultSet.isFirst");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -690,7 +707,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean isLast() throws SQLException {
-        log.finest("isLast");
+        log.finest("NanodbcResultSet.isLast");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -699,7 +717,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void beforeFirst() throws SQLException {
-        log.finest("beforeFirst");
+        log.finest("NanodbcResultSet.beforeFirst");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -708,7 +727,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void afterLast() throws SQLException {
-        log.finest("afterLast");
+        log.finest("NanodbcResultSet.afterLast");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -717,7 +737,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean first() throws SQLException {
-        log.finest("first");
+        log.finest("NanodbcResultSet.first");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -726,7 +747,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean last() throws SQLException {
-        log.finest("last");
+        log.finest("NanodbcResultSet.last");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -735,7 +757,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int getRow() throws SQLException {
-        log.finest("getRow");
+        log.finest("NanodbcResultSet.getRow");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -744,7 +767,8 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean absolute(int row) throws SQLException {
-        log.finest("absolute");
+        log.finest("NanodbcResultSet.absolute");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -753,7 +777,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean relative(int rows) throws SQLException {
-        log.finest("relative");
+        log.finest("NanodbcResultSet.relative");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -762,7 +786,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean previous() throws SQLException {
-        log.finest("previous");
+        log.finest("NanodbcResultSet.previous");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -771,7 +795,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void setFetchDirection(int direction) throws SQLException {
-        log.finest("setFetchDirection");
+        log.finest("NanodbcResultSet.setFetchDirection");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -780,7 +804,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int getFetchDirection() throws SQLException {
-        log.finest("getFetchDirection");
+        log.finest("NanodbcResultSet.getFetchDirection");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -789,7 +813,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void setFetchSize(int rows) throws SQLException {
-        log.finest("setFetchSize");
+        log.finest("NanodbcResultSet.setFetchSize");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -798,7 +822,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int getFetchSize() throws SQLException {
-        log.finest("getFetchSize");
+        log.finest("NanodbcResultSet.getFetchSize");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -807,7 +831,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int getType() throws SQLException {
-        log.finest("getType");
+        log.finest("NanodbcResultSet.getType");
         return ResultSet.TYPE_FORWARD_ONLY;
         //throw new SQLFeatureNotSupportedException(); todo
     }
@@ -817,7 +841,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int getConcurrency() throws SQLException {
-        log.finest("getConcurrency");
+        log.finest("NanodbcResultSet.getConcurrency");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -826,7 +850,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean rowUpdated() throws SQLException {
-        log.finest("rowUpdated");
+        log.finest("NanodbcResultSet.rowUpdated");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -835,7 +859,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean rowInserted() throws SQLException {
-        log.finest("rowInserted");
+        log.finest("NanodbcResultSet.rowInserted");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -844,7 +868,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean rowDeleted() throws SQLException {
-        log.finest("rowDeleted");
+        log.finest("NanodbcResultSet.rowDeleted");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -853,7 +877,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNull(int columnIndex) throws SQLException {
-        log.finest("updateNull");
+        log.finest("NanodbcResultSet.updateNull");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -862,7 +886,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBoolean(int columnIndex, boolean x) throws SQLException {
-        log.finest("updateBoolean");
+        log.finest("NanodbcResultSet.updateBoolean");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -871,7 +895,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateByte(int columnIndex, byte x) throws SQLException {
-        log.finest("updateByte");
+        log.finest("NanodbcResultSet.updateByte");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -880,7 +904,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateShort(int columnIndex, short x) throws SQLException {
-        log.finest("updateShort");
+        log.finest("NanodbcResultSet.updateShort");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -889,7 +913,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateInt(int columnIndex, int x) throws SQLException {
-        log.finest("updateInt");
+        log.finest("NanodbcResultSet.updateInt");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -898,7 +922,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateLong(int columnIndex, long x) throws SQLException {
-        log.finest("updateLong");
+        log.finest("NanodbcResultSet.updateLong");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -907,7 +931,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateFloat(int columnIndex, float x) throws SQLException {
-        log.finest("updateFloat");
+        log.finest("NanodbcResultSet.updateFloat");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -916,7 +940,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateDouble(int columnIndex, double x) throws SQLException {
-        log.finest("updateDouble");
+        log.finest("NanodbcResultSet.updateDouble");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -925,7 +949,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBigDecimal(int columnIndex, BigDecimal x) throws SQLException {
-        log.finest("updateBigDecimal");
+        log.finest("NanodbcResultSet.updateBigDecimal");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -934,7 +958,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateString(int columnIndex, String x) throws SQLException {
-        log.finest("updateString");
+        log.finest("NanodbcResultSet.updateString");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -943,7 +967,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBytes(int columnIndex, byte[] x) throws SQLException {
-        log.finest("updateBytes");
+        log.finest("NanodbcResultSet.updateBytes");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -952,7 +976,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateDate(int columnIndex, Date x) throws SQLException {
-        log.finest("updateDate");
+        log.finest("NanodbcResultSet.updateDate");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -961,7 +985,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateTime(int columnIndex, Time x) throws SQLException {
-        log.finest("updateTime");
+        log.finest("NanodbcResultSet.updateTime");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -970,7 +994,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateTimestamp(int columnIndex, Timestamp x) throws SQLException {
-        log.finest("updateTimestamp");
+        log.finest("NanodbcResultSet.updateTimestamp");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -979,7 +1003,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateAsciiStream(int columnIndex, InputStream x, int length) throws SQLException {
-        log.finest("updateAsciiStream");
+        log.finest("NanodbcResultSet.updateAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -988,7 +1012,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBinaryStream(int columnIndex, InputStream x, int length) throws SQLException {
-        log.finest("updateBinaryStream");
+        log.finest("NanodbcResultSet.updateBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -997,7 +1021,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateCharacterStream(int columnIndex, Reader x, int length) throws SQLException {
-        log.finest("updateCharacterStream");
+        log.finest("NanodbcResultSet.updateCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1006,7 +1030,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateObject(int columnIndex, Object x, int scaleOrLength) throws SQLException {
-        log.finest("updateObject");
+        log.finest("NanodbcResultSet.updateObject");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1015,7 +1039,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateObject(int columnIndex, Object x) throws SQLException {
-        log.finest("updateObject");
+        log.finest("NanodbcResultSet.updateObject");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1024,7 +1048,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNull(String columnLabel) throws SQLException {
-        log.finest("updateNull");
+        log.finest("NanodbcResultSet.updateNull");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1033,7 +1057,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBoolean(String columnLabel, boolean x) throws SQLException {
-        log.finest("updateBoolean");
+        log.finest("NanodbcResultSet.updateBoolean");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1042,7 +1066,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateByte(String columnLabel, byte x) throws SQLException {
-        log.finest("updateByte");
+        log.finest("NanodbcResultSet.updateByte");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1051,7 +1075,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateShort(String columnLabel, short x) throws SQLException {
-        log.finest("updateShort");
+        log.finest("NanodbcResultSet.updateShort");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1060,7 +1084,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateInt(String columnLabel, int x) throws SQLException {
-        log.finest("updateInt");
+        log.finest("NanodbcResultSet.updateInt");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1069,7 +1093,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateLong(String columnLabel, long x) throws SQLException {
-        log.finest("updateLong");
+        log.finest("NanodbcResultSet.updateLong");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1078,7 +1102,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateFloat(String columnLabel, float x) throws SQLException {
-        log.finest("updateFloat");
+        log.finest("NanodbcResultSet.updateFloat");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1087,7 +1111,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateDouble(String columnLabel, double x) throws SQLException {
-        log.finest("updateDouble");
+        log.finest("NanodbcResultSet.updateDouble");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1096,7 +1120,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBigDecimal(String columnLabel, BigDecimal x) throws SQLException {
-        log.finest("updateBigDecimal");
+        log.finest("NanodbcResultSet.updateBigDecimal");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1105,7 +1129,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateString(String columnLabel, String x) throws SQLException {
-        log.finest("updateString");
+        log.finest("NanodbcResultSet.updateString");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1114,7 +1138,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBytes(String columnLabel, byte[] x) throws SQLException {
-        log.finest("updateBytes");
+        log.finest("NanodbcResultSet.updateBytes");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1123,7 +1147,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateDate(String columnLabel, Date x) throws SQLException {
-        log.finest("updateDate");
+        log.finest("NanodbcResultSet.updateDate");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1132,7 +1156,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateTime(String columnLabel, Time x) throws SQLException {
-        log.finest("updateTime");
+        log.finest("NanodbcResultSet.updateTime");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1141,7 +1165,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateTimestamp(String columnLabel, Timestamp x) throws SQLException {
-        log.finest("updateTimestamp");
+        log.finest("NanodbcResultSet.updateTimestamp");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1150,7 +1174,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateAsciiStream(String columnLabel, InputStream x, int length) throws SQLException {
-        log.finest("updateAsciiStream");
+        log.finest("NanodbcResultSet.updateAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1159,7 +1183,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBinaryStream(String columnLabel, InputStream x, int length) throws SQLException {
-        log.finest("updateBinaryStream");
+        log.finest("NanodbcResultSet.updateBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1168,7 +1192,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateCharacterStream(String columnLabel, Reader reader, int length) throws SQLException {
-        log.finest("updateCharacterStream");
+        log.finest("NanodbcResultSet.updateCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1177,7 +1201,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateObject(String columnLabel, Object x, int scaleOrLength) throws SQLException {
-        log.finest("updateObject");
+        log.finest("NanodbcResultSet.updateObject");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1186,7 +1210,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateObject(String columnLabel, Object x) throws SQLException {
-        log.finest("updateObject");
+        log.finest("NanodbcResultSet.updateObject");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1195,7 +1219,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void insertRow() throws SQLException {
-        log.finest("insertRow");
+        log.finest("NanodbcResultSet.insertRow");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1204,7 +1228,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateRow() throws SQLException {
-        log.finest("updateRow");
+        log.finest("NanodbcResultSet.updateRow");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1213,7 +1237,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void deleteRow() throws SQLException {
-        log.finest("deleteRow");
+        log.finest("NanodbcResultSet.deleteRow");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1222,7 +1246,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void refreshRow() throws SQLException {
-        log.finest("refreshRow");
+        log.finest("NanodbcResultSet.refreshRow");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1231,7 +1255,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void cancelRowUpdates() throws SQLException {
-        log.finest("cancelRowUpdates");
+        log.finest("NanodbcResultSet.cancelRowUpdates");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1240,7 +1264,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void moveToInsertRow() throws SQLException {
-        log.finest("moveToInsertRow");
+        log.finest("NanodbcResultSet.moveToInsertRow");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1249,7 +1273,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void moveToCurrentRow() throws SQLException {
-        log.finest("moveToCurrentRow");
+        log.finest("NanodbcResultSet.moveToCurrentRow");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1258,7 +1282,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Statement getStatement() throws SQLException {
-        log.finest("getStatement");
+        log.finest("NanodbcResultSet.getStatement");
         throwIfAlreadyClosed();
         return statement.get();
     }
@@ -1268,7 +1292,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Object getObject(int columnIndex, Map<String, Class<?>> map) throws SQLException {
-        log.finest("getObject");
+        log.finest("NanodbcResultSet.getObject");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1277,7 +1301,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Ref getRef(int columnIndex) throws SQLException {
-        log.finest("getRef");
+        log.finest("NanodbcResultSet.getRef");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1286,7 +1310,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Blob getBlob(int columnIndex) throws SQLException {
-        log.finest("getBlob");
+        log.finest("NanodbcResultSet.getBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1295,7 +1319,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Clob getClob(int columnIndex) throws SQLException {
-        log.finest("getClob");
+        log.finest("NanodbcResultSet.getClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1304,7 +1328,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Array getArray(int columnIndex) throws SQLException {
-        log.finest("getArray");
+        log.finest("NanodbcResultSet.getArray");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1313,7 +1337,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Object getObject(String columnLabel, Map<String, Class<?>> map) throws SQLException {
-        log.finest("getObject");
+        log.finest("NanodbcResultSet.getObject");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1322,7 +1346,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Ref getRef(String columnLabel) throws SQLException {
-        log.finest("getRef");
+        log.finest("NanodbcResultSet.getRef");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1331,7 +1355,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Blob getBlob(String columnLabel) throws SQLException {
-        log.finest("getBlob");
+        log.finest("NanodbcResultSet.getBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1340,7 +1364,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Clob getClob(String columnLabel) throws SQLException {
-        log.finest("getClob");
+        log.finest("NanodbcResultSet.getClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1349,7 +1373,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Array getArray(String columnLabel) throws SQLException {
-        log.finest("getArray");
+        log.finest("NanodbcResultSet.getArray");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1358,7 +1382,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Date getDate(int columnIndex, Calendar cal) throws SQLException {
-        log.finest("getDate");
+        log.finest("NanodbcResultSet.getDate");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1367,7 +1391,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Date getDate(String columnLabel, Calendar cal) throws SQLException {
-        log.finest("getDate");
+        log.finest("NanodbcResultSet.getDate");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1376,7 +1400,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Time getTime(int columnIndex, Calendar cal) throws SQLException {
-        log.finest("getTime");
+        log.finest("NanodbcResultSet.getTime");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1385,7 +1409,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Time getTime(String columnLabel, Calendar cal) throws SQLException {
-        log.finest("getTime");
+        log.finest("NanodbcResultSet.getTime");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1394,7 +1418,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException {
-        log.finest("getTimestamp");
+        log.finest("NanodbcResultSet.getTimestamp");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1403,7 +1427,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Timestamp getTimestamp(String columnLabel, Calendar cal) throws SQLException {
-        log.finest("getTimestamp");
+        log.finest("NanodbcResultSet.getTimestamp");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1412,7 +1436,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public URL getURL(int columnIndex) throws SQLException {
-        log.finest("getURL");
+        log.finest("NanodbcResultSet.getURL");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1421,7 +1445,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public URL getURL(String columnLabel) throws SQLException {
-        log.finest("getURL");
+        log.finest("NanodbcResultSet.getURL");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1430,7 +1454,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateRef(int columnIndex, Ref x) throws SQLException {
-        log.finest("updateRef");
+        log.finest("NanodbcResultSet.updateRef");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1439,7 +1463,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateRef(String columnLabel, Ref x) throws SQLException {
-        log.finest("updateRef");
+        log.finest("NanodbcResultSet.updateRef");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1448,7 +1472,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBlob(int columnIndex, Blob x) throws SQLException {
-        log.finest("updateBlob");
+        log.finest("NanodbcResultSet.updateBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1457,7 +1481,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBlob(String columnLabel, Blob x) throws SQLException {
-        log.finest("updateBlob");
+        log.finest("NanodbcResultSet.updateBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1466,7 +1490,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateClob(int columnIndex, Clob x) throws SQLException {
-        log.finest("updateClob");
+        log.finest("NanodbcResultSet.updateClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1475,7 +1499,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateClob(String columnLabel, Clob x) throws SQLException {
-        log.finest("updateClob");
+        log.finest("NanodbcResultSet.updateClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1484,7 +1508,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateArray(int columnIndex, Array x) throws SQLException {
-        log.finest("updateArray");
+        log.finest("NanodbcResultSet.updateArray");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1493,7 +1517,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateArray(String columnLabel, Array x) throws SQLException {
-        log.finest("updateArray");
+        log.finest("NanodbcResultSet.updateArray");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1502,7 +1526,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public RowId getRowId(int columnIndex) throws SQLException {
-        log.finest("getRowId");
+        log.finest("NanodbcResultSet.getRowId");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1511,7 +1535,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public RowId getRowId(String columnLabel) throws SQLException {
-        log.finest("getRowId");
+        log.finest("NanodbcResultSet.getRowId");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1520,7 +1544,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateRowId(int columnIndex, RowId x) throws SQLException {
-        log.finest("updateRowId");
+        log.finest("NanodbcResultSet.updateRowId");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1529,7 +1553,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateRowId(String columnLabel, RowId x) throws SQLException {
-        log.finest("updateRowId");
+        log.finest("NanodbcResultSet.updateRowId");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1538,7 +1562,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public int getHoldability() throws SQLException {
-        log.finest("getHoldability");
+        log.finest("NanodbcResultSet.getHoldability");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1547,7 +1571,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean isClosed() throws SQLException {
-        log.finest("isClosed");
+        log.finest("NanodbcResultSet.isClosed");
         return closed;
     }
 
@@ -1556,7 +1580,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNString(int columnIndex, String nString) throws SQLException {
-        log.finest("updateNString");
+        log.finest("NanodbcResultSet.updateNString");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1565,7 +1589,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNString(String columnLabel, String nString) throws SQLException {
-        log.finest("updateNString");
+        log.finest("NanodbcResultSet.updateNString");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1574,7 +1598,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNClob(int columnIndex, NClob nClob) throws SQLException {
-        log.finest("updateNClob");
+        log.finest("NanodbcResultSet.updateNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1583,7 +1607,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNClob(String columnLabel, NClob nClob) throws SQLException {
-        log.finest("updateNClob");
+        log.finest("NanodbcResultSet.updateNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1592,7 +1616,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public NClob getNClob(int columnIndex) throws SQLException {
-        log.finest("getNClob");
+        log.finest("NanodbcResultSet.getNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1601,7 +1625,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public NClob getNClob(String columnLabel) throws SQLException {
-        log.finest("getNClob");
+        log.finest("NanodbcResultSet.getNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1610,7 +1634,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        log.finest("getSQLXML");
+        log.finest("NanodbcResultSet.getSQLXML");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1619,7 +1643,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public SQLXML getSQLXML(String columnLabel) throws SQLException {
-        log.finest("getSQLXML");
+        log.finest("NanodbcResultSet.getSQLXML");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1628,7 +1652,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateSQLXML(int columnIndex, SQLXML xmlObject) throws SQLException {
-        log.finest("updateSQLXML");
+        log.finest("NanodbcResultSet.updateSQLXML");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1637,7 +1661,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateSQLXML(String columnLabel, SQLXML xmlObject) throws SQLException {
-        log.finest("updateSQLXML");
+        log.finest("NanodbcResultSet.updateSQLXML");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1646,7 +1670,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public String getNString(int columnIndex) throws SQLException {
-        log.finest("getNString");
+        log.finest("NanodbcResultSet.getNString");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1655,7 +1679,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public String getNString(String columnLabel) throws SQLException {
-        log.finest("getNString");
+        log.finest("NanodbcResultSet.getNString");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1664,7 +1688,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Reader getNCharacterStream(int columnIndex) throws SQLException {
-        log.finest("getNCharacterStream");
+        log.finest("NanodbcResultSet.getNCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1673,7 +1697,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public Reader getNCharacterStream(String columnLabel) throws SQLException {
-        log.finest("getNCharacterStream");
+        log.finest("NanodbcResultSet.getNCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1682,7 +1706,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException {
-        log.finest("updateNCharacterStream");
+        log.finest("NanodbcResultSet.updateNCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1691,7 +1715,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException {
-        log.finest("updateNCharacterStream");
+        log.finest("NanodbcResultSet.updateNCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1700,7 +1724,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateAsciiStream(int columnIndex, InputStream x, long length) throws SQLException {
-        log.finest("updateAsciiStream");
+        log.finest("NanodbcResultSet.updateAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1709,7 +1733,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBinaryStream(int columnIndex, InputStream x, long length) throws SQLException {
-        log.finest("updateBinaryStream");
+        log.finest("NanodbcResultSet.updateBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1718,7 +1742,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateCharacterStream(int columnIndex, Reader x, long length) throws SQLException {
-        log.finest("updateCharacterStream");
+        log.finest("NanodbcResultSet.updateCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1727,7 +1751,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateAsciiStream(String columnLabel, InputStream x, long length) throws SQLException {
-        log.finest("updateAsciiStream");
+        log.finest("NanodbcResultSet.updateAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1736,7 +1760,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBinaryStream(String columnLabel, InputStream x, long length) throws SQLException {
-        log.finest("updateBinaryStream");
+        log.finest("NanodbcResultSet.updateBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1745,7 +1769,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateCharacterStream(String columnLabel, Reader reader, long length) throws SQLException {
-        log.finest("updateCharacterStream");
+        log.finest("NanodbcResultSet.updateCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1754,7 +1778,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBlob(int columnIndex, InputStream inputStream, long length) throws SQLException {
-        log.finest("updateBlob");
+        log.finest("NanodbcResultSet.updateBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1763,7 +1787,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBlob(String columnLabel, InputStream inputStream, long length) throws SQLException {
-        log.finest("updateBlob");
+        log.finest("NanodbcResultSet.updateBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1772,7 +1796,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateClob(int columnIndex, Reader reader, long length) throws SQLException {
-        log.finest("updateClob");
+        log.finest("NanodbcResultSet.updateClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1781,7 +1805,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateClob(String columnLabel, Reader reader, long length) throws SQLException {
-        log.finest("updateClob");
+        log.finest("NanodbcResultSet.updateClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1790,7 +1814,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNClob(int columnIndex, Reader reader, long length) throws SQLException {
-        log.finest("updateNClob");
+        log.finest("NanodbcResultSet.updateNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1799,7 +1823,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNClob(String columnLabel, Reader reader, long length) throws SQLException {
-        log.finest("updateNClob");
+        log.finest("NanodbcResultSet.updateNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1808,7 +1832,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException {
-        log.finest("updateNCharacterStream");
+        log.finest("NanodbcResultSet.updateNCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1817,7 +1841,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNCharacterStream(String columnLabel, Reader reader) throws SQLException {
-        log.finest("updateNCharacterStream");
+        log.finest("NanodbcResultSet.updateNCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1826,7 +1850,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateAsciiStream(int columnIndex, InputStream x) throws SQLException {
-        log.finest("updateAsciiStream");
+        log.finest("NanodbcResultSet.updateAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1835,7 +1859,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBinaryStream(int columnIndex, InputStream x) throws SQLException {
-        log.finest("updateBinaryStream");
+        log.finest("NanodbcResultSet.updateBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1844,7 +1868,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateCharacterStream(int columnIndex, Reader x) throws SQLException {
-        log.finest("updateCharacterStream");
+        log.finest("NanodbcResultSet.updateCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1853,7 +1877,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateAsciiStream(String columnLabel, InputStream x) throws SQLException {
-        log.finest("updateAsciiStream");
+        log.finest("NanodbcResultSet.updateAsciiStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1862,7 +1886,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBinaryStream(String columnLabel, InputStream x) throws SQLException {
-        log.finest("updateBinaryStream");
+        log.finest("NanodbcResultSet.updateBinaryStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1871,7 +1895,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateCharacterStream(String columnLabel, Reader reader) throws SQLException {
-        log.finest("updateCharacterStream");
+        log.finest("NanodbcResultSet.updateCharacterStream");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1880,7 +1904,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBlob(int columnIndex, InputStream inputStream) throws SQLException {
-        log.finest("updateBlob");
+        log.finest("NanodbcResultSet.updateBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1889,7 +1913,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateBlob(String columnLabel, InputStream inputStream) throws SQLException {
-        log.finest("updateBlob");
+        log.finest("NanodbcResultSet.updateBlob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1898,7 +1922,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateClob(int columnIndex, Reader reader) throws SQLException {
-        log.finest("updateClob");
+        log.finest("NanodbcResultSet.updateClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1907,7 +1931,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateClob(String columnLabel, Reader reader) throws SQLException {
-        log.finest("updateClob");
+        log.finest("NanodbcResultSet.updateClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1916,7 +1940,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNClob(int columnIndex, Reader reader) throws SQLException {
-        log.finest("updateNClob");
+        log.finest("NanodbcResultSet.updateNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1925,7 +1949,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public void updateNClob(String columnLabel, Reader reader) throws SQLException {
-        log.finest("updateNClob");
+        log.finest("NanodbcResultSet.updateNClob");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1934,7 +1958,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-        log.finest("getObject");
+        log.finest("NanodbcResultSet.getObject");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1943,7 +1967,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
-        log.finest("getObject");
+        log.finest("NanodbcResultSet.getObject");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -1952,7 +1976,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        log.finest("unwrap");
+        log.finest("NanodbcResultSet.unwrap");
         if (isWrapperFor(iface)) {
             return iface.cast(this);
         }
@@ -1964,7 +1988,7 @@ public class NanodbcResultSet implements ResultSet {
      */
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        log.finest("isWrapperFor");
+        log.finest("NanodbcResultSet.isWrapperFor");
         return iface.isInstance(this) || iface == ResultSet.class;
     }
 

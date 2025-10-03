@@ -5,6 +5,7 @@ import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.dto.DatabaseMetaDataDto;
 import io.github.nanodbc4j.internal.handler.DatabaseMetaDataHandler;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
+import lombok.extern.java.Log;
 
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
@@ -15,8 +16,10 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+@Log
 public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     private final WeakReference<NanodbcConnection> connection;
     private final DatabaseMetaDataDto metaData;
@@ -31,6 +34,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean allProceduresAreCallable() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.allProceduresAreCallable");
         return metaData.allProceduresAreCallable;
     }
 
@@ -39,6 +43,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean allTablesAreSelectable() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.allTablesAreSelectable");
         return metaData.allTablesAreSelectable;
     }
 
@@ -47,6 +52,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getURL() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getURL");
         return connection.get().getUrl();
     }
 
@@ -55,6 +61,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getUserName() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getUserName");
         return metaData.userName != null ? metaData.userName : null;
     }
 
@@ -63,6 +70,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean isReadOnly() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.isReadOnly");
         return metaData.isReadOnly;
     }
 
@@ -71,6 +79,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean nullsAreSortedHigh() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.nullsAreSortedHigh");
         return metaData.nullsAreSortedHigh;
     }
 
@@ -79,6 +88,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean nullsAreSortedLow() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.nullsAreSortedLow");
         return metaData.nullsAreSortedLow;
     }
 
@@ -87,6 +97,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean nullsAreSortedAtStart() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.nullsAreSortedAtStart");
         return metaData.nullsAreSortedAtStart;
     }
 
@@ -95,6 +106,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean nullsAreSortedAtEnd() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.nullsAreSortedAtEnd");
         return metaData.nullsAreSortedAtEnd;
     }
 
@@ -103,6 +115,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getDatabaseProductName() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDatabaseProductName");
         return metaData.databaseProductName;
     }
 
@@ -111,6 +124,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getDatabaseProductVersion() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDatabaseProductVersion");
         return metaData.databaseProductVersion;
     }
 
@@ -119,6 +133,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getDriverName() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDriverName");
         return "JDBC-ODBC Bridge (" + metaData.driverName + ")";
     }
 
@@ -127,6 +142,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getDriverVersion() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDriverVersion");
         return metaData.driverVersion;
     }
 
@@ -135,6 +151,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getDriverMajorVersion() {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDriverMajorVersion");
         return metaData.driverMajorVersion;
     }
 
@@ -143,6 +160,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getDriverMinorVersion() {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDriverMinorVersion");
         return metaData.driverMinorVersion;
     }
 
@@ -151,6 +169,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean usesLocalFiles() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.usesLocalFiles");
         return metaData.usesLocalFiles;
     }
 
@@ -159,6 +178,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean usesLocalFilePerTable() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.usesLocalFilePerTable");
         return metaData.usesLocalFilePerTable;
     }
 
@@ -167,6 +187,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMixedCaseIdentifiers() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsMixedCaseIdentifiers");
         return metaData.supportsMixedCaseIdentifiers;
     }
 
@@ -175,6 +196,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesUpperCaseIdentifiers() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.storesUpperCaseIdentifiers");
         return metaData.storesUpperCaseIdentifiers;
     }
 
@@ -183,6 +205,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesLowerCaseIdentifiers() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.storesLowerCaseIdentifiers");
         return metaData.storesLowerCaseIdentifiers;
     }
 
@@ -191,6 +214,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesMixedCaseIdentifiers() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.storesMixedCaseIdentifiers");
         return metaData.storesMixedCaseIdentifiers;
     }
 
@@ -199,6 +223,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMixedCaseQuotedIdentifiers() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsMixedCaseQuotedIdentifiers");
         return metaData.supportsMixedCaseQuotedIdentifiers;
     }
 
@@ -207,6 +232,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesUpperCaseQuotedIdentifiers() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.storesUpperCaseQuotedIdentifiers");
         return metaData.storesUpperCaseQuotedIdentifiers;
     }
 
@@ -215,6 +241,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesLowerCaseQuotedIdentifiers() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.storesLowerCaseQuotedIdentifiers");
         return metaData.storesLowerCaseQuotedIdentifiers;
     }
 
@@ -223,6 +250,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesMixedCaseQuotedIdentifiers() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.storesMixedCaseQuotedIdentifiers");
         return metaData.storesMixedCaseQuotedIdentifiers;
     }
 
@@ -231,6 +259,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getIdentifierQuoteString() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getIdentifierQuoteString");
         return metaData.identifierQuoteString != null ? metaData.identifierQuoteString : "";
     }
 
@@ -239,6 +268,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getSQLKeywords() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSQLKeywords");
         return metaData.sqlKeywords != null ? metaData.sqlKeywords : "";
     }
 
@@ -247,6 +277,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getNumericFunctions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getNumericFunctions");
         return metaData.numericFunctions != null ? metaData.numericFunctions : "";
     }
 
@@ -255,6 +286,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getStringFunctions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getStringFunctions");
         return metaData.stringFunctions != null ? metaData.stringFunctions : "";
     }
 
@@ -263,6 +295,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getSystemFunctions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSystemFunctions");
         return metaData.systemFunctions != null ? metaData.systemFunctions : "";
     }
 
@@ -271,6 +304,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getTimeDateFunctions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getTimeDateFunctions");
         return metaData.timeDateFunctions != null ? metaData.timeDateFunctions : "";
     }
 
@@ -279,6 +313,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getSearchStringEscape() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSearchStringEscape");
         return metaData.searchStringEscape != null ? metaData.searchStringEscape : "";
     }
 
@@ -287,6 +322,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getExtraNameCharacters() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getExtraNameCharacters");
         return metaData.extraNameCharacters != null ? metaData.extraNameCharacters : "";
     }
 
@@ -295,6 +331,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsAlterTableWithAddColumn() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsAlterTableWithAddColumn");
         return metaData.supportsAlterTableWithAddColumn;
     }
 
@@ -303,6 +340,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsAlterTableWithDropColumn() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsAlterTableWithDropColumn");
         return metaData.supportsAlterTableWithDropColumn;
     }
 
@@ -311,6 +349,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsColumnAliasing() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsColumnAliasing");
         return metaData.supportsColumnAliasing;
     }
 
@@ -319,6 +358,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean nullPlusNonNullIsNull() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.nullPlusNonNullIsNull");
         return metaData.nullPlusNonNullIsNull;
     }
 
@@ -327,6 +367,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsConvert() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsConvert");
         return metaData.supportsConvert;
     }
 
@@ -335,6 +376,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsConvert(int fromType, int toType) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsConvert");
         try {
             return DatabaseMetaDataHandler.supportsConvert(connection.get().getConnectionPtr(), fromType, toType);
         } catch (NativeException e) {
@@ -347,6 +389,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsTableCorrelationNames() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsTableCorrelationNames");
         return metaData.supportsTableCorrelationNames;
     }
 
@@ -355,6 +398,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsDifferentTableCorrelationNames() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsDifferentTableCorrelationNames");
         return metaData.supportsDifferentTableCorrelationNames;
     }
 
@@ -363,6 +407,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsExpressionsInOrderBy() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsExpressionsInOrderBy");
         return metaData.supportsExpressionsInOrderBy;
     }
 
@@ -371,6 +416,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsOrderByUnrelated() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsOrderByUnrelated");
         return metaData.supportsOrderByUnrelated;
     }
 
@@ -379,6 +425,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsGroupBy() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsGroupBy");
         return metaData.supportsGroupBy;
     }
 
@@ -387,6 +434,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsGroupByUnrelated() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsGroupByUnrelated");
         return metaData.supportsGroupByUnrelated;
     }
 
@@ -395,6 +443,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsGroupByBeyondSelect() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsGroupByBeyondSelect");
         return metaData.supportsGroupByBeyondSelect;
     }
 
@@ -403,6 +452,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsLikeEscapeClause() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsLikeEscapeClause");
         return metaData.supportsLikeEscapeClause;
     }
 
@@ -411,6 +461,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMultipleResultSets() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsMultipleResultSets");
         return metaData.supportsMultipleResultSets;
     }
 
@@ -419,6 +470,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMultipleTransactions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsMultipleTransactions");
         return metaData.supportsMultipleTransactions;
     }
 
@@ -427,6 +479,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsNonNullableColumns() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsNonNullableColumns");
         return metaData.supportsNonNullableColumns;
     }
 
@@ -435,6 +488,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMinimumSQLGrammar() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsMinimumSQLGrammar");
         return metaData.supportsMinimumSQLGrammar;
     }
 
@@ -443,6 +497,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsCoreSQLGrammar() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsCoreSQLGrammar");
         return metaData.supportsCoreSQLGrammar;
     }
 
@@ -451,6 +506,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsExtendedSQLGrammar() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsExtendedSQLGrammar");
         return metaData.supportsExtendedSQLGrammar;
     }
 
@@ -459,6 +515,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsANSI92EntryLevelSQL() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsANSI92EntryLevelSQL");
         return metaData.supportsANSI92EntryLevelSQL;
     }
 
@@ -467,6 +524,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsANSI92IntermediateSQL() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsANSI92IntermediateSQL");
         return metaData.supportsANSI92IntermediateSQL;
     }
 
@@ -475,6 +533,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsANSI92FullSQL() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsANSI92FullSQL");
         return metaData.supportsANSI92FullSQL;
     }
 
@@ -483,6 +542,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsIntegrityEnhancementFacility() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsIntegrityEnhancementFacility");
         return metaData.supportsIntegrityEnhancementFacility;
     }
 
@@ -491,6 +551,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsOuterJoins() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsOuterJoins");
         return metaData.supportsOuterJoins;
     }
 
@@ -499,6 +560,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsFullOuterJoins() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsFullOuterJoins");
         return metaData.supportsFullOuterJoins;
     }
 
@@ -507,6 +569,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsLimitedOuterJoins() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsLimitedOuterJoins");
         return metaData.supportsLimitedOuterJoins;
     }
 
@@ -515,6 +578,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getSchemaTerm() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSchemaTerm");
         return metaData.schemaTerm != null ? metaData.schemaTerm : "SCHEMA";
     }
 
@@ -523,6 +587,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getProcedureTerm() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getProcedureTerm");
         return metaData.procedureTerm != null ? metaData.procedureTerm : "PROCEDURE";
     }
 
@@ -531,6 +596,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getCatalogTerm() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getCatalogTerm");
         return metaData.catalogTerm != null ? metaData.catalogTerm : "CATALOG";
     }
 
@@ -539,6 +605,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean isCatalogAtStart() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.isCatalogAtStart");
         return metaData.isCatalogAtStart;
     }
 
@@ -547,6 +614,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getCatalogSeparator() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getCatalogSeparator");
         return metaData.catalogSeparator != null ? metaData.catalogSeparator : ".";
     }
 
@@ -555,6 +623,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInDataManipulation() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSchemasInDataManipulation");
         return metaData.supportsSchemasInDataManipulation;
     }
 
@@ -563,6 +632,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInProcedureCalls() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSchemasInProcedureCalls");
         return metaData.supportsSchemasInProcedureCalls;
     }
 
@@ -571,6 +641,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInTableDefinitions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSchemasInTableDefinitions");
         return metaData.supportsSchemasInTableDefinitions;
     }
 
@@ -579,6 +650,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInIndexDefinitions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSchemasInIndexDefinitions");
         return metaData.supportsSchemasInIndexDefinitions;
     }
 
@@ -587,6 +659,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInPrivilegeDefinitions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSchemasInPrivilegeDefinitions");
         return metaData.supportsSchemasInPrivilegeDefinitions;
     }
 
@@ -595,6 +668,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsCatalogsInDataManipulation() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsCatalogsInDataManipulation");
         return metaData.supportsCatalogsInDataManipulation;
     }
 
@@ -603,6 +677,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsCatalogsInProcedureCalls() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsCatalogsInProcedureCalls");
         return metaData.supportsCatalogsInProcedureCalls;
     }
 
@@ -611,6 +686,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsCatalogsInTableDefinitions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsCatalogsInTableDefinitions");
         return metaData.supportsCatalogsInTableDefinitions;
     }
 
@@ -619,6 +695,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsCatalogsInIndexDefinitions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsCatalogsInIndexDefinitions");
         return metaData.supportsCatalogsInIndexDefinitions;
     }
 
@@ -627,6 +704,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsCatalogsInPrivilegeDefinitions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsCatalogsInPrivilegeDefinitions");
         return metaData.supportsCatalogsInPrivilegeDefinitions;
     }
 
@@ -635,6 +713,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsPositionedDelete() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsPositionedDelete");
         return metaData.supportsPositionedDelete;
     }
 
@@ -643,6 +722,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsPositionedUpdate() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsPositionedUpdate");
         return metaData.supportsPositionedUpdate;
     }
 
@@ -651,6 +731,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSelectForUpdate() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSelectForUpdate");
         return metaData.supportsSelectForUpdate;
     }
 
@@ -659,6 +740,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsStoredProcedures() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsStoredProcedures");
         return metaData.supportsStoredProcedures;
     }
 
@@ -667,6 +749,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSubqueriesInComparisons() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSubqueriesInComparisons");
         return metaData.supportsSubqueriesInComparisons;
     }
 
@@ -675,6 +758,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSubqueriesInExists() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSubqueriesInExists");
         return metaData.supportsSubqueriesInExists;
     }
 
@@ -683,6 +767,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSubqueriesInIns() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSubqueriesInIns");
         return metaData.supportsSubqueriesInIns;
     }
 
@@ -691,6 +776,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSubqueriesInQuantifieds() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSubqueriesInQuantifieds");
         return metaData.supportsSubqueriesInQuantifieds;
     }
 
@@ -699,6 +785,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsCorrelatedSubqueries() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsCorrelatedSubqueries");
         return metaData.supportsCorrelatedSubqueries;
     }
 
@@ -707,6 +794,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsUnion() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsUnion");
         return metaData.supportsUnion;
     }
 
@@ -715,6 +803,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsUnionAll() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsUnionAll");
         return metaData.supportsUnionAll;
     }
 
@@ -723,6 +812,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsOpenCursorsAcrossCommit() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsOpenCursorsAcrossCommit");
         return metaData.supportsOpenCursorsAcrossCommit;
     }
 
@@ -731,6 +821,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsOpenCursorsAcrossRollback() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsOpenCursorsAcrossRollback");
         return metaData.supportsOpenCursorsAcrossRollback;
     }
 
@@ -739,6 +830,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsOpenStatementsAcrossCommit() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsOpenStatementsAcrossCommit");
         return metaData.supportsOpenStatementsAcrossCommit;
     }
 
@@ -747,6 +839,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsOpenStatementsAcrossRollback() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsOpenStatementsAcrossRollback");
         return metaData.supportsOpenStatementsAcrossRollback;
     }
 
@@ -755,6 +848,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxBinaryLiteralLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxBinaryLiteralLength");
         return metaData.getMaxBinaryLiteralLength;
     }
 
@@ -763,6 +857,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxCharLiteralLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxCharLiteralLength");
         return metaData.getMaxCharLiteralLength;
     }
 
@@ -771,6 +866,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnNameLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxColumnNameLength");
         return metaData.maxColumnNameLength;
     }
 
@@ -779,6 +875,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInGroupBy() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxColumnsInGroupBy");
         return metaData.maxColumnsInGroupBy;
     }
 
@@ -787,6 +884,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInIndex() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxColumnsInIndex");
         return metaData.maxColumnsInIndex;
     }
 
@@ -795,6 +893,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInOrderBy() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxColumnsInOrderBy");
         return metaData.maxColumnsInOrderBy;
     }
 
@@ -803,6 +902,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInSelect() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxColumnsInSelect");
         return metaData.maxColumnsInSelect;
     }
 
@@ -811,6 +911,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInTable() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxColumnsInTable");
         return metaData.maxColumnsInTable;
     }
 
@@ -819,6 +920,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxConnections() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxConnections");
         return metaData.getMaxConnections;
     }
 
@@ -827,6 +929,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxCursorNameLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxCursorNameLength");
         return metaData.getMaxCursorNameLength;
     }
 
@@ -835,6 +938,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxIndexLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxIndexLength");
         return metaData.getMaxIndexLength;
     }
 
@@ -843,6 +947,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxSchemaNameLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxSchemaNameLength");
         return metaData.maxSchemaNameLength;
     }
 
@@ -851,6 +956,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxProcedureNameLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxProcedureNameLength");
         return metaData.getMaxProcedureNameLength;
     }
 
@@ -859,6 +965,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxCatalogNameLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxCatalogNameLength");
         return metaData.maxCatalogNameLength;
     }
 
@@ -867,6 +974,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxRowSize() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxRowSize");
         return metaData.maxRowSize;
     }
 
@@ -875,6 +983,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.doesMaxRowSizeIncludeBlobs");
         return metaData.doesMaxRowSizeIncludeBlobs;
     }
 
@@ -883,6 +992,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxStatementLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxStatementLength");
         return metaData.maxStatementLength;
     }
 
@@ -891,6 +1001,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxStatements() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxStatements");
         return metaData.maxStatements;
     }
 
@@ -899,6 +1010,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxTableNameLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxTableNameLength");
         return metaData.maxTableNameLength;
     }
 
@@ -907,6 +1019,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxTablesInSelect() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDatabaseProductName");
         return metaData.maxTablesInSelect;
     }
 
@@ -915,6 +1028,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxUserNameLength() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getMaxUserNameLength");
         return metaData.maxUserNameLength;
     }
 
@@ -923,6 +1037,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getDefaultTransactionIsolation() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDefaultTransactionIsolation");
         return metaData.defaultTransactionIsolation;
     }
 
@@ -931,6 +1046,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsTransactions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsTransactions");
         return metaData.supportsTransactions;
     }
 
@@ -939,6 +1055,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsTransactionIsolationLevel(int level) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsTransactionIsolationLevel");
         return (metaData.supportsTransactionIsolationLevel & level) != 0;
     }
 
@@ -947,6 +1064,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsDataDefinitionAndDataManipulationTransactions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsDataDefinitionAndDataManipulationTransactions");
         return metaData.supportsDataDefinitionAndDataManipulationTransactions;
     }
 
@@ -955,6 +1073,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsDataManipulationTransactionsOnly() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsDataManipulationTransactionsOnly");
         return metaData.supportsDataManipulationTransactionsOnly;
     }
 
@@ -963,6 +1082,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.dataDefinitionCausesTransactionCommit");
         return metaData.dataDefinitionCausesTransactionCommit;
     }
 
@@ -971,6 +1091,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.dataDefinitionIgnoredInTransactions");
         return metaData.dataDefinitionIgnoredInTransactions;
     }
 
@@ -979,6 +1100,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getProcedures(String catalog, String schemaPattern, String procedureNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getProcedures");
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getProcedures(connection.get().getConnectionPtr(), catalog, schemaPattern, procedureNamePattern);
             return new NanodbcResultSet(resultSetPtr);
@@ -992,6 +1114,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getProcedureColumns(String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getProcedureColumns");
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getProcedureColumns(connection.get().getConnectionPtr(), catalog, schemaPattern, procedureNamePattern, columnNamePattern);
             return new NanodbcResultSet(resultSetPtr);
@@ -1005,6 +1128,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getTables");
         // https://msdn.microsoft.com/en-us/library/ms710171.aspx
         String typePattern = types == null ? "" : Arrays.stream(types)
                 .filter(Objects::nonNull)
@@ -1024,6 +1148,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getSchemas() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSchemas");
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getSchemas(connection.get().getConnectionPtr());
             return new NanodbcResultSet(resultSetPtr);
@@ -1037,6 +1162,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getCatalogs() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getCatalogs");
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getCatalogs(connection.get().getConnectionPtr());
             return new NanodbcResultSet(resultSetPtr);
@@ -1050,6 +1176,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getTableTypes() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getTableTypes");
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getTableTypes(connection.get().getConnectionPtr());
             return new NanodbcResultSet(resultSetPtr);
@@ -1063,6 +1190,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getColumns");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getColumns(connection.get().getConnectionPtr(), catalog, schemaPattern, tableNamePattern, columnNamePattern);
@@ -1077,6 +1205,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getColumnPrivileges");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getColumnPrivileges(connection.get().getConnectionPtr(), catalog, schema, table, columnNamePattern);
@@ -1091,6 +1220,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getTablePrivileges(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getTablePrivileges");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getTablePrivileges(connection.get().getConnectionPtr(), catalog, schemaPattern, tableNamePattern);
@@ -1105,6 +1235,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getBestRowIdentifier(String catalog, String schema, String table, int scope, boolean nullable) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getBestRowIdentifier");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getBestRowIdentifier(connection.get().getConnectionPtr(), catalog, schema, table, scope, nullable);
@@ -1119,6 +1250,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getVersionColumns(String catalog, String schema, String table) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getVersionColumns");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getVersionColumns(connection.get().getConnectionPtr(), catalog, schema, table);
@@ -1133,6 +1265,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getPrimaryKeys(String catalog, String schema, String table) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getPrimaryKeys");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getPrimaryKeys(connection.get().getConnectionPtr(), catalog, schema, table);
@@ -1147,6 +1280,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getImportedKeys(String catalog, String schema, String table) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getImportedKeys");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getImportedKeys(connection.get().getConnectionPtr(), catalog, schema, table);
@@ -1161,6 +1295,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getExportedKeys(String catalog, String schema, String table) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getExportedKeys");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getExportedKeys(connection.get().getConnectionPtr(), catalog, schema, table);
@@ -1175,10 +1310,11 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getCrossReference(String parentCatalog, String parentSchema, String parentTable, String foreignCatalog, String foreignSchema, String foreignTable) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getCrossReference");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getCrossReference(connection.get().getConnectionPtr(), parentCatalog, parentSchema, parentTable,
-                    foreignCatalog, foreignSchema, foreignTable);
+                            foreignCatalog, foreignSchema, foreignTable);
             return new NanodbcResultSet(resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -1190,6 +1326,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getTypeInfo() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getTypeInfo");
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getTypeInfo(connection.get().getConnectionPtr());
             return new NanodbcResultSet(resultSetPtr);
@@ -1203,6 +1340,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getIndexInfo(String catalog, String schema, String table, boolean unique, boolean approximate) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getIndexInfo");
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getIndexInfo(connection.get().getConnectionPtr(), catalog, schema, table, unique, approximate);
@@ -1217,6 +1355,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsResultSetType(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsResultSetType");
         return switch (type) {
             case ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE -> true;
             default -> false;
@@ -1228,6 +1367,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsResultSetConcurrency(int type, int concurrency) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDatabaseProductName");
         return concurrency == ResultSet.CONCUR_READ_ONLY;
     }
 
@@ -1236,6 +1376,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean ownUpdatesAreVisible(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.ownUpdatesAreVisible");
         return false;
     }
 
@@ -1244,6 +1385,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean ownDeletesAreVisible(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.ownDeletesAreVisible");
         return false;
     }
 
@@ -1252,6 +1394,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean ownInsertsAreVisible(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.ownInsertsAreVisible");
         return false;
     }
 
@@ -1260,6 +1403,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean othersUpdatesAreVisible(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.othersUpdatesAreVisible");
         return false;
     }
 
@@ -1268,6 +1412,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean othersDeletesAreVisible(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.othersDeletesAreVisible");
         return false;
     }
 
@@ -1276,6 +1421,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean othersInsertsAreVisible(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.othersInsertsAreVisible");
         return false;
     }
 
@@ -1284,6 +1430,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean updatesAreDetected(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.updatesAreDetected");
         return false;
     }
 
@@ -1292,6 +1439,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean deletesAreDetected(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.deletesAreDetected");
         return false;
     }
 
@@ -1300,6 +1448,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean insertsAreDetected(int type) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.insertsAreDetected");
         return false;
     }
 
@@ -1308,6 +1457,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsBatchUpdates() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsBatchUpdates");
         return metaData.supportsBatchUpdates;
     }
 
@@ -1316,6 +1466,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getUDTs");
         return null;
     }
 
@@ -1324,6 +1475,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public Connection getConnection() {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getConnection");
         return connection.get();
     }
 
@@ -1332,6 +1484,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSavepoints() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsSavepoints");
         return metaData.supportsSavepoints;
     }
 
@@ -1340,6 +1493,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsNamedParameters() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsNamedParameters");
         return metaData.supportsNamedParameters;
     }
 
@@ -1348,6 +1502,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMultipleOpenResults() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsMultipleOpenResults");
         return metaData.supportsMultipleOpenResults;
     }
 
@@ -1356,6 +1511,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsGetGeneratedKeys() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsGetGeneratedKeys");
         return metaData.supportsGetGeneratedKeys;
     }
 
@@ -1364,6 +1520,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getSuperTypes(String catalog, String schemaPattern, String typeNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSuperTypes");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
@@ -1373,6 +1530,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getSuperTables(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSuperTables");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
@@ -1382,6 +1540,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getAttributes(String catalog, String schemaPattern, String typeNamePattern, String attributeNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getAttributes");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
@@ -1391,6 +1550,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsResultSetHoldability(int holdability) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsResultSetHoldability");
         return holdability == ResultSet.HOLD_CURSORS_OVER_COMMIT;
     }
 
@@ -1399,6 +1559,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getResultSetHoldability() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getResultSetHoldability");
         return metaData.resultSetHoldability;
     }
 
@@ -1407,6 +1568,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getDatabaseMajorVersion() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDatabaseMajorVersion");
         return metaData.databaseMajorVersion;
     }
 
@@ -1415,6 +1577,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getDatabaseMinorVersion() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDatabaseMinorVersion");
         return metaData.databaseMinorVersion;
     }
 
@@ -1423,6 +1586,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getJDBCMajorVersion() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getJDBCMajorVersion");
         return NanodbcDriver.MAJOR_VERSION;
     }
 
@@ -1431,6 +1595,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getJDBCMinorVersion() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getJDBCMinorVersion");
         return NanodbcDriver.MINOR_VERSION;
     }
 
@@ -1439,6 +1604,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getSQLStateType() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSQLStateType");
         return metaData.sqlStateType;
     }
 
@@ -1447,6 +1613,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean locatorsUpdateCopy() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.locatorsUpdateCopy");
         return metaData.locatorsUpdateCopy;
     }
 
@@ -1455,6 +1622,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsStatementPooling() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsStatementPooling");
         return metaData.supportsStatementPooling;
     }
 
@@ -1463,6 +1631,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public RowIdLifetime getRowIdLifetime() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getRowIdLifetime");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
@@ -1472,6 +1641,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSchemas");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException("getSchemas with parameters is not supported");
     }
@@ -1481,6 +1651,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsStoredFunctionsUsingCallSyntax");
         return metaData.supportsStoredFunctionsUsingCallSyntax;
     }
 
@@ -1489,6 +1660,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.autoCommitFailureClosesAllResultSets");
         return metaData.autoCommitFailureClosesAllResultSets;
     }
 
@@ -1497,6 +1669,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getClientInfoProperties() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getClientInfoProperties");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException();
     }
@@ -1506,6 +1679,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getFunctions");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException("Operation not yet supported");
     }
@@ -1515,6 +1689,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern, String columnNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getFunctionColumns");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException("Operation not yet supported");
     }
@@ -1524,6 +1699,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.getPseudoColumns");
         // sun.jdbc.odbc does not support this
         throw new UnsupportedOperationException("Operation not yet supported");
     }
@@ -1533,6 +1709,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean generatedKeyAlwaysReturned() throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.generatedKeyAlwaysReturned");
         return metaData.generatedKeyAlwaysReturned;
     }
 
@@ -1541,6 +1718,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.unwrap");
         if (isWrapperFor(iface)) {
             return iface.cast(this);
         }
@@ -1552,11 +1730,13 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.isWrapperFor");
         return iface.isInstance(this) || iface == DatabaseMetaData.class;
     }
 
     @Override
     public String toString() {
+        log.log(Level.FINEST, "NanodbcDatabaseMetaData.toString");
         return "NanodbcDatabaseMetaData{" +
                 "metaData=" + metaData +
                 '}';

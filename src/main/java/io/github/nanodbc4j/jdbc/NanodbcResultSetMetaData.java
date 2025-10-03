@@ -2,6 +2,7 @@ package io.github.nanodbc4j.jdbc;
 
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
 import io.github.nanodbc4j.internal.dto.ResultSetMetadataDto;
+import lombok.extern.java.Log;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -9,9 +10,11 @@ import java.sql.SQLException;
 /**
  * Metadata about result columns: name, type, size, nullability, etc.
  */
+@Log
 public class NanodbcResultSetMetaData implements ResultSetMetaData {
     private final ResultSetMetadataDto metaData;
-    public NanodbcResultSetMetaData(ResultSetMetadataDto metaData){
+
+    public NanodbcResultSetMetaData(ResultSetMetadataDto metaData) {
         this.metaData = metaData;
     }
 
@@ -20,6 +23,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public int getColumnCount() throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getColumnCount");
         return metaData.columnCount;
     }
 
@@ -28,6 +32,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isAutoIncrement(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isAutoIncrement");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isAutoIncrement;
     }
@@ -37,6 +42,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isCaseSensitive(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isCaseSensitive");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isCaseSensitive;
     }
@@ -46,6 +52,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isSearchable(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isSearchable");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isSearchable;
     }
@@ -55,6 +62,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isCurrency(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isCurrency");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isCurrency;
     }
@@ -64,6 +72,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public int isNullable(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isNullable");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isNullable;
     }
@@ -73,6 +82,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isSigned(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isSigned");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isSigned;
     }
@@ -82,6 +92,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public int getColumnDisplaySize(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getColumnDisplaySize");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).displaySize;
     }
@@ -91,6 +102,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getColumnLabel(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getColumnLabel");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).columnLabel;
     }
@@ -100,6 +112,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getColumnName(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getColumnName");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).columnName;
     }
@@ -109,6 +122,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getSchemaName(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getSchemaName");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).schemaName;
     }
@@ -118,6 +132,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public int getPrecision(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getPrecision");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).precision;
     }
@@ -127,6 +142,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public int getScale(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getScale");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).scale;
     }
@@ -136,6 +152,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getTableName(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getTableName");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).tableName;
     }
@@ -145,6 +162,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getCatalogName(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getCatalogName");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).catalogName;
     }
@@ -154,6 +172,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public int getColumnType(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getColumnType");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).columnType;
     }
@@ -163,6 +182,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getColumnTypeName(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getColumnTypeName");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).columnTypeName;
     }
@@ -172,6 +192,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isReadOnly(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isReadOnly");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isReadOnly;
     }
@@ -181,6 +202,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isWritable(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isWritable");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isWritable;
     }
@@ -190,6 +212,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isDefinitelyWritable(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isDefinitelyWritable");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).isDefinitelyWritable;
     }
@@ -199,6 +222,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getColumnClassName(int column) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.getColumnClassName");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).columnClassName;
     }
@@ -208,6 +232,7 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.unwrap");
         if (isWrapperFor(iface)) {
             return iface.cast(this);
         }
@@ -219,15 +244,17 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        log.finest("NanodbcResultSetMetaData.isWrapperFor");
         return iface.isInstance(this) || iface == ResultSetMetaData.class;
     }
 
     @Override
     public String toString() {
+        log.finest("NanodbcResultSetMetaData.toString");
         return metaData.toString();
     }
 
-    private void checkIndex (int index) throws SQLException {
+    private void checkIndex(int index) throws SQLException {
         if (index <= 0 || index > metaData.columnCount) {
             throw new NanodbcSQLException("Column " + index + " out of range");
         }

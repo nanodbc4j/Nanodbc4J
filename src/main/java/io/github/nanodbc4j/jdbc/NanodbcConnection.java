@@ -45,7 +45,7 @@ public class NanodbcConnection implements Connection {
     private DatabaseMetaData metaData = null;
 
     @Getter(AccessLevel.PACKAGE)
-    private String url = null;
+    private String url;
 
     NanodbcConnection(String url) throws SQLException {
         try {
@@ -61,7 +61,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Statement createStatement() throws SQLException {
-        log.log(Level.FINEST, "createStatement");
+        log.log(Level.FINEST, "NanodbcConnection.NanodbcConnection.createStatement");
         try {
             StatementPtr statementPtr = ConnectionHandler.create(connectionPtr);
             return new NanodbcStatement(this, statementPtr);
@@ -75,7 +75,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        log.log(Level.FINEST, "prepareStatement");
+        log.log(Level.FINEST, "NanodbcConnection.NanodbcConnection.prepareStatement");
         try {
             StatementPtr statementPtr = ConnectionHandler.create(connectionPtr);
             ConnectionHandler.prepared(statementPtr, sql, TIMEOUT);
@@ -90,7 +90,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
-        log.log(Level.FINEST, "prepareCall");
+        log.log(Level.FINEST, "NanodbcConnection.NanodbcConnection.prepareCall");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -99,7 +100,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public String nativeSQL(String sql) throws SQLException {
-        log.log(Level.FINEST, "nativeSQL");
+        log.log(Level.FINEST, "NanodbcConnection.NanodbcConnection.nativeSQL");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -108,7 +110,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        log.log(Level.FINEST, "setAutoCommit");
+        log.log(Level.FINEST, "NanodbcConnection.NanodbcConnection.setAutoCommit");
         try {
             ConnectionHandler.setAutoCommitTransaction(connectionPtr, autoCommit);
         } catch (NativeException e) {
@@ -121,7 +123,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public boolean getAutoCommit() throws SQLException {
-        log.log(Level.FINEST, "getAutoCommit");
+        log.log(Level.FINEST, "NanodbcConnection.getAutoCommit");
         try {
             return ConnectionHandler.getAutoCommitTransaction(connectionPtr);
         } catch (NativeException e) {
@@ -134,7 +136,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void commit() throws SQLException {
-        log.log(Level.FINEST, "commit");
+        log.log(Level.FINEST, "NanodbcConnection.commit");
         try {
             ConnectionHandler.commitTransaction(connectionPtr);
         } catch (NativeException e) {
@@ -147,7 +149,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void rollback() throws SQLException {
-        log.log(Level.FINEST, "rollback");
+        log.log(Level.FINEST, "NanodbcConnection.rollback");
         try {
             ConnectionHandler.rollbackTransaction(connectionPtr);
         } catch (NativeException e) {
@@ -160,7 +162,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void close() throws SQLException {
-        log.log(Level.FINEST, "close");
+        log.log(Level.FINEST, "NanodbcConnection.close");
         try {
             ConnectionHandler.disconnect(connectionPtr);
             connectionPtr = null;
@@ -175,7 +177,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public boolean isClosed() throws SQLException {
-        log.log(Level.FINEST, "isClosed");
+        log.log(Level.FINEST, "NanodbcConnection.isClosed");
         try {
             return !ConnectionHandler.isConnected(connectionPtr);
         } catch (NativeException e) {
@@ -188,7 +190,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        log.log(Level.FINEST, "getMetaData");
+        log.log(Level.FINEST, "NanodbcConnection.getMetaData");
         try {
             if (metaData == null) {
                 metaData = ConnectionHandler.getDatabaseSetMetaData(this, connectionPtr);
@@ -204,7 +206,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-        log.log(Level.FINEST, "setReadOnly");
+        log.log(Level.FINEST, "NanodbcConnection.setReadOnly");
+        // log.warning("throw SQLFeatureNotSupportedException");
         // throw new SQLFeatureNotSupportedException(); TODO
     }
 
@@ -213,8 +216,9 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public boolean isReadOnly() throws SQLException {
-        log.log(Level.FINEST, "isReadOnly");
+        log.log(Level.FINEST, "NanodbcConnection.isReadOnly");
         return true;
+        //log.warning("throw SQLFeatureNotSupportedException");
         //throw new SQLFeatureNotSupportedException(); TODO
     }
 
@@ -223,7 +227,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setCatalog(String catalog) throws SQLException {
-        log.log(Level.FINEST, "setCatalog");
+        log.log(Level.FINEST, "NanodbcConnection.setCatalog");
         try {
             ConnectionHandler.setCatalog(connectionPtr, catalog);
         } catch (NativeException e) {
@@ -236,7 +240,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public String getCatalog() throws SQLException {
-        log.log(Level.FINEST, "getCatalog");
+        log.log(Level.FINEST, "NanodbcConnection.getCatalog");
         try {
             return ConnectionHandler.getCatalog(connectionPtr);
         } catch (NativeException e) {
@@ -249,7 +253,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setTransactionIsolation(int level) throws SQLException {
-        log.log(Level.FINEST, "setTransactionIsolation");
+        log.log(Level.FINEST, "NanodbcConnection.setTransactionIsolation");
         try {
             ConnectionHandler.setTransactionIsolation(connectionPtr, level);
         } catch (NativeException e) {
@@ -262,7 +266,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public int getTransactionIsolation() throws SQLException {
-        log.log(Level.FINEST, "getTransactionIsolation");
+        log.log(Level.FINEST, "NanodbcConnection.getTransactionIsolation");
         try {
             int level = ConnectionHandler.getTransactionIsolation(connectionPtr);
             // Проверим, поддерживается ли значение
@@ -283,7 +287,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        log.log(Level.FINEST, "getWarnings");
+        log.log(Level.FINEST, "NanodbcConnection.getWarnings");
         throwIfAlreadyClosed();
         return null; // TODO
     }
@@ -293,7 +297,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void clearWarnings() throws SQLException {
-        log.log(Level.FINEST, "clearWarnings");
+        log.log(Level.FINEST, "NanodbcConnection.clearWarnings");
         throwIfAlreadyClosed();
         // nothing to do
     }
@@ -303,7 +307,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        log.log(Level.FINEST, "createStatement");
+        log.log(Level.FINEST, "NanodbcConnection.createStatement");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -312,7 +317,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        log.log(Level.FINEST, "prepareStatement");
+        log.log(Level.FINEST, "NanodbcConnection.prepareStatement");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -321,7 +327,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        log.log(Level.FINEST, "prepareCall");
+        log.log(Level.FINEST, "NanodbcConnection.prepareCall");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -330,7 +337,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Map<String, Class<?>> getTypeMap() throws SQLException {
-        log.log(Level.FINEST, "getTypeMap");
+        log.log(Level.FINEST, "NanodbcConnection.getTypeMap");
         return Map.of();
     }
 
@@ -339,7 +346,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-        log.log(Level.FINEST, "setTypeMap");
+        log.log(Level.FINEST, "NanodbcConnection.setTypeMap");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -348,7 +356,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setHoldability(int holdability) throws SQLException {
-        log.log(Level.FINEST, "setHoldability");
+        log.log(Level.FINEST, "NanodbcConnection.setHoldability");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -357,7 +366,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public int getHoldability() throws SQLException {
-        log.log(Level.FINEST, "getHoldability");
+        log.log(Level.FINEST, "NanodbcConnection.getHoldability");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -366,7 +376,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Savepoint setSavepoint() throws SQLException {
-        log.log(Level.FINEST, "setSavepoint");
+        log.log(Level.FINEST, "NanodbcConnection.setSavepoint");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -375,7 +386,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Savepoint setSavepoint(String name) throws SQLException {
-        log.log(Level.FINEST, "setSavepoint");
+        log.log(Level.FINEST, "NanodbcConnection.setSavepoint");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -384,7 +396,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void rollback(Savepoint savepoint) throws SQLException {
-        log.log(Level.FINEST, "rollback");
+        log.log(Level.FINEST, "NanodbcConnection.rollback");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -393,7 +406,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-        log.log(Level.FINEST, "releaseSavepoint");
+        log.log(Level.FINEST, "NanodbcConnection.releaseSavepoint");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -402,7 +416,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        log.log(Level.FINEST, "createStatement");
+        log.log(Level.FINEST, "NanodbcConnection.createStatement");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -411,7 +426,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        log.log(Level.FINEST, "prepareStatement");
+        log.log(Level.FINEST, "NanodbcConnection.prepareStatement");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -420,7 +436,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        log.log(Level.FINEST, "prepareCall");
+        log.log(Level.FINEST, "NanodbcConnection.prepareCall");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -429,7 +446,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-        log.log(Level.FINEST, "prepareStatement");
+        log.log(Level.FINEST, "NanodbcConnection.prepareStatement");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -438,7 +456,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-        log.log(Level.FINEST, "prepareStatement");
+        log.log(Level.FINEST, "NanodbcConnection.prepareStatement");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -447,7 +466,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-        log.log(Level.FINEST, "prepareStatement");
+        log.log(Level.FINEST, "NanodbcConnection.prepareStatement");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -456,7 +476,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Clob createClob() throws SQLException {
-        log.log(Level.FINEST, "createClob");
+        log.log(Level.FINEST, "NanodbcConnection.createClob");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -465,7 +486,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Blob createBlob() throws SQLException {
-        log.log(Level.FINEST, "createBlob");
+        log.log(Level.FINEST, "NanodbcConnection.createBlob");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -474,7 +496,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public NClob createNClob() throws SQLException {
-        log.log(Level.FINEST, "createNClob");
+        log.log(Level.FINEST, "NanodbcConnection.createNClob");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -483,7 +506,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public SQLXML createSQLXML() throws SQLException {
-        log.log(Level.FINEST, "createSQLXML");
+        log.log(Level.FINEST, "NanodbcConnection.createSQLXML");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -492,7 +516,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public boolean isValid(int timeout) throws SQLException {
-        log.log(Level.FINEST, "isValid");
+        log.log(Level.FINEST, "NanodbcConnection.isValid");
         return !isClosed();
     }
 
@@ -501,7 +525,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setClientInfo(String name, String value) throws SQLClientInfoException {
-        log.log(Level.FINEST, "setClientInfo");
+        log.log(Level.FINEST, "NanodbcConnection.setClientInfo");
     }
 
     /**
@@ -509,7 +533,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setClientInfo(Properties properties) throws SQLClientInfoException {
-        log.log(Level.FINEST, "setClientInfo");
+        log.log(Level.FINEST, "NanodbcConnection.setClientInfo");
 
     }
 
@@ -518,7 +542,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public String getClientInfo(String name) throws SQLException {
-        log.log(Level.FINEST, "getClientInfo");
+        log.log(Level.FINEST, "NanodbcConnection.getClientInfo");
         return "";
     }
 
@@ -527,7 +551,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Properties getClientInfo() throws SQLException {
-        log.log(Level.FINEST, "getClientInfo");
+        log.log(Level.FINEST, "NanodbcConnection.getClientInfo");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -536,7 +561,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-        log.log(Level.FINEST, "createArrayOf");
+        log.log(Level.FINEST, "NanodbcConnection.createArrayOf");
         return null;
     }
 
@@ -545,7 +570,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-        log.log(Level.FINEST, "createStruct");
+        log.log(Level.FINEST, "NanodbcConnection.createStruct");
         return null;
     }
 
@@ -554,7 +579,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setSchema(String schema) throws SQLException {
-        log.log(Level.FINEST, "setSchema");
+        log.log(Level.FINEST, "NanodbcConnection.setSchema");
     }
 
     /**
@@ -562,7 +587,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public String getSchema() throws SQLException {
-        log.log(Level.FINEST, "getSchema");
+        log.log(Level.FINEST, "NanodbcConnection.getSchema");
         return null;
     }
 
@@ -571,7 +596,8 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void abort(Executor executor) throws SQLException {
-        log.log(Level.FINEST, "abort");
+        log.log(Level.FINEST, "NanodbcConnection.abort");
+        log.warning("throw SQLFeatureNotSupportedException");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -580,7 +606,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-        log.log(Level.FINEST, "setNetworkTimeout");
+        log.log(Level.FINEST, "NanodbcConnection.setNetworkTimeout");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -589,7 +615,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public int getNetworkTimeout() throws SQLException {
-        log.log(Level.FINEST, "getNetworkTimeout");
+        log.log(Level.FINEST, "NanodbcConnection.getNetworkTimeout");
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -598,7 +624,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        log.log(Level.FINEST, "unwrap");
+        log.log(Level.FINEST, "NanodbcConnection.unwrap");
         if (isWrapperFor(iface)) {
             return iface.cast(this);
         }
@@ -610,7 +636,7 @@ public class NanodbcConnection implements Connection {
      */
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        log.log(Level.FINEST, "isWrapperFor");
+        log.log(Level.FINEST, "NanodbcConnection.isWrapperFor");
         return iface.isInstance(this) || iface == Connection.class;
     }
 
