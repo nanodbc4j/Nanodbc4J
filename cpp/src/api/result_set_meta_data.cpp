@@ -7,7 +7,7 @@ CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) 
 	try {
 		if (!results) {
 			LOG_ERROR("Result pointer is null, cannot get metadata");
-			set_error(error, 2, "MetaDataError", "Result is null");
+			set_error(error, ErrorCode::Database, "MetaDataError", "Result is null");
 			return nullptr;
 		}
 
@@ -16,10 +16,10 @@ CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) 
 		LOG_DEBUG("Metadata created successfully: columns count = {}", meta_data->columnCount);
 		return meta_data;
 	} catch (const std::exception& e) {
-		set_error(error, 2, "MetaDataError", e.what());
+		set_error(error, ErrorCode::Standard, "MetaDataError", e.what());
 		LOG_ERROR_W(L"Exception in get_meta_data: {}", utils::to_wstring(e.what()));
 	} catch (...) {
-		set_error(error, -1, "UnknownError", "Unknown get meta data error");
+		set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
 		LOG_ERROR("Unknown exception in get_meta_data");
 	}
 	return nullptr;

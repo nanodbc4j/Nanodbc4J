@@ -1,4 +1,5 @@
 #pragma once
+#include <core/error_codes.hpp>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,4 +27,4 @@ extern "C" {
 void init_error(NativeError* error);
 
 // Установка ошибки
-void set_error(NativeError* error, int code, const char* type, const char* message);
+void set_error(NativeError* error, ErrorCode code, const char* type, const char* message);

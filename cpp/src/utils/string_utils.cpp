@@ -3,6 +3,7 @@
 #include <memory>
 #include <cstring>
 #include <vector>
+#include <exception>
 #include <codecvt>
 
 #ifdef _WIN32
@@ -10,6 +11,23 @@
 #endif
 
 #include "utils/logger.hpp"
+
+namespace {
+
+class MallocException : public std::exception {
+    const char* what() const noexcept override {
+        return "Memory allocation failure: insufficient memory or heap corruption";
+    }
+};
+
+class StringOverflowException : public std::exception {
+    const char* what() const noexcept override {
+        return "String too long, potential overflow";
+    }
+};
+
+} // namespace
+
 
 wide_string_t utils::to_wide_string(const char16_t* string) {
     LOG_TRACE("string={}", string ? reinterpret_cast<const char*>(string) : "(null)");
@@ -150,15 +168,16 @@ CharT* utils::duplicate_string(const CharT* src, size_t length) {
     if (!src) return nullptr;
 
     // Защита от переполнения
-    if (length > std::numeric_limits<size_t>::max() / sizeof(CharT)) {
-        LOG_TRACE("String too long, potential overflow");
-        return nullptr;
+    constexpr size_t max_allowed = std::numeric_limits<size_t>::max() / sizeof(CharT);
+    if (length > max_allowed) {
+        LOG_ERROR("String length {} exceeds maximum allowed {}", length, max_allowed);
+        throw StringOverflowException();
     }
 
     CharT* dest = static_cast<CharT*>(malloc(sizeof(CharT) * (length + 1)));
     if (!dest) {
         LOG_TRACE("malloc failed");
-        return nullptr;
+        throw MallocException();
     }
 
     std::char_traits<CharT>::copy(dest, src, length + 1);

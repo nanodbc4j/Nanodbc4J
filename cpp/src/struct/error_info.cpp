@@ -6,7 +6,7 @@
 
 NativeError::NativeError() {
     LOG_TRACE("Default constructing NativeError");
-    error_code = 0;
+    error_code = ErrorCode::Success;
     error_message = nullptr;
     error_type = nullptr;
 }
@@ -48,10 +48,10 @@ void init_error(NativeError* error) {
 }
 
 // Установка ошибки
-void set_error(NativeError* error, int code, const char* type, const char* message) {
+void set_error(NativeError* error, ErrorCode code, const char* type, const char* message) {
     LOG_TRACE("set_error: error={}, code={}, type='{}', message='{}'",
         (void*)error,
-        code,
+        code.to_int(),
         type ? type : "(null)",
         message ? message : "(null)");
 

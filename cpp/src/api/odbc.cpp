@@ -25,7 +25,7 @@ int set_log_level(int level) {
 	try {
 		auto result_level_name = set_spdlog_level(level);
 		LOG_DEBUG("Set log level: {}", result_level_name);
-		return 0;
+		return ErrorCode::Success;
 	} catch (const std::exception& e) {
 		LOG_ERROR_W(L"Exception in set_log_level: {}", utils::to_wstring(e.what()));
 	} catch (...) {

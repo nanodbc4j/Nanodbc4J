@@ -50,6 +50,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE ODBC_EXPORTS)
 # Отключаем min max в windows.h
 target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
 
+# Отключаем вывод имени файла и номера строки в исключениях nanodbc
+target_compile_definitions(nanodbc PRIVATE NANODBC_THROW_NO_SOURCE_LOCATION)
+
 # Линкуем зависимости
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     nanodbc 
