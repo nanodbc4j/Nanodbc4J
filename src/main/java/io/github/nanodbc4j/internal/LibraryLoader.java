@@ -23,6 +23,7 @@ public class LibraryLoader {
     private static final Logger logger = Logger.getLogger(LibraryLoader.class.getName());
     private static final String LIBRARY_NAME = "nanodbc4j";
     private static final String TEMP_LIB_PREFIX = "nanodbc4j_";
+    private static final String LOCK_EXT = ".lck";
     private static volatile boolean isLoaded = false;
 
     public static synchronized void load() throws IOException {
@@ -46,7 +47,7 @@ public class LibraryLoader {
         String libFileName = new File(resourcePath).getName();
         String uuid = UUID.randomUUID().toString();
         String extractedLibName = TEMP_LIB_PREFIX + uuid + '_' + libFileName;
-        String extractedLckName = extractedLibName + ".lck";
+        String extractedLckName = extractedLibName + LOCK_EXT;
 
         Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
         Path libFile = tempDir.resolve(extractedLibName);
@@ -89,8 +90,8 @@ public class LibraryLoader {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     if (file != null && !Files.isDirectory(file)) {
                         String name = file.getFileName().toString();
-                        if (name.startsWith(TEMP_LIB_PREFIX) && !name.endsWith(".lck")) {
-                            Path lckFile = file.resolveSibling(name + ".lck");
+                        if (name.startsWith(TEMP_LIB_PREFIX) && !name.endsWith(LOCK_EXT)) {
+                            Path lckFile = file.resolveSibling(name + LOCK_EXT);
                             if (!Files.exists(lckFile)) {
                                 try {
                                     Files.delete(file);
