@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 @UtilityClass
 public class LibraryLoader {
     private static final Logger logger = Logger.getLogger(LibraryLoader.class.getName());
-    private static final String LIBRARY_NAME = "odbc";
+    private static final String LIBRARY_NAME = "nanodbc4j";
     private static final String TEMP_LIB_PREFIX = "nanodbc4j_";
     private static volatile boolean isLoaded = false;
 
@@ -33,7 +33,7 @@ public class LibraryLoader {
     }
 
     private static String getNativeResourcePath(String libName) {
-        return "natives/" + libName;
+        return "natives" + File.separatorChar + libName;
     }
 
     private static void loadLibraryFromJar(String resourcePath) throws IOException {

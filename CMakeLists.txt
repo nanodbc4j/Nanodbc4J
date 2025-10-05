@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(odbc CXX)
+project(nanodbc4j CXX)
 
 # Настройка Runtime Library (MT/MD)
 if(MSVC)
@@ -33,7 +33,6 @@ find_package(ODBC REQUIRED)
 
 add_subdirectory(third_party/nanodbc)
 add_subdirectory(third_party/spdlog)
-add_subdirectory(third_party/fmt)
 
 # Ищем все исходники в src/
 file(GLOB_RECURSE SRC_FILES "${SOURCE_DIR}/*.cpp" )
@@ -53,11 +52,15 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
 # Отключаем вывод имени файла и номера строки в исключениях nanodbc
 target_compile_definitions(nanodbc PRIVATE NANODBC_THROW_NO_SOURCE_LOCATION)
 
+# utfcpp
+add_library(utfcpp INTERFACE)
+target_include_directories(utfcpp INTERFACE third_party/utfcpp/source)
+
 # Линкуем зависимости
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     nanodbc 
-    spdlog::spdlog 
-    fmt::fmt 
+    spdlog::spdlog
     ODBC::ODBC 
     Threads::Threads
+    utfcpp
 )

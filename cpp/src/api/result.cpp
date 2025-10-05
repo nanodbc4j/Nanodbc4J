@@ -6,7 +6,7 @@ using namespace std;
 using namespace utils;
 
 template<typename T>
-static T get_value_by_name(nanodbc::result* results, const wide_string_t& column_name, NativeError* error, T fallback = T{}) {
+static T get_value_by_name(nanodbc::result* results, const wstring& column_name, NativeError* error, T fallback = T{}) {
     init_error(error);
     try {
         if (!results) {
@@ -203,28 +203,28 @@ bool was_null_by_index(nanodbc::result* results, int index, NativeError* error) 
 }
 
 int get_int_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
-    return get_value_by_name<int>(results, to_wide_string(name), error, 0);
+    return get_value_by_name<int>(results, to_wstring(name), error, 0);
 }
 
 long get_long_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
-    return get_value_by_name<long>(results, to_wide_string(name), error, 0L);
+    return get_value_by_name<long>(results, to_wstring(name), error, 0L);
 }
 
 double get_double_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
-    return get_value_by_name<double>(results, to_wide_string(name), error, 0.0);
+    return get_value_by_name<double>(results, to_wstring(name), error, 0.0);
 }
 
 bool get_bool_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
     // result->get<bool>() не работает
-    return get_value_by_name<short>(results, to_wide_string(name), error, 0);
+    return get_value_by_name<short>(results, to_wstring(name), error, 0);
 }
 
 float get_float_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
-    return get_value_by_name<float>(results, to_wide_string(name), error, 0.0f);
+    return get_value_by_name<float>(results, to_wstring(name), error, 0.0f);
 }
 
 short get_short_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
-    return get_value_by_name<short>(results, to_wide_string(name), error, 0);
+    return get_value_by_name<short>(results, to_wstring(name), error, 0);
 }
 
 const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
@@ -239,14 +239,12 @@ const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_
             return nullptr;
         }
 
-        auto wide_name = to_wide_string(name);
-
-        if (!name || results->is_null(wide_name)) {
+        if (!name || results->is_null(w_name)) {
             LOG_DEBUG_W(L"Column '{}' is NULL", w_name);
             return nullptr;
         }
 
-        auto result = results->get<nanodbc::string>(wide_name);
+        auto result = results->get<nanodbc::string>(w_name);
         auto u16_result = to_u16string(result);
         LOG_DEBUG_W(L"String value retrieved by name '{}': '{}'", w_name, to_wstring(u16_result));
         return duplicate_string(u16_result.c_str(), u16_result.length());
@@ -271,7 +269,7 @@ CDate* get_date_value_by_name(nanodbc::result* results, const char16_t* name, Na
         LOG_DEBUG_W(L"Column '{}' is NULL", to_wstring(name));
         return nullptr;
     }
-    auto date = get_value_by_name<nanodbc::date>(results, to_wide_string(name), error, {});
+    auto date = get_value_by_name<nanodbc::date>(results, to_wstring(name), error, {});
     return new CDate(date);
 }
 
@@ -280,7 +278,7 @@ CTime* get_time_value_by_name(nanodbc::result* results, const char16_t* name, Na
         LOG_DEBUG_W(L"Column '{}' is NULL", to_wstring(name));
         return nullptr;
     }
-    auto time = get_value_by_name<nanodbc::time>(results, to_wide_string(name), error, {});
+    auto time = get_value_by_name<nanodbc::time>(results, to_wstring(name), error, {});
     return new CTime(time);
 }
 
@@ -289,7 +287,7 @@ CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const char16_t
         LOG_DEBUG_W(L"Column '{}' is NULL", to_wstring(name));
         return nullptr;
     }
-    auto timestamp = get_value_by_name<nanodbc::timestamp>(results, to_wide_string(name), error, {});
+    auto timestamp = get_value_by_name<nanodbc::timestamp>(results, to_wstring(name), error, {});
     return new CTimestamp(timestamp);
 }
 
@@ -301,7 +299,7 @@ int find_column_by_name(nanodbc::result* results, const char16_t* name, NativeEr
             LOG_ERROR("Attempted to close null result");
             return 0;
         }
-        int index = results->column(to_wide_string(name));
+        int index = results->column(to_wstring(name));
         LOG_DEBUG_W(L"Index retrieved by name '{}': '{}'", to_wstring(name), index);
         return index;
     }  catch (const nanodbc::index_range_error& e) {
@@ -325,7 +323,7 @@ bool was_null_by_name(nanodbc::result* results, const char16_t* name, NativeErro
             LOG_ERROR("Attempted to close null result");
             return 0;
         }
-        bool is_null = results->is_null(to_wide_string(name));
+        bool is_null = results->is_null(to_wstring(name));
         LOG_DEBUG_W(L"Index was null '{}': '{}'", to_wstring(name), is_null);
         return is_null;
     }  catch (const nanodbc::index_range_error& e) {

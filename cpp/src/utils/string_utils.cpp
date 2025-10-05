@@ -4,7 +4,7 @@
 #include <cstring>
 #include <vector>
 #include <exception>
-#include <codecvt>
+#include "utf8.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -28,13 +28,6 @@ class StringOverflowException : public std::exception {
 
 } // namespace
 
-
-wide_string_t utils::to_wide_string(const char16_t* string) {
-    LOG_TRACE("string={}", string ? reinterpret_cast<const char*>(string) : "(null)");
-    if (!string) return wide_string_t(); // Возвращаем пустую строку
-    // Преобразуем входящую строку в wide_string (используется UTF-16LE)
-    return std::basic_string<wide_char_t>(reinterpret_cast<const wide_char_t*>(string));
-}
 
 std::wstring utils::to_wstring(const char16_t* str) {
     LOG_TRACE("str={}", str ? reinterpret_cast<const char*>(str) : "(null)");
@@ -121,34 +114,93 @@ std::wstring utils::to_wstring(std::wstring_view str) {
 
 std::u16string utils::to_u16string(const std::string& str) {
     LOG_TRACE("input string length = {}", str.length());
-    std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> conv;
-    return conv.from_bytes(str);
-}
-
-std::u16string utils::to_u16string(const std::u16string& str) {
-    LOG_TRACE("u16string length = {}", str.length());
-    return str;
+    std::u16string result;
+    utf8::utf8to16(str.begin(), str.end(), std::back_inserter(result));
+    return result;
 }
 
 std::u16string utils::to_u16string(const std::u32string& str) {
     LOG_TRACE("u32string length = {}", str.length());
-    std::wstring_convert<std::codecvt_utf16<char32_t>, char32_t> conv;
-    std::string utf8 = conv.to_bytes(str.c_str(), str.c_str() + str.size());
-    return to_u16string(utf8); // повторно используем UTF-8 -> UTF-16
+
+    // Unicode code point boundaries (from the Unicode Standard)
+    constexpr char32_t UNICODE_MAX_CODEPOINT = 0x10FFFF;
+    constexpr char32_t BMP_MAX               = 0xFFFF;
+    constexpr char32_t SURROGATE_MIN         = 0xD800;
+    constexpr char32_t SURROGATE_MAX         = 0xDFFF;
+    constexpr char32_t REPLACEMENT_CHAR      = 0xFFFD;
+    constexpr char32_t ASTRAL_PLANE_START    = 0x10000;
+
+    // Reserve approximate capacity: each code point becomes 1 or 2 char16_t units.
+    std::u16string result;
+    result.reserve(str.size());
+
+    for (char32_t codepoint : str) {
+        if (codepoint <= BMP_MAX) {
+            // Basic Multilingual Plane (U+0000 to U+FFFF)
+            if (codepoint >= SURROGATE_MIN && codepoint <= SURROGATE_MAX) {
+                // Surrogates are invalid in UTF-32 → replace with U+FFFD
+                result.push_back(static_cast<char16_t>(REPLACEMENT_CHAR));
+            } else {
+                result.push_back(static_cast<char16_t>(codepoint));
+            }
+        } else if (codepoint <= UNICODE_MAX_CODEPOINT) {
+            // Astral planes: U+10000 to U+10FFFF → encode as surrogate pair
+            char32_t offset = codepoint - ASTRAL_PLANE_START; // 20-bit value (0x00000–0xFFFFF)
+            char16_t high_surrogate = static_cast<char16_t>((offset >> 10) + 0xD800);
+            char16_t low_surrogate  = static_cast<char16_t>((offset & 0x3FF) + 0xDC00);
+            result.push_back(high_surrogate);
+            result.push_back(low_surrogate);
+        } else {
+            // Invalid code point (> U+10FFFF)
+            result.push_back(static_cast<char16_t>(REPLACEMENT_CHAR));
+        }
+    }
+
+    return result;
 }
 
 std::u16string utils::to_u16string(const std::wstring& str) {
     LOG_TRACE_W(L"input wstring length = {}", str.length());
+
 #ifdef _WIN32
-    // Windows wchar_t == UTF-16
+    // On Windows, wchar_t is UTF-16 (16 bits)
     LOG_TRACE("Platform: Windows, wchar_t is UTF-16, direct cast");
-    return std::u16string(reinterpret_cast<const char16_t*>(str.c_str()));
+    return std::u16string(reinterpret_cast<const char16_t*>(str.c_str()), str.size());
 #else
-    // Linux wchar_t == UTF-32
+    // On Unix-like systems, wchar_t is UTF-32 (32 bits)
     LOG_TRACE("Platform: Unix, converting UTF-32 wchar_t to UTF-16");
-    wstring_convert<codecvt_utf16<wchar_t>, wchar_t> conv;
-    string utf16 = conv.to_bytes(str.c_str(), str.c_str() + str.size());
-    return std::u16string(reinterpret_cast<const char16_t*>(utf16.c_str()), utf16.size() / sizeof(char16_t));
+
+    // Reuse the same logic as to_u16string(const std::u32string&)
+    // by treating wstring as u32string (since wchar_t == char32_t on Unix)
+    constexpr char32_t UNICODE_MAX_CODEPOINT = 0x10FFFF;
+    constexpr char32_t BMP_MAX               = 0xFFFF;
+    constexpr char32_t SURROGATE_MIN         = 0xD800;
+    constexpr char32_t SURROGATE_MAX         = 0xDFFF;
+    constexpr char32_t REPLACEMENT_CHAR      = 0xFFFD;
+    constexpr char32_t ASTRAL_PLANE_START    = 0x10000;
+
+    std::u16string result;
+    result.reserve(str.size());
+
+    for (wchar_t wc : str) {
+        char32_t codepoint = static_cast<char32_t>(wc);
+
+        if (codepoint <= BMP_MAX) {
+            if (codepoint >= SURROGATE_MIN && codepoint <= SURROGATE_MAX) {
+                result.push_back(static_cast<char16_t>(REPLACEMENT_CHAR));
+            } else {
+                result.push_back(static_cast<char16_t>(codepoint));
+            }
+        } else if (codepoint <= UNICODE_MAX_CODEPOINT) {
+            char32_t offset = codepoint - ASTRAL_PLANE_START;
+            result.push_back(static_cast<char16_t>((offset >> 10) + 0xD800));
+            result.push_back(static_cast<char16_t>((offset & 0x3FF) + 0xDC00));
+        } else {
+            result.push_back(static_cast<char16_t>(REPLACEMENT_CHAR));
+        }
+    }
+
+    return result;
 #endif
 }
 

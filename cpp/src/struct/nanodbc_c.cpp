@@ -33,8 +33,7 @@ Driver::Attribute::~Attribute() {
 Driver::Driver(const Driver& other) {
 	LOG_TRACE("Copying Driver from {}", (void*)&other);
 	attribute_count = static_cast<int>(other.attribute_count);
-	auto _name = to_u16string(other.name);
-	name = duplicate_string(_name.c_str(), _name.length());
+	name = duplicate_string(other.name);
 	attributes = nullptr;
 	
 	if (attribute_count > 0) {
@@ -80,11 +79,8 @@ Driver::~Driver() {
 
 Datasource::Datasource(const Datasource& other) {
 	LOG_TRACE("Copying Datasource from {}", (void*)&other);
-	auto _name = to_u16string(other.name);
-	name = duplicate_string(_name.c_str(), _name.length());
-
-	auto _driver = to_u16string(other.driver);
-	driver = duplicate_string(_driver.c_str(), _driver.length());
+	name = duplicate_string(other.name);
+	driver = duplicate_string(other.driver);
 }
 
 Datasource::Datasource(const nanodbc::datasource& other) {
