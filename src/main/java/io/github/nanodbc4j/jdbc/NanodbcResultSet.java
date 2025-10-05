@@ -229,8 +229,13 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
         log.finest("NanodbcResultSet.getBytes");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            lastColumn = columnIndex;
+            return ResultSetHandler.getBytesByIndex(resultSetPtr, columnIndex);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -438,8 +443,13 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public byte[] getBytes(String columnLabel) throws SQLException {
         log.finest("NanodbcResultSet.getBytes");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            lastColumn = columnLabel;
+            return ResultSetHandler.getBytesByName(resultSetPtr, columnLabel);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**

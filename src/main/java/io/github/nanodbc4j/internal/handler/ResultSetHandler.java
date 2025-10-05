@@ -1,6 +1,7 @@
 package io.github.nanodbc4j.internal.handler;
 
 import com.sun.jna.Pointer;
+import io.github.nanodbc4j.internal.cstruct.BinaryArray;
 import io.github.nanodbc4j.internal.cstruct.ResultSetMetaDataStruct;
 import io.github.nanodbc4j.internal.dto.ResultSetMetadataDto;
 import io.github.nanodbc4j.jdbc.NanodbcResultSetMetaData;
@@ -49,7 +50,7 @@ public final class ResultSetHandler {
     public static <T> T getValueByName(ResultSetPtr resultSet, String name, Handler.TriFunction<ResultSetPtr, String, NativeError, T> function) {
         NativeError nativeError = new NativeError();
         try {
-            T value = function.apply(resultSet, name + '\0', nativeError);
+            T value = function.apply(resultSet, name + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
             return value;
         } finally {
@@ -107,11 +108,43 @@ public final class ResultSetHandler {
         }
     }
 
+    public static byte[] getBytesByIndex(ResultSetPtr resultSet, int index) {
+        NativeError nativeError = new NativeError();
+        BinaryArray array = null;
+        try {
+            array = NativeDB.INSTANCE.get_bytes_array_by_index(resultSet, index - 1, nativeError);
+            throwIfNativeError(nativeError);
+            if (array == null) {
+                return new byte[0];
+            }
+            return array.getBytes();
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+            NativeDB.INSTANCE.delete_binary_array(array);
+        }
+    }
+
+    public static byte[] getBytesByName(ResultSetPtr resultSet, String name) {
+        NativeError nativeError = new NativeError();
+        BinaryArray array = null;
+        try {
+            array = NativeDB.INSTANCE.get_bytes_array_by_name(resultSet, name + NUL_CHAR, nativeError);
+            throwIfNativeError(nativeError);
+            if (array == null) {
+                return new byte[0];
+            }
+            return array.getBytes();
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+            NativeDB.INSTANCE.delete_binary_array(array);
+        }
+    }
+
     public static String getStringValueByName(ResultSetPtr resultSet, String name) {
         NativeError nativeError = new NativeError();
         Pointer strPtr = null;
         try {
-            strPtr = NativeDB.INSTANCE.get_string_value_by_name(resultSet, name + '\0', nativeError);
+            strPtr = NativeDB.INSTANCE.get_string_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
             return getWideString(strPtr);
         } finally {
@@ -125,7 +158,7 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         DateStruct dateStruct = null;
         try {
-            dateStruct = NativeDB.INSTANCE.get_date_value_by_name(resultSet, name + '\0', nativeError);
+            dateStruct = NativeDB.INSTANCE.get_date_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             return convert(dateStruct, nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -137,7 +170,7 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         TimeStruct timeStruct = null;
         try {
-            timeStruct = NativeDB.INSTANCE.get_time_value_by_name(resultSet, name + '\0', nativeError);
+            timeStruct = NativeDB.INSTANCE.get_time_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             return convert(timeStruct, nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
@@ -149,7 +182,7 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         TimestampStruct timestampStruct = null;
         try {
-            timestampStruct = NativeDB.INSTANCE.get_timestamp_value_by_name(resultSet, name + '\0', nativeError);
+            timestampStruct = NativeDB.INSTANCE.get_timestamp_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             return convert(timestampStruct, nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);

@@ -3,6 +3,7 @@
 #include "struct/error_info.h"
 #include "api/export.h"
 #include "struct/nanodbc_c.h"
+#include "struct/binary_array.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,6 +31,8 @@ extern "C" {
 
     ODBC_API CTimestamp* get_timestamp_value_by_index(nanodbc::result* results, int index, NativeError* error);
 
+    ODBC_API BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, NativeError* error);
+
     ODBC_API int find_column_by_index(nanodbc::result* results, int index, NativeError* error);
 
     ODBC_API bool was_null_by_index(nanodbc::result* results, int index, NativeError* error);
@@ -54,11 +57,15 @@ extern "C" {
 
     ODBC_API CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
+    ODBC_API BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
+
     ODBC_API int find_column_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
     ODBC_API bool was_null_by_name(nanodbc::result* results, const char16_t* name, NativeError* error);
 
     ODBC_API void close_result(nanodbc::result* results, NativeError* error);
+
+    ODBC_API void delete_binary_array(BinaryArray* array);
 
     ODBC_API void delete_date(CDate* date);
 

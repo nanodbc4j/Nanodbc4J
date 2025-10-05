@@ -178,6 +178,51 @@ CTimestamp* get_timestamp_value_by_index(nanodbc::result* results, int index, Na
     return new CTimestamp(timestamp);
 }
 
+BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, NativeError* error) {
+    if (was_null_by_index(results, index, error) || error->error_code) {
+        LOG_DEBUG_W(L"Column '{}' is NULL", index);
+        return nullptr;
+    }
+    try {
+        // Пробуем получить как binary данные
+        std::vector<uint8_t> binary_data = results->get<std::vector<uint8_t>>(index);
+        return new BinaryArray(binary_data);
+
+    } catch (const nanodbc::database_error& e) {
+        // Если не binary, пробуем как строку (для CLOB)
+        try {
+            std::string string_data = results->get<std::string>(index);
+            std::vector<uint8_t> binary_data(string_data.begin(), string_data.end());
+            return new BinaryArray(binary_data);
+        } catch (const nanodbc::index_range_error& e) {
+            set_error(error, ErrorCode::Database, "IndexError", e.what());
+            LOG_ERROR_W(L"Index range error at index {}: {}", index, to_wstring(e.what()));
+        } catch (const nanodbc::type_incompatible_error& e) {
+            set_error(error, ErrorCode::Database, "TypeError", e.what());
+            LOG_ERROR_W(L"Type incompatible error at index {}: {}", index, to_wstring(e.what()));
+        } catch (const std::exception& e) {
+            set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+            LOG_ERROR_W(L"Exception in get_string_value_by_index {}: {}", index, to_wstring(e.what()));
+        } catch (...) {
+            set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
+            LOG_ERROR("Unknown exception in get_string_value_by_index {}", index);
+        }
+    } catch (const nanodbc::index_range_error& e) {
+        set_error(error, ErrorCode::Database, "IndexError", e.what());
+        LOG_ERROR_W(L"Index range error at index {}: {}", index, to_wstring(e.what()));
+    } catch (const nanodbc::type_incompatible_error& e) {
+        set_error(error, ErrorCode::Database, "TypeError", e.what());
+        LOG_ERROR_W(L"Type incompatible error at index {}: {}", index, to_wstring(e.what()));
+    } catch (const std::exception& e) {
+        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+        LOG_ERROR_W(L"Exception in get_string_value_by_index {}: {}", index, to_wstring(e.what()));
+    } catch (...) {
+        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
+        LOG_ERROR("Unknown exception in get_string_value_by_index {}", index);
+    } 
+    return nullptr;
+}
+
 bool was_null_by_index(nanodbc::result* results, int index, NativeError* error) {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
@@ -228,40 +273,15 @@ short get_short_value_by_name(nanodbc::result* results, const char16_t* name, Na
 }
 
 const char16_t* get_string_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    int index = find_column_by_name(results, name, error);
+    if (error->error_code) {
+        return nullptr;
+    }
+
     const auto w_name = to_wstring(name);
     LOG_DEBUG_W(L"Getting string value by name: '{}'", w_name);
-    init_error(error);
-
-    try {
-        if (!results) {
-            LOG_ERROR("Result is null");
-            set_error(error, ErrorCode::Database, "ResultError", "Result is null");
-            return nullptr;
-        }
-
-        if (!name || results->is_null(w_name)) {
-            LOG_DEBUG_W(L"Column '{}' is NULL", w_name);
-            return nullptr;
-        }
-
-        auto result = results->get<nanodbc::string>(w_name);
-        auto u16_result = to_u16string(result);
-        LOG_DEBUG_W(L"String value retrieved by name '{}': '{}'", w_name, to_wstring(u16_result));
-        return duplicate_string(u16_result.c_str(), u16_result.length());
-    } catch (const nanodbc::index_range_error& e) {
-        set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR_W(L"Index range error for column '{}': {}", w_name, to_wstring(e.what()));
-    } catch (const nanodbc::type_incompatible_error& e) {
-        set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR_W(L"Type incompatible error for column '{}': {}", w_name, to_wstring(e.what()));
-    } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR_W(L"Exception in get_string_value_by_name '{}': {}", w_name, to_wstring(e.what()));
-    } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
-        LOG_ERROR_W(L"Unknown exception in get_string_value_by_name '{}'", w_name);
-    }
-    return nullptr;
+    
+    return get_string_value_by_index(results, index, error);
 }
 
 CDate* get_date_value_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
@@ -289,6 +309,14 @@ CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const char16_t
     }
     auto timestamp = get_value_by_name<nanodbc::timestamp>(results, to_wstring(name), error, {});
     return new CTimestamp(timestamp);
+}
+
+BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
+    int index = find_column_by_name(results, name, error);
+    if (error->error_code) {
+        return nullptr;
+    }
+    return get_bytes_array_by_index(results, index, error);
 }
 
 int find_column_by_name(nanodbc::result* results, const char16_t* name, NativeError* error) {
@@ -355,6 +383,14 @@ void close_result(nanodbc::result* results, NativeError* error) {
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown close result error");
         LOG_ERROR("Unknown exception in close_result");
+    }
+}
+
+void delete_binary_array(BinaryArray* array) {
+    LOG_DEBUG_W(L"Deleting BinaryArray object: {}", reinterpret_cast<uintptr_t>(array));
+    if (array) {
+        delete array;
+        LOG_DEBUG_W(L"BinaryArray deleted");
     }
 }
 
