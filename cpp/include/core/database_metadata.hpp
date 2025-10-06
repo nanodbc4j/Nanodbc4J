@@ -10,23 +10,23 @@ public:
     explicit DatabaseMetaData(nanodbc::connection& connection);
 
     // === Строковые методы ===
-    std::wstring getDatabaseProductName() const;
-    std::wstring getDatabaseProductVersion() const;
-    std::wstring getDriverName() const;
-    std::wstring getDriverVersion() const;
-    std::wstring getIdentifierQuoteString() const;
-    std::wstring getSchemaTerm() const;
-    std::wstring getProcedureTerm() const;
-    std::wstring getCatalogTerm() const;
-    std::wstring getCatalogSeparator() const;
-    std::wstring getSQLKeywords() const;
-    std::wstring getNumericFunctions() const;
-    std::wstring getStringFunctions() const;
-    std::wstring getSystemFunctions() const;
-    std::wstring getTimeDateFunctions() const;
-    std::wstring getSearchStringEscape() const;
-    std::wstring getExtraNameCharacters() const;
-    std::wstring getUserName() const;
+    nanodbc::string getDatabaseProductName() const;
+    nanodbc::string getDatabaseProductVersion() const;
+    nanodbc::string getDriverName() const;
+    nanodbc::string getDriverVersion() const;
+    nanodbc::string getIdentifierQuoteString() const;
+    nanodbc::string getSchemaTerm() const;
+    nanodbc::string getProcedureTerm() const;
+    nanodbc::string getCatalogTerm() const;
+    nanodbc::string getCatalogSeparator() const;
+    nanodbc::string getSQLKeywords() const;
+    nanodbc::string getNumericFunctions() const;
+    nanodbc::string getStringFunctions() const;
+    nanodbc::string getSystemFunctions() const;
+    nanodbc::string getTimeDateFunctions() const;
+    nanodbc::string getSearchStringEscape() const;
+    nanodbc::string getExtraNameCharacters() const;
+    nanodbc::string getUserName() const;
 
     // === Булевы методы ===
     bool isReadOnly() const;
@@ -152,20 +152,20 @@ public:
     nanodbc::result getSchemas() const;
     nanodbc::result getCatalogs() const;
     nanodbc::result getTableTypes() const;
-    nanodbc::result getTables(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table, const std::wstring& type) const;    
-    nanodbc::result getColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, const std::wstring& column) const;
-    nanodbc::result getPrimaryKeys(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table) const;
-    nanodbc::result getImportedKeys(const std::wstring& catalog, const std::wstring& schema,  const std::wstring& table) const;
-    nanodbc::result getExportedKeys(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table) const;
+    nanodbc::result getTables(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table, const nanodbc::string& type) const;    
+    nanodbc::result getColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& column) const;
+    nanodbc::result getPrimaryKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const;
+    nanodbc::result getImportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const;
+    nanodbc::result getExportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const;
     nanodbc::result getTypeInfo() const;
-    nanodbc::result getColumnPrivileges(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, const std::wstring& columnNamePattern) const;
-    nanodbc::result getTablePrivileges(const std::wstring& catalog, const std::wstring& schemaPattern, const std::wstring& tableNamePattern) const;
-    nanodbc::result getBestRowIdentifier(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, int scope, bool nullable) const;
-    nanodbc::result getVersionColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table) const;
-    nanodbc::result getCrossReference(const std::wstring& parentCatalog, const std::wstring& parentSchema, const std::wstring& parentTable,
-                                      const std::wstring& foreignCatalog, const std::wstring& foreignSchema, const std::wstring& foreignTable) const;
-    nanodbc::result getIndexInfo(const std::wstring& catalog, const std::wstring& schema, const std::wstring& table, bool unique, bool approximate) const;
-    nanodbc::result getProcedures(const std::wstring& catalog, const std::wstring& schema, const std::wstring& procedure) const;
-    nanodbc::result getProcedureColumns(const std::wstring& catalog, const std::wstring& schema, const std::wstring& procedure, const std::wstring& column) const;
+    nanodbc::result getColumnPrivileges(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& columnNamePattern) const;
+    nanodbc::result getTablePrivileges(const nanodbc::string& catalog, const nanodbc::string& schemaPattern, const nanodbc::string& tableNamePattern) const;
+    nanodbc::result getBestRowIdentifier(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, int scope, bool nullable) const;
+    nanodbc::result getVersionColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const;
+    nanodbc::result getCrossReference(const nanodbc::string& parentCatalog, const nanodbc::string& parentSchema, const nanodbc::string& parentTable,
+                                      const nanodbc::string& foreignCatalog, const nanodbc::string& foreignSchema, const nanodbc::string& foreignTable) const;
+    nanodbc::result getIndexInfo(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, bool unique, bool approximate) const;
+    nanodbc::result getProcedures(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure) const;
+    nanodbc::result getProcedureColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure, const nanodbc::string& column) const;
 
 };

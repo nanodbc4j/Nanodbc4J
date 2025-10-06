@@ -1,23 +1,25 @@
 cmake_minimum_required(VERSION 3.20)
 project(nanodbc4j CXX)
 
-# Настройка Runtime Library (MT/MD)
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/cpp/include)
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/cpp/src)
 
-# Отключаем создание импортной библиотеки .dll.a
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)  # Автоматический экспорт символов
-set(CMAKE_GNUtoMS ON)                     # Игнорировать .dll.a (только для MinGW)
+if(WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
 
-# Настройки для nanodbc
+if(UNIX AND NOT APPLE)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 set(NANODBC_DISABLE_INSTALL ON)
 set(NANODBC_ENABLE_SHARED OFF)
 set(NANODBC_ENABLE_UNICODE ON)
@@ -25,8 +27,6 @@ set(NANODBC_DISABLE_EXAMPLES ON)
 set(NANODBC_DISABLE_TESTS ON)
 set(NANODBC_FORCE_LIBCXX  ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-
-add_definitions(-DSPDLOG_WCHAR_TO_UTF8_SUPPORT)
 
 find_package(Threads REQUIRED)
 find_package(ODBC REQUIRED)
@@ -43,11 +43,11 @@ add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 # Подключаем заголовочные файлы проекта
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
-# Определяем ODBC_EXPORTS только при сборке библиотеки
-target_compile_definitions(${PROJECT_NAME} PRIVATE ODBC_EXPORTS)
-
-# Отключаем min max в windows.h
-target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
+target_compile_definitions(${PROJECT_NAME} PRIVATE 
+    $<$<BOOL:${WIN32}>:ODBC_EXPORTS>
+    $<$<BOOL:${WIN32}>:NOMINMAX>
+    $<$<BOOL:${WIN32}>:SPDLOG_WCHAR_TO_UTF8_SUPPORT>
+)
 
 # Отключаем вывод имени файла и номера строки в исключениях nanodbc
 target_compile_definitions(nanodbc PRIVATE NANODBC_THROW_NO_SOURCE_LOCATION)
@@ -64,3 +64,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Threads::Threads
     utfcpp
 )
+
+if(UNIX AND NOT APPLE)
+    find_library(LIBDL dl)
+    if(LIBDL)
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBDL})
+    endif()
+endif()

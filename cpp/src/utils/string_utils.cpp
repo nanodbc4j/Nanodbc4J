@@ -69,7 +69,7 @@ std::wstring utils::to_wstring(const char16_t* str, size_t length) {
 }
 
 std::wstring utils::to_wstring(const std::u16string& str) {
-    LOG_TRACE_W(L"str length = {}", str.length());
+    LOG_TRACE("str length = {}", str.length());
     return to_wstring(str.c_str(), str.length());
 }
 
@@ -108,7 +108,7 @@ std::wstring utils::to_wstring(std::string_view str) {
 }
 
 std::wstring utils::to_wstring(std::wstring_view str) {
-    LOG_TRACE_W(L"wstring_view length = {}", str.length());
+    LOG_TRACE("wstring_view length = {}", str.length());
     return std::wstring(str);
 }
 
@@ -160,7 +160,7 @@ std::u16string utils::to_u16string(const std::u32string& str) {
 }
 
 std::u16string utils::to_u16string(const std::wstring& str) {
-    LOG_TRACE_W(L"input wstring length = {}", str.length());
+    LOG_TRACE("input wstring length = {}", str.length());
 
 #ifdef _WIN32
     // On Windows, wchar_t is UTF-16 (16 bits)

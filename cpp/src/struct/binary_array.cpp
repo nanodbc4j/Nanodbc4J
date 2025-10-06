@@ -1,4 +1,5 @@
 #include "struct/binary_array.h"
+#include <cstring>
 
 BinaryArray::BinaryArray(const std::vector<uint8_t>& vec) {
     if (!vec.empty()) {
