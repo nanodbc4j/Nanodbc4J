@@ -118,10 +118,10 @@ inline static T joinString(const std::vector<T>& vec, const T& delimiter) {
     return result;
 }
 
-inline static std::pair<int, int> processingVersionString(nanodbc::string ver) {
+inline static std::pair<int, int> processingVersionString(std::string ver) {
     // Пропускаем не-цифры и не-знаки в начале строки
     auto it = ver.begin();
-    while (it != ver.end() && !std::iswdigit(*it) && *it != L'+' && *it != L'-' && *it != L'.') {
+    while (it != ver.end() && !std::iswdigit(*it) && *it != '+' && *it != '-' && *it != '.') {
         ++it;
     }
 
@@ -130,26 +130,25 @@ inline static std::pair<int, int> processingVersionString(nanodbc::string ver) {
         return { 0, 0 };
     }
     // Если строка начинается с точки — значит, major = 0
-    bool leadingDot = (*it == L'.');
-    std::wstring cleaned = leadingDot ? (L"0" + std::wstring(it, ver.end())) : std::wstring(it, ver.end());
-    std::wistringstream wiss(cleaned);
+    bool leadingDot = (*it == '.');
+    std::string cleaned = leadingDot ? ("0" + std::string(it, ver.end())) : std::string(it, ver.end());
+    std::stringstream ss(cleaned);
 
     int major = 0;
-    wchar_t dot = 0;
     int minor = 0;
 
     // Пробуем прочитать major
-    if (!(wiss >> major)) {
+    if (!(ss >> major)) {
         LOG_TRACE("Failed to parse major version; returning {{0, 0}}");
         return { 0, 0 };
     }
 
     // Читаем точку и minor, если есть
-    if (wiss.peek() == L'.') {
-        wchar_t dot;
-        wiss >> dot;  // Пропускаем точку
+    if (ss.peek() == '.') {
+        char dot;
+        ss >> dot;  // Пропускаем точку
 
-        if (!(wiss >> minor)) {
+        if (!(ss >> minor)) {
             LOG_TRACE("Failed to parse minor version; minor set to 0");
             minor = 0;  // не ошибка — minor может отсутствовать или быть некорректным
         }
@@ -316,7 +315,7 @@ nanodbc::string DatabaseMetaData::getStringFunctions() const {
 
 #undef ADD_IF_SET
 
-    nanodbc::string result = joinString<nanodbc::string>(funcs, L",");
+    nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(""));
 
     LOG_TRACE_W(L"Returning: {}", result);
     return result;
@@ -328,13 +327,13 @@ nanodbc::string DatabaseMetaData::getSystemFunctions() const {
     SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_SYSTEM_FUNCTIONS, &mask, sizeof(mask), nullptr);
     if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
         LOG_ERROR("SQLGetInfo(SQL_SYSTEM_FUNCTIONS) failed: {}", ret);
-        LOG_TRACE_W("Returning: L\"\"");
-        return L"";
+        LOG_TRACE("Returning: \"\"");
+        return NANODBC_TEXT("");
     }
 
     std::vector<nanodbc::string> funcs;
 
-#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(L##name)
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(NANODBC_TEXT(name))
 
     ADD_IF_SET(SQL_FN_SYS_DBNAME, "DBNAME");
     ADD_IF_SET(SQL_FN_SYS_IFNULL, "IFNULL");
@@ -342,7 +341,7 @@ nanodbc::string DatabaseMetaData::getSystemFunctions() const {
 
 #undef ADD_IF_SET
 
-    nanodbc::string result = joinString<nanodbc::string>(funcs, L",");
+    nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(","));
 
     LOG_TRACE_W(L"Returning: {}", result);
     return result;
@@ -354,13 +353,13 @@ nanodbc::string DatabaseMetaData::getTimeDateFunctions() const {
     SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_TIMEDATE_FUNCTIONS, &mask, sizeof(mask), nullptr);
     if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
         LOG_ERROR("SQLGetInfo(SQL_TIMEDATE_FUNCTIONS) failed: {}", ret);
-        LOG_TRACE_W("Returning: L\"\"");
-        return L"";
+        LOG_TRACE("Returning: \"\"");
+        return NANODBC_TEXT("");
     }
 
     std::vector<nanodbc::string> funcs;
 
-#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(L##name)
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(NANODBC_TEXT(name))
 
     ADD_IF_SET(SQL_FN_TD_CURDATE, "CURDATE");
     ADD_IF_SET(SQL_FN_TD_CURTIME, "CURTIME");
@@ -383,7 +382,7 @@ nanodbc::string DatabaseMetaData::getTimeDateFunctions() const {
 
 #undef ADD_IF_SET
 
-    nanodbc::string result = joinString<nanodbc::string>(funcs, L",");
+    nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(","));
 
     LOG_TRACE_W(L"Returning: {}", result);
     return result;
@@ -807,7 +806,7 @@ bool DatabaseMetaData::generatedKeyAlwaysReturned() const {
 }
 
 bool DatabaseMetaData::nullsAreSortedHigh() const {
-    LOG_TRACE_W(L"Called");
+    LOG_TRACE("Called");
     auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
     bool result = (val == SQL_NC_HIGH);
     LOG_TRACE_W(L"Returning: {}", result);
@@ -815,7 +814,7 @@ bool DatabaseMetaData::nullsAreSortedHigh() const {
 }
 
 bool DatabaseMetaData::nullsAreSortedLow() const {
-    LOG_TRACE_W(L"Called");
+    LOG_TRACE("Called");
     auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
     bool result = (val == SQL_NC_LOW);
     LOG_TRACE_W(L"Returning: {}", result);
@@ -1188,8 +1187,8 @@ bool DatabaseMetaData::supportsGetGeneratedKeys() const {
 
 bool DatabaseMetaData::doesMaxRowSizeIncludeBlobs() const {
     LOG_TRACE("Called");
-    auto val = getInfoSafely<nanodbc::string>(connection_, SQL_MAX_ROW_SIZE_INCLUDES_LONG, L"");
-    bool result = (val == L"Y" || val == L"y");
+    auto val = getInfoSafely<nanodbc::string>(connection_, SQL_MAX_ROW_SIZE_INCLUDES_LONG, NANODBC_TEXT(""));
+    bool result = (val == NANODBC_TEXT("Y") || val == NANODBC_TEXT("y"));
     LOG_TRACE("Returning: {}", result);
     return result;
 }
@@ -1351,7 +1350,7 @@ int DatabaseMetaData::getDatabaseMajorVersion() const {
         LOG_TRACE("Version string is empty, returning 0");
         return 0;
     }
-    auto [major, minor] = processingVersionString(ver);
+    auto [major, minor] = processingVersionString(utils::to_string(ver));
     return major;
 }
 
@@ -1362,7 +1361,7 @@ int DatabaseMetaData::getDatabaseMinorVersion() const {
         LOG_TRACE("Version string is empty, returning 0");
         return 0;
     }
-    auto [major, minor] = processingVersionString(ver);
+    auto [major, minor] = processingVersionString(utils::to_string(ver));
     return minor;
 }
 
@@ -1373,7 +1372,7 @@ int DatabaseMetaData::getDriverMajorVersion() const {
         LOG_TRACE("Driver version string is empty, returning 0");
         return 0;
     }
-    auto [major, minor] = processingVersionString(ver);
+    auto [major, minor] = processingVersionString(utils::to_string(ver));
     return major;    
 }
 
@@ -1384,7 +1383,7 @@ int DatabaseMetaData::getDriverMinorVersion() const {
         LOG_TRACE("Driver version string is empty, returning 0");
         return 0;
     }
-    auto [major, minor] = processingVersionString(ver);
+    auto [major, minor] = processingVersionString(utils::to_string(ver));
     return minor;
 }
 
@@ -1536,7 +1535,7 @@ nanodbc::result DatabaseMetaData::getColumnPrivileges(const nanodbc::string& cat
     if (!SQL_SUCCEEDED(rc))
         NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
 
-    LOG_TRACE_W(L"Returning column privileges result set");
+    LOG_TRACE("Returning column privileges result set");
     return ResultSet(std::move(stmt), 1);
 }
 
@@ -1554,7 +1553,7 @@ nanodbc::result DatabaseMetaData::getTablePrivileges(const nanodbc::string& cata
     if (!SQL_SUCCEEDED(rc))
         NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
 
-    LOG_TRACE_W(L"Returning table privileges result set");
+    LOG_TRACE("Returning table privileges result set");
     return ResultSet(std::move(stmt), 1);
 }
 
@@ -1575,7 +1574,7 @@ nanodbc::result DatabaseMetaData::getBestRowIdentifier(const nanodbc::string& ca
     if (!SQL_SUCCEEDED(rc))
         NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
 
-    LOG_TRACE_W(L"Returning best row identifier result set");
+    LOG_TRACE("Returning best row identifier result set");
     return ResultSet(std::move(stmt), 1);
 }
 
@@ -1596,7 +1595,7 @@ nanodbc::result DatabaseMetaData::getVersionColumns(const nanodbc::string& catal
     if (!SQL_SUCCEEDED(rc))
         NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
 
-    LOG_TRACE_W(L"Returning version columns result set");
+    LOG_TRACE("Returning version columns result set");
     return ResultSet(std::move(stmt), 1);
 }
 
@@ -1619,7 +1618,7 @@ nanodbc::result DatabaseMetaData::getCrossReference(const nanodbc::string& paren
     if (!SQL_SUCCEEDED(rc))
         NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
 
-    LOG_TRACE_W(L"Returning cross reference result set");
+    LOG_TRACE("Returning cross reference result set");
     return ResultSet(std::move(stmt), 1);
 }
 
@@ -1639,7 +1638,7 @@ nanodbc::result DatabaseMetaData::getIndexInfo(const nanodbc::string& catalog, c
     if (!SQL_SUCCEEDED(rc))
         NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
 
-    LOG_TRACE_W(L"Returning index info result set");
+    LOG_TRACE("Returning index info result set");
     return ResultSet(std::move(stmt), 1);
 }
 

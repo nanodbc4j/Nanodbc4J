@@ -28,6 +28,31 @@ class StringOverflowException : public std::exception {
 
 } // namespace
 
+std::string utils::to_string(const std::wstring& str) {
+#ifdef _WIN32
+    // Windows: wstring is UTF-16
+    std::string result;
+    utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
+    return result;
+#else
+    // Linux/macOS: wstring is UTF-32
+    std::string result;
+    utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
+    return result;
+#endif
+}
+
+std::string utils::to_string(const std::u16string& str) {
+    std::string result;
+    utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
+    return result;
+}
+
+std::string utils::to_string(const std::u32string& str) {
+    std::string result;
+    utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
+    return result;
+}
 
 std::wstring utils::to_wstring(const char16_t* str) {
     LOG_TRACE("str={}", str ? reinterpret_cast<const char*>(str) : "(null)");

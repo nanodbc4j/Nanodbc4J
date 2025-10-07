@@ -7,6 +7,7 @@
 #include <sqlext.h>
 #include <sql.h>
 #include "utils/logger.hpp"
+#include "core/nanodbc_defs.h"
 
 #define BUFFER_SIZE 1024
 
@@ -499,59 +500,59 @@ std::wstring ResultSetMetaData::getColumnClassName(int column) const {
 #ifdef SQL_WLONGVARCHAR
         case SQL_WLONGVARCHAR:
 #endif
-            LOG_TRACE_W(L"Mapping wide string type to java.lang.String");
+            LOG_TRACE("Mapping wide string type to java.lang.String");
             return L"java.lang.String";
 
         case SQL_DECIMAL:
         case SQL_NUMERIC:
-            LOG_TRACE_W(L"Mapping decimal/numeric to java.math.BigDecimal");
+            LOG_TRACE("Mapping decimal/numeric to java.math.BigDecimal");
             return L"java.math.BigDecimal";
 
         case SQL_INTEGER:
-            LOG_TRACE_W(L"Mapping INTEGER to java.lang.Integer");
+            LOG_TRACE("Mapping INTEGER to java.lang.Integer");
             return L"java.lang.Integer";
 
         case SQL_BIGINT:
-            LOG_TRACE_W(L"Mapping BIGINT to java.lang.Long");
+            LOG_TRACE("Mapping BIGINT to java.lang.Long");
             return L"java.lang.Long";
 
         case SQL_SMALLINT:
-            LOG_TRACE_W(L"Mapping SMALLINT to java.lang.Short");
+            LOG_TRACE("Mapping SMALLINT to java.lang.Short");
             return L"java.lang.Short";
 
         case SQL_TINYINT:
-            LOG_TRACE_W(L"Mapping TINYINT to java.lang.Byte");
+            LOG_TRACE("Mapping TINYINT to java.lang.Byte");
             return L"java.lang.Byte";
 
         case SQL_REAL:
-            LOG_TRACE_W(L"Mapping REAL to java.lang.Float");
+            LOG_TRACE("Mapping REAL to java.lang.Float");
             return L"java.lang.Float";
 
         case SQL_FLOAT:
         case SQL_DOUBLE:
-            LOG_TRACE_W(L"Mapping FLOAT/DOUBLE to java.lang.Double");
+            LOG_TRACE("Mapping FLOAT/DOUBLE to java.lang.Double");
             return L"java.lang.Double";
 
         case SQL_BIT:
-            LOG_TRACE_W(L"Mapping BIT to java.lang.Boolean");
+            LOG_TRACE("Mapping BIT to java.lang.Boolean");
             return L"java.lang.Boolean";
 
         case SQL_DATE:
-            LOG_TRACE_W(L"Mapping DATE to java.sql.Date");
+            LOG_TRACE("Mapping DATE to java.sql.Date");
             return L"java.sql.Date";
 
         case SQL_TIME:
-            LOG_TRACE_W(L"Mapping TIME to java.sql.Time");
+            LOG_TRACE("Mapping TIME to java.sql.Time");
             return L"java.sql.Time";
 
         case SQL_TIMESTAMP:
-            LOG_TRACE_W(L"Mapping TIMESTAMP to java.sql.Timestamp");
+            LOG_TRACE("Mapping TIMESTAMP to java.sql.Timestamp");
             return L"java.sql.Timestamp";
 
         case SQL_BINARY:
         case SQL_VARBINARY:
         case SQL_LONGVARBINARY:
-            LOG_TRACE_W(L"Mapping binary type to [B (byte array)");
+            LOG_TRACE("Mapping binary type to [B (byte array)");
             return L"[B";
 
         default: {

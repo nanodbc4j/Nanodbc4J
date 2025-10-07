@@ -27,11 +27,13 @@ set(NANODBC_DISABLE_EXAMPLES ON)
 set(NANODBC_DISABLE_TESTS ON)
 set(NANODBC_FORCE_LIBCXX  ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
+set(SPDLOG_FMT_EXTERNAL ON)
 
 find_package(Threads REQUIRED)
 find_package(ODBC REQUIRED)
 
 add_subdirectory(third_party/nanodbc)
+add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/spdlog)
 
 # Ищем все исходники в src/
@@ -43,11 +45,11 @@ add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 # Подключаем заголовочные файлы проекта
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
-    $<$<BOOL:${WIN32}>:ODBC_EXPORTS>
-    $<$<BOOL:${WIN32}>:NOMINMAX>
-    $<$<BOOL:${WIN32}>:SPDLOG_WCHAR_TO_UTF8_SUPPORT>
-)
+if(WIN32)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE ODBC_EXPORTS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
+    add_definitions(-DSPDLOG_WCHAR_TO_UTF8_SUPPORT)
+endif()
 
 # Отключаем вывод имени файла и номера строки в исключениях nanodbc
 target_compile_definitions(nanodbc PRIVATE NANODBC_THROW_NO_SOURCE_LOCATION)
@@ -59,7 +61,8 @@ target_include_directories(utfcpp INTERFACE third_party/utfcpp/source)
 # Линкуем зависимости
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     nanodbc 
-    spdlog::spdlog
+    fmt::fmt
+    spdlog::spdlog_header_only
     ODBC::ODBC 
     Threads::Threads
     utfcpp
