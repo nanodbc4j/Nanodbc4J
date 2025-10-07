@@ -5,7 +5,7 @@
 using namespace utils;
 
 inline static ApiChar* convert(const ApiString& str) {
-    LOG_TRACE_W("Converting string to char array: '{}'", str);
+    LOG_TRACE("Converting string to char array: '{}'", to_string(str));
     ApiChar* result = duplicate_string(str.c_str(), str.length());
     LOG_TRACE("Converted string duplicated at {}", (void*)result);
     return result;

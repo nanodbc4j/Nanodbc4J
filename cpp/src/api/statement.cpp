@@ -65,8 +65,7 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
 }
 
 void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, long timeout, NativeError* error) {
-    auto wide_sql = to_wstring(sql);
-    LOG_DEBUG_W("Preparing statement: {}", wide_sql);
+    LOG_DEBUG("Preparing statement: {}", to_string(sql));
     LOG_DEBUG("Timeout: {}", timeout);
     LOG_DEBUG("Statement object: {}", reinterpret_cast<uintptr_t>(stmt));
 

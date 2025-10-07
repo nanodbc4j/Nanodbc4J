@@ -12,8 +12,11 @@
 #include <sqlext.h>
 #include <cwctype>
 #include <sql.h>
+#include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
 #include "core/nanodbc_defs.h"
+
+using namespace utils;
 
 namespace {
     class DatabaseCatalog : public nanodbc::catalog {
@@ -176,70 +179,70 @@ DatabaseMetaData::DatabaseMetaData(nanodbc::connection& connection)
 nanodbc::string DatabaseMetaData::getDatabaseProductName() const {
     LOG_TRACE("Called");
     auto result = connection_.dbms_name();
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getDatabaseProductVersion() const {
     LOG_TRACE("Called");
     auto result = connection_.dbms_version();
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getDriverName() const {
     LOG_TRACE("Called");
     auto result = connection_.driver_name();
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getDriverVersion() const {
     LOG_TRACE("Called");
     auto result = connection_.driver_version();
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getIdentifierQuoteString() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_IDENTIFIER_QUOTE_CHAR);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getSchemaTerm() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_SCHEMA_TERM);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getProcedureTerm() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_PROCEDURE_TERM);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getCatalogTerm() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_CATALOG_TERM);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getCatalogSeparator() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_CATALOG_NAME_SEPARATOR);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getSQLKeywords() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_KEYWORDS);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
@@ -282,7 +285,7 @@ nanodbc::string DatabaseMetaData::getNumericFunctions() const {
 
     nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(","));
 
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
@@ -321,7 +324,7 @@ nanodbc::string DatabaseMetaData::getStringFunctions() const {
 
     nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(""));
 
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
@@ -347,7 +350,7 @@ nanodbc::string DatabaseMetaData::getSystemFunctions() const {
 
     nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(","));
 
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
@@ -388,28 +391,28 @@ nanodbc::string DatabaseMetaData::getTimeDateFunctions() const {
 
     nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(","));
 
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getSearchStringEscape() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_SEARCH_PATTERN_ESCAPE);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getExtraNameCharacters() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_SPECIAL_CHARACTERS);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
 nanodbc::string DatabaseMetaData::getUserName() const {
     LOG_TRACE("Called");
     auto result = getInfoSafely<nanodbc::string>(connection_, SQL_USER_NAME);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", to_string(result));
     return result;
 }
 
@@ -813,7 +816,7 @@ bool DatabaseMetaData::nullsAreSortedHigh() const {
     LOG_TRACE("Called");
     auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
     bool result = (val == SQL_NC_HIGH);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", result);
     return result;
 }
 
@@ -821,7 +824,7 @@ bool DatabaseMetaData::nullsAreSortedLow() const {
     LOG_TRACE("Called");
     auto val = getInfoSafely<SQLUSMALLINT>(connection_.native_dbc_handle(), SQL_NULL_COLLATION, 0);
     bool result = (val == SQL_NC_LOW);
-    LOG_TRACE_W("Returning: {}", result);
+    LOG_TRACE("Returning: {}", result);
     return result;
 }
 
@@ -1354,7 +1357,7 @@ int DatabaseMetaData::getDatabaseMajorVersion() const {
         LOG_TRACE("Version string is empty, returning 0");
         return 0;
     }
-    auto [major, minor] = processingVersionString(utils::to_string(ver));
+    auto [major, minor] = processingVersionString(to_string(ver));
     return major;
 }
 
@@ -1365,7 +1368,7 @@ int DatabaseMetaData::getDatabaseMinorVersion() const {
         LOG_TRACE("Version string is empty, returning 0");
         return 0;
     }
-    auto [major, minor] = processingVersionString(utils::to_string(ver));
+    auto [major, minor] = processingVersionString(to_string(ver));
     return minor;
 }
 
@@ -1376,7 +1379,7 @@ int DatabaseMetaData::getDriverMajorVersion() const {
         LOG_TRACE("Driver version string is empty, returning 0");
         return 0;
     }
-    auto [major, minor] = processingVersionString(utils::to_string(ver));
+    auto [major, minor] = processingVersionString(to_string(ver));
     return major;    
 }
 
@@ -1387,7 +1390,7 @@ int DatabaseMetaData::getDriverMinorVersion() const {
         LOG_TRACE("Driver version string is empty, returning 0");
         return 0;
     }
-    auto [major, minor] = processingVersionString(utils::to_string(ver));
+    auto [major, minor] = processingVersionString(to_string(ver));
     return minor;
 }
 
@@ -1525,7 +1528,7 @@ nanodbc::result DatabaseMetaData::getTypeInfo() const {
 }
 
 nanodbc::result DatabaseMetaData::getColumnPrivileges(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& columnNamePattern) const {
-    LOG_TRACE_W("Called getColumnPrivileges({}, {}, {}, {})", catalog, schema, table, columnNamePattern);
+    LOG_TRACE("Called getColumnPrivileges({}, {}, {}, {})", to_string(catalog), to_string(schema), to_string(table), to_string(columnNamePattern));
 
     nanodbc::statement stmt(connection_);
     RETCODE rc = NANODBC_FUNC(SQLColumnPrivileges)(
@@ -1544,7 +1547,7 @@ nanodbc::result DatabaseMetaData::getColumnPrivileges(const nanodbc::string& cat
 }
 
 nanodbc::result DatabaseMetaData::getTablePrivileges(const nanodbc::string& catalog, const nanodbc::string& schemaPattern, const nanodbc::string& tableNamePattern) const {
-    LOG_TRACE_W("Called getTablePrivileges({}, {}, {})", catalog, schemaPattern, tableNamePattern);
+    LOG_TRACE("Called getTablePrivileges({}, {}, {})", to_string(catalog), to_string(schemaPattern), to_string(tableNamePattern));
 
     nanodbc::statement stmt(connection_);
     RETCODE rc = NANODBC_FUNC(SQLTablePrivileges)(
@@ -1562,7 +1565,7 @@ nanodbc::result DatabaseMetaData::getTablePrivileges(const nanodbc::string& cata
 }
 
 nanodbc::result DatabaseMetaData::getBestRowIdentifier(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, int scope, bool nullable) const {
-    LOG_TRACE_W("Called getBestRowIdentifier({}, {}, {}, {}, {})", catalog, schema, table, scope, nullable);
+    LOG_TRACE("Called getBestRowIdentifier({}, {}, {}, {}, {})", to_string(catalog), to_string(schema), to_string(table), scope, nullable);
 
     nanodbc::statement stmt(connection_);
     RETCODE rc = NANODBC_FUNC(SQLSpecialColumns)(
@@ -1583,7 +1586,7 @@ nanodbc::result DatabaseMetaData::getBestRowIdentifier(const nanodbc::string& ca
 }
 
 nanodbc::result DatabaseMetaData::getVersionColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const {
-    LOG_TRACE_W("Called getVersionColumns({}, {}, {})", catalog, schema, table);
+    LOG_TRACE("Called getVersionColumns({}, {}, {})", to_string(catalog), to_string(schema), to_string(table));
 
     nanodbc::statement stmt(connection_);
     RETCODE rc = NANODBC_FUNC(SQLSpecialColumns)(
@@ -1605,8 +1608,8 @@ nanodbc::result DatabaseMetaData::getVersionColumns(const nanodbc::string& catal
 
 nanodbc::result DatabaseMetaData::getCrossReference(const nanodbc::string& parentCatalog, const nanodbc::string& parentSchema, const nanodbc::string& parentTable,
                                                     const nanodbc::string& foreignCatalog, const nanodbc::string& foreignSchema, const nanodbc::string& foreignTable) const {
-    LOG_TRACE_W("Called getCrossReference({}, {}, {}, {}, {}, {})",
-        parentCatalog, parentSchema, parentTable, foreignCatalog, foreignSchema, foreignTable);
+    LOG_TRACE("Called getCrossReference({}, {}, {}, {}, {}, {})",
+        to_string(parentCatalog), to_string(parentSchema), to_string(parentTable), to_string(foreignCatalog), to_string(foreignSchema), to_string(foreignTable));
 
     nanodbc::statement stmt(connection_);
     RETCODE rc = NANODBC_FUNC(SQLForeignKeys)(
@@ -1627,7 +1630,7 @@ nanodbc::result DatabaseMetaData::getCrossReference(const nanodbc::string& paren
 }
 
 nanodbc::result DatabaseMetaData::getIndexInfo(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, bool unique, bool approximate) const {
-    LOG_TRACE_W("Called getIndexInfo({}, {}, {}, {}, {})", catalog, schema, table, unique, approximate);
+    LOG_TRACE("Called getIndexInfo({}, {}, {}, {}, {})", to_string(catalog), to_string(schema), to_string(table), unique, approximate);
 
     nanodbc::statement stmt(connection_);
     RETCODE rc = NANODBC_FUNC(SQLStatistics)(

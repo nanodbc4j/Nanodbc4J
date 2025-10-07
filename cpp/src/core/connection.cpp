@@ -8,13 +8,6 @@
 #include <sqlext.h>
 #include "core/nanodbc_defs.h"
 
-// Helper: Throws if ODBC call failed.
-inline static void check_odbc_result(SQLRETURN rc, const std::string& operation) {
-    if (!SQL_SUCCEEDED(rc)) {
-        throw std::runtime_error("ODBC error in " + operation);
-    }
-}
-
 void Connection::set_catalog(const nanodbc::string& catalog) {
     if (!connected()) {
         throw std::runtime_error("Cannot set isolation level: connection is not active");
@@ -31,7 +24,9 @@ void Connection::set_catalog(const nanodbc::string& catalog) {
         SQL_NTS
     );
 
-    check_odbc_result(ret, "SQLSetConnectAttr(SQL_ATTR_CURRENT_CATALOG) - Driver may not support changing catalog at runtime.");
+    if (!SQL_SUCCEEDED(ret)) {
+        throw std::runtime_error("ODBC error in SQLSetConnectAttr(SQL_ATTR_CURRENT_CATALOG) - Driver may not support changing catalog at runtime.");
+    }
 }
 
 void Connection::set_isolation_level(IsolationLevel level) {
@@ -47,7 +42,9 @@ void Connection::set_isolation_level(IsolationLevel level) {
         0
     );
 
-    check_odbc_result(rc, "SQLSetConnectAttr(SQL_ATTR_TXN_ISOLATION)");
+    if (!SQL_SUCCEEDED(rc)) {
+        throw std::runtime_error("ODBC error in SQLSetConnectAttr(SQL_ATTR_TXN_ISOLATION)");
+    }
 }
 
 IsolationLevel Connection::get_isolation_level() const {
@@ -64,7 +61,9 @@ IsolationLevel Connection::get_isolation_level() const {
         nullptr
     );
 
-    check_odbc_result(rc, "SQLGetConnectAttr(SQL_ATTR_TXN_ISOLATION)");
+    if (!SQL_SUCCEEDED(rc)) {
+        throw std::runtime_error("ODBC error in SQLGetConnectAttr(SQL_ATTR_TXN_ISOLATION)");
+    }
 
     return IsolationLevel::from_odbc(current_level);
 }

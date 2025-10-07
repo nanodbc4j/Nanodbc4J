@@ -26,7 +26,7 @@ static Connection* connection_with_error_handling(const function<Connection* ()>
 }
 
 Connection* connection(const ApiChar* connection_string, NativeError* error) {
-    LOG_DEBUG_W("Сonnection_string={}", utils::to_wstring(connection_string));
+    LOG_DEBUG("Сonnection_string={}", utils::to_string(connection_string));
     return connection_with_error_handling(
         [&]() {
             return new Connection(connection_string);
@@ -36,7 +36,7 @@ Connection* connection(const ApiChar* connection_string, NativeError* error) {
 }
 
 Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) {
-    LOG_DEBUG_W("Сonnection_string={}, timeout={}", utils::to_wstring(connection_string), timeout);
+    LOG_DEBUG("Сonnection_string={}, timeout={}", utils::to_string(connection_string), timeout);
     return connection_with_error_handling(
         [&]() {
             return new Connection(connection_string, timeout);
@@ -46,9 +46,9 @@ Connection* connection_with_timeout(const ApiChar* connection_string, long timeo
 }
 
 Connection* connection_with_user_pass_timeout(const ApiChar* dsn, const ApiChar* user, const ApiChar* pass, long timeout, NativeError* error) {
-    LOG_DEBUG_W("DSN={}, User={}, Pass=***, Timeout={}",
-        utils::to_wstring(dsn),
-        utils::to_wstring(user),
+    LOG_DEBUG("DSN={}, User={}, Pass=***, Timeout={}",
+        utils::to_string(dsn),
+        utils::to_string(user),
         timeout);
     return connection_with_error_handling(
         [&]() {
@@ -171,7 +171,7 @@ const ApiChar* get_catalog_name(Connection* conn, NativeError* error) {
             return nullptr;
         }
         auto catalog = conn->catalog_name();
-        LOG_DEBUG_W("Catalog name: '{}'", to_wstring(catalog));
+        LOG_DEBUG("Catalog name: '{}'", to_string(catalog));
         return duplicate_string(catalog.c_str(), catalog.length());
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "ConnectionError", e.what());
