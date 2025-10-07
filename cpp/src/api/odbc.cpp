@@ -86,5 +86,5 @@ void delete_driver_array(Driver** driver_array, int size) {
 		delete_driver(driver_array[i]);
 	}
 	delete[] driver_array;
-	LOG_DEBUG_W(L"Driver array deleted");
+	LOG_DEBUG("Driver array deleted");
 }

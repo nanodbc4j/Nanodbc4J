@@ -4,10 +4,9 @@
 
 using namespace utils;
 
-inline static const char16_t* convert(const std::wstring& str) {
+inline static ApiChar* convert(const ApiString& str) {
     LOG_TRACE_W(L"Converting string to char array: '{}'", str);
-    auto u16str = to_u16string(str);
-    const char16_t* result = duplicate_string(u16str.c_str(), u16str.length());
+    ApiChar* result = duplicate_string(str.c_str(), str.length());
     LOG_TRACE("Converted string duplicated at {}", (void*)result);
     return result;
 }
@@ -37,8 +36,8 @@ CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) 
 }
 
 CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
-    auto str_free = [&](const char16_t* str) {
-        if (str) free(const_cast<char16_t*>(str));
+    auto str_free = [&](const ApiChar* str) {
+        if (str) free(const_cast<ApiChar*>(str));
     };
 
     str_free(columnLabel);

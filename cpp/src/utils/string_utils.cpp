@@ -28,14 +28,20 @@ class StringOverflowException : public std::exception {
 
 } // namespace
 
+std::string utils::to_string(const std::string& str) {
+    return str;
+}
+
 std::string utils::to_string(const std::wstring& str) {
 #ifdef _WIN32
     // Windows: wstring is UTF-16
+    static_assert(sizeof(wchar_t) == 2, "wchar_t must be 16-bit on Windows");
     std::string result;
     utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #else
     // Linux/macOS: wstring is UTF-32
+    static_assert(sizeof(wchar_t) == 4, "wchar_t must be 32-bit on Unix-like systems");
     std::string result;
     utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
@@ -127,14 +133,8 @@ std::wstring utils::to_wstring(const std::string& str) {
     return to_wstring(str.c_str());
 }
 
-std::wstring utils::to_wstring(std::string_view str) {
-    LOG_TRACE("string_view length = {}", str.length());
-    return to_wstring(str.data());
-}
-
-std::wstring utils::to_wstring(std::wstring_view str) {
-    LOG_TRACE("wstring_view length = {}", str.length());
-    return std::wstring(str);
+std::wstring utils::to_wstring(const std::wstring& str) {
+    return str;
 }
 
 std::u16string utils::to_u16string(const std::string& str) {
@@ -227,6 +227,10 @@ std::u16string utils::to_u16string(const std::wstring& str) {
 
     return result;
 #endif
+}
+
+std::u16string utils::to_u16string(const std::u16string& str) {
+    return str;
 }
 
 template <typename CharT>

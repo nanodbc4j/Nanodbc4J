@@ -13,11 +13,8 @@ Driver::Attribute::Attribute(const Driver::Attribute& other) {
 
 Driver::Attribute::Attribute(const nanodbc::driver::attribute& other) {
 	LOG_TRACE("Constructing Driver::Attribute from nanodbc::driver::attribute");
-	auto _keyword = to_u16string(other.keyword);
-	keyword = duplicate_string(_keyword.c_str(), _keyword.length());
-
-	auto _value = to_u16string(other.value);
-	value = duplicate_string(_value.c_str(), _value.length());
+	keyword = duplicate_string(other.keyword.c_str(), other.keyword.length());
+	value = duplicate_string(other.value.c_str(), other.value.length());
 }
 
 Driver::Attribute::~Attribute() {
@@ -47,8 +44,7 @@ Driver::Driver(const Driver& other) {
 Driver::Driver(const nanodbc::driver& other) {
 	LOG_TRACE("Constructing Driver from nanodbc::driver");
 	attribute_count = static_cast<int>(other.attributes.size());
-	auto _name = to_u16string(other.name);
-	name = duplicate_string(_name.c_str(), _name.length());
+	name = duplicate_string(other.name.c_str(), other.name.length());
 	attributes = nullptr;
 
 	if (attribute_count > 0) {		
@@ -85,11 +81,8 @@ Datasource::Datasource(const Datasource& other) {
 
 Datasource::Datasource(const nanodbc::datasource& other) {
 	LOG_TRACE("Constructing Datasource from nanodbc::datasource");
-	auto _name = to_u16string(other.name);
-	name = duplicate_string(_name.c_str(), _name.length());
-
-	auto _driver = to_u16string(other.driver);
-	driver = duplicate_string(_driver.c_str(), _driver.length());
+	name = duplicate_string(other.name.c_str(), other.name.length());
+	driver = duplicate_string(other.driver.c_str(), other.driver.length());
 }
 
 Datasource::~Datasource() {

@@ -25,34 +25,34 @@ static Connection* connection_with_error_handling(const function<Connection* ()>
     return nullptr;
 }
 
-Connection* connection(const char16_t* connection_string, NativeError* error) {
+Connection* connection(const ApiChar* connection_string, NativeError* error) {
     LOG_DEBUG_W(L"Сonnection_string={}", utils::to_wstring(connection_string));
     return connection_with_error_handling(
         [&]() {
-            return new Connection(to_wstring(connection_string));
+            return new Connection(connection_string);
         },
         error
     );
 }
 
-Connection* connection_with_timeout(const char16_t* connection_string, long timeout, NativeError* error) {
+Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) {
     LOG_DEBUG_W(L"Сonnection_string={}, timeout={}", utils::to_wstring(connection_string), timeout);
     return connection_with_error_handling(
         [&]() {
-            return new Connection(to_wstring(connection_string), timeout);
+            return new Connection(connection_string, timeout);
         },
         error
     );
 }
 
-Connection* connection_with_user_pass_timeout(const char16_t* dsn, const char16_t* user, const char16_t* pass, long timeout, NativeError* error) {
+Connection* connection_with_user_pass_timeout(const ApiChar* dsn, const ApiChar* user, const ApiChar* pass, long timeout, NativeError* error) {
     LOG_DEBUG_W(L"DSN={}, User={}, Pass=***, Timeout={}",
         utils::to_wstring(dsn),
         utils::to_wstring(user),
         timeout);
     return connection_with_error_handling(
         [&]() {
-            return new Connection(to_wstring(dsn), to_wstring(user), to_wstring(pass), timeout);
+            return new Connection(dsn, user, pass, timeout);
         },
         error
     );
@@ -161,7 +161,7 @@ bool get_auto_commit_transaction(Connection* conn, NativeError* error) {
     return true;
 }
 
-const char16_t* get_catalog_name(Connection* conn, NativeError* error) {
+const ApiChar* get_catalog_name(Connection* conn, NativeError* error) {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -171,9 +171,8 @@ const char16_t* get_catalog_name(Connection* conn, NativeError* error) {
             return nullptr;
         }
         auto catalog = conn->catalog_name();
-        auto u16_catalog = to_u16string(catalog);
         LOG_DEBUG_W(L"Catalog name: '{}'", to_wstring(catalog));
-        return duplicate_string(u16_catalog.c_str(), u16_catalog.length());
+        return duplicate_string(catalog.c_str(), catalog.length());
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "ConnectionError", e.what());
         LOG_ERROR_W(L"Database error during get catalog name: {}", to_wstring(e.what()));
@@ -187,7 +186,7 @@ const char16_t* get_catalog_name(Connection* conn, NativeError* error) {
     return nullptr;
 }
 
-void set_catalog_name(Connection* conn, const char16_t* catalog, NativeError* error) {
+void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* error) {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -195,8 +194,7 @@ void set_catalog_name(Connection* conn, const char16_t* catalog, NativeError* er
             LOG_ERROR("Connection is null, cannot set catalog name");
             set_error(error, ErrorCode::Database, "ConnectionError", "Connection is null");
         }
-        auto w_catalog = to_wstring(catalog);
-        conn->set_catalog(w_catalog);
+        conn->set_catalog(catalog);
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "ConnectionError", e.what());
         LOG_ERROR_W(L"Database error during set catalog name: {}", to_wstring(e.what()));
@@ -273,7 +271,7 @@ int get_transaction_isolation_level(Connection* conn, NativeError* error) {
     return 0;
 }
 
-nanodbc::result* execute_request(Connection* conn, const char16_t* sql, NativeError* error) {
+nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, NativeError* error) {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -282,7 +280,7 @@ nanodbc::result* execute_request(Connection* conn, const char16_t* sql, NativeEr
             set_error(error, ErrorCode::Database, "ExecuteError", "Connection is null");
             return nullptr;
         }
-        auto results = nanodbc::execute(*conn, to_wstring(sql));
+        auto results = nanodbc::execute(*conn, sql);
         auto result_ptr = new nanodbc::result(results);
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
@@ -299,7 +297,7 @@ nanodbc::result* execute_request(Connection* conn, const char16_t* sql, NativeEr
     return nullptr;
 }
 
-int execute_request_update(Connection* conn, const char16_t* sql, NativeError* error) {
+int execute_request_update(Connection* conn, const ApiChar* sql, NativeError* error) {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -308,7 +306,7 @@ int execute_request_update(Connection* conn, const char16_t* sql, NativeError* e
             set_error(error, ErrorCode::Database, "ExecuteError", "Connection is null");
             return 0;
         }
-        auto results = nanodbc::execute(*conn, to_wstring(sql));
+        auto results = nanodbc::execute(*conn, sql);
         int affected_rows = static_cast<int>(results.rowset_size());
         LOG_DEBUG("Update executed successfully, affected rows: {}", affected_rows);
         return affected_rows;

@@ -24,11 +24,11 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
     }
 }
 
-static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const std::wstring& value, NativeError* error) {
+static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const nanodbc::string& value, NativeError* error) {
     init_error(error);
     try {
         // Оборачиваем одну строку в вектор
-        std::vector<std::wstring> vec{ value };
+        std::vector<nanodbc::string> vec{ value };
         stmt->bind_strings(index, vec);
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
@@ -64,7 +64,7 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
     }
 }
 
-void prepare_statement(nanodbc::statement* stmt, const char16_t* sql, long timeout, NativeError* error) {
+void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, long timeout, NativeError* error) {
     auto wide_sql = to_wstring(sql);
     LOG_DEBUG_W(L"Preparing statement: {}", wide_sql);
     LOG_DEBUG("Timeout: {}", timeout);
@@ -77,7 +77,7 @@ void prepare_statement(nanodbc::statement* stmt, const char16_t* sql, long timeo
             set_error(error, ErrorCode::Database, "StatementError", "Statement is null");
             return;
         }
-        nanodbc::prepare(*stmt, wide_sql, timeout);
+        nanodbc::prepare(*stmt, sql, timeout);
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "StatementError", e.what());
         LOG_ERROR_W(L"Database error during prepare: {}", to_wstring(e.what()));
@@ -115,13 +115,12 @@ void set_short_value(nanodbc::statement* stmt, int index, short value, NativeErr
     set_value_with_error_handling(stmt, index, value, error);
 }
 
-void set_string_value(nanodbc::statement* stmt, int index, const char16_t* value, NativeError* error) {
+void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value, NativeError* error) {
     if (!value) {
         return set_value_with_error_handling(stmt, index, nullptr, error);
     }
     
-    std::wstring wide_str = to_wstring(value);
-    set_value_with_error_handling(stmt, index, wide_str, error);
+    set_value_with_error_handling(stmt, index, nanodbc::string(value), error);
 }
 
 void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeError* error) {

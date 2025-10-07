@@ -3,12 +3,13 @@
 #include "struct/error_info.h"
 #include "struct/nanodbc_c.h"
 #include "api/export.h"
+#include "api/api.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    ODBC_API void prepare_statement(nanodbc::statement* stmt, const char16_t* sql, long timeout, NativeError* error);
+    ODBC_API void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, long timeout, NativeError* error);
 
     ODBC_API void set_int_value(nanodbc::statement* stmt, int index, int value, NativeError* error);
 
@@ -22,7 +23,7 @@ extern "C" {
 
     ODBC_API void set_short_value(nanodbc::statement* stmt, int index, short value, NativeError* error);
 
-    ODBC_API void set_string_value(nanodbc::statement* stmt, int index, const char16_t* value, NativeError* error);
+    ODBC_API void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value, NativeError* error);
 
     ODBC_API void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeError* error);
 

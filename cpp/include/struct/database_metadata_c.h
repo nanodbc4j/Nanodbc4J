@@ -1,5 +1,6 @@
 #pragma once
 #include "core/database_metadata.hpp"
+#include "api/api.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -7,23 +8,23 @@ extern "C" {
 
     struct CDatabaseMetaData {
         // === Строковые значения ===
-        const char16_t* databaseProductName = nullptr;
-        const char16_t* databaseProductVersion = nullptr;
-        const char16_t* driverName = nullptr;
-        const char16_t* driverVersion = nullptr;
-        const char16_t* identifierQuoteString = nullptr;
-        const char16_t* schemaTerm = nullptr;
-        const char16_t* procedureTerm = nullptr;
-        const char16_t* catalogTerm = nullptr;
-        const char16_t* catalogSeparator = nullptr;
-        const char16_t* sqlKeywords = nullptr;
-        const char16_t* numericFunctions = nullptr;
-        const char16_t* stringFunctions = nullptr;
-        const char16_t* systemFunctions = nullptr;
-        const char16_t* timeDateFunctions = nullptr;
-        const char16_t* searchStringEscape = nullptr;
-        const char16_t* extraNameCharacters = nullptr;
-        const char16_t* userName = nullptr;
+        const ApiChar* databaseProductName = nullptr;
+        const ApiChar* databaseProductVersion = nullptr;
+        const ApiChar* driverName = nullptr;
+        const ApiChar* driverVersion = nullptr;
+        const ApiChar* identifierQuoteString = nullptr;
+        const ApiChar* schemaTerm = nullptr;
+        const ApiChar* procedureTerm = nullptr;
+        const ApiChar* catalogTerm = nullptr;
+        const ApiChar* catalogSeparator = nullptr;
+        const ApiChar* sqlKeywords = nullptr;
+        const ApiChar* numericFunctions = nullptr;
+        const ApiChar* stringFunctions = nullptr;
+        const ApiChar* systemFunctions = nullptr;
+        const ApiChar* timeDateFunctions = nullptr;
+        const ApiChar* searchStringEscape = nullptr;
+        const ApiChar* extraNameCharacters = nullptr;
+        const ApiChar* userName = nullptr;
 
         // === Булевы значения ===
         bool isReadOnly = false;
