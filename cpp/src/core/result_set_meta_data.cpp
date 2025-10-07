@@ -11,124 +11,96 @@
 
 #define BUFFER_SIZE 1024
 
-// Проверка успешности выполнени¤ ODBC операции
-inline static bool isOdbcSuccess(const SQLRETURN& ret) {
-    bool success = (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
-    if (!success) {
-        LOG_DEBUG("ODBC operation failed with return code: {}", ret);
-    }
-    return success;
-}
-
 // Вспомогательный метод для определения по имени типа
-static const std::wstring determineClassNameByTypeName(int column, int sqlType, const std::wstring& typeName) {
+static const nanodbc::string determineClassNameByTypeName(int column, int sqlType, const nanodbc::string& typeName) {
     LOG_TRACE_W(L"column={}, sqlType={}, typeName={}", column, sqlType, typeName);
 
     try {
-        std::string lowerTypeName;
-        lowerTypeName.reserve(typeName.size());
-
-        // Преобразование wstring в string и в нижний регистр
-        for (wchar_t c : typeName) {
-            lowerTypeName += static_cast<char>(std::tolower(c));
-        }
+        std::string lowerTypeName = utils::to_string(typeName);
+        std::for_each(lowerTypeName.begin(), lowerTypeName.end(), [](char& c) {
+            c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+        });
 
         LOG_DEBUG("Resolved type name in lowercase: {}", lowerTypeName);
 
         if (lowerTypeName.find("bool") != std::string::npos ||
             lowerTypeName.find("bit") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Boolean");
-            return L"java.lang.Boolean";
-        }
-        else if (lowerTypeName.find("tinyint") != std::string::npos) {
+            return NANODBC_TEXT("java.lang.Boolean");
+        } else if (lowerTypeName.find("tinyint") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Byte");
-            return L"java.lang.Byte";
-        }
-        else if (lowerTypeName.find("smallint") != std::string::npos) {
+            return NANODBC_TEXT("java.lang.Byte");
+        } else if (lowerTypeName.find("smallint") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Short");
-            return L"java.lang.Short";
-        }
-        else if (lowerTypeName.find("int") != std::string::npos ||
+            return NANODBC_TEXT("java.lang.Short");
+        } else if (lowerTypeName.find("int") != std::string::npos ||
             lowerTypeName.find("integer") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Integer");
-            return L"java.lang.Integer";
-        }
-        else if (lowerTypeName.find("bigint") != std::string::npos) {
+            return NANODBC_TEXT("java.lang.Integer");
+        } else if (lowerTypeName.find("bigint") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Long");
-            return L"java.lang.Long";
-        }
-        else if (lowerTypeName.find("float") != std::string::npos) {
+            return NANODBC_TEXT("java.lang.Long");
+        } else if (lowerTypeName.find("float") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Float");
-            return L"java.lang.Float";
-        }
-        else if (lowerTypeName.find("real") != std::string::npos) {
+            return NANODBC_TEXT("java.lang.Float");
+        } else if (lowerTypeName.find("real") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Float");
-            return L"java.lang.Float";
-        }
-        else if (lowerTypeName.find("double") != std::string::npos) {
+            return NANODBC_TEXT("java.lang.Float");
+        } else if (lowerTypeName.find("double") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Double");
-            return L"java.lang.Double";
-        }
-        else if (lowerTypeName.find("decimal") != std::string::npos ||
+            return NANODBC_TEXT("java.lang.Double");
+        } else if (lowerTypeName.find("decimal") != std::string::npos ||
             lowerTypeName.find("numeric") != std::string::npos) {
             LOG_TRACE("Mapping to java.math.BigDecimal");
-            return L"java.math.BigDecimal";
-        }
-        else if (lowerTypeName.find("date") != std::string::npos) {
+            return NANODBC_TEXT("java.math.BigDecimal");
+        } else if (lowerTypeName.find("date") != std::string::npos) {
             LOG_TRACE("Mapping to java.sql.Date");
-            return L"java.sql.Date";
-        }
-        else if (lowerTypeName.find("timestamp") != std::string::npos ||
+            return NANODBC_TEXT("java.sql.Date");
+        } else if (lowerTypeName.find("timestamp") != std::string::npos ||
             lowerTypeName.find("datetime") != std::string::npos) {
             LOG_TRACE("Mapping to java.sql.Timestamp");
-            return L"java.sql.Timestamp";
-        }
-        else if (lowerTypeName.find("time") != std::string::npos) {
+            return NANODBC_TEXT("java.sql.Timestamp");
+        } else if (lowerTypeName.find("time") != std::string::npos) {
             LOG_TRACE("Mapping to java.sql.Time");
-            return L"java.sql.Time";
-        }
-        else if (lowerTypeName.find("char") != std::string::npos ||
+            return NANODBC_TEXT("java.sql.Time");
+        } else if (lowerTypeName.find("char") != std::string::npos ||
             lowerTypeName.find("varchar") != std::string::npos ||
             lowerTypeName.find("text") != std::string::npos ||
             lowerTypeName.find("string") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.String");
-            return L"java.lang.String";
-        }
-        else if (lowerTypeName.find("binary") != std::string::npos ||
+            return NANODBC_TEXT("java.lang.String");
+        } else if (lowerTypeName.find("binary") != std::string::npos ||
             lowerTypeName.find("varbinary") != std::string::npos ||
             lowerTypeName.find("blob") != std::string::npos) {
             LOG_TRACE("Mapping to [B (byte array)");
-            return L"[B"; // byte array
-        }
-        else if (lowerTypeName.find("guid") != std::string::npos ||
+            return NANODBC_TEXT("[B"); // byte array
+        } else if (lowerTypeName.find("guid") != std::string::npos ||
             lowerTypeName.find("uuid") != std::string::npos) {
             LOG_TRACE("Mapping to java.util.UUID");
-            return L"java.util.UUID";
+            return NANODBC_TEXT("java.util.UUID");
         }
 
         // Fallback для неизвестных типов
         if (sqlType == SQL_UNKNOWN_TYPE) {
             LOG_DEBUG("SQL type is unknown, falling back to java.lang.Object");
-            return L"java.lang.Object";
+            return NANODBC_TEXT("java.lang.Object");
         }
 
         // Для известных SQL типов без конкретного case
         LOG_DEBUG_W(L"No match found, falling back to java.lang.String for type: {}", typeName);
-        return L"java.lang.String";
+        return NANODBC_TEXT("java.lang.String");
 
-    }
-    catch (const std::exception& e) {
+    } catch (const std::exception& e) {
         LOG_DEBUG("Exception in determineClassNameByTypeName: {}", e.what());
-        return L"java.lang.Object";
-    }
-    catch (...) {
+        return NANODBC_TEXT("java.lang.Object");
+    } catch (...) {
         LOG_DEBUG("Unknown exception in determineClassNameByTypeName");
-        return L"java.lang.Object";
+        return NANODBC_TEXT("java.lang.Object");
     }
 }
 
 // Получение строкового атрибута колонки через ODBC
-inline static std::wstring getColumnStringAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
+inline static nanodbc::string getColumnStringAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
     LOG_TRACE("hStmt={}, column={}, field={}", hStmt, column, field);
 
     SQLWCHAR buffer[BUFFER_SIZE] = { 0 };
@@ -142,18 +114,18 @@ inline static std::wstring getColumnStringAttribute(const SQLHSTMT& hStmt, const
         &byteLength,
         nullptr);
 
-    if (isOdbcSuccess(ret) && byteLength > 0) {
+    if (SQL_SUCCEEDED(ret) && byteLength > 0) {
         // Преобразуем байты в количество символов
         SQLSMALLINT numChars = byteLength / sizeof(SQLWCHAR);
 
         // Защита от переполнения
         numChars = std::min(numChars, static_cast<SQLSMALLINT>(BUFFER_SIZE - 1));
-        std::wstring result(buffer, numChars);
+        nanodbc::string result(buffer, numChars);
         LOG_DEBUG_W(L"Got string attribute value: '{}'", result);
         return result;
     }
     LOG_DEBUG("Failed to get string attribute, return empty wstring");
-    return std::wstring();
+    return nanodbc::string();
 }
 
 // Получение числового атрибута колонки через ODBC
@@ -170,7 +142,7 @@ inline static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLU
         nullptr,
         &value);
 
-    if (isOdbcSuccess(ret)) {
+    if (SQL_SUCCEEDED(ret)) {
         LOG_DEBUG("Numeric attribute value: {}", value);
         return value;
     } else {
@@ -201,13 +173,17 @@ bool ResultSetMetaData::isAutoIncrement(int column) const {
 
     // Дополнительные проверки через другие атрибуты
     value = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
-    std::wstring name = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
+    nanodbc::string name = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
 
     // Ёвристика: если им¤ содержит "id" или "identity", возможно это автоинкремент
-    std::wstring lowerName = name;
-    std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::towlower);
-    bool heuristicMatch = (lowerName.find(L"id") != std::wstring::npos ||
-                           lowerName.find(L"identity") != std::wstring::npos);
+    std::string lowerName = utils::to_string(name);
+
+    std::for_each(lowerName.begin(), lowerName.end(), [](char& c) {
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));    
+    });
+
+    bool heuristicMatch = (lowerName.find("id") != std::string::npos ||
+                           lowerName.find("identity") != std::string::npos);
     if (heuristicMatch) {
         LOG_DEBUG_W(L"Heuristic: column {} name '{}' suggests auto-increment", column, name);
     }
@@ -250,12 +226,16 @@ bool ResultSetMetaData::isCurrency(int column) const {
     }
 
     // проверка по имени типа
-    std::wstring typeName = getColumnTypeName(column);
-    std::transform(typeName.begin(), typeName.end(), typeName.begin(), ::towlower);
-    bool isCurrency = (typeName.find(L"money") != std::wstring::npos ||
-                        typeName.find(L"currency") != std::wstring::npos);
+    std::string typeName = utils::to_string(getColumnTypeName(column));
+
+    std::for_each(typeName.begin(), typeName.end(), [](char& c) {
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    });
+
+    bool isCurrency = (typeName.find("money") != std::string::npos ||
+                        typeName.find("currency") != std::string::npos);
     if (isCurrency) {
-        LOG_DEBUG_W(L"Column {} type name '{}' suggests currency", column, typeName);
+        LOG_DEBUG("Column {} type name '{}' suggests currency", column, typeName);
     }
     return isCurrency;
 }
@@ -266,7 +246,7 @@ int ResultSetMetaData::isNullable(int column) const {
     SQLSMALLINT nullable = SQL_NULLABLE_UNKNOWN;
     SQLRETURN ret = SQLDescribeColW(result_.native_statement_handle(), column, nullptr, 0, nullptr, nullptr, nullptr, nullptr, &nullable);
 
-    if (isOdbcSuccess(ret)) {
+    if (SQL_SUCCEEDED(ret)) {
         LOG_DEBUG("isNullable: column {} -> {}", column, nullable);
         return nullable;
     }
@@ -304,25 +284,25 @@ int ResultSetMetaData::getColumnDisplaySize(int column) const {
     return 0;
 }
 
-std::wstring ResultSetMetaData::getColumnLabel(int column) const {
+nanodbc::string ResultSetMetaData::getColumnLabel(int column) const {
     LOG_TRACE("column={}", column);
-    std::wstring label = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_LABEL);
+    nanodbc::string label = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_LABEL);
     if (!label.empty()) {
         LOG_DEBUG_W(L"Column {} label: '{}'", column, label);
         return label;
     }
 
     // если нет специального label, используем имя
-    std::wstring name = getColumnName(column);
+    nanodbc::string name = getColumnName(column);
     LOG_DEBUG_W(L"Using column name as label: '{}'", name);
     return name;
 }
 
-std::wstring ResultSetMetaData::getColumnName(int column) const {
+nanodbc::string ResultSetMetaData::getColumnName(int column) const {
     LOG_TRACE("column={}", column);
 
     try {
-        std::wstring name = result_.column_name(column - 1);
+        nanodbc::string name = result_.column_name(column - 1);
         LOG_DEBUG_W(L"Column {} name: '{}'", column, name);
         return name;
     } catch (const std::exception& e) {
@@ -330,12 +310,12 @@ std::wstring ResultSetMetaData::getColumnName(int column) const {
     } catch (...) {
         LOG_DEBUG("Unknown exception in getColumnName({})", column);
     }
-    return std::wstring();
+    return nanodbc::string();
 }
 
-std::wstring ResultSetMetaData::getSchemaName(int column) const {
+nanodbc::string ResultSetMetaData::getSchemaName(int column) const {
     LOG_TRACE("column={}", column);
-    std::wstring schema = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_SCHEMA_NAME);
+    nanodbc::string schema = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_SCHEMA_NAME);
     if (!schema.empty()) {
         LOG_DEBUG_W(L"Column {} schema: '{}'", column, schema);
     }
@@ -378,18 +358,18 @@ int ResultSetMetaData::getScale(int column) const {
     return 0;
 }
 
-std::wstring ResultSetMetaData::getTableName(int column) const {
+nanodbc::string ResultSetMetaData::getTableName(int column) const {
     LOG_TRACE("column={}", column);
-    std::wstring table = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TABLE_NAME);
+    nanodbc::string table = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TABLE_NAME);
     if (!table.empty()) {
         LOG_DEBUG_W(L"Column {} table: '{}'", column, table);
     }
     return table;
 }
 
-std::wstring ResultSetMetaData::getCatalogName(int column) const {
+nanodbc::string ResultSetMetaData::getCatalogName(int column) const {
     LOG_TRACE("column={}", column);
-    std::wstring catalog = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_CATALOG_NAME);
+    nanodbc::string catalog = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_CATALOG_NAME);
     if (!catalog.empty()) {
         LOG_DEBUG_W(L"Column {} catalog: '{}'", column, catalog);
     }
@@ -409,7 +389,7 @@ int ResultSetMetaData::getColumnType(int column) const {
 
     SQLSMALLINT type = 0;
     SQLRETURN ret = SQLDescribeColW(result_.native_statement_handle(), column, nullptr, 0, nullptr, &type, nullptr, nullptr, nullptr);
-    if (isOdbcSuccess(ret)) {
+    if (SQL_SUCCEEDED(ret)) {
         LOG_DEBUG("Column {} type (via SQLDescribeColW): {}", column, type);
         return type;
     }
@@ -418,10 +398,10 @@ int ResultSetMetaData::getColumnType(int column) const {
     return SQL_UNKNOWN_TYPE;
 }
 
-std::wstring ResultSetMetaData::getColumnTypeName(int column) const {
+nanodbc::string ResultSetMetaData::getColumnTypeName(int column) const {
     LOG_TRACE("column={}", column);
     // Сначала пробуем получить им¤ типа через ODBC
-    std::wstring typeName = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TYPE_NAME);
+    nanodbc::string typeName = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TYPE_NAME);
     if (!typeName.empty()) {
         LOG_DEBUG_W(L"Column {} type name: '{}'", column, typeName);
         return typeName;
@@ -432,31 +412,30 @@ std::wstring ResultSetMetaData::getColumnTypeName(int column) const {
     // Fallback: сопоставление по типу данных
     int type = getColumnType(column);
     switch (type) {
-        case SQL_INTEGER: return L"INTEGER";
-        case SQL_VARCHAR: return L"VARCHAR";
-        case SQL_CHAR: return L"CHAR";
-        case SQL_DECIMAL: return L"DECIMAL";
-        case SQL_NUMERIC: return L"NUMERIC";
-        case SQL_TIMESTAMP: return L"TIMESTAMP";
-        case SQL_BIGINT: return L"BIGINT";
-        case SQL_SMALLINT: return L"SMALLINT";
-        case SQL_TINYINT: return L"TINYINT";
-        case SQL_REAL: return L"REAL";
-        case SQL_FLOAT: return L"FLOAT";
-        case SQL_DOUBLE: return L"DOUBLE";
-        case SQL_DATE: return L"DATE";
-        case SQL_TIME: return L"TIME";
-        case SQL_WVARCHAR: return L"NVARCHAR";
-        case SQL_WCHAR: return L"NCHAR";
-        case SQL_BIT: return L"BIT";
-        case SQL_BINARY: return L"BINARY";
-        case SQL_VARBINARY: return L"VARBINARY";
-        case SQL_LONGVARCHAR: return L"LONGVARCHAR";
-        case SQL_LONGVARBINARY: return L"LONGVARBINARY";
+        case SQL_INTEGER: return NANODBC_TEXT("INTEGER");
+        case SQL_VARCHAR: return NANODBC_TEXT("VARCHAR");
+        case SQL_CHAR: return NANODBC_TEXT("CHAR");
+        case SQL_DECIMAL: return NANODBC_TEXT("DECIMAL");
+        case SQL_NUMERIC: return NANODBC_TEXT("NUMERIC");
+        case SQL_TIMESTAMP: return NANODBC_TEXT("TIMESTAMP");
+        case SQL_BIGINT: return NANODBC_TEXT("BIGINT");
+        case SQL_SMALLINT: return NANODBC_TEXT("SMALLINT");
+        case SQL_TINYINT: return NANODBC_TEXT("TINYINT");
+        case SQL_REAL: return NANODBC_TEXT("REAL");
+        case SQL_FLOAT: return NANODBC_TEXT("FLOAT");
+        case SQL_DOUBLE: return NANODBC_TEXT("DOUBLE");
+        case SQL_DATE: return NANODBC_TEXT("DATE");
+        case SQL_TIME: return NANODBC_TEXT("TIME");
+        case SQL_WVARCHAR: return NANODBC_TEXT("NVARCHAR");
+        case SQL_WCHAR: return NANODBC_TEXT("NCHAR");
+        case SQL_BIT: return NANODBC_TEXT("BIT");
+        case SQL_BINARY: return NANODBC_TEXT("BINARY");
+        case SQL_VARBINARY: return NANODBC_TEXT("VARBINARY");
+        case SQL_LONGVARCHAR: return NANODBC_TEXT("LONGVARCHAR");
+        case SQL_LONGVARBINARY: return NANODBC_TEXT("LONGVARBINARY");
         default: {
-            std::wstring unknown = L"UNKNOWN";
-            LOG_DEBUG_W(L"Unknown SQL type {}, returning '{}'", type, unknown);
-            return unknown;
+            LOG_DEBUG("Unknown SQL type {}, returning UNKNOWN", type);
+            return NANODBC_TEXT("UNKNOWN");
         }
     }
 }
@@ -485,7 +464,7 @@ bool ResultSetMetaData::isDefinitelyWritable(int column) const {
     return definitelyWritable;
 }
 
-std::wstring ResultSetMetaData::getColumnClassName(int column) const {
+nanodbc::string ResultSetMetaData::getColumnClassName(int column) const {
     LOG_TRACE("column={}", column);
 
     int sqlType = getColumnType(column);
@@ -501,63 +480,63 @@ std::wstring ResultSetMetaData::getColumnClassName(int column) const {
         case SQL_WLONGVARCHAR:
 #endif
             LOG_TRACE("Mapping wide string type to java.lang.String");
-            return L"java.lang.String";
+            return NANODBC_TEXT("java.lang.String");
 
         case SQL_DECIMAL:
         case SQL_NUMERIC:
             LOG_TRACE("Mapping decimal/numeric to java.math.BigDecimal");
-            return L"java.math.BigDecimal";
+            return NANODBC_TEXT("java.math.BigDecimal");
 
         case SQL_INTEGER:
             LOG_TRACE("Mapping INTEGER to java.lang.Integer");
-            return L"java.lang.Integer";
+            return NANODBC_TEXT("java.lang.Integer");
 
         case SQL_BIGINT:
             LOG_TRACE("Mapping BIGINT to java.lang.Long");
-            return L"java.lang.Long";
+            return NANODBC_TEXT("java.lang.Long");
 
         case SQL_SMALLINT:
             LOG_TRACE("Mapping SMALLINT to java.lang.Short");
-            return L"java.lang.Short";
+            return NANODBC_TEXT("java.lang.Short");
 
         case SQL_TINYINT:
             LOG_TRACE("Mapping TINYINT to java.lang.Byte");
-            return L"java.lang.Byte";
+            return NANODBC_TEXT("java.lang.Byte");
 
         case SQL_REAL:
             LOG_TRACE("Mapping REAL to java.lang.Float");
-            return L"java.lang.Float";
+            return NANODBC_TEXT("java.lang.Float");
 
         case SQL_FLOAT:
         case SQL_DOUBLE:
             LOG_TRACE("Mapping FLOAT/DOUBLE to java.lang.Double");
-            return L"java.lang.Double";
+            return NANODBC_TEXT("java.lang.Double");
 
         case SQL_BIT:
             LOG_TRACE("Mapping BIT to java.lang.Boolean");
-            return L"java.lang.Boolean";
+            return NANODBC_TEXT("java.lang.Boolean");
 
         case SQL_DATE:
             LOG_TRACE("Mapping DATE to java.sql.Date");
-            return L"java.sql.Date";
+            return NANODBC_TEXT("java.sql.Date");
 
         case SQL_TIME:
             LOG_TRACE("Mapping TIME to java.sql.Time");
-            return L"java.sql.Time";
+            return NANODBC_TEXT("java.sql.Time");
 
         case SQL_TIMESTAMP:
             LOG_TRACE("Mapping TIMESTAMP to java.sql.Timestamp");
-            return L"java.sql.Timestamp";
+            return NANODBC_TEXT("java.sql.Timestamp");
 
         case SQL_BINARY:
         case SQL_VARBINARY:
         case SQL_LONGVARBINARY:
             LOG_TRACE("Mapping binary type to [B (byte array)");
-            return L"[B";
+            return NANODBC_TEXT("[B");
 
         default: {
-            std::wstring typeName = getColumnTypeName(column);
-            std::wstring className = determineClassNameByTypeName(column, sqlType, typeName);
+            nanodbc::string typeName = getColumnTypeName(column);
+            nanodbc::string className = determineClassNameByTypeName(column, sqlType, typeName);
             LOG_DEBUG_W(L"Using determineClassNameByTypeName: type={}, typeName='{}' -> className='{}'", sqlType, typeName, className);
             return className;
         }
