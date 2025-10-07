@@ -1,7 +1,6 @@
 #pragma once
 #include <nanodbc/nanodbc.h>
 #include "struct/error_info.h"
-#include "api/export.h"
 #include "api/api.h"
 #include "struct/nanodbc_c.h"
 #include "struct/binary_array.h"

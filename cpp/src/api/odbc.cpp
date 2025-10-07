@@ -27,7 +27,7 @@ int set_log_level(int level) {
 		LOG_DEBUG("Set log level: {}", result_level_name);
 		return ErrorCode::Success;
 	} catch (const std::exception& e) {
-		LOG_ERROR_W(L"Exception in set_log_level: {}", utils::to_wstring(e.what()));
+		LOG_ERROR("Exception in set_log_level: {}", e.what());
 	} catch (...) {
 		LOG_ERROR("Unknown exception in get_value");
 	}

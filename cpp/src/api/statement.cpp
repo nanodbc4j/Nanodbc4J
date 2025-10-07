@@ -11,13 +11,13 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
         stmt->bind(index, &value);
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR_W(L"Index range error in set_value: {}", to_wstring(e.what()));
+        LOG_ERROR("Index range error in set_value: {}", e.what());
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR_W(L"Type incompatible error in set_value: {}", to_wstring(e.what()));
+        LOG_ERROR("Type incompatible error in set_value: {}", e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR_W(L"Standard exception in set_value: {}", to_wstring(e.what()));
+        LOG_ERROR("Standard exception in set_value: {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in set_value");
@@ -32,13 +32,13 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
         stmt->bind_strings(index, vec);
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR_W(L"Index range error (String): {}", to_wstring(e.what()));
+        LOG_ERROR("Index range error (String): {}", e.what());
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR_W(L"Type incompatible error (String): {}", to_wstring(e.what()));
+        LOG_ERROR("Type incompatible error (String): {}", e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR_W(L"Standard exception (String {}", to_wstring(e.what()));
+        LOG_ERROR("Standard exception (String {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error setting string");
         LOG_ERROR("Unknown exception (String)");
@@ -51,13 +51,13 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
         stmt->bind_null(index);
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR_W(L"Index range error (NULL): {}", to_wstring(e.what()));
+        LOG_ERROR("Index range error (NULL): {}", e.what());
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR_W(L"Type incompatible error (NULL): {}", to_wstring(e.what()));
+        LOG_ERROR("Type incompatible error (NULL): {}", e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR_W(L"Standard exception (NULL): {}", to_wstring(e.what()));
+        LOG_ERROR("Standard exception (NULL): {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error setting NULL");
         LOG_ERROR("Unknown exception (NULL)");
@@ -66,7 +66,7 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
 
 void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, long timeout, NativeError* error) {
     auto wide_sql = to_wstring(sql);
-    LOG_DEBUG_W(L"Preparing statement: {}", wide_sql);
+    LOG_DEBUG_W("Preparing statement: {}", wide_sql);
     LOG_DEBUG("Timeout: {}", timeout);
     LOG_DEBUG("Statement object: {}", reinterpret_cast<uintptr_t>(stmt));
 
@@ -80,10 +80,10 @@ void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, long timeou
         nanodbc::prepare(*stmt, sql, timeout);
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "StatementError", e.what());
-        LOG_ERROR_W(L"Database error during prepare: {}", to_wstring(e.what()));
+        LOG_ERROR("Database error during prepare: {}", e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "StatementError", e.what());
-        LOG_ERROR_W(L"Standard exception during prepare: {}", to_wstring(e.what()));
+        LOG_ERROR("Standard exception during prepare: {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown create statement error");
         LOG_ERROR("Unknown exception during prepare");
@@ -184,10 +184,10 @@ nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {
         return result_ptr;
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "ExecuteError", e.what());
-        LOG_ERROR_W(L"Database error during execute: {}", to_wstring(e.what()));
+        LOG_ERROR("Database error during execute: {}", e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "ExecuteError", e.what());
-        LOG_ERROR_W(L"Database error during execute: {}", to_wstring(e.what()));
+        LOG_ERROR("Database error during execute: {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown execute statement error");
         LOG_ERROR("Unknown exception during execute");
@@ -210,10 +210,10 @@ int execute_update(nanodbc::statement* stmt, NativeError* error) {
         return affected_rows;
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "ExecuteError", e.what());
-        LOG_ERROR_W(L"Database error during execute_update: {}", to_wstring(e.what()));
+        LOG_ERROR("Database error during execute_update: {}", e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "ExecuteError", e.what());
-        LOG_ERROR_W(L"Standard exception during execute_update: {}", to_wstring(e.what()));
+        LOG_ERROR("Standard exception during execute_update: {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown execute statement error");
         LOG_ERROR("Unknown exception during execute_update");
@@ -236,10 +236,10 @@ void close_statement(nanodbc::statement* stmt, NativeError* error) {
         LOG_DEBUG("Statement successfully closed and deleted");
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "StatementError", e.what());
-        LOG_ERROR_W(L"Database error during close_statement: {}", to_wstring(e.what()));
+        LOG_ERROR("Database error during close_statement: {}", e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "StatementError", e.what());
-        LOG_ERROR_W(L"Standard exception during close_statement: {}", to_wstring(e.what()));
+        LOG_ERROR("Standard exception during close_statement: {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown close statement error");
         LOG_ERROR("Unknown exception during close_statement");

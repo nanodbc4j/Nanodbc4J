@@ -4,7 +4,7 @@
 using namespace utils;
 
 template<typename Func>
-static nanodbc::result* execute_metadata_query(nanodbc::connection* conn, Func&& func, NativeError* error, const char* operation_name) {
+static nanodbc::result* execute_metadata_query(nanodbc::connection* conn, Func&& func, NativeError* error, const std::string& operation_name) {
     LOG_DEBUG("Executing metadata query '{}' on connection: {}", operation_name, reinterpret_cast<uintptr_t>(conn));
     init_error(error);
 
@@ -24,10 +24,10 @@ static nanodbc::result* execute_metadata_query(nanodbc::connection* conn, Func&&
 
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "MetaDataError", e.what());
-        LOG_ERROR_W(L"Database error in '{}': {}", to_wstring(operation_name), to_wstring(e.what()));
+        LOG_ERROR("Database error in '{}': {}", operation_name, e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "MetaDataError", e.what());
-        LOG_ERROR_W(L"Exception in '{}': {}", to_wstring(operation_name), to_wstring(e.what()));
+        LOG_ERROR("Exception in '{}': {}", operation_name, e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in '{}'", operation_name);
@@ -52,7 +52,7 @@ CDatabaseMetaData* get_database_meta_data(nanodbc::connection* conn, NativeError
 		return meta_data;
 	} catch (const std::exception& e) {
 		set_error(error, ErrorCode::Standard, "DatabaseMetaData", e.what());
-		LOG_ERROR_W(L"Exception in get_database_meta_data: {}", to_wstring(e.what()));
+		LOG_ERROR("Exception in get_database_meta_data: {}", e.what());
 	} catch (...) {
 		set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
 		LOG_ERROR("Unknown exception in get_database_meta_data");
@@ -76,7 +76,7 @@ bool database_meta_data_support_convert (nanodbc::connection* conn, int from_typ
 		return result;
 	} catch (const std::exception& e) {
 		set_error(error, ErrorCode::Standard, "DatabaseMetaData", e.what());
-		LOG_ERROR_W(L"Exception in database_meta_data_support_convert: {}", to_wstring(e.what()));
+		LOG_ERROR("Exception in database_meta_data_support_convert: {}", e.what());
 	} catch (...) {
 		set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
 		LOG_ERROR("Unknown exception in database_meta_data_support_convert");

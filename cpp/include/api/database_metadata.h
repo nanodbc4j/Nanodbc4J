@@ -2,7 +2,6 @@
 #include <nanodbc/nanodbc.h>
 #include "struct/database_metadata_c.h"
 #include "struct/error_info.h"
-#include "api/export.h"
 #include "api/api.h"
 
 #ifdef __cplusplus

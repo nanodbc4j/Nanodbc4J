@@ -1,7 +1,6 @@
 #pragma once
 #include "core/connection.hpp"
 #include "struct/error_info.h"
-#include "api/export.h"
 #include "api/api.h"
 
 #ifdef __cplusplus

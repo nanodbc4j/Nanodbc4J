@@ -17,7 +17,7 @@ CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) 
 		return meta_data;
 	} catch (const std::exception& e) {
 		set_error(error, ErrorCode::Standard, "MetaDataError", e.what());
-		LOG_ERROR_W(L"Exception in get_meta_data: {}", utils::to_wstring(e.what()));
+		LOG_ERROR("Exception in get_meta_data: {}", e.what());
 	} catch (...) {
 		set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
 		LOG_ERROR("Unknown exception in get_meta_data");
