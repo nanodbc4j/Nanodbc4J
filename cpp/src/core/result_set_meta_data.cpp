@@ -107,30 +107,30 @@ static const nanodbc::string determineClassNameByTypeName(int column, int sqlTyp
     }
 }
 
+template <std::size_t N>
+inline std::size_t size(NANODBC_SQLCHAR const (&array)[N]) noexcept {
+    auto const n = std::char_traits<NANODBC_SQLCHAR>::length(array);
+    assert(n < N);
+    return n < N ? n : N - 1;
+}
+
 // Получение строкового атрибута колонки через ODBC
 inline static nanodbc::string getColumnStringAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
     LOG_TRACE("hStmt={}, column={}, field={}", hStmt, column, field);
 
-    SQLWCHAR buffer[BUFFER_SIZE] = { 0 };
+    NANODBC_SQLCHAR buffer[BUFFER_SIZE] = { 0 };
     SQLSMALLINT byteLength = 0;
-    SQLRETURN ret = SQLColAttributeW(
+    RETCODE rc = NANODBC_FUNC(SQLColAttribute)(
         hStmt,
         column,
         field,
         buffer,
-        sizeof(buffer) / sizeof(SQLWCHAR),
+        sizeof(buffer) / sizeof(NANODBC_SQLCHAR),
         &byteLength,
         nullptr);
 
-    if (SQL_SUCCEEDED(ret) && byteLength > 0) {
-        // Преобразуем байты в количество символов
-        SQLSMALLINT numChars = byteLength / sizeof(SQLWCHAR);
-
-        // Защита от переполнения
-        numChars = std::min(numChars, static_cast<SQLSMALLINT>(BUFFER_SIZE - 1));
-        nanodbc::string result(buffer, numChars);
-        LOG_DEBUG("Got string attribute value: '{}'", to_string(result));
-        return result;
+    if (SQL_SUCCEEDED(rc)) {
+        return nanodbc::string(&buffer[0], &buffer[size(buffer)]);
     }
     LOG_DEBUG("Failed to get string attribute, return empty wstring");
     return nanodbc::string();
@@ -141,7 +141,7 @@ inline static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLU
     LOG_TRACE("hStmt={}, column={}, field={}", hStmt, column, field);
 
     SQLLEN value = 0;
-    SQLRETURN ret = SQLColAttributeW(
+    RETCODE rc = NANODBC_FUNC(SQLColAttribute)(
         hStmt,
         column,
         field,
@@ -150,7 +150,7 @@ inline static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLU
         nullptr,
         &value);
 
-    if (SQL_SUCCEEDED(ret)) {
+    if (SQL_SUCCEEDED(rc)) {
         LOG_DEBUG("Numeric attribute value: {}", value);
         return value;
     } else {
@@ -158,6 +158,7 @@ inline static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLU
         return 0;
     }
 }
+
 
 ResultSetMetaData::ResultSetMetaData(const nanodbc::result& result) 
     : result_ (result)
@@ -252,9 +253,19 @@ int ResultSetMetaData::isNullable(int column) const {
     LOG_TRACE("column={}", column);
 
     SQLSMALLINT nullable = SQL_NULLABLE_UNKNOWN;
-    SQLRETURN ret = SQLDescribeColW(result_.native_statement_handle(), column, nullptr, 0, nullptr, nullptr, nullptr, nullptr, &nullable);
+    RETCODE rc = NANODBC_FUNC(SQLDescribeCol)(
+        result_.native_statement_handle(), 
+        column, 
+        nullptr, 
+        0, 
+        nullptr, 
+        nullptr, 
+        nullptr, 
+        nullptr, 
+        &nullable
+    );
 
-    if (SQL_SUCCEEDED(ret)) {
+    if (SQL_SUCCEEDED(rc)) {
         LOG_DEBUG("isNullable: column {} -> {}", column, nullable);
         return nullable;
     }
@@ -396,8 +407,18 @@ int ResultSetMetaData::getColumnType(int column) const {
     }
 
     SQLSMALLINT type = 0;
-    SQLRETURN ret = SQLDescribeColW(result_.native_statement_handle(), column, nullptr, 0, nullptr, &type, nullptr, nullptr, nullptr);
-    if (SQL_SUCCEEDED(ret)) {
+    SQLRETURN rc = NANODBC_FUNC(SQLDescribeCol)(
+        result_.native_statement_handle(), 
+        column, 
+        nullptr, 
+        0, 
+        nullptr, 
+        &type, 
+        nullptr, 
+        nullptr, 
+        nullptr
+    );
+    if (SQL_SUCCEEDED(rc)) {
         LOG_DEBUG("Column {} type (via SQLDescribeColW): {}", column, type);
         return type;
     }

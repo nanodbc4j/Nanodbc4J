@@ -13,10 +13,8 @@ extern "C" {
         NativeError();
         explicit NativeError(const NativeError& other);
         ~NativeError();
+        static void clear(NativeError* error);
     };
-
-    // очистить структуры ошибки
-    void clear_native_error(NativeError* error);
 
 #ifdef __cplusplus
 }

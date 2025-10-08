@@ -43,6 +43,12 @@ void std_free(void* ptr) {
     }
 }
 
+// очистить структуры ошибки
+void clear_native_error(NativeError* error) {
+	LOG_TRACE("clear_native_error: error={}", (void*)error);
+	NativeError::clear(error);
+}
+
 void delete_datasource(Datasource* datasource) {
 	LOG_DEBUG("Deleting Datasource object: {}", reinterpret_cast<uintptr_t>(datasource));
 	if (datasource) {

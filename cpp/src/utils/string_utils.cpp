@@ -64,7 +64,7 @@ std::wstring utils::to_wstring(const std::u16string& str) {
     LOG_TRACE("str={}", !str.empty() ? utils::to_string(str) : "(empty)");
     if (str.empty()) return std::wstring();
 
-#if defined(_WIN32) || defined(_WIN64)
+#ifdef _WIN32
     // На Windows wchar_t == 16 бит, можно копировать напрямую
     LOG_TRACE("Platform: Windows, direct cast (UTF-16 -> wchar_t)");
     return std::wstring(reinterpret_cast<const wchar_t*>(str.c_str()), str.length());

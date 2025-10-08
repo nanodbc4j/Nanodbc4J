@@ -4,6 +4,22 @@
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
 
+void NativeError::clear(NativeError* error) {
+    LOG_TRACE("clear_native_error: error={}", (void*)error);
+    if (error) {
+        error->error_code = 0;
+        if (error->error_message) {
+            free(error->error_message);
+            error->error_message = nullptr;
+        }
+        if (error->error_type) {
+            free(error->error_type);
+            error->error_type = nullptr;
+        }
+        LOG_TRACE("NativeError cleared and destructed");
+    }
+}
+
 NativeError::NativeError() {
     LOG_TRACE("Default constructing NativeError");
     error_code = ErrorCode::Success;
@@ -25,25 +41,12 @@ NativeError::~NativeError() {
     if (error_type) {
         free(error_type);        
     }
-
-    error_message = nullptr;
-    error_type = nullptr;
-}
-
-// очистить структуры ошибки
-void clear_native_error(NativeError* error) {
-    LOG_TRACE("clear_native_error: error={}", (void*)error);
-    if (error) {
-        error->error_code = 0;
-        error->~NativeError();
-        LOG_TRACE("NativeError cleared and destructed");
-    }
 }
 
 // Инициализация структуры ошибки
 void init_error(NativeError* error) {
     LOG_TRACE("init_error: error={}", (void*)error);
-    clear_native_error(error);
+    NativeError::clear(error);
     LOG_TRACE("NativeError initialized");
 }
 
@@ -56,7 +59,7 @@ void set_error(NativeError* error, ErrorCode code, const char* type, const char*
         message ? message : "(null)");
 
     if (error) {
-        clear_native_error(error);
+        NativeError::clear(error);
         error->error_code = code;
         error->error_type = strdup(type);
         error->error_message = strdup(message);
