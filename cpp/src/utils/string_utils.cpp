@@ -60,30 +60,23 @@ std::string utils::to_string(const std::u32string& str) {
     return result;
 }
 
-std::wstring utils::to_wstring(const char16_t* str) {
-    LOG_TRACE("str={}", str ? reinterpret_cast<const char*>(str) : "(null)");
-    if (!str) return std::wstring();
-    size_t length = std::char_traits<char16_t>::length(str);
-    return utils::to_wstring(str, length);
-}
-
-std::wstring utils::to_wstring(const char16_t* str, size_t length) {
-    LOG_TRACE("str={}", str ? reinterpret_cast<const char*>(str) : "(null)");
-    if (!str) return std::wstring();
+std::wstring utils::to_wstring(const std::u16string& str) {
+    LOG_TRACE("str={}", !str.empty() ? utils::to_string(str) : "(empty)");
+    if (str.empty()) return std::wstring();
 
 #if defined(_WIN32) || defined(_WIN64)
     // На Windows wchar_t == 16 бит, можно копировать напрямую
     LOG_TRACE("Platform: Windows, direct cast (UTF-16 -> wchar_t)");
-    return std::wstring(reinterpret_cast<const wchar_t*>(str), length);
+    return std::wstring(reinterpret_cast<const wchar_t*>(str.c_str()), str.length());
 #else
     // На Linux wchar_t == 32 бита, нужен конвертер с расширением surrogate pairs
     LOG_TRACE("Platform: Unix, converting UTF-16 to UTF-32 wchar_t");
     std::wstring result;
-    result.reserve(length);
-    for (size_t i = 0; i < length; ++i) {
+    result.reserve(str.length());
+    for (size_t i = 0; i < str.length(); ++i) {
         char16_t ch = str[i];
         // Обработка суррогатных пар (UTF-16 -> UTF-32)
-        if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < length) {
+        if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < str.length()) {
             char16_t ch2 = str[i + 1];
             if (ch2 >= 0xDC00 && ch2 <= 0xDFFF) {
                 // Парная суррогатная пара
@@ -99,38 +92,23 @@ std::wstring utils::to_wstring(const char16_t* str, size_t length) {
 #endif
 }
 
-std::wstring utils::to_wstring(const std::u16string& str) {
-    LOG_TRACE("str length = {}", str.length());
-    return to_wstring(str.c_str(), str.length());
-}
-
-std::wstring utils::to_wstring(const char* str) {
-    LOG_TRACE("str={}", str ? str : "(null)");
-    if (!str) return std::wstring();
-#ifdef _WIN32
-    // На Windows используем MultiByteToWideChar для UTF-8
-    LOG_TRACE("Platform: Windows, using MultiByteToWideChar (UTF-8 -> UTF-16)");
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
-    if (size_needed == 0) return std::wstring();
-    std::wstring wstr(size_needed - 1, 0); // -1 чтобы убрать нуль-терминатор
-    MultiByteToWideChar(CP_UTF8, 0, str, -1, &wstr[0], size_needed);
-    return wstr;
-#else
-    // На Linux считаем, что str в UTF-8, используем mbstowcs
-    LOG_TRACE("Platform: Unix, using mbsrtowcs (UTF-8 -> wchar_t)");
-    std::mbstate_t state = std::mbstate_t();
-    size_t len = std::mbsrtowcs(nullptr, &str, 0, &state);
-    if (len == (size_t)-1) return std::wstring();
-    std::vector<wchar_t> buf(len + 1);
-    state = std::mbstate_t();
-    std::mbsrtowcs(buf.data(), &str, len + 1, &state);
-    return std::wstring(buf.data());
-#endif
-}
-
 std::wstring utils::to_wstring(const std::string& str) {
-    LOG_TRACE("string length = {}", str.length());
-    return to_wstring(str.c_str());
+    LOG_TRACE("str={}", !str.empty() ? str : "(empty)");
+    if (str.empty()) return std::wstring();
+
+#ifdef _WIN32
+    // Windows: wstring is UTF-16
+    static_assert(sizeof(wchar_t) == 2, "wchar_t must be 16-bit on Windows");
+    std::wstring result;
+    utf8::utf8to16(str.begin(), str.end(), std::back_inserter(result));
+    return result;
+#else
+    // Linux/macOS: wstring is UTF-32
+    static_assert(sizeof(wchar_t) == 4, "wchar_t must be 32-bit on Unix-like systems");
+    std::wstring result;
+    utf8::utf8to32(str.begin(), str.end(), std::back_inserter(result));
+    return result;
+#endif
 }
 
 std::wstring utils::to_wstring(const std::wstring& str) {
