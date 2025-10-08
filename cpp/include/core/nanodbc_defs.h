@@ -1,5 +1,5 @@
 #pragma once
-#include <format>
+#include <fmt/format.h>
 #include "utils/path_utils.h"
 
 #ifdef NANODBC_ENABLE_UNICODE
@@ -18,4 +18,4 @@
 
 #define NANODBC_THROW_DATABASE_ERROR(handle, handle_type)                                          \
     throw nanodbc::database_error(                                                                 \
-        handle, handle_type, std::format("{}:{}:", utils::extract_filename(__FILE__), __LINE__)) /**/
+        handle, handle_type, fmt::format("{}:{}:", utils::extract_filename(__FILE__), __LINE__)) /**/

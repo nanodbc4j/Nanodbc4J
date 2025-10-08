@@ -27,7 +27,7 @@ int set_log_level(int level) {
 		LOG_DEBUG("Set log level: {}", result_level_name);
 		return ErrorCode::Success;
 	} catch (const std::exception& e) {
-		LOG_ERROR_W(L"Exception in set_log_level: {}", utils::to_wstring(e.what()));
+		LOG_ERROR("Exception in set_log_level: {}", e.what());
 	} catch (...) {
 		LOG_ERROR("Unknown exception in get_value");
 	}
@@ -41,6 +41,12 @@ void std_free(void* ptr) {
 		LOG_DEBUG("Memory freed successfully");
 		return;
     }
+}
+
+// очистить структуры ошибки
+void clear_native_error(NativeError* error) {
+	LOG_TRACE("clear_native_error: error={}", (void*)error);
+	NativeError::clear(error);
 }
 
 void delete_datasource(Datasource* datasource) {
@@ -86,5 +92,5 @@ void delete_driver_array(Driver** driver_array, int size) {
 		delete_driver(driver_array[i]);
 	}
 	delete[] driver_array;
-	LOG_DEBUG_W(L"Driver array deleted");
+	LOG_DEBUG("Driver array deleted");
 }

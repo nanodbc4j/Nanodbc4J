@@ -1,5 +1,10 @@
 #include "core/isolation_level.hpp"
-#include <wtypes.h>
+
+#ifdef _WIN32
+// needs to be included above sql.h for windows
+#include <windows.h>
+#endif
+
 #include <sqlext.h>
 #include <stdexcept>
 

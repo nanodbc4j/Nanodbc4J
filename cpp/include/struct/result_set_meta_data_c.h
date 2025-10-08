@@ -1,5 +1,6 @@
 #pragma once
 #include "core/result_set_meta_data.hpp"
+#include "api/api.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,13 +23,13 @@ extern "C" {
             bool isWritable = false;
             bool isDefinitelyWritable = false;
 
-            const char16_t* columnLabel = nullptr;
-            const char16_t* columnName = nullptr;
-            const char16_t* schemaName = nullptr;
-            const char16_t* tableName = nullptr;
-            const char16_t* catalogName = nullptr;
-            const char16_t* columnTypeName = nullptr;
-            const char16_t* columnClassName = nullptr;
+            ApiChar* columnLabel = nullptr;
+            ApiChar* columnName = nullptr;
+            ApiChar* schemaName = nullptr;
+            ApiChar* tableName = nullptr;
+            ApiChar* catalogName = nullptr;
+            ApiChar* columnTypeName = nullptr;
+            ApiChar* columnClassName = nullptr;
 
             ColumnMetaData() = default;
             explicit ColumnMetaData(const ColumnMetaData& other);

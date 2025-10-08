@@ -2,7 +2,7 @@
 #include <nanodbc/nanodbc.h>
 #include "struct/error_info.h"
 #include "struct/nanodbc_c.h"
-#include "api/export.h"
+#include "api/api.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,6 +13,8 @@ extern "C" {
     ODBC_API const Datasource** datasources_list(int* count);
 
     ODBC_API void std_free(void* ptr);
+
+    ODBC_API void clear_native_error(NativeError* error);
 
     ODBC_API int set_log_level(int level);
 

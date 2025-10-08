@@ -24,23 +24,23 @@ public:
 
     int getColumnDisplaySize(int column) const;
 
-    std::wstring getColumnLabel(int column) const;
+    nanodbc::string getColumnLabel(int column) const;
 
-    std::wstring getColumnName(int column) const;
+    nanodbc::string getColumnName(int column) const;
 
-    std::wstring getSchemaName(int column) const;
+    nanodbc::string getSchemaName(int column) const;
 
     int getPrecision(int column) const;
 
     int getScale(int column) const;
 
-    std::wstring getTableName(int column) const;
+    nanodbc::string getTableName(int column) const;
 
-    std::wstring getCatalogName(int column) const;
+    nanodbc::string getCatalogName(int column) const;
 
     int getColumnType(int column) const;
 
-    std::wstring getColumnTypeName(int column) const;
+    nanodbc::string getColumnTypeName(int column) const;
 
     bool isReadOnly(int column) const;
     
@@ -48,5 +48,5 @@ public:
 
     bool isDefinitelyWritable(int column) const;
 
-    std::wstring getColumnClassName(int column) const;
+    nanodbc::string getColumnClassName(int column) const;
 };

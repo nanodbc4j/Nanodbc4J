@@ -4,25 +4,27 @@
 
 namespace utils {
 
-	std::wstring to_wstring(const char16_t* str);
+	std::string to_string(const std::string& str);
 
-	std::wstring to_wstring(const char16_t* str, size_t length);
+	std::string to_string(const std::wstring& str);
+
+	std::string to_string(const std::u16string& str);
+
+	std::string to_string(const std::u32string& str);
 
 	std::wstring to_wstring(const std::u16string& str);
-
-	std::wstring to_wstring(const char* str);
 	
 	std::wstring to_wstring(const std::string& str);
 
-	std::wstring to_wstring(std::string_view str);
-
-	std::wstring to_wstring(std::wstring_view str);
+	std::wstring to_wstring(const std::wstring& str);
 
 	std::u16string to_u16string(const std::string& str);
 
 	std::u16string to_u16string(const std::u32string& str);
 
 	std::u16string to_u16string(const std::wstring& str);
+
+	std::u16string to_u16string(const std::u16string& str);
 
 	template <typename CharT>
 	CharT* duplicate_string(const CharT* src);
