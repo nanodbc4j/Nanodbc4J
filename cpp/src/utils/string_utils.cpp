@@ -37,12 +37,14 @@ std::string utils::to_string(const std::wstring& str) {
     // Windows: wstring is UTF-16
     static_assert(sizeof(wchar_t) == 2, "wchar_t must be 16-bit on Windows");
     std::string result;
+    result.reserve(str.size());
     utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #else
     // Linux/macOS: wstring is UTF-32
     static_assert(sizeof(wchar_t) == 4, "wchar_t must be 32-bit on Unix-like systems");
     std::string result;
+    result.reserve(str.size());
     utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #endif
@@ -50,12 +52,14 @@ std::string utils::to_string(const std::wstring& str) {
 
 std::string utils::to_string(const std::u16string& str) {
     std::string result;
+    result.reserve(str.size());
     utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }
 
 std::string utils::to_string(const std::u32string& str) {
     std::string result;
+    result.reserve(str.size());
     utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }
@@ -72,7 +76,7 @@ std::wstring utils::to_wstring(const std::u16string& str) {
     // На Linux wchar_t == 32 бита, нужен конвертер с расширением surrogate pairs
     LOG_TRACE("Platform: Unix, converting UTF-16 to UTF-32 wchar_t");
     std::wstring result;
-    result.reserve(str.length());
+    result.reserve(str.size());
     for (size_t i = 0; i < str.length(); ++i) {
         char16_t ch = str[i];
         // Обработка суррогатных пар (UTF-16 -> UTF-32)
@@ -100,12 +104,14 @@ std::wstring utils::to_wstring(const std::string& str) {
     // Windows: wstring is UTF-16
     static_assert(sizeof(wchar_t) == 2, "wchar_t must be 16-bit on Windows");
     std::wstring result;
+    result.reserve(str.size());
     utf8::utf8to16(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #else
     // Linux/macOS: wstring is UTF-32
     static_assert(sizeof(wchar_t) == 4, "wchar_t must be 32-bit on Unix-like systems");
     std::wstring result;
+    result.reserve(str.size());
     utf8::utf8to32(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #endif
@@ -118,6 +124,7 @@ std::wstring utils::to_wstring(const std::wstring& str) {
 std::u16string utils::to_u16string(const std::string& str) {
     LOG_TRACE("input string length = {}", str.length());
     std::u16string result;
+    result.reserve(str.size());
     utf8::utf8to16(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }

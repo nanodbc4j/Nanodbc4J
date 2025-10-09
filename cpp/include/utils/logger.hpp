@@ -10,13 +10,14 @@ void ensure_initialized();
 // Установка уровня логирования
 std::string set_spdlog_level(int level = SPDLOG_LEVEL_INFO);
 
-// Ensure initialization before logging
+// Ensure initialization before logging, but only if the log level is enabled
 #define LOG_WITH_INIT(level, ...) \
     do { \
-        ensure_initialized(); \
-        spdlog::log(level, __VA_ARGS__); \
+        if (spdlog::should_log(level)) { \
+            ensure_initialized(); \
+            spdlog::log(level, __VA_ARGS__); \
+        } \
     } while(0)
-
 
 // Logging macros
 #define LOG_TRACE(fmt, ...)    LOG_WITH_INIT(spdlog::level::trace, "[{}:{}] {}():\t" fmt, __FILENAME__, __LINE__, __func__, ##__VA_ARGS__)

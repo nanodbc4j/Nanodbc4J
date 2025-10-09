@@ -78,3 +78,12 @@ if(UNIX AND NOT APPLE)
         target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBDL})
     endif()
 endif()
+
+# === Настройки на Linux: переносимость и статическая линковка ===
+if(UNIX AND NOT APPLE)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_link_options(${PROJECT_NAME} PRIVATE   -static-libgcc    -static-libstdc++     -Wl,--gc-sections)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        target_link_options(${PROJECT_NAME} PRIVATE   -static-libstdc++   -Wl,--gc-sections)
+    endif()
+endif()
