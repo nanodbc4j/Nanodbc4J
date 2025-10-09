@@ -3,16 +3,19 @@ package io.github.nanodbc4j.jdbc;
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.NativeDB;
+import io.github.nanodbc4j.internal.handler.NanodbcBinaryStream;
 import io.github.nanodbc4j.internal.handler.ResultSetHandler;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import lombok.extern.java.Log;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.InvalidClassException;
 import java.io.Reader;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -308,8 +311,13 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public InputStream getBinaryStream(int columnIndex) throws SQLException {
         log.finest("NanodbcResultSet.getBinaryStream");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            lastColumn = columnIndex;
+            return new NanodbcBinaryStream(resultSetPtr, columnIndex);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -523,8 +531,13 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public InputStream getBinaryStream(String columnLabel) throws SQLException {
         log.finest("NanodbcResultSet.getBinaryStream");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            lastColumn = columnLabel;
+            return new NanodbcBinaryStream(resultSetPtr, columnLabel);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -648,8 +661,13 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public Reader getCharacterStream(int columnIndex) throws SQLException {
         log.finest("NanodbcResultSet.getCharacterStream");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            lastColumn = columnIndex;
+            return new InputStreamReader(new NanodbcBinaryStream(resultSetPtr, columnIndex), StandardCharsets.UTF_8);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -658,8 +676,13 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public Reader getCharacterStream(String columnLabel) throws SQLException {
         log.finest("NanodbcResultSet.getCharacterStream");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            lastColumn = columnLabel;
+            return new InputStreamReader(new NanodbcBinaryStream(resultSetPtr, columnLabel), StandardCharsets.UTF_8);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**

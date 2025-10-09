@@ -177,6 +177,69 @@ CTimestamp* get_timestamp_value_by_index(nanodbc::result* results, int index, Na
     return new CTimestamp(timestamp);
 }
 
+ChunkedBinaryStream* get_binary_stream_by_index(nanodbc::result* results, int index, NativeError* error) {
+    LOG_DEBUG("Getting binary stream by index: {}", index);
+    init_error(error);
+    try {
+        if (!results) {
+            LOG_ERROR("Result is null");
+            set_error(error, ErrorCode::Database, "ResultError", "Result is null");
+            return nullptr;
+        }
+
+        if (results->is_null(index)) {
+            LOG_DEBUG("Column '{}' is NULL", index);
+            return nullptr;
+        }
+
+        auto result = new ChunkedBinaryStream(results, index);
+        LOG_DEBUG("Binary stream ptr retrieved from index {}: '{}'", index, reinterpret_cast<uintptr_t>(results));
+        return result;
+    } catch (const nanodbc::index_range_error& e) {
+        set_error(error, ErrorCode::Database, "IndexError", e.what());
+        LOG_ERROR("Index range error at index {}: {}", index, e.what());
+    } catch (const nanodbc::type_incompatible_error& e) {
+        set_error(error, ErrorCode::Database, "TypeError", e.what());
+        LOG_ERROR("Type incompatible error at index {}: {}", index, e.what());
+    } catch (const std::exception& e) {
+        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+        LOG_ERROR("Exception in get_string_value_by_index {}: {}", index, e.what());
+    } catch (...) {
+        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
+        LOG_ERROR("Unknown exception in get_string_value_by_index {}", index);
+    }
+    return nullptr;
+}
+
+int read_binary_stream(ChunkedBinaryStream* stream, uint8_t* buffer, int offset, int length, NativeError* error) {
+    LOG_DEBUG("Reading binary stream: {}", reinterpret_cast<uintptr_t>(stream));
+    init_error(error);
+    try {
+        if (!stream) {
+            set_error(error, ErrorCode::Standard, "StreamError", "ChunkedBinaryStream is null");
+            return -1;
+        }
+        if (buffer == nullptr) {
+            set_error(error, ErrorCode::Standard, "StreamError", "buffer is null");
+            return -1;
+        }
+        if (offset < 0 || length < 0) {
+            set_error(error, ErrorCode::Standard, "StreamError", "Invalid offset or length");
+            return -1;
+        }
+        int result = stream->read(buffer, offset, length);
+        LOG_DEBUG("Reading {} byte", result);
+        return result;
+    } catch (const std::exception& e) {
+        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+        LOG_ERROR("Exception in read_binary_stream: {}", e.what());
+    } catch (...) {
+        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
+        LOG_ERROR("Unknown exception");
+    }
+    return -1;
+}
+
 BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, NativeError* error) {
     if (was_null_by_index(results, index, error) || error->error_code) {
         LOG_DEBUG("Column '{}' is NULL", index);
@@ -317,6 +380,14 @@ BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const ApiChar* na
     return get_bytes_array_by_index(results, index, error);
 }
 
+ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
+    int index = find_column_by_name(results, name, error);
+    if (error->error_code) {
+        return nullptr;
+    }
+    return  get_binary_stream_by_index(results, index, error);
+}
+
 int find_column_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
@@ -413,5 +484,13 @@ void delete_timestamp(CTimestamp* timestamp) {
     if (timestamp) {
         delete timestamp;
         LOG_DEBUG("CTimestamp deleted");
+    }
+}
+
+void close_binary_stream(ChunkedBinaryStream* stream) {
+    LOG_DEBUG("Deleting ChunkedBinaryStream object: {}", reinterpret_cast<uintptr_t>(stream));
+    if (stream) {
+        delete stream;
+        LOG_DEBUG("ChunkedBinaryStream deleted");
     }
 }

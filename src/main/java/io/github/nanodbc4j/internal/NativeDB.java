@@ -154,6 +154,10 @@ public interface NativeDB extends Library {
 
     BinaryArray get_bytes_array_by_index(ResultSetPtr results, int index, NativeError error);
 
+    BinaryStreamPtr get_binary_stream_by_index(ResultSetPtr results, int index, NativeError error);
+
+    int read_binary_stream(BinaryStreamPtr stream, byte[] buffer, int offset, int length, NativeError error);
+
     byte was_null_by_index(ResultSetPtr results, int index, NativeError error);
 
     int get_int_value_by_name(ResultSetPtr results, String name, NativeError error);
@@ -177,6 +181,8 @@ public interface NativeDB extends Library {
     TimestampStruct get_timestamp_value_by_name(ResultSetPtr results, String name, NativeError error);
 
     BinaryArray get_bytes_array_by_name(ResultSetPtr results, String name, NativeError error);
+
+    BinaryStreamPtr get_binary_stream_by_name(ResultSetPtr results, String name, NativeError error);
 
     int find_column_by_name(ResultSetPtr results, String name, NativeError error);
 
@@ -268,4 +274,6 @@ public interface NativeDB extends Library {
                                                    String table, byte unique, byte approximate, NativeError error);
 
     void delete_database_meta_data(DatabaseMetaDataStruct meta_data);
+
+    void close_binary_stream(BinaryStreamPtr stream);
 }

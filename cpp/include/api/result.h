@@ -4,6 +4,7 @@
 #include "api/api.h"
 #include "struct/nanodbc_c.h"
 #include "struct/binary_array.h"
+#include "core/chunked_binary_stream.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,9 +34,13 @@ extern "C" {
 
     ODBC_API BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, NativeError* error);
 
+    ODBC_API ChunkedBinaryStream* get_binary_stream_by_index(nanodbc::result* results, int index, NativeError* error);
+
+    ODBC_API int read_binary_stream(ChunkedBinaryStream* stream, uint8_t* buffer, int offset, int length, NativeError* error);
+
     ODBC_API int find_column_by_index(nanodbc::result* results, int index, NativeError* error);
 
-    ODBC_API bool was_null_by_index(nanodbc::result* results, int index, NativeError* error);
+    ODBC_API bool was_null_by_index(nanodbc::result* results, int index, NativeError* error);    
 
     ODBC_API int get_int_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error);
 
@@ -59,6 +64,8 @@ extern "C" {
 
     ODBC_API BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error);
 
+    ODBC_API ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error);
+
     ODBC_API int find_column_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error);
 
     ODBC_API bool was_null_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error);
@@ -72,6 +79,8 @@ extern "C" {
     ODBC_API void delete_time(CTime* time);
 
     ODBC_API void delete_timestamp(CTimestamp* timestamp);
+
+    ODBC_API void close_binary_stream(ChunkedBinaryStream* stream, NativeError* error);
 
 #ifdef __cplusplus
 } // extern "C"
