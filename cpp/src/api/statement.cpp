@@ -168,6 +168,32 @@ void set_timestamp_value(nanodbc::statement* stmt, int index, CTimestamp* value,
     set_value_with_error_handling(stmt, index, ts, error);
 }
 
+void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* value, NativeError* error) {
+    if (!value) {
+        set_value_with_error_handling(stmt, index, nullptr, error);
+        return;
+    }
+
+    init_error(error);
+    try {
+        std::vector<uint8_t> data = value->to_vector();
+        if (data.empty()) {
+            std::vector<std::vector<uint8_t>> empty_batch;
+            stmt->bind(index, empty_batch);
+        } else {
+            std::vector<std::vector<uint8_t>> batch;
+            batch.push_back(data);
+            stmt->bind(index, batch);
+        }
+    } catch (const std::exception& e) {
+        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+        LOG_ERROR("Exception in set_binary_array_value: {}", e.what());
+    } catch (...) {
+        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
+        LOG_ERROR("Unknown exception in set_binary_array_value");
+    }
+}
+
 nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {
     LOG_DEBUG("Executing statement: {}", reinterpret_cast<uintptr_t>(stmt));
     init_error(error);

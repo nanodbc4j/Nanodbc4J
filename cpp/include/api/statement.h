@@ -2,6 +2,7 @@
 #include <nanodbc/nanodbc.h>
 #include "struct/error_info.h"
 #include "struct/nanodbc_c.h"
+#include "struct/binary_array.h"
 #include "api/api.h"
 
 #ifdef __cplusplus
@@ -29,6 +30,8 @@ extern "C" {
     ODBC_API void set_time_value(nanodbc::statement* stmt, int index, CTime* value, NativeError* error);
 
     ODBC_API void set_timestamp_value(nanodbc::statement* stmt, int index, CTimestamp* value, NativeError* error);
+
+    ODBC_API void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* value, NativeError* error);
 
     ODBC_API nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error);
 

@@ -124,6 +124,8 @@ public interface NativeDB extends Library {
 
     void set_timestamp_value(StatementPtr stmt, int index, TimestampStruct value, NativeError error);
 
+    void set_binary_array_value(StatementPtr stmt, int index, BinaryArray value, NativeError error);
+
     ResultSetPtr execute(StatementPtr stmt, NativeError error);
 
     int execute_update(StatementPtr stmt, NativeError error);

@@ -3,6 +3,7 @@ package io.github.nanodbc4j.jdbc;
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.NativeDB;
+import io.github.nanodbc4j.internal.cstruct.BinaryArray;
 import io.github.nanodbc4j.internal.handler.StatementHandler;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import io.github.nanodbc4j.internal.pointer.StatementPtr;
@@ -204,8 +205,13 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setBytes(int parameterIndex, byte[] x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setBytes");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            var value = new BinaryArray(x);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, NativeDB.INSTANCE::set_binary_array_value);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
