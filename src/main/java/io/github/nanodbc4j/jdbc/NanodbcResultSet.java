@@ -292,7 +292,7 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
         log.finest("NanodbcResultSet.getAsciiStream");
-        throw new SQLFeatureNotSupportedException();
+        return getBinaryStream(columnIndex);
     }
 
     /**
@@ -301,8 +301,7 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public InputStream getUnicodeStream(int columnIndex) throws SQLException {
         log.finest("NanodbcResultSet.getUnicodeStream");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        return getBinaryStream(columnIndex);
     }
 
     /**
@@ -511,8 +510,7 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public InputStream getAsciiStream(String columnLabel) throws SQLException {
         log.finest("NanodbcResultSet.getAsciiStream");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        return getBinaryStream(columnLabel);
     }
 
     /**
@@ -521,8 +519,7 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public InputStream getUnicodeStream(String columnLabel) throws SQLException {
         log.finest("NanodbcResultSet.getUnicodeStream");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        return getBinaryStream(columnLabel);
     }
 
     /**
@@ -691,8 +688,9 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
         log.finest("NanodbcResultSet.getBigDecimal");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        String s = getString(columnIndex);
+        return s == null ? null : new BigDecimal(s);
     }
 
     /**
@@ -701,8 +699,9 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
         log.finest("NanodbcResultSet.getBigDecimal");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        String s = getString(columnLabel);
+        return s == null ? null : new BigDecimal(s);
     }
 
     /**
