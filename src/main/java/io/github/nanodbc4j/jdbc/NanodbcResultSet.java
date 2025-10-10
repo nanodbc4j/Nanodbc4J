@@ -3,7 +3,6 @@ package io.github.nanodbc4j.jdbc;
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.NativeDB;
-import io.github.nanodbc4j.internal.handler.NanodbcBinaryStream;
 import io.github.nanodbc4j.internal.handler.ResultSetHandler;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import lombok.extern.java.Log;
@@ -46,6 +45,7 @@ public class NanodbcResultSet implements ResultSet {
     private ResultSetMetaData metaData = null;
     private boolean closed = false;
     private Object lastColumn = null;
+    private int currentRow = 0;
 
     NanodbcResultSet(ResultSetPtr resultSetPtr) {
         this.resultSetPtr = resultSetPtr;
@@ -65,6 +65,7 @@ public class NanodbcResultSet implements ResultSet {
         log.finest("NanodbcResultSet.next");
         throwIfAlreadyClosed();
         try {
+            currentRow++;   //  forward-only
             return ResultSetHandler.next(resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -790,8 +791,7 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public int getRow() throws SQLException {
         log.finest("NanodbcResultSet.getRow");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        return currentRow;
     }
 
     /**
@@ -1469,7 +1469,11 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public URL getURL(int columnIndex) throws SQLException {
         log.finest("NanodbcResultSet.getURL");
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return new URL(getString(columnIndex));
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
     }
 
     /**
@@ -1478,7 +1482,11 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public URL getURL(String columnLabel) throws SQLException {
         log.finest("NanodbcResultSet.getURL");
-        throw new SQLFeatureNotSupportedException();
+        try {
+            return new URL(getString(columnLabel));
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
     }
 
     /**
@@ -1989,18 +1997,54 @@ public class NanodbcResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
         log.finest("NanodbcResultSet.getObject");
-        throw new SQLFeatureNotSupportedException();
+        if (type == UUID.class) {
+            String s = getString(columnIndex);
+            return s == null ? null : (T) UUID.fromString(s);
+        } else if (type == String.class) {
+            return (T) getString(columnIndex);
+        } else if (type == Integer.class) {
+            return (T) Integer.valueOf(getInt(columnIndex));
+        } else if (type == BigDecimal.class) {
+            return (T) getBigDecimal(columnIndex);
+        } else if (type == Timestamp.class) {
+            return (T) getTimestamp(columnIndex);
+        } else if (type == Blob.class) {
+            return (T) getBlob(columnIndex);
+        } else if (type == Clob.class) {
+            return (T) getClob(columnIndex);
+        }
+        // fallback
+        return (T) getObject(columnIndex);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
         log.finest("NanodbcResultSet.getObject");
-        throw new SQLFeatureNotSupportedException();
+        if (type == UUID.class) {
+            String s = getString(columnLabel);
+            return s == null ? null : (T) UUID.fromString(s);
+        } else if (type == String.class) {
+            return (T) getString(columnLabel);
+        } else if (type == Integer.class) {
+            return (T) Integer.valueOf(getInt(columnLabel));
+        } else if (type == BigDecimal.class) {
+            return (T) getBigDecimal(columnLabel);
+        } else if (type == Timestamp.class) {
+            return (T) getTimestamp(columnLabel);
+        } else if (type == Blob.class) {
+            return (T) getBlob(columnLabel);
+        } else if (type == Clob.class) {
+            return (T) getClob(columnLabel);
+        }
+        // fallback
+        return (T) getObject(columnLabel);
     }
 
     /**

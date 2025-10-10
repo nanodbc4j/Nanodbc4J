@@ -1,4 +1,4 @@
-package io.github.nanodbc4j.internal.handler;
+package io.github.nanodbc4j.jdbc;
 
 import io.github.nanodbc4j.internal.NativeDB;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
