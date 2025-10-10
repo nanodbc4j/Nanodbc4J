@@ -80,7 +80,7 @@ extern "C" {
 
     ODBC_API void delete_timestamp(CTimestamp* timestamp);
 
-    ODBC_API void close_binary_stream(ChunkedBinaryStream* stream, NativeError* error);
+    ODBC_API void close_binary_stream(ChunkedBinaryStream* stream);
 
 #ifdef __cplusplus
 } // extern "C"
