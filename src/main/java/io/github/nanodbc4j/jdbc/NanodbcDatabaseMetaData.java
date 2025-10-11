@@ -1356,10 +1356,11 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     @Override
     public boolean supportsResultSetType(int type) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.supportsResultSetType");
-        return switch (type) {
-            case ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE -> true;
-            default -> false;
-        };
+        return type == ResultSet.TYPE_FORWARD_ONLY;
+//        return switch (type) {    TODO
+//            case ResultSet.TYPE_FORWARD_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE -> true;
+//            default -> false;
+//        };
     }
 
     /**
@@ -1368,7 +1369,8 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     @Override
     public boolean supportsResultSetConcurrency(int type, int concurrency) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDatabaseProductName");
-        return concurrency == ResultSet.CONCUR_READ_ONLY;
+        // Support only FORWARD_ONLY + READ_ONLY
+        return (type == ResultSet.TYPE_FORWARD_ONLY) && (concurrency == ResultSet.CONCUR_READ_ONLY);
     }
 
     /**
