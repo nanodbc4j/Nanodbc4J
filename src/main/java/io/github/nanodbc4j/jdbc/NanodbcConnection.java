@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -308,8 +309,20 @@ public class NanodbcConnection implements Connection {
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.createStatement");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        if (resultSetType != ResultSet.TYPE_SCROLL_INSENSITIVE && resultSetType != ResultSet.TYPE_FORWARD_ONLY) {
+            // TYPE_SCROLL_SENSITIVE не поддерживается
+            throw new SQLFeatureNotSupportedException("Only TYPE_SCROLL_INSENSITIVE and TYPE_FORWARD_ONLY are supported");
+        }
+        if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
+            throw new SQLFeatureNotSupportedException("Only CONCUR_READ_ONLY is supported");
+        }
+
+        try {
+            StatementPtr statementPtr = ConnectionHandler.create(connectionPtr);
+            return new NanodbcStatement(this, statementPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -318,8 +331,21 @@ public class NanodbcConnection implements Connection {
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.prepareStatement");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        if (resultSetType != ResultSet.TYPE_SCROLL_INSENSITIVE && resultSetType != ResultSet.TYPE_FORWARD_ONLY) {
+            // TYPE_SCROLL_SENSITIVE не поддерживается
+            throw new SQLFeatureNotSupportedException("Only TYPE_SCROLL_INSENSITIVE and TYPE_FORWARD_ONLY are supported");
+        }
+        if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
+            throw new SQLFeatureNotSupportedException("Only CONCUR_READ_ONLY is supported");
+        }
+
+        try {
+            StatementPtr statementPtr = ConnectionHandler.create(connectionPtr);
+            ConnectionHandler.prepared(statementPtr, sql, TIMEOUT);
+            return new NanodbcPreparedStatement(this, statementPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**

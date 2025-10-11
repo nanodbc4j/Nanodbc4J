@@ -6,7 +6,6 @@ import io.github.nanodbc4j.internal.handler.DriverHandler;
 import io.github.nanodbc4j.logging.EnhancedSimpleFormatter;
 import lombok.extern.java.Log;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -16,7 +15,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -133,37 +131,24 @@ public class NanodbcDriver implements Driver {
     }
 
     /**
-     * Initializes custom logging for the driver by setting up a console handler and a rotating file handler
+     * Initializes custom logging for the driver by setting up a console handler
      * with the enhanced formatter that includes source file and line number for fine-grained log levels.
-     * This method configures the root logger to use these handlers exclusively.
+     * This method configures the root logger to use this handler exclusively.
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void initializeLogging() {
         try {
-            // Create logs directory
-            File logsFile = new File("logs");
-            if(!logsFile.exists()) {
-                logsFile.mkdirs();
-            }
-
             // Set up console handler
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setLevel(Level.ALL);
             consoleHandler.setFormatter(new EnhancedSimpleFormatter());
-
-            // Set up file handler with rotation
-            FileHandler fileHandler = new FileHandler("logs/nanodbc4j.log", 5_000_000, 3, true);
-            fileHandler.setLevel(Level.ALL);
-            fileHandler.setFormatter(new EnhancedSimpleFormatter());
 
             // Configure root logger
             Logger root = Logger.getLogger("");
             root.setUseParentHandlers(false); // disable default handlers
             root.setLevel(Level.ALL);
 
-            // Add custom handlers
+            // Add custom console handler
             root.addHandler(consoleHandler);
-            root.addHandler(fileHandler);
 
             Logger.getLogger(NanodbcDriver.class.getName()).info("Custom logging initialized");
         } catch (Exception e) {

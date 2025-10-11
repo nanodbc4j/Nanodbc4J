@@ -234,8 +234,8 @@ public class NanodbcStatement implements Statement {
     @Override
     public void setFetchDirection(int direction) throws SQLException {
         log.finest("NanodbcStatement.setFetchDirection");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        // TODO
     }
 
     /**
@@ -244,8 +244,8 @@ public class NanodbcStatement implements Statement {
     @Override
     public int getFetchDirection() throws SQLException {
         log.finest("NanodbcStatement.getFetchDirection");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        return ResultSet.FETCH_FORWARD; // TODO
     }
 
     /**
@@ -254,6 +254,7 @@ public class NanodbcStatement implements Statement {
     @Override
     public void setFetchSize(int rows) throws SQLException {
         log.finest("NanodbcStatement.setFetchSize");
+        throwIfAlreadyClosed();
         //throw new SQLFeatureNotSupportedException(); todo
     }
 

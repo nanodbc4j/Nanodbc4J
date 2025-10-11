@@ -828,7 +828,8 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public void setFetchDirection(int direction) throws SQLException {
         log.finest("NanodbcResultSet.setFetchDirection");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        //throw new SQLFeatureNotSupportedException();
     }
 
     /**
@@ -837,7 +838,8 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public int getFetchDirection() throws SQLException {
         log.finest("NanodbcResultSet.getFetchDirection");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        return ResultSet.FETCH_FORWARD; // TODO
     }
 
     /**
