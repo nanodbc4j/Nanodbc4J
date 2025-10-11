@@ -1370,7 +1370,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsResultSetConcurrency(int type, int concurrency) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getDatabaseProductName");
         // Support only FORWARD_ONLY + READ_ONLY
-        return (type == ResultSet.TYPE_FORWARD_ONLY) && (concurrency == ResultSet.CONCUR_READ_ONLY);
+        return supportsResultSetType(type) && (concurrency == ResultSet.CONCUR_READ_ONLY);
     }
 
     /**
