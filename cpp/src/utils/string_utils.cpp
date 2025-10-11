@@ -37,14 +37,14 @@ std::string utils::to_string(const std::wstring& str) {
     // Windows: wstring is UTF-16
     static_assert(sizeof(wchar_t) == 2, "wchar_t must be 16-bit on Windows");
     std::string result;
-    result.reserve(str.size());
+    result.reserve(str.size() * 2);
     utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #else
     // Linux/macOS: wstring is UTF-32
     static_assert(sizeof(wchar_t) == 4, "wchar_t must be 32-bit on Unix-like systems");
     std::string result;
-    result.reserve(str.size());
+    result.reserve(str.size() * 4);
     utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #endif
@@ -52,14 +52,14 @@ std::string utils::to_string(const std::wstring& str) {
 
 std::string utils::to_string(const std::u16string& str) {
     std::string result;
-    result.reserve(str.size());
+    result.reserve(str.size() * 3);
     utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }
 
 std::string utils::to_string(const std::u32string& str) {
     std::string result;
-    result.reserve(str.size());
+    result.reserve(str.size() * 4);
     utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }
@@ -76,7 +76,7 @@ std::wstring utils::to_wstring(const std::u16string& str) {
     // На Linux wchar_t == 32 бита, нужен конвертер с расширением surrogate pairs
     LOG_TRACE("Platform: Unix, converting UTF-16 to UTF-32 wchar_t");
     std::wstring result;
-    result.reserve(str.size());
+    result.reserve(str.size() * 2);
     for (size_t i = 0; i < str.length(); ++i) {
         char16_t ch = str[i];
         // Обработка суррогатных пар (UTF-16 -> UTF-32)
@@ -142,7 +142,7 @@ std::u16string utils::to_u16string(const std::u32string& str) {
 
     // Reserve approximate capacity: each code point becomes 1 or 2 char16_t units.
     std::u16string result;
-    result.reserve(str.size());
+    result.reserve(str.size() * 2);
 
     for (char32_t codepoint : str) {
         if (codepoint <= BMP_MAX) {
@@ -190,7 +190,7 @@ std::u16string utils::to_u16string(const std::wstring& str) {
     constexpr char32_t ASTRAL_PLANE_START    = 0x10000;
 
     std::u16string result;
-    result.reserve(str.size());
+    result.reserve(str.size() * 2);
 
     for (wchar_t wc : str) {
         char32_t codepoint = static_cast<char32_t>(wc);
