@@ -5,8 +5,10 @@ import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.handler.StatementHandler;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import io.github.nanodbc4j.internal.pointer.StatementPtr;
+import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 
+import java.lang.ref.Cleaner;
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,11 +25,16 @@ public class NanodbcStatement implements Statement {
     protected StatementPtr statementPtr;
     protected final WeakReference<NanodbcConnection> connection;
     protected NanodbcResultSet resultSet = null;
-    protected boolean closed = false;
+    protected volatile boolean closed = false;
+
+    // Cleaner for managing resource cleanup
+    private static final Cleaner cleaner = Cleaner.create();
+    private final Cleaner.Cleanable cleanable;
 
     NanodbcStatement(NanodbcConnection connection, StatementPtr statementPtr) {
         this.statementPtr = statementPtr;
         this.connection = new WeakReference<>(connection);
+        cleanable = cleaner.register(this, new StatementCleaner(statementPtr));
     }
 
     /**
@@ -67,15 +74,16 @@ public class NanodbcStatement implements Statement {
     @Override
     public void close() throws SQLException {
         log.finest("NanodbcStatement.close");
-        try {
-            if (resultSet != null) {
-                resultSet.close();
+        synchronized (this) {
+            try {
+                if (!closed) {
+                    cleanable.clean();
+                    statementPtr = null;
+                    closed = true;
+                }
+            } catch (NativeException e) {
+                throw new NanodbcSQLException(e);
             }
-            StatementHandler.close(statementPtr);
-            statementPtr = null;
-            closed = true;
-        } catch (NativeException e) {
-            throw new NanodbcSQLException(e);
         }
     }
 
@@ -483,17 +491,6 @@ public class NanodbcStatement implements Statement {
         return iface.isInstance(this) || iface == Statement.class;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            if (!isClosed()) {
-                close();
-            }
-        } finally {
-            super.finalize();
-        }
-    }
-
     /**
      * Throws exception if statement is already closed.
      *
@@ -502,6 +499,24 @@ public class NanodbcStatement implements Statement {
     protected void throwIfAlreadyClosed() throws SQLException {
         if (isClosed() || statementPtr == null) {
             throw new NanodbcSQLException("Statement: already closed");
+        }
+    }
+
+    @AllArgsConstructor
+    private static class StatementCleaner implements Runnable {
+        private StatementPtr ptr;
+
+        @Override
+        public void run() {
+            if (ptr != null) {
+                try {
+                    StatementHandler.close(ptr);
+                } catch (Exception ignore) {
+                    // Suppress exception
+                } finally {
+                    ptr = null;
+                }
+            }
         }
     }
 }

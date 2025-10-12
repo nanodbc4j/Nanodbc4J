@@ -4,21 +4,28 @@ import io.github.nanodbc4j.internal.NativeDB;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
 import io.github.nanodbc4j.internal.pointer.BinaryStreamPtr;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
+import lombok.AllArgsConstructor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.Cleaner;
 
 import static io.github.nanodbc4j.internal.handler.Handler.NUL_CHAR;
 import static io.github.nanodbc4j.internal.handler.Handler.throwIfNativeError;
 
 public class NanodbcBinaryStream extends InputStream {
     private final BinaryStreamPtr streamPtr;
-    private boolean closed = false;
+    private volatile boolean closed = false;
+
+    // Cleaner for managing resource cleanup
+    private static final Cleaner cleaner = Cleaner.create();
+    private final Cleaner.Cleanable cleanable;
 
     public NanodbcBinaryStream(ResultSetPtr resultSetPtr, int columnIndex) {
         NativeError error = new NativeError();
         try {
-            this.streamPtr = NativeDB.INSTANCE.get_binary_stream_by_index(resultSetPtr, columnIndex - 1, error);
+            streamPtr = NativeDB.INSTANCE.get_binary_stream_by_index(resultSetPtr, columnIndex - 1, error);
+            cleanable = cleaner.register(this, new BinaryStreamCleaner(streamPtr));
             throwIfNativeError(error);
         } finally {
             NativeDB.INSTANCE.clear_native_error(error);
@@ -28,7 +35,8 @@ public class NanodbcBinaryStream extends InputStream {
     public NanodbcBinaryStream(ResultSetPtr resultSetPtr, String columnName) {
         NativeError error = new NativeError();
         try {
-            this.streamPtr = NativeDB.INSTANCE.get_binary_stream_by_name(resultSetPtr, columnName + NUL_CHAR, error);
+            streamPtr = NativeDB.INSTANCE.get_binary_stream_by_name(resultSetPtr, columnName + NUL_CHAR, error);
+            cleanable = cleaner.register(this, new BinaryStreamCleaner(streamPtr));
             throwIfNativeError(error);
         } finally {
             NativeDB.INSTANCE.clear_native_error(error);
@@ -63,8 +71,26 @@ public class NanodbcBinaryStream extends InputStream {
     public void close() throws IOException {
         synchronized (this) {
             if (!closed) {
-                NativeDB.INSTANCE.close_binary_stream(streamPtr);
+                cleanable.clean();
                 closed = true;
+            }
+        }
+    }
+
+    @AllArgsConstructor
+    private static class BinaryStreamCleaner implements Runnable {
+        private BinaryStreamPtr ptr;
+
+        @Override
+        public void run() {
+            if (ptr != null) {
+                try {
+                    NativeDB.INSTANCE.close_binary_stream(ptr);
+                } catch (Exception ignore) {
+                    // Suppress exception
+                } finally {
+                    ptr = null;
+                }
             }
         }
     }

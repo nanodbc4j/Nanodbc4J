@@ -6,9 +6,11 @@ import io.github.nanodbc4j.internal.handler.ConnectionHandler;
 import io.github.nanodbc4j.internal.pointer.ConnectionPtr;
 import io.github.nanodbc4j.internal.pointer.StatementPtr;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.java.Log;
 
+import java.lang.ref.Cleaner;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -48,10 +50,15 @@ public class NanodbcConnection implements Connection {
     @Getter(AccessLevel.PACKAGE)
     private String url;
 
+    // Cleaner for managing resource cleanup
+    private static final Cleaner cleaner = Cleaner.create();
+    private final Cleaner.Cleanable cleanable;
+
     NanodbcConnection(String url) throws SQLException {
         try {
             connectionPtr = ConnectionHandler.connect(url, 5);
             this.url = url;
+            cleanable = cleaner.register(this, new ConnectionCleaner(connectionPtr));
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -164,12 +171,14 @@ public class NanodbcConnection implements Connection {
     @Override
     public void close() throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.close");
-        try {
-            ConnectionHandler.disconnect(connectionPtr);
-            connectionPtr = null;
-            url = null;
-        } catch (NativeException e) {
-            throw new NanodbcSQLException(e);
+        synchronized (this) {
+            try {
+                cleanable.clean();
+                connectionPtr = null;
+                url = null;
+            } catch (NativeException e) {
+                throw new NanodbcSQLException(e);
+            }
         }
     }
 
@@ -666,17 +675,6 @@ public class NanodbcConnection implements Connection {
         return iface.isInstance(this) || iface == Connection.class;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            if (connectionPtr != null) {
-                close();
-            }
-        } finally {
-            super.finalize();
-        }
-    }
-
     /**
      * Throws exception if Connection is already closed.
      *
@@ -685,6 +683,24 @@ public class NanodbcConnection implements Connection {
     protected void throwIfAlreadyClosed() throws SQLException {
         if (isClosed() || connectionPtr == null) {
             throw new NanodbcSQLException("Connection: already closed");
+        }
+    }
+
+    @AllArgsConstructor
+    private static class ConnectionCleaner implements Runnable {
+        private ConnectionPtr ptr;
+
+        @Override
+        public void run() {
+            if (ptr != null) {
+                try {
+                    ConnectionHandler.disconnect(ptr);
+                } catch (Exception ignore) {
+                    // Suppress exception
+                } finally {
+                    ptr = null;
+                }
+            }
         }
     }
 }

@@ -5,12 +5,14 @@ import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.NativeDB;
 import io.github.nanodbc4j.internal.handler.ResultSetHandler;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
+import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InvalidClassException;
 import java.io.Reader;
+import java.lang.ref.Cleaner;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -43,15 +45,21 @@ public class NanodbcResultSet implements ResultSet {
     protected ResultSetPtr resultSetPtr;
     private final WeakReference<NanodbcStatement> statement;
     private ResultSetMetaData metaData = null;
-    private boolean closed = false;
+    private volatile boolean closed = false;
     private Object lastColumn = null;
 
+    // Cleaner for managing resource cleanup
+    private static final Cleaner cleaner = Cleaner.create();
+    private final Cleaner.Cleanable cleanable;
+
     NanodbcResultSet(ResultSetPtr resultSetPtr) {
+        cleanable = cleaner.register(this, new ResultSetCleaner(resultSetPtr));
         this.resultSetPtr = resultSetPtr;
         this.statement = new WeakReference<>(null);
     }
 
     NanodbcResultSet(NanodbcStatement statement, ResultSetPtr resultSetPtr) {
+        cleanable = cleaner.register(this, new ResultSetCleaner(resultSetPtr));
         this.resultSetPtr = resultSetPtr;
         this.statement = new WeakReference<>(statement);
     }
@@ -76,14 +84,18 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public void close() throws SQLException {
         log.finest("NanodbcResultSet.close");
-        try {
-            ResultSetHandler.close(resultSetPtr);
-            resultSetPtr = null;
-            metaData = null;
-            lastColumn = null;
-            closed = true;
-        } catch (NativeException e) {
-            throw new NanodbcSQLException(e);
+        synchronized (this) {
+            try {
+                if (!closed) {
+                    cleanable.clean();
+                    resultSetPtr = null;
+                    metaData = null;
+                    lastColumn = null;
+                    closed = true;
+                }
+            } catch (NativeException e) {
+                throw new NanodbcSQLException(e);
+            }
         }
     }
 
@@ -2098,6 +2110,24 @@ public class NanodbcResultSet implements ResultSet {
     protected void throwIfAlreadyClosed() throws SQLException {
         if (isClosed() || resultSetPtr == null) {
             throw new NanodbcSQLException("ResultSet: already closed");
+        }
+    }
+
+    @AllArgsConstructor
+    private static class ResultSetCleaner implements Runnable {
+        private ResultSetPtr ptr;
+
+        @Override
+        public void run() {
+            if (ptr != null) {
+                try {
+                    ResultSetHandler.close(ptr);
+                } catch (Exception ignore) {
+                    // Suppress exception
+                } finally {
+                    ptr = null;
+                }
+            }
         }
     }
 }
