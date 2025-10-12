@@ -21,11 +21,11 @@ import java.util.logging.Logger;
 /**
  * JDBC Driver implementation over ODBC using nanodbc.
  * <p>
- * Usage: {@code DriverManager.getConnection("jdbc:odbc:Driver={...};...")}
+ * Usage: {@code DriverManager.getConnection("jdbc:nanodbc4j:Driver={...};...")}
  */
 @Log
 public class NanodbcDriver implements Driver {
-    public static final String PREFIX = "jdbc:odbc:";
+    public static final String PREFIX = "jdbc:nanodbc4j:";
     static final int MAJOR_VERSION = 1;
     static final int MINOR_VERSION = 7;
 
@@ -50,8 +50,9 @@ public class NanodbcDriver implements Driver {
             return null;
         }
 
-        String connectionString = extractAddress(url).trim(); // ← убираем jdbc:odbc:
-        return new NanodbcConnection(connectionString);
+        String connectionString = extractAddress(url).trim(); // ← remove jdbc:nanodbc4j:
+        int loginTimeoutSeconds = DriverManager.getLoginTimeout();
+        return new NanodbcConnection(connectionString, loginTimeoutSeconds);
     }
 
     /**
@@ -167,8 +168,9 @@ public class NanodbcDriver implements Driver {
     public static NanodbcConnection createConnection(String url, Properties prop) throws SQLException {
         if (!isValidURL(url)) return null;
 
-        String connectionString = extractAddress(url).trim(); // ← убираем jdbc:odbc:
-        return new NanodbcConnection(connectionString);
+        String connectionString = extractAddress(url).trim(); // ← remove jdbc:nanodbc4j:
+        int loginTimeoutSeconds = DriverManager.getLoginTimeout();
+        return new NanodbcConnection(connectionString, loginTimeoutSeconds);
     }
 
     /**

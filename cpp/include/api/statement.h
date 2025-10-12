@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-    ODBC_API void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, long timeout, NativeError* error);
+    ODBC_API void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError* error);
 
     ODBC_API void set_int_value(nanodbc::statement* stmt, int index, int value, NativeError* error);
 
@@ -33,9 +33,11 @@ extern "C" {
 
     ODBC_API void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* value, NativeError* error);
 
-    ODBC_API nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error);
+    ODBC_API nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* error);
 
-    ODBC_API int execute_update(nanodbc::statement* stmt, NativeError* error);
+    ODBC_API int execute_update(nanodbc::statement* stmt, int timeout, NativeError* error);
+
+    ODBC_API void cancel_statement(nanodbc::statement* stmt, NativeError* error);
 
     ODBC_API void close_statement(nanodbc::statement* stmt, NativeError* error);
 

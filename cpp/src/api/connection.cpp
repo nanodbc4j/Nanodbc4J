@@ -7,6 +7,7 @@
 using namespace std;
 using namespace utils;
 
+#define BATCH_OPERATIONS 1
 
 static Connection* connection_with_error_handling(const function<Connection* ()>& operation, NativeError* error) {
     init_error(error);
@@ -23,16 +24,6 @@ static Connection* connection_with_error_handling(const function<Connection* ()>
         LOG_ERROR("Unknown exception in connection_with_error_handling");
     }
     return nullptr;
-}
-
-Connection* connection(const ApiChar* connection_string, NativeError* error) {
-    LOG_DEBUG("Сonnection_string={}", utils::to_string(connection_string));
-    return connection_with_error_handling(
-        [&]() {
-            return new Connection(connection_string);
-        },
-        error
-    );
 }
 
 Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) {
@@ -134,7 +125,7 @@ void rollback_transaction(Connection* conn, NativeError* error) {
         LOG_ERROR("Database error during rollback transaction: {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown rollback transaction error");
-        LOG_ERROR("Unknown exception during execute");
+        LOG_ERROR("Unknown exception during rollback");
     }
 }
 
@@ -243,7 +234,7 @@ void set_transaction_isolation_level(Connection* conn, int level, NativeError* e
         LOG_ERROR("Database error during set transaction isolation level: {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown set transaction isolation level error");
-        LOG_ERROR("Unknown exception during execute");
+        LOG_ERROR("Unknown exception during set transaction isolation level");
     }
 }
 
@@ -266,12 +257,12 @@ int get_transaction_isolation_level(Connection* conn, NativeError* error) {
         LOG_ERROR("Database error during get transaction isolation level: {}", e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get transaction isolation level error");
-        LOG_ERROR("Unknown exception during execute");
+        LOG_ERROR("Unknown exception during get transaction isolation level");
     }
     return 0;
 }
 
-nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, NativeError* error) {
+nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -280,7 +271,7 @@ nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, NativeErr
             set_error(error, ErrorCode::Database, "ExecuteError", "Connection is null");
             return nullptr;
         }
-        auto results = nanodbc::execute(*conn, sql);
+        auto results = nanodbc::execute(*conn, sql, BATCH_OPERATIONS, timeout);
         auto result_ptr = new nanodbc::result(results);
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
@@ -297,7 +288,7 @@ nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, NativeErr
     return nullptr;
 }
 
-int execute_request_update(Connection* conn, const ApiChar* sql, NativeError* error) {
+int execute_request_update(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -306,7 +297,7 @@ int execute_request_update(Connection* conn, const ApiChar* sql, NativeError* er
             set_error(error, ErrorCode::Database, "ExecuteError", "Connection is null");
             return 0;
         }
-        auto results = nanodbc::execute(*conn, sql);
+        auto results = nanodbc::execute(*conn, sql, BATCH_OPERATIONS, timeout);
         int affected_rows = static_cast<int>(results.rowset_size());
         LOG_DEBUG("Update executed successfully, affected rows: {}", affected_rows);
         return affected_rows;

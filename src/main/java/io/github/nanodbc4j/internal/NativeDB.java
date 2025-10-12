@@ -48,14 +48,6 @@ public interface NativeDB extends Library {
      * Метод создаёт соединение с базой данных
      *
      * @param connection_string Массив символов (UTF-16LE) строки подключения
-     * @param error             Ошибка, возникающая при соединении
-     */
-    ConnectionPtr connection(String connection_string, NativeError error);
-
-    /**
-     * Метод создаёт соединение с базой данных
-     *
-     * @param connection_string Массив символов (UTF-16LE) строки подключения
      * @param timeout           Время ожидания соединения
      * @param error             Ошибка, возникающая при соединении
      */
@@ -96,13 +88,13 @@ public interface NativeDB extends Library {
 
     byte get_auto_commit_transaction(ConnectionPtr conn, NativeError error);
 
-    ResultSetPtr execute_request(ConnectionPtr conn, String sql, NativeError error);
+    ResultSetPtr execute_request(ConnectionPtr conn, String sql, int timeout, NativeError error);
 
-    int execute_request_update(ConnectionPtr conn, String sql, NativeError error);
+    int execute_request_update(ConnectionPtr conn, String sql, int timeout, NativeError error);
 
     StatementPtr create_statement(ConnectionPtr conn, NativeError error);
 
-    void prepare_statement(StatementPtr stmt, String sql, long timeout, NativeError error);
+    void prepare_statement(StatementPtr stmt, String sql, NativeError error);
 
     void set_int_value(StatementPtr stmt, int index, int value, NativeError error);
 
@@ -126,9 +118,11 @@ public interface NativeDB extends Library {
 
     void set_binary_array_value(StatementPtr stmt, int index, BinaryArray value, NativeError error);
 
-    ResultSetPtr execute(StatementPtr stmt, NativeError error);
+    ResultSetPtr execute(StatementPtr stmt, int timeout, NativeError error);
 
-    int execute_update(StatementPtr stmt, NativeError error);
+    int execute_update(StatementPtr stmt, int timeout, NativeError error);
+
+    void cancel_statement(StatementPtr stmt, NativeError error);
 
     byte next_result(ResultSetPtr results, NativeError error);
 

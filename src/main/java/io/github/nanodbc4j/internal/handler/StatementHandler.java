@@ -22,10 +22,10 @@ import static io.github.nanodbc4j.internal.handler.Handler.*;
 @UtilityClass
 public final class StatementHandler {
 
-    public static ResultSetPtr execute(ConnectionPtr conn, String sql) {
+    public static ResultSetPtr execute(ConnectionPtr conn, String sql, int timeout) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute_request(conn, sql + NUL_CHAR, nativeError);
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute_request(conn, sql + NUL_CHAR, timeout, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
@@ -33,10 +33,10 @@ public final class StatementHandler {
         }
     }
 
-    public static int executeUpdate(ConnectionPtr conn, String sql) {
+    public static int executeUpdate(ConnectionPtr conn, String sql, int timeout) {
         NativeError nativeError = new NativeError();
         try {
-            int result = NativeDB.INSTANCE.execute_request_update(conn, sql + NUL_CHAR, nativeError);
+            int result = NativeDB.INSTANCE.execute_request_update(conn, sql + NUL_CHAR, timeout, nativeError);
             throwIfNativeError(nativeError);
             return result;
         } finally {
@@ -44,10 +44,10 @@ public final class StatementHandler {
         }
     }
 
-    public static ResultSetPtr execute(StatementPtr statementPtr) {
+    public static ResultSetPtr execute(StatementPtr statementPtr, int timeout) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute(statementPtr, nativeError);
+            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute(statementPtr, timeout, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
@@ -55,10 +55,10 @@ public final class StatementHandler {
         }
     }
 
-    public static int executeUpdate(StatementPtr statementPtr) {
+    public static int executeUpdate(StatementPtr statementPtr, int timeout) {
         NativeError nativeError = new NativeError();
         try {
-            int result = NativeDB.INSTANCE.execute_update(statementPtr, nativeError);
+            int result = NativeDB.INSTANCE.execute_update(statementPtr, timeout, nativeError);
             throwIfNativeError(nativeError);
             return result;
         } finally {
@@ -70,6 +70,16 @@ public final class StatementHandler {
         NativeError nativeError = new NativeError();
         try {
             function.accept(statementPtr, index - 1, value,  nativeError);
+            throwIfNativeError(nativeError);
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static void cancel(StatementPtr statement) {
+        NativeError nativeError = new NativeError();
+        try {
+            NativeDB.INSTANCE.cancel_statement(statement, nativeError);
             throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);

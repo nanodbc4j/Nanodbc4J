@@ -43,8 +43,6 @@ public class NanodbcConnection implements Connection {
     @Getter(AccessLevel.PACKAGE)
     private ConnectionPtr connectionPtr;
 
-    private static final long TIMEOUT = 5;
-
     private DatabaseMetaData metaData = null;
 
     @Getter(AccessLevel.PACKAGE)
@@ -54,9 +52,9 @@ public class NanodbcConnection implements Connection {
     private static final Cleaner cleaner = Cleaner.create();
     private final Cleaner.Cleanable cleanable;
 
-    NanodbcConnection(String url) throws SQLException {
+    NanodbcConnection(String url, int loginTimeoutSeconds) throws SQLException {
         try {
-            connectionPtr = ConnectionHandler.connect(url, 5);
+            connectionPtr = ConnectionHandler.connect(url, loginTimeoutSeconds);
             this.url = url;
             cleanable = cleaner.register(this, new ConnectionCleaner(connectionPtr));
         } catch (NativeException e) {
@@ -86,7 +84,7 @@ public class NanodbcConnection implements Connection {
         log.log(Level.FINEST, "NanodbcConnection.NanodbcConnection.prepareStatement");
         try {
             StatementPtr statementPtr = ConnectionHandler.create(connectionPtr);
-            ConnectionHandler.prepared(statementPtr, sql, TIMEOUT);
+            ConnectionHandler.prepared(statementPtr, sql);
             return new NanodbcPreparedStatement(this, statementPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -350,7 +348,7 @@ public class NanodbcConnection implements Connection {
 
         try {
             StatementPtr statementPtr = ConnectionHandler.create(connectionPtr);
-            ConnectionHandler.prepared(statementPtr, sql, TIMEOUT);
+            ConnectionHandler.prepared(statementPtr, sql);
             return new NanodbcPreparedStatement(this, statementPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);

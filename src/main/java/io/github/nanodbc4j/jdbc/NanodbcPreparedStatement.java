@@ -50,7 +50,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.executeQuery");
         throwIfAlreadyClosed();
         try {
-            ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr);
+            ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr, queryTimeoutSeconds);
             return new NanodbcResultSet(this, resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -65,7 +65,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.executeUpdate");
         throwIfAlreadyClosed();
         try {
-            return StatementHandler.executeUpdate(statementPtr);
+            return StatementHandler.executeUpdate(statementPtr, queryTimeoutSeconds);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -360,7 +360,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         throwIfAlreadyClosed();
         try {
             assert connection.get() != null;
-            ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr);
+            ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr, queryTimeoutSeconds);
             resultSet = new NanodbcResultSet(this, resultSetPtr);
             return true;
         } catch (NativeException e) {

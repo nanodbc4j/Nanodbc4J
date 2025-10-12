@@ -4,6 +4,8 @@
 
 using namespace utils;
 
+#define BATCH_OPERATIONS 1
+
 template<typename T>
 static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const T& value, NativeError* error) {
     init_error(error);
@@ -64,9 +66,8 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
     }
 }
 
-void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, long timeout, NativeError* error) {
+void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError* error) {
     LOG_DEBUG("Preparing statement: {}", to_string(sql));
-    LOG_DEBUG("Timeout: {}", timeout);
     LOG_DEBUG("Statement object: {}", reinterpret_cast<uintptr_t>(stmt));
 
     init_error(error);
@@ -76,7 +77,7 @@ void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, long timeou
             set_error(error, ErrorCode::Database, "StatementError", "Statement is null");
             return;
         }
-        nanodbc::prepare(*stmt, sql, timeout);
+        nanodbc::prepare(*stmt, sql);
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "StatementError", e.what());
         LOG_ERROR("Database error during prepare: {}", e.what());
@@ -194,7 +195,7 @@ void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* va
     }
 }
 
-nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {
+nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* error) {
     LOG_DEBUG("Executing statement: {}", reinterpret_cast<uintptr_t>(stmt));
     init_error(error);
     try {
@@ -203,7 +204,7 @@ nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {
             set_error(error, ErrorCode::Database, "ExecuteError", "Statement is null");
             return nullptr;
         }
-        auto results = stmt->execute();
+        auto results = stmt->execute(BATCH_OPERATIONS, timeout);
         auto result_ptr = new nanodbc::result(std::move(results));
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
@@ -220,7 +221,7 @@ nanodbc::result* execute(nanodbc::statement* stmt, NativeError* error) {
     return nullptr;
 }
 
-int execute_update(nanodbc::statement* stmt, NativeError* error) {
+int execute_update(nanodbc::statement* stmt, int timeout, NativeError* error) {
     LOG_DEBUG("Executing update on statement: {}", reinterpret_cast<uintptr_t>(stmt));
     init_error(error);
     try {
@@ -229,7 +230,7 @@ int execute_update(nanodbc::statement* stmt, NativeError* error) {
             set_error(error, ErrorCode::Database, "ExecuteError", "Statement is null");
             return 0;
         }
-        auto results = stmt->execute();
+        auto results = stmt->execute(BATCH_OPERATIONS, timeout);
         int affected_rows = static_cast<int>(results.rowset_size());
         LOG_DEBUG("Update executed successfully, affected rows: {}", affected_rows);
         return affected_rows;
@@ -246,6 +247,27 @@ int execute_update(nanodbc::statement* stmt, NativeError* error) {
     return 0;
 }
 
+void cancel_statement(nanodbc::statement* stmt, NativeError* error) {
+    LOG_DEBUG("Cancel statement: {}", reinterpret_cast<uintptr_t>(stmt));
+    init_error(error);
+    try {
+        if (!stmt) {
+            LOG_ERROR("Attempted to close null statement");
+            return;
+        }
+        stmt->cancel();
+        LOG_DEBUG("Statement cancel");
+    } catch (const nanodbc::database_error& e) {
+        set_error(error, ErrorCode::Database, "StatementError", e.what());
+        LOG_ERROR("Database error during cancel_statement: {}", e.what());
+    } catch (const std::exception& e) {
+        set_error(error, ErrorCode::Standard, "StatementError", e.what());
+        LOG_ERROR("Standard exception during cancel_statement: {}", e.what());
+    } catch (...) {
+        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown cancel statement error");
+        LOG_ERROR("Unknown exception during cancel_statement");
+    }
+}
 
 void close_statement(nanodbc::statement* stmt, NativeError* error) {
     LOG_DEBUG("Closing statement: {}", reinterpret_cast<uintptr_t>(stmt));

@@ -26,6 +26,7 @@ public class NanodbcStatement implements Statement {
     protected final WeakReference<NanodbcConnection> connection;
     protected NanodbcResultSet resultSet = null;
     protected volatile boolean closed = false;
+    protected int queryTimeoutSeconds = 0;
 
     // Cleaner for managing resource cleanup
     private static final Cleaner cleaner = Cleaner.create();
@@ -46,7 +47,7 @@ public class NanodbcStatement implements Statement {
         throwIfAlreadyClosed();
         try {
             assert connection.get() != null;
-            ResultSetPtr resultSetPtr = StatementHandler.execute(connection.get().getConnectionPtr(), sql);
+            ResultSetPtr resultSetPtr = StatementHandler.execute(connection.get().getConnectionPtr(), sql, queryTimeoutSeconds);
             return new NanodbcResultSet(this, resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -62,7 +63,7 @@ public class NanodbcStatement implements Statement {
         throwIfAlreadyClosed();
         try {
             assert connection.get() != null;
-            return StatementHandler.executeUpdate(connection.get().getConnectionPtr(), sql);
+            return StatementHandler.executeUpdate(connection.get().getConnectionPtr(), sql, queryTimeoutSeconds);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -138,8 +139,7 @@ public class NanodbcStatement implements Statement {
     @Override
     public int getQueryTimeout() throws SQLException {
         log.finest("NanodbcStatement.getQueryTimeout");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        return queryTimeoutSeconds;
     }
 
     /**
@@ -148,8 +148,7 @@ public class NanodbcStatement implements Statement {
     @Override
     public void setQueryTimeout(int seconds) throws SQLException {
         log.finest("NanodbcStatement.setQueryTimeout");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        this.queryTimeoutSeconds =  seconds;
     }
 
     /**
@@ -158,8 +157,12 @@ public class NanodbcStatement implements Statement {
     @Override
     public void cancel() throws SQLException {
         log.finest("NanodbcStatement.cancel");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            StatementHandler.cancel(statementPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -198,7 +201,7 @@ public class NanodbcStatement implements Statement {
         throwIfAlreadyClosed();
         try {
             assert connection.get() != null;
-            ResultSetPtr resultSetPtr = StatementHandler.execute(connection.get().getConnectionPtr(), sql);
+            ResultSetPtr resultSetPtr = StatementHandler.execute(connection.get().getConnectionPtr(), sql, queryTimeoutSeconds);
             resultSet = new NanodbcResultSet(this, resultSetPtr);
             return true;
         } catch (NativeException e) {

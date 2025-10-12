@@ -21,17 +21,6 @@ import static io.github.nanodbc4j.internal.handler.Handler.*;
 @UtilityClass
 public final class ConnectionHandler {
 
-    public static ConnectionPtr connect(String connection_string) {
-        NativeError nativeError = new NativeError();
-        try {
-            ConnectionPtr ptr = NativeDB.INSTANCE.connection(connection_string + NUL_CHAR, nativeError);
-            throwIfNativeError(nativeError);
-            return ptr;
-        } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-        }
-    }
-
     public static ConnectionPtr connect(String connection_string, long timeout) {
         NativeError nativeError = new NativeError();
         try {
@@ -67,10 +56,10 @@ public final class ConnectionHandler {
         }
     }
 
-    public static void prepared(StatementPtr statementPtr, String sql, long timeout) {
+    public static void prepared(StatementPtr statementPtr, String sql) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.prepare_statement(statementPtr, sql + NUL_CHAR, timeout, nativeError);
+            NativeDB.INSTANCE.prepare_statement(statementPtr, sql + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
