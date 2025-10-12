@@ -132,6 +132,16 @@ public interface NativeDB extends Library {
 
     byte next_result(ResultSetPtr results, NativeError error);
 
+    byte previous_result(ResultSetPtr results, NativeError error);
+
+    byte first_result(ResultSetPtr results, NativeError error);
+
+    byte last_result(ResultSetPtr results, NativeError error);
+
+    byte absolute_result(ResultSetPtr results, int row, NativeError error);
+
+    int get_row_result(ResultSetPtr results, NativeError error);
+
     int get_int_value_by_index(ResultSetPtr results, int index, NativeError error);
 
     long get_long_value_by_index(ResultSetPtr results, int index, NativeError error);

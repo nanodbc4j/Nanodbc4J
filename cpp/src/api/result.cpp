@@ -1,4 +1,5 @@
 #include "api/result.h"
+#include <functional>
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
 
@@ -69,26 +70,74 @@ static T get_value_by_index(nanodbc::result* results, int index, NativeError* er
     return fallback;
 }
 
-
-bool next_result(nanodbc::result* results, NativeError* error) {
-    LOG_DEBUG("Calling next() on result: {}", reinterpret_cast<uintptr_t>(results));
+template<typename T>
+static T execute_result_set_query(nanodbc::result* results, const std::function<T(nanodbc::result*)>& func, NativeError* error) {
+    LOG_DEBUG("Executing result set query: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
     try {
         if (!results) {
-            LOG_ERROR("Result is null, next() returns false");
+            LOG_ERROR("Result is null, returns false");
             return false;
         }
-        bool has_next = results->next();
-        LOG_DEBUG("next() result: {}", has_next ? "true" : "false");
-        return has_next;
+        T result = func(results);
+        LOG_DEBUG("Result: {}", result);
+        return result;
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "ResultError", e.what());
-        LOG_ERROR("Exception in next_result: {}", e.what());
+        LOG_ERROR("Exception: {}", e.what());
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown next result error");
+        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in next_result");
     }
     return false;
+}
+
+bool next_result(nanodbc::result* results, NativeError* error) {
+    LOG_DEBUG("Calling next() on result: {}", reinterpret_cast<uintptr_t>(results));
+    return execute_result_set_query<bool>(results, [](nanodbc::result* results) {
+        return results->next();
+    },
+    error);
+}
+
+bool previous_result(nanodbc::result* results, NativeError* error) {
+    LOG_DEBUG("Calling previous_result() on result: {}", reinterpret_cast<uintptr_t>(results));
+    return execute_result_set_query<bool>(results, [](nanodbc::result* results) {
+        return results->prior();
+    },
+    error);
+}
+
+bool first_result(nanodbc::result* results, NativeError* error) {
+    LOG_DEBUG("Calling first_result() on result: {}", reinterpret_cast<uintptr_t>(results));
+    return execute_result_set_query<bool>(results, [](nanodbc::result* results) {
+        return results->first();
+    },
+    error);
+}
+
+bool last_result(nanodbc::result* results, NativeError* error) {
+    LOG_DEBUG("Calling last_result() on result: {}", reinterpret_cast<uintptr_t>(results));
+    return execute_result_set_query<bool>(results, [](nanodbc::result* results) {
+        return results->last();
+    },
+    error);
+}
+
+bool absolute_result(nanodbc::result* results, int row, NativeError* error) {
+    LOG_DEBUG("Calling absolute_result() on result: {}", reinterpret_cast<uintptr_t>(results));
+    return execute_result_set_query<bool>(results, [row](nanodbc::result* results) {
+        return results->move(row);
+    },
+    error);
+}
+
+int get_row_result(nanodbc::result* results, NativeError* error) {
+    LOG_DEBUG("Calling get_row_result() on result: {}", reinterpret_cast<uintptr_t>(results));
+    return execute_result_set_query<int>(results, [](nanodbc::result* results) {
+        return results->position();
+    },
+    error);
 }
 
 int get_int_value_by_index(nanodbc::result* results, int index, NativeError* error) {

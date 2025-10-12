@@ -12,6 +12,16 @@ extern "C" {
 
     ODBC_API bool next_result(nanodbc::result* results, NativeError* error);
 
+    ODBC_API bool previous_result(nanodbc::result* results, NativeError* error);
+
+    ODBC_API bool first_result(nanodbc::result* results, NativeError* error);
+
+    ODBC_API bool last_result(nanodbc::result* results, NativeError* error);
+
+    ODBC_API bool absolute_result(nanodbc::result* results, int row, NativeError* error);
+
+    ODBC_API int get_row_result(nanodbc::result* results, NativeError* error);
+
     ODBC_API int get_int_value_by_index(nanodbc::result* results, int index, NativeError* error);
 
     ODBC_API long get_long_value_by_index(nanodbc::result* results, int index, NativeError* error);

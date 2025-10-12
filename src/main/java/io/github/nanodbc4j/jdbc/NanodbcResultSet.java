@@ -45,7 +45,6 @@ public class NanodbcResultSet implements ResultSet {
     private ResultSetMetaData metaData = null;
     private boolean closed = false;
     private Object lastColumn = null;
-    private int currentRow = 0;
 
     NanodbcResultSet(ResultSetPtr resultSetPtr) {
         this.resultSetPtr = resultSetPtr;
@@ -65,7 +64,6 @@ public class NanodbcResultSet implements ResultSet {
         log.finest("NanodbcResultSet.next");
         throwIfAlreadyClosed();
         try {
-            currentRow++;   //  forward-only
             return ResultSetHandler.next(resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
@@ -771,8 +769,12 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public boolean first() throws SQLException {
         log.finest("NanodbcResultSet.first");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            return ResultSetHandler.first(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -781,8 +783,12 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public boolean last() throws SQLException {
         log.finest("NanodbcResultSet.last");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            return ResultSetHandler.last(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -791,7 +797,12 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public int getRow() throws SQLException {
         log.finest("NanodbcResultSet.getRow");
-        return currentRow;
+        throwIfAlreadyClosed();
+        try {
+            return ResultSetHandler.getRow(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -800,8 +811,12 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public boolean absolute(int row) throws SQLException {
         log.finest("NanodbcResultSet.absolute");
-        log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            return ResultSetHandler.absolute(resultSetPtr, row);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -819,7 +834,12 @@ public class NanodbcResultSet implements ResultSet {
     @Override
     public boolean previous() throws SQLException {
         log.finest("NanodbcResultSet.previous");
-        throw new SQLFeatureNotSupportedException();
+        throwIfAlreadyClosed();
+        try {
+            return ResultSetHandler.previous(resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**

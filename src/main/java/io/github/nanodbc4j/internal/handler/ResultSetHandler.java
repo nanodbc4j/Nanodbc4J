@@ -28,9 +28,64 @@ public final class ResultSetHandler {
     public static boolean next(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            boolean hasNext = NativeDB.INSTANCE.next_result(resultSet, nativeError) != 0;
+            boolean result = NativeDB.INSTANCE.next_result(resultSet, nativeError) != 0;
             throwIfNativeError(nativeError);
-            return hasNext;
+            return result;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static boolean previous(ResultSetPtr resultSet) {
+        NativeError nativeError = new NativeError();
+        try {
+            boolean result = NativeDB.INSTANCE.previous_result(resultSet, nativeError) != 0;
+            throwIfNativeError(nativeError);
+            return result;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static boolean first(ResultSetPtr resultSet) {
+        NativeError nativeError = new NativeError();
+        try {
+            boolean result = NativeDB.INSTANCE.first_result(resultSet, nativeError) != 0;
+            throwIfNativeError(nativeError);
+            return result;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static boolean last(ResultSetPtr resultSet) {
+        NativeError nativeError = new NativeError();
+        try {
+            boolean result = NativeDB.INSTANCE.last_result(resultSet, nativeError) != 0;
+            throwIfNativeError(nativeError);
+            return result;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static boolean absolute(ResultSetPtr resultSet, int row) {
+        NativeError nativeError = new NativeError();
+        try {
+            boolean result = NativeDB.INSTANCE.absolute_result(resultSet, row, nativeError) != 0;
+            throwIfNativeError(nativeError);
+            return result;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static int getRow(ResultSetPtr resultSet) {
+        NativeError nativeError = new NativeError();
+        try {
+            int result = NativeDB.INSTANCE.get_row_result(resultSet, nativeError);
+            throwIfNativeError(nativeError);
+            return result;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }
