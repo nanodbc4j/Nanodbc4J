@@ -205,6 +205,7 @@ nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* err
             return nullptr;
         }
         auto results = stmt->execute(BATCH_OPERATIONS, timeout);
+        results.unbind();
         auto result_ptr = new nanodbc::result(std::move(results));
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
