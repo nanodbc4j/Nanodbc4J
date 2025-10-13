@@ -16,6 +16,8 @@ import java.lang.ref.Cleaner;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.sql.Array;
 import java.sql.Blob;
@@ -617,16 +619,8 @@ public class NanodbcResultSet implements ResultSet {
                 case "java.sql.Date" -> getDate(columnIndex);
                 case "java.sql.Time" -> getTime(columnIndex);
                 case "java.sql.Timestamp" -> getTimestamp(columnIndex);
-                case "[B" -> // byte array
-                        getBytes(columnIndex);
-                case "java.util.UUID" -> {
-                    String uuidString = getString(columnIndex);
-                    try {
-                        yield uuidString != null ? UUID.fromString(uuidString) : null;
-                    } catch (IllegalArgumentException e) {
-                        throw new SQLException("Invalid UUID format: " + uuidString, e);
-                    }
-                }
+                case "[B" -> getBytes(columnIndex); // byte array
+                case "java.util.UUID" -> getUuid(columnIndex);
                 default -> getString(columnIndex); // Fallback
             };
         } catch (SQLException e) {
@@ -2035,8 +2029,7 @@ public class NanodbcResultSet implements ResultSet {
     public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
         log.finest("NanodbcResultSet.getObject");
         if (type == UUID.class) {
-            String s = getString(columnIndex);
-            return s == null ? null : (T) UUID.fromString(s);
+            return (T) getUuid(columnIndex);
         } else if (type == String.class) {
             return (T) getString(columnIndex);
         } else if (type == Integer.class) {
@@ -2058,27 +2051,61 @@ public class NanodbcResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
         log.finest("NanodbcResultSet.getObject");
-        if (type == UUID.class) {
-            String s = getString(columnLabel);
-            return s == null ? null : (T) UUID.fromString(s);
-        } else if (type == String.class) {
-            return (T) getString(columnLabel);
-        } else if (type == Integer.class) {
-            return (T) Integer.valueOf(getInt(columnLabel));
-        } else if (type == BigDecimal.class) {
-            return (T) getBigDecimal(columnLabel);
-        } else if (type == Timestamp.class) {
-            return (T) getTimestamp(columnLabel);
-        } else if (type == Blob.class) {
-            return (T) getBlob(columnLabel);
-        } else if (type == Clob.class) {
-            return (T) getClob(columnLabel);
+        int index = findColumn(columnLabel);
+        return getObject(index, type);
+    }
+
+    /**
+     * Retrieves the value of the specified column as a {@link UUID}.
+     * <p>
+     * This method attempts to read the UUID in a database-agnostic way:
+     * <ol>
+     *   <li>First, it tries to read the value as a string and parse it using {@link UUID#fromString(String)}.
+     *   <li>If that fails (e.g., due to invalid format or native driver error), it falls back to reading raw bytes.
+     *   <li>When reading bytes, it expects exactly 16 bytes in big-endian order (standard Java/PostgreSQL/MySQL format).
+     * </ol>
+     * <p>
+     *
+     * @param columnIndex the first column is 1, the second is 2, ...
+     * @return the column value as a {@code UUID}, or {@code null} if the value is SQL {@code NULL}
+     * @throws SQLException if the column value cannot be converted to a valid UUID
+     */
+    public UUID getUuid(int columnIndex) throws SQLException {
+        throwIfAlreadyClosed();
+        lastColumn = columnIndex;
+
+        // First, try reading as a string — this is the most portable and widely supported approach
+        try {
+            String uuidStr = ResultSetHandler.getStringValueByIndex(resultSetPtr, columnIndex);
+            if (uuidStr == null) {
+                return null;
+            }
+            return UUID.fromString(uuidStr.trim());
+        } catch (IllegalArgumentException | NativeException e) {
+            // String is not a valid UUID format — proceed to byte fallback
+            // Native driver failed to retrieve as string — proceed to byte fallback
         }
-        // fallback
-        return (T) getObject(columnLabel);
+
+        // Fallback: attempt to read as raw bytes (e.g., PostgreSQL uuid, MySQL BINARY(16), etc.)
+        try {
+            byte[] bytes = ResultSetHandler.getBytesByIndex(resultSetPtr, columnIndex);
+            if (bytes == null) {
+                return null;
+            }
+            if (bytes.length != 16) {
+                throw new SQLException("Invalid UUID byte length: " + bytes.length + ". Expected 16 bytes.");
+            }
+            ByteBuffer bb = ByteBuffer.wrap(bytes);
+            long mostSigBits = bb.getLong();
+            long leastSigBits = bb.getLong();
+            return new UUID(mostSigBits, leastSigBits);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        } catch (BufferUnderflowException e) {
+            throw new SQLException("Not enough bytes to construct UUID", e);
+        }
     }
 
     /**
