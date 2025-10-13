@@ -1,0 +1,8 @@
+This product includes software developed by third parties:
+
+- fmt library (https://github.com/fmtlib/fmt) - MIT License
+- spdlog library (https://github.com/gabime/spdlog) - MIT License
+- utfcpp library (https://github.com/nemtrif/utfcpp) - Boost Software License
+- nanodbc library (https://github.com/nanodbc/nanodbc) - MIT License
+
+See respective LICENSE files for details.
