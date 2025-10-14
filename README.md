@@ -1,8 +1,9 @@
 # Nanodbc4J
 
-**Experimental JDBC-ODBC Bridge using nanodbc and JNA**
+**A modern JDBC-ODBC bridge using nanodbc and JNA**
 
-> **Note**: This project is **experimental** and under active development. It is not suitable for production use.
+> ✅ **Now working in DBeaver!**  
+> ⚠️ Still experimental — use with caution in non-production environments.
 
 Nanodbc4J is a **JDBC driver** that enables Java applications to access ODBC data sources directly, using the modern [nanodbc](https://github.com/nanodbc/nanodbc ) C++ library via **Java Native Access (JNA)**.
 
@@ -18,34 +19,54 @@ Nanodbc4J fills this gap by:
 - Providing a **JDBC-compliant interface** for use in Java applications.
 - Supporting cross-platform builds for **Windows (ODBC)** and **Linux (unixODBC)**.
 
-## Features (planned)
+## ✅ Implemented Features
 
-- [ ] Connection management via ODBC
-- [ ] Support for setting connection and statement attributes
-- [ ] Query execution and result set handling
-- [ ] Prepared statements
-- [ ] Transaction support
-- [ ] Unicode support
-- [ ] Error handling and diagnostics
+- [x] JDBC `Driver` registration and URL parsing (`jdbc:nanodbc4j:...`)
+- [x] Connection via **DSN** or full **ODBC connection string**
+- [x] Basic `Statement` and `PreparedStatement` support
+- [x] `ResultSet` navigation and data retrieval (strings, integers, decimals, dates, booleans)
+- [x] Full **metadata support** (`DatabaseMetaData`, `ResultSetMetaData`) — enables integration with DBeaver
+- [x] Automatic loading of native libraries via **JNA** (no manual setup required)
+- [x] Cross-platform native builds (Windows, Linux, macOS)
+- [x] Basic ODBC error diagnostics and mapping to `SQLException`
 
-## ⚠️ Limitations
 
-- **Experimental**: APIs may change frequently.
-- **Performance**: JNA is slower than JNI or native code.
-- **Platform dependent**: Requires ODBC driver installed and configured.
-- **Incomplete JDBC coverage**: Not all JDBC features are implemented yet.
+## ⚠️ Limitations & Notes
+
+- **Not 100% JDBC-compliant** — some methods throw `SQLFeatureNotSupportedException`.
+- **Requires JNA** — users must include `jna.jar`.
+- **ODBC driver must be installed and configured** on the system.
+- **Performance**: JNA adds overhead vs. pure JNI — acceptable for most integration scenarios.
+- **Unicode support**: basic; full UTF-16/UTF-8 handling depends on underlying ODBC driver.
 
 ---
 
 ## Requirements
 
-- Java 17+
-- JNA (via Maven or Gradle)
-- C++ compiler for building native nanodbc wrapper
-- ODBC driver installed and configured
+- **Java 17+**
+- **ODBC driver** installed (e.g., PostgreSQL ODBC, SQL Server ODBC, etc.)
+- **(Optional)** For development: C++ compiler to rebuild native layer
 
-## Usage (Example)
+## 🧪 Usage Example (Java)
 
 ```java
-// Coming soon!
-```
+import java.sql.*;
+
+public class Nanodbc4JExample {
+    public static void main(String[] args) throws SQLException {
+        // Option 1: Connect via DSN
+        String url = "jdbc:nanodbc4j:DSN=MyDatabase;UID=user;PWD=secret";
+
+        // Option 2: Connect via full ODBC connection string
+        // String url = "jdbc:nanodbc4j:DRIVER={PostgreSQL ODBC Driver};SERVER=localhost;PORT=5432;DATABASE=test;UID=postgres;PWD=pass";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT id, name FROM users")) {
+
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") + ": " + rs.getString("name"));
+            }
+        }
+    }
+}
