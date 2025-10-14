@@ -27,7 +27,7 @@ Nanodbc4J fills this gap by:
 - [x] `ResultSet` navigation and data retrieval (strings, integers, decimals, dates, booleans)
 - [x] Full **metadata support** (`DatabaseMetaData`, `ResultSetMetaData`) — enables integration with DBeaver
 - [x] Automatic loading of native libraries via **JNA** (no manual setup required)
-- [x] Cross-platform native builds (Windows, Linux, macOS)
+- [x] Cross-platform native builds (Windows, Linux)
 - [x] Basic ODBC error diagnostics and mapping to `SQLException`
 
 
