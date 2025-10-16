@@ -18,64 +18,13 @@
 
 using namespace utils;
 
-namespace {
-    class DatabaseCatalog : public nanodbc::catalog {
-    public:
-        explicit DatabaseCatalog(nanodbc::connection& conn) : nanodbc::catalog(conn) {
-        }
-
-        nanodbc::result getCatalogsResult() {
-            return list_catalogs_impl();
-        }
-
-        nanodbc::result getSchemasResult() {
-            return list_schemas_impl();
-        }
-
-        nanodbc::result getTableTypesResult() {
-            return list_table_types_impl();
-        }
-    };
-
-    class DatabaseTables : public nanodbc::catalog::tables {
-    public:
-        nanodbc::result& getResult() {
-            return get_result();
-        }
-    };
-
-    class DatabaseColumns : public nanodbc::catalog::columns {
-    public:
-        nanodbc::result& getResult() {
-            return get_result();
-        }
-    };
-
-    class DatabasePrimaryKeys : public nanodbc::catalog::primary_keys {
-    public:
-        nanodbc::result& getResult() {
-            return get_result();
-        }
-    };
-
-    class DatabaseProcedures : public nanodbc::catalog::procedures {
-    public:
-        nanodbc::result& getResult() {
-            return get_result();
-        }
-    };
-
-    class DatabaseProcedureColumns : public nanodbc::catalog::procedure_columns {
-    public:
-        nanodbc::result& getResult() {
-            return get_result();
-        }
-    };
+namespace {;
 
     class ResultSet : public nanodbc::result {
     public:
         ResultSet(nanodbc::statement&& statement, long rowset_size) : nanodbc::result(std::move(statement), rowset_size) {};
     };
+
 }
 
 // === Для строк: использует nanodbc::connection::get_info<T> ===
@@ -113,16 +62,6 @@ inline static T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = 
     }
 
     return value;
-}
-
-template<class T>
-inline static T joinString(const std::vector<T>& vec, const T& delimiter) {
-    T result{};
-    for (size_t i = 0; i < vec.size(); ++i) {
-        if (i > 0) result += delimiter;
-        result += vec[i];
-    }
-    return result;
 }
 
 inline static std::pair<int, int> processingVersionString(std::string ver) {
@@ -283,7 +222,7 @@ nanodbc::string DatabaseMetaData::getNumericFunctions() const {
 
 #undef ADD_IF_SET
 
-    nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(","));
+    nanodbc::string result = join_strings(funcs, NANODBC_TEXT(","));
 
     LOG_TRACE("Returning: {}", to_string(result));
     return result;
@@ -322,7 +261,7 @@ nanodbc::string DatabaseMetaData::getStringFunctions() const {
 
 #undef ADD_IF_SET
 
-    nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(""));
+    nanodbc::string result = join_strings(funcs, NANODBC_TEXT(""));
 
     LOG_TRACE("Returning: {}", to_string(result));
     return result;
@@ -348,7 +287,7 @@ nanodbc::string DatabaseMetaData::getSystemFunctions() const {
 
 #undef ADD_IF_SET
 
-    nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(","));
+    nanodbc::string result = join_strings(funcs, NANODBC_TEXT(","));
 
     LOG_TRACE("Returning: {}", to_string(result));
     return result;
@@ -389,7 +328,7 @@ nanodbc::string DatabaseMetaData::getTimeDateFunctions() const {
 
 #undef ADD_IF_SET
 
-    nanodbc::string result = joinString<nanodbc::string>(funcs, NANODBC_TEXT(","));
+    nanodbc::string result = join_strings(funcs, NANODBC_TEXT(","));
 
     LOG_TRACE("Returning: {}", to_string(result));
     return result;
@@ -1438,37 +1377,141 @@ int DatabaseMetaData::getMaxProcedureNameLength() const {
 
 // === Schemas ===
 nanodbc::result DatabaseMetaData::getSchemas() const {
-    return DatabaseCatalog(connection_).getSchemasResult();
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLTables),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0,
+        (NANODBC_SQLCHAR*)SQL_ALL_SCHEMAS,
+        1,
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0,
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0);
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    return ResultSet(std::move(stmt), 1);
 }
 
 // === Catalogs ===
 nanodbc::result DatabaseMetaData::getCatalogs() const {
-    return DatabaseCatalog(connection_).getCatalogsResult();
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLTables),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)SQL_ALL_CATALOGS,
+        1,
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0,
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0,
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0);
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    return ResultSet(std::move(stmt), 1);
 }
 
 // === TableTypes ===
 nanodbc::result DatabaseMetaData::getTableTypes() const {
-    return DatabaseCatalog(connection_).getTableTypesResult();
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLTables),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0,
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0,
+        (NANODBC_SQLCHAR*)NANODBC_TEXT(""),
+        0,
+        (NANODBC_SQLCHAR*)SQL_ALL_TABLE_TYPES,
+        1);
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    return ResultSet(std::move(stmt), 1);
 }
 
 // === Tables ===
 nanodbc::result DatabaseMetaData::getTables(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& type) const {
-    auto tables_result = nanodbc::catalog(connection_).find_tables(table, type, schema, catalog);
-    return DatabaseTables(tables_result).getResult();
+    // Passing a null pointer to a search pattern argument does not
+    // constrain the search for that argument; that is, a null pointer and
+    // the search pattern % (any characters) are equivalent.
+    // However, a zero-length search pattern - that is, a valid pointer to
+    // a string of length zero - matches only the empty string ("").
+    // See https://msdn.microsoft.com/en-us/library/ms710171.aspx
+
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLTables),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? nullptr : catalog.c_str()),
+        (catalog.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(schema.empty() ? nullptr : schema.c_str()),
+        (schema.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(table.empty() ? nullptr : table.c_str()),
+        (table.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(type.empty() ? nullptr : type.c_str()),
+        (type.empty() ? 0 : SQL_NTS));
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    return ResultSet(std::move(stmt), 1);
 }
 
 
 // === Columns ===
 nanodbc::result DatabaseMetaData::getColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& column) const {
-    auto columns_result = nanodbc::catalog(connection_).find_columns(column, table, schema, catalog);
-    return DatabaseColumns(columns_result).getResult();
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLColumns),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? nullptr : catalog.c_str()),
+        (catalog.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(schema.empty() ? nullptr : schema.c_str()),
+        (schema.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(table.empty() ? nullptr : table.c_str()),
+        (table.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(column.empty() ? nullptr : column.c_str()),
+        (column.empty() ? 0 : SQL_NTS));
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    return ResultSet(std::move(stmt), 1);
 }
 
 
 // === Primary Keys ===
 nanodbc::result DatabaseMetaData::getPrimaryKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const {
-    auto primary_keys_result = nanodbc::catalog(connection_).find_primary_keys(table, schema, catalog);
-    return DatabasePrimaryKeys(primary_keys_result).getResult();
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLPrimaryKeys),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? nullptr : catalog.c_str()),
+        (catalog.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(schema.empty() ? nullptr : schema.c_str()),
+        (schema.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(table.empty() ? nullptr : table.c_str()),
+        (table.empty() ? 0 : SQL_NTS));
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    return ResultSet(std::move(stmt), 1);
 }
 
 // === Imported Keys ===
@@ -1651,12 +1694,49 @@ nanodbc::result DatabaseMetaData::getIndexInfo(const nanodbc::string& catalog, c
 
 // === Procedures ===
 nanodbc::result DatabaseMetaData::getProcedures(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure) const {
-    auto procedures_keys_result = nanodbc::catalog(connection_).find_procedures (procedure, schema, catalog);
-    return DatabaseProcedures(procedures_keys_result).getResult();
+    // Passing a null pointer to a search pattern argument does not
+    // constrain the search for that argument; that is, a null pointer and
+    // the search pattern % (any characters) are equivalent.
+    // However, a zero-length search pattern - that is, a valid pointer to
+    // a string of length zero - matches only the empty string ("").
+    // See https://msdn.microsoft.com/en-us/library/ms710171.aspx
+
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLProcedures),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? nullptr : catalog.c_str()),
+        (catalog.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(schema.empty() ? nullptr : schema.c_str()),
+        (schema.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(procedure.empty() ? nullptr : procedure.c_str()),
+        (procedure.empty() ? 0 : SQL_NTS));
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    return ResultSet(std::move(stmt), 1);
 }
 
 // === Procedure Columns ===
 nanodbc::result DatabaseMetaData::getProcedureColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure, const nanodbc::string& column) const {
-    auto procedure_columns_result = nanodbc::catalog(connection_).find_procedure_columns (column, procedure, schema, catalog);
-    return DatabaseProcedureColumns(procedure_columns_result).getResult();
+    nanodbc::statement stmt(connection_);
+    RETCODE rc;
+    NANODBC_CALL_RC(
+        NANODBC_FUNC(SQLProcedureColumns),
+        rc,
+        stmt.native_statement_handle(),
+        (NANODBC_SQLCHAR*)(catalog.empty() ? nullptr : catalog.c_str()),
+        (catalog.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(schema.empty() ? nullptr : schema.c_str()),
+        (schema.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(procedure.empty() ? nullptr : procedure.c_str()),
+        (procedure.empty() ? 0 : SQL_NTS),
+        (NANODBC_SQLCHAR*)(column.empty() ? nullptr : column.c_str()),
+        (column.empty() ? 0 : SQL_NTS));
+    if (!SQL_SUCCEEDED(rc))
+        NANODBC_THROW_DATABASE_ERROR(stmt.native_statement_handle(), SQL_HANDLE_STMT);
+
+    return ResultSet(std::move(stmt), 1);
 }

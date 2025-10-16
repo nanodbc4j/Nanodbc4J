@@ -26,6 +26,9 @@ namespace utils {
 
 	std::u16string to_u16string(const std::u16string& str);
 
+	template<typename Container>
+	auto join_strings(const Container& c, const typename Container::value_type& delimiter) -> typename Container::value_type;
+
 	template <typename CharT>
 	CharT* duplicate_string(const CharT* src);
 

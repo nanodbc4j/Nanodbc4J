@@ -4,7 +4,10 @@
 #include <cstring>
 #include <vector>
 #include <exception>
-#include "utf8.h"
+#include <fmt/core.h>
+#include <fmt/ranges.h>
+#include <fmt/xchar.h>
+#include <utf8.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -216,6 +219,38 @@ std::u16string utils::to_u16string(const std::wstring& str) {
 
 std::u16string utils::to_u16string(const std::u16string& str) {
     return str;
+}
+
+template<>
+std::string utils::join_strings<std::vector<std::string>>(const std::vector<std::string>& c, const std::string& delimiter) {
+    return fmt::format("{}", fmt::join(c, delimiter));
+}
+
+template<>
+std::wstring utils::join_strings<std::vector<std::wstring>>(const std::vector<std::wstring>& c, const std::wstring& delimiter) {
+    return fmt::format(L"{}", fmt::join(c, delimiter));
+}
+
+template<>
+std::u16string utils::join_strings<std::vector<std::u16string>>(const std::vector<std::u16string>& c, const std::u16string& delimiter) {
+    if (c.empty()) return {};
+    std::u16string result = c[0];
+    for (size_t i = 1; i < c.size(); ++i) {
+        result += delimiter;
+        result += c[i];
+    }
+    return result;
+}
+
+template<>
+std::u32string utils::join_strings<std::vector<std::u32string>>(const std::vector<std::u32string>& c, const std::u32string& delimiter) {
+    if (c.empty()) return {};
+    std::u32string result = c[0];
+    for (size_t i = 1; i < c.size(); ++i) {
+        result += delimiter;
+        result += c[i];
+    }
+    return result;
 }
 
 template <typename CharT>
