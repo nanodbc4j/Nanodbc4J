@@ -118,11 +118,11 @@ void set_short_value(nanodbc::statement* stmt, int index, short value, NativeErr
 
 void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value, NativeError* error) {
     if (!value) {
-        return set_value_with_error_handling(stmt, index, nullptr, error);
+        set_value_with_error_handling(stmt, index, nullptr, error);
+        return;
     }
     
-    auto str_value = value ? nanodbc::string(value) : nanodbc::string();
-    set_value_with_error_handling(stmt, index, str_value, error);
+    set_value_with_error_handling(stmt, index, nanodbc::string(value), error);
 }
 
 void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeError* error) {

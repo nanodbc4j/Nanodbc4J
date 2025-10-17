@@ -32,6 +32,8 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
 
+import static io.github.nanodbc4j.internal.handler.Handler.NUL_CHAR;
+
 /**
  * Prepared SQL statement with parameter support (?). Use setX() methods to bind values.
  */
@@ -193,7 +195,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.setString");
         throwIfAlreadyClosed();
         try {
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x + "\0", NativeDB.INSTANCE::set_string_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x == null ? null : x + NUL_CHAR, NativeDB.INSTANCE::set_string_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
