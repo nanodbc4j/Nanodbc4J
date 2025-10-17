@@ -234,7 +234,7 @@ int execute_update(nanodbc::statement* stmt, int timeout, NativeError* error) {
             return 0;
         }
         auto results = stmt->execute(BATCH_OPERATIONS, timeout);
-        int affected_rows = static_cast<int>(results.rowset_size());
+        int affected_rows = static_cast<int>(results.affected_rows());
         LOG_DEBUG("Update executed successfully, affected rows: {}", affected_rows);
         return affected_rows;
     } catch (const nanodbc::database_error& e) {

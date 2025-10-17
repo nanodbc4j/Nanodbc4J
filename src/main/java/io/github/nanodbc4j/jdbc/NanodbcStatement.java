@@ -81,6 +81,7 @@ public class NanodbcStatement implements Statement {
                     cleanable.clean();
                     statementPtr = null;
                     closed = true;
+                    closeResultSet();
                 }
             } catch (NativeException e) {
                 throw new NanodbcSQLException(e);
@@ -502,6 +503,13 @@ public class NanodbcStatement implements Statement {
     protected void throwIfAlreadyClosed() throws SQLException {
         if (isClosed() || statementPtr == null) {
             throw new NanodbcSQLException("Statement: already closed");
+        }
+    }
+
+    protected synchronized void closeResultSet() throws SQLException {
+        if (resultSet != null && !resultSet.isClosed()) {
+            resultSet.close();
+            resultSet = null;
         }
     }
 
