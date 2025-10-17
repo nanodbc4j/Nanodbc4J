@@ -11,6 +11,7 @@ import io.github.nanodbc4j.internal.cstruct.DateStruct;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
 import io.github.nanodbc4j.internal.cstruct.TimeStruct;
 import io.github.nanodbc4j.internal.cstruct.TimestampStruct;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.io.InvalidClassException;
@@ -102,7 +103,7 @@ public final class ResultSetHandler {
         }
     }
 
-    public static <T> T getValueByName(ResultSetPtr resultSet, String name, Handler.TriFunction<ResultSetPtr, String, NativeError, T> function) {
+    public static <T> T getValueByName(ResultSetPtr resultSet, @NonNull String name, Handler.TriFunction<ResultSetPtr, String, NativeError, T> function) {
         NativeError nativeError = new NativeError();
         try {
             T value = function.apply(resultSet, name + NUL_CHAR, nativeError);
@@ -179,7 +180,7 @@ public final class ResultSetHandler {
         }
     }
 
-    public static byte[] getBytesByName(ResultSetPtr resultSet, String name) {
+    public static byte[] getBytesByName(ResultSetPtr resultSet, @NonNull String name) {
         NativeError nativeError = new NativeError();
         BinaryArray array = null;
         try {
@@ -191,11 +192,13 @@ public final class ResultSetHandler {
             return array.getBytes();
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_binary_array(array);
+            if (array != null) {
+                NativeDB.INSTANCE.delete_binary_array(array);
+            }
         }
     }
 
-    public static String getStringValueByName(ResultSetPtr resultSet, String name) {
+    public static String getStringValueByName(ResultSetPtr resultSet, @NonNull String name) {
         NativeError nativeError = new NativeError();
         Pointer strPtr = null;
         try {
@@ -204,12 +207,14 @@ public final class ResultSetHandler {
             return getWideString(strPtr);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.std_free(strPtr);
+            if (strPtr != null) {
+                NativeDB.INSTANCE.std_free(strPtr);
+            }
         }
     }
 
 
-    public static Date getDateValueByName(ResultSetPtr resultSet, String name) {
+    public static Date getDateValueByName(ResultSetPtr resultSet, @NonNull String name) {
         NativeError nativeError = new NativeError();
         DateStruct dateStruct = null;
         try {
@@ -217,11 +222,13 @@ public final class ResultSetHandler {
             return convert(dateStruct, nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_date(dateStruct);
+            if (dateStruct != null) {
+                NativeDB.INSTANCE.delete_date(dateStruct);
+            }
         }
     }
 
-    public static Time getTimeValueByName(ResultSetPtr resultSet, String name) {
+    public static Time getTimeValueByName(ResultSetPtr resultSet, @NonNull String name) {
         NativeError nativeError = new NativeError();
         TimeStruct timeStruct = null;
         try {
@@ -229,11 +236,13 @@ public final class ResultSetHandler {
             return convert(timeStruct, nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_time(timeStruct);
+            if (timeStruct != null) {
+                NativeDB.INSTANCE.delete_time(timeStruct);
+            }
         }
     }
 
-    public static Timestamp getTimestampValueByName(ResultSetPtr resultSet, String name) {
+    public static Timestamp getTimestampValueByName(ResultSetPtr resultSet, @NonNull String name) {
         NativeError nativeError = new NativeError();
         TimestampStruct timestampStruct = null;
         try {
@@ -241,7 +250,9 @@ public final class ResultSetHandler {
             return convert(timestampStruct, nativeError);
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_timestamp(timestampStruct);
+            if (timestampStruct != null) {
+                NativeDB.INSTANCE.delete_timestamp(timestampStruct);
+            }
         }
     }
 
@@ -267,7 +278,7 @@ public final class ResultSetHandler {
         }
     }
 
-    public static int findColumn(ResultSetPtr resultSet, String name) {
+    public static int findColumn(ResultSetPtr resultSet, @NonNull String name) {
         NativeError nativeError = new NativeError();
         try {
             int col = NativeDB.INSTANCE.find_column_by_name(resultSet, name + NUL_CHAR, nativeError) + 1;

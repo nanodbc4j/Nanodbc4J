@@ -162,6 +162,11 @@ public class DatabaseMetaDataHandler {
     }
 
     public static ResultSetPtr getTables(ConnectionPtr conn, String catalog, String schema, String table, String type) {
+        catalog = catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
+        type = type == null ? "" : type;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -222,6 +227,11 @@ public class DatabaseMetaDataHandler {
     }
 
     public static ResultSetPtr getColumns(ConnectionPtr conn, String catalog, String schema, String table, String column) {
+        catalog =  catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
+        column = column == null ? "" : column;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -239,6 +249,10 @@ public class DatabaseMetaDataHandler {
     }
 
     public static ResultSetPtr getPrimaryKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+        catalog = catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -255,6 +269,10 @@ public class DatabaseMetaDataHandler {
     }
 
     public static ResultSetPtr getImportedKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+        catalog = catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -271,6 +289,10 @@ public class DatabaseMetaDataHandler {
     }
 
     public static ResultSetPtr getExportedKeys(ConnectionPtr conn, String catalog, String schema, String table) {
+        catalog = catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -299,6 +321,10 @@ public class DatabaseMetaDataHandler {
     }
 
     public static ResultSetPtr getProcedures(ConnectionPtr conn, String catalog, String schemaPattern, String procedureNamePattern) {
+        catalog = catalog == null ? "" : catalog;
+        schemaPattern  = schemaPattern == null ? "" : schemaPattern;
+        procedureNamePattern = procedureNamePattern == null ? "" : procedureNamePattern;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -315,6 +341,11 @@ public class DatabaseMetaDataHandler {
     }
 
     public static ResultSetPtr getProcedureColumns(ConnectionPtr conn, String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) {
+        catalog = catalog == null ? "" : catalog;
+        schemaPattern  = schemaPattern == null ? "" : schemaPattern;
+        procedureNamePattern = procedureNamePattern == null ? "" : procedureNamePattern;
+        columnNamePattern = columnNamePattern == null ? "" : columnNamePattern;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -332,6 +363,11 @@ public class DatabaseMetaDataHandler {
     }
 
     public ResultSetPtr getColumnPrivileges(ConnectionPtr conn, String catalog, String schema, String table, String columnNamePattern) {
+        catalog = catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
+        columnNamePattern = columnNamePattern == null ? "" : columnNamePattern;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -349,6 +385,10 @@ public class DatabaseMetaDataHandler {
     }
 
     public ResultSetPtr getTablePrivileges(ConnectionPtr conn, String catalog, String schemaPattern, String tableNamePattern) {
+        catalog = catalog == null ? "" : catalog;
+        schemaPattern  = schemaPattern == null ? "" : schemaPattern;
+        tableNamePattern = tableNamePattern == null ? "" : tableNamePattern;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -365,7 +405,11 @@ public class DatabaseMetaDataHandler {
     }
 
     public ResultSetPtr getBestRowIdentifier(ConnectionPtr conn, String catalog, String schema, String table, int scope, boolean nullable) {
+        catalog = catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
         byte isNullable = (byte) (nullable ? 1 : 0);
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -384,6 +428,10 @@ public class DatabaseMetaDataHandler {
     }
 
     public ResultSetPtr getVersionColumns(ConnectionPtr conn, String catalog, String schema, String table) {
+        catalog = catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -400,6 +448,13 @@ public class DatabaseMetaDataHandler {
 
     public ResultSetPtr getCrossReference(ConnectionPtr conn, String parentCatalog, String parentSchema, String parentTable,
                                           String foreignCatalog, String foreignSchema, String foreignTable) {
+        parentCatalog = parentCatalog == null ? "" : parentCatalog;
+        parentSchema = parentSchema == null ? "" : parentSchema;
+        parentTable = parentTable == null ? "" : parentTable;
+        foreignCatalog = foreignCatalog == null ? "" : foreignCatalog;
+        foreignSchema = foreignSchema == null ? "" : foreignSchema;
+        foreignTable = foreignTable == null ? "" : foreignTable;
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
@@ -419,8 +474,12 @@ public class DatabaseMetaDataHandler {
     }
 
     public ResultSetPtr getIndexInfo(ConnectionPtr conn, String catalog, String schema, String table, boolean unique, boolean approximate) {
+        catalog = catalog == null ? "" : catalog;
+        schema = schema == null ? "" : schema;
+        table = table == null ? "" : table;
         byte isUnique = (byte) (unique ? 1 : 0);
         byte isApproximate = (byte) (approximate ? 1 : 0);
+
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =

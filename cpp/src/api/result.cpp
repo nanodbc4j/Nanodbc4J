@@ -359,28 +359,34 @@ bool was_null_by_index(nanodbc::result* results, int index, NativeError* error) 
 }
 
 int get_int_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
-    return get_value_by_name<int>(results, name, error, 0);
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
+    return get_value_by_name<int>(results, str_name, error, 0);
 }
 
 long get_long_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
-    return get_value_by_name<long>(results, name, error, 0L);
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
+    return get_value_by_name<long>(results, str_name, error, 0L);
 }
 
 double get_double_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
-    return get_value_by_name<double>(results, name, error, 0.0);
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
+    return get_value_by_name<double>(results, str_name, error, 0.0);
 }
 
 bool get_bool_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
     // result->get<bool>() не работает
-    return get_value_by_name<short>(results, name, error, 0);
+    return get_value_by_name<short>(results, str_name, error, 0);
 }
 
 float get_float_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
-    return get_value_by_name<float>(results, name, error, 0.0f);
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
+    return get_value_by_name<float>(results, str_name, error, 0.0f);
 }
 
 short get_short_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
-    return get_value_by_name<short>(results, name, error, 0);
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
+    return get_value_by_name<short>(results, str_name, error, 0);
 }
 
 const ApiChar* get_string_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
@@ -395,29 +401,32 @@ const ApiChar* get_string_value_by_name(nanodbc::result* results, const ApiChar*
 }
 
 CDate* get_date_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
     if (was_null_by_name(results, name, error) || error->error_code) {
-        LOG_DEBUG("Column '{}' is NULL", to_string(name));
+        LOG_DEBUG("Column '{}' is NULL", to_string(str_name));
         return nullptr;
     }
-    auto date = get_value_by_name<nanodbc::date>(results, name, error, {});
+    auto date = get_value_by_name<nanodbc::date>(results, str_name, error, {});
     return new CDate(date);
 }
 
 CTime* get_time_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
     if (was_null_by_name(results, name, error) || error->error_code) {
-        LOG_DEBUG("Column '{}' is NULL", to_string(name));
+        LOG_DEBUG("Column '{}' is NULL", to_string(str_name));
         return nullptr;
     }
-    auto time = get_value_by_name<nanodbc::time>(results, name, error, {});
+    auto time = get_value_by_name<nanodbc::time>(results, str_name, error, {});
     return new CTime(time);
 }
 
 CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
     if (was_null_by_name(results, name, error) || error->error_code) {
-        LOG_DEBUG("Column '{}' is NULL", to_string(name));
+        LOG_DEBUG("Column '{}' is NULL", to_string(str_name));
         return nullptr;
     }
-    auto timestamp = get_value_by_name<nanodbc::timestamp>(results, name, error, {});
+    auto timestamp = get_value_by_name<nanodbc::timestamp>(results, str_name, error, {});
     return new CTimestamp(timestamp);
 }
 
@@ -439,48 +448,50 @@ ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const A
 
 int find_column_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
     init_error(error);
     try {
         if (!results) {
             LOG_ERROR("Attempted to close null result");
             return 0;
         }
-        int index = results->column(name);
-        LOG_DEBUG("Index retrieved by name '{}': '{}'", to_string(name), index);
+        int index = results->column(str_name);
+        LOG_DEBUG("Index retrieved by name '{}': '{}'", to_string(str_name), index);
         return index;
     }  catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error for column '{}': {}", to_string(name), e.what());
+        LOG_ERROR("Index range error for column '{}': {}", to_string(str_name), e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception '{}': {}", to_string(name), e.what());
+        LOG_ERROR("Exception '{}': {}", to_string(str_name), e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
-        LOG_ERROR("Unknown exception '{}'", to_string(name));
+        LOG_ERROR("Unknown exception '{}'", to_string(str_name));
     } 
     return 0;
 }
 
 bool was_null_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
+    auto str_name = name ? nanodbc::string(name) : nanodbc::string();
     init_error(error);
     try {
         if (!results) {
             LOG_ERROR("Attempted to close null result");
             return 0;
         }
-        bool is_null = results->is_null(name);
-        LOG_DEBUG("Index was null '{}': '{}'", to_string(name), is_null);
+        bool is_null = results->is_null(str_name);
+        LOG_DEBUG("Index was null '{}': '{}'", to_string(str_name), is_null);
         return is_null;
     }  catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error for column '{}': {}", to_string(name), e.what());
+        LOG_ERROR("Index range error for column '{}': {}", to_string(str_name), e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception '{}': {}", to_string(name), e.what());
+        LOG_ERROR("Exception '{}': {}", to_string(str_name), e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
-        LOG_ERROR("Unknown exception '{}'", to_string(name));
+        LOG_ERROR("Unknown exception '{}'", to_string(str_name));
     } 
     return true;
 }

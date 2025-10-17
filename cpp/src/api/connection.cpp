@@ -27,23 +27,29 @@ static Connection* connection_with_error_handling(const function<Connection* ()>
 }
 
 Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) {
-    LOG_DEBUG("Сonnection_string={}, timeout={}", utils::to_string(connection_string), timeout);
+    auto str_connection_string = connection_string ? nanodbc::string(connection_string) : nanodbc::string();
+
+    LOG_DEBUG("Сonnection_string={}, timeout={}", utils::to_string(str_connection_string), timeout);
     return connection_with_error_handling(
         [&]() {
-            return new Connection(connection_string, timeout);
+            return new Connection(str_connection_string, timeout);
         },
         error
     );
 }
 
 Connection* connection_with_user_pass_timeout(const ApiChar* dsn, const ApiChar* user, const ApiChar* pass, long timeout, NativeError* error) {
+    auto str_dsn = dsn ? nanodbc::string(dsn) : nanodbc::string();
+    auto str_user = user ? nanodbc::string(user) : nanodbc::string();
+    auto str_pass = pass ? nanodbc::string(pass) : nanodbc::string();
+
     LOG_DEBUG("DSN={}, User={}, Pass=***, Timeout={}",
-        utils::to_string(dsn),
-        utils::to_string(user),
+        utils::to_string(str_dsn),
+        utils::to_string(str_user),
         timeout);
     return connection_with_error_handling(
         [&]() {
-            return new Connection(dsn, user, pass, timeout);
+            return new Connection(str_dsn, str_user, str_pass, timeout);
         },
         error
     );
@@ -185,7 +191,10 @@ void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* err
             LOG_ERROR("Connection is null, cannot set catalog name");
             set_error(error, ErrorCode::Database, "ConnectionError", "Connection is null");
         }
-        conn->set_catalog(catalog);
+
+        auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+
+        conn->set_catalog(str_catalog);
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "ConnectionError", e.what());
         LOG_ERROR("Database error during set catalog name: {}", e.what());
@@ -271,7 +280,10 @@ nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeo
             set_error(error, ErrorCode::Database, "ExecuteError", "Connection is null");
             return nullptr;
         }
-        auto results = nanodbc::execute(*conn, sql, BATCH_OPERATIONS, timeout);
+
+        auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
+
+        auto results = nanodbc::execute(*conn, str_sql, BATCH_OPERATIONS, timeout);
         auto result_ptr = new nanodbc::result(results);
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
@@ -297,7 +309,10 @@ int execute_request_update(Connection* conn, const ApiChar* sql, int timeout, Na
             set_error(error, ErrorCode::Database, "ExecuteError", "Connection is null");
             return 0;
         }
-        auto results = nanodbc::execute(*conn, sql, BATCH_OPERATIONS, timeout);
+
+        auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
+
+        auto results = nanodbc::execute(*conn, str_sql, BATCH_OPERATIONS, timeout);
         int affected_rows = static_cast<int>(results.rowset_size());
         LOG_DEBUG("Update executed successfully, affected rows: {}", affected_rows);
         return affected_rows;

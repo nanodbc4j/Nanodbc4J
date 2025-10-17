@@ -9,6 +9,7 @@ import io.github.nanodbc4j.internal.pointer.StatementPtr;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
 import io.github.nanodbc4j.jdbc.NanodbcConnection;
 import io.github.nanodbc4j.jdbc.NanodbcDatabaseMetaData;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.sql.DatabaseMetaData;
@@ -21,7 +22,7 @@ import static io.github.nanodbc4j.internal.handler.Handler.*;
 @UtilityClass
 public final class ConnectionHandler {
 
-    public static ConnectionPtr connect(String connection_string, long timeout) {
+    public static ConnectionPtr connect(@NonNull String connection_string, long timeout) {
         NativeError nativeError = new NativeError();
         try {
             ConnectionPtr ptr =
@@ -33,7 +34,9 @@ public final class ConnectionHandler {
         }
     }
 
-    public static ConnectionPtr connect(String dsn, String user, String pass, long timeout) {
+    public static ConnectionPtr connect(@NonNull String dsn, String user, String pass, long timeout) {
+        user = user == null ? "" : user;
+        pass = pass == null ? "" : pass;
         NativeError nativeError = new NativeError();
         try {
             ConnectionPtr ptr =
@@ -56,7 +59,7 @@ public final class ConnectionHandler {
         }
     }
 
-    public static void prepared(StatementPtr statementPtr, String sql) {
+    public static void prepared(StatementPtr statementPtr, @NonNull String sql) {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.prepare_statement(statementPtr, sql + NUL_CHAR, nativeError);
@@ -87,7 +90,7 @@ public final class ConnectionHandler {
         }
     }
 
-    public static void setCatalog(ConnectionPtr conn, String catalog) {
+    public static void setCatalog(ConnectionPtr conn, @NonNull String catalog) {
         NativeError nativeError = new NativeError();
         try {
             NativeDB.INSTANCE.set_catalog_name(conn, catalog, nativeError);

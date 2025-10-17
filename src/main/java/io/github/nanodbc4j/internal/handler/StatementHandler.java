@@ -8,6 +8,7 @@ import io.github.nanodbc4j.internal.pointer.ConnectionPtr;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import io.github.nanodbc4j.internal.pointer.StatementPtr;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.sql.Date;
@@ -22,7 +23,7 @@ import static io.github.nanodbc4j.internal.handler.Handler.*;
 @UtilityClass
 public final class StatementHandler {
 
-    public static ResultSetPtr execute(ConnectionPtr conn, String sql, int timeout) {
+    public static ResultSetPtr execute(ConnectionPtr conn, @NonNull String sql, int timeout) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute_request(conn, sql + NUL_CHAR, timeout, nativeError);
@@ -33,7 +34,7 @@ public final class StatementHandler {
         }
     }
 
-    public static int executeUpdate(ConnectionPtr conn, String sql, int timeout) {
+    public static int executeUpdate(ConnectionPtr conn, @NonNull String sql, int timeout) {
         NativeError nativeError = new NativeError();
         try {
             int result = NativeDB.INSTANCE.execute_request_update(conn, sql + NUL_CHAR, timeout, nativeError);

@@ -104,37 +104,59 @@ nanodbc::result* get_database_meta_data_table_types(nanodbc::connection* conn, N
 }
 
 nanodbc::result* get_database_meta_data_tables(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, const ApiChar* type, NativeError* error) {
+		const ApiChar* table, const ApiChar* type, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
+	auto str_type = type ? nanodbc::string(type) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getTables(catalog, schema, table, type);
+		return meta.getTables(str_catalog, str_schema, str_table, str_type);
 	}, error, "getTables");
 }
 
 nanodbc::result* get_database_meta_data_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, const ApiChar* column, NativeError* error) {
+		const ApiChar* table, const ApiChar* column, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
+	auto str_column = column ? nanodbc::string(column) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getColumns(catalog, schema, table, column);
+		return meta.getColumns(str_catalog, str_schema, str_table, str_column);
 	}, error, "getColumns");
 }
 
 nanodbc::result* get_database_meta_data_primary_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, NativeError* error) {
+		const ApiChar* table, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getPrimaryKeys(catalog, schema, table);
+		return meta.getPrimaryKeys(str_catalog, str_schema, str_table);
 	}, error, "getPrimaryKeys");
 }
 
 nanodbc::result* get_database_meta_data_imported_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, NativeError* error) {
+		const ApiChar* table, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getImportedKeys(catalog, schema, table);
+		return meta.getImportedKeys(str_catalog, str_schema, str_table);
 	}, error, "getImportedKeys");
 }
 
 nanodbc::result* get_database_meta_data_exported_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, NativeError* error) {
+		const ApiChar* table, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getExportedKeys(catalog, schema, table);
+		return meta.getExportedKeys(str_catalog, str_schema, str_table);
 	}, error, "getExportedKeys");
 }
 
@@ -145,57 +167,90 @@ nanodbc::result* get_database_meta_data_type_info(nanodbc::connection* conn, Nat
 }
 
 nanodbc::result* get_database_meta_data_procedures(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* procedure, NativeError* error) {
+		const ApiChar* procedure, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_procedure = procedure ? nanodbc::string(procedure) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getProcedures(catalog, schema, procedure);
+		return meta.getProcedures(str_catalog, str_schema, str_procedure);
 	}, error, "getProcedures");
 }
 
 nanodbc::result* get_database_meta_data_procedure_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* procedure, const ApiChar* column, NativeError* error) {
+		const ApiChar* procedure, const ApiChar* column, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_procedure = procedure ? nanodbc::string(procedure) : nanodbc::string();
+	auto str_column = column ? nanodbc::string(column) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getProcedureColumns(catalog, schema, procedure, column);
+		return meta.getProcedureColumns(str_catalog, str_schema, str_procedure, str_column);
 	}, error, "getProcedureColumns");
 }
 
 nanodbc::result* get_database_meta_data_column_privileges(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, const ApiChar* columnNamePattern, NativeError* error) {
+		const ApiChar* table, const ApiChar* columnNamePattern, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
+	auto str_column = columnNamePattern ? nanodbc::string(columnNamePattern) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getColumnPrivileges(catalog, schema, table, columnNamePattern);
+		return meta.getColumnPrivileges(str_catalog, str_schema, str_table, str_column);
 	}, error, "getColumnPrivileges");
 }
 
 nanodbc::result* get_database_meta_data_table_privileges(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema_pattern,
-	const ApiChar* table_name_pattern, NativeError* error) {
+		const ApiChar* table_name_pattern, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema_pattern ? nanodbc::string(schema_pattern) : nanodbc::string();
+	auto str_table = table_name_pattern ? nanodbc::string(table_name_pattern) : nanodbc::string();
+	
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getTablePrivileges(catalog, schema_pattern, table_name_pattern);
+		return meta.getTablePrivileges(str_catalog, str_schema, str_table);
 	}, error, "getTablePrivileges");
 }
 
 nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, int scope, bool nullable, NativeError* error) {
+		const ApiChar* table, int scope, bool nullable, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getBestRowIdentifier(catalog, schema, table, scope, nullable);
+		return meta.getBestRowIdentifier(str_catalog, str_schema, str_table, scope, nullable);
 	}, error, "getBestRowIdentifier");
 }
 
 nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, NativeError* error) {
+		const ApiChar* table, NativeError* error) {
+	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
+	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getVersionColumns(catalog, schema, table);
+		return meta.getVersionColumns(str_catalog, str_schema, str_table);
 	}, error, "getVersionColumns");
 }
 
 nanodbc::result* get_database_meta_data_cross_reference(nanodbc::connection* conn, const ApiChar* parent_catalog, const ApiChar* parent_schema,
-	const ApiChar* parent_table, const ApiChar* foreign_catalog, const ApiChar* foreign_schema, const ApiChar* foreign_table, NativeError* error) {
+		const ApiChar* parent_table, const ApiChar* foreign_catalog, const ApiChar* foreign_schema, const ApiChar* foreign_table, NativeError* error) {
+	auto str_parent_catalog = parent_catalog ? nanodbc::string(parent_catalog) : nanodbc::string();
+	auto str_parent_schema = parent_schema ? nanodbc::string(parent_schema) : nanodbc::string();
+	auto str_parent_table = parent_table ? nanodbc::string(parent_table) : nanodbc::string();
+	auto str_parent_foreign_catalog = foreign_catalog ? nanodbc::string(foreign_catalog) : nanodbc::string();
+	auto str_parent_foreign_schema = foreign_schema ? nanodbc::string(foreign_schema) : nanodbc::string();
+	auto str_parent_foreign_table = foreign_table ? nanodbc::string(foreign_table) : nanodbc::string();
+
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
-		return meta.getCrossReference(parent_catalog, parent_schema, parent_table, 
-			foreign_catalog, foreign_schema, foreign_table);
+		return meta.getCrossReference(str_parent_catalog, str_parent_schema, str_parent_table,
+			str_parent_foreign_catalog, str_parent_foreign_schema, str_parent_foreign_table);
 	}, error, "getCrossReference");
 }
 
 nanodbc::result* get_database_meta_data_index_info(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-	const ApiChar* table, bool unique, bool approximate, NativeError* error) {
+		const ApiChar* table, bool unique, bool approximate, NativeError* error) {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
 		return meta.getIndexInfo(catalog, schema, table, unique, approximate);
 	}, error, "getIndexInfo");

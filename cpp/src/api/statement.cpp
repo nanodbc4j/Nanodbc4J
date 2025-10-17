@@ -67,7 +67,8 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
 }
 
 void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError* error) {
-    LOG_DEBUG("Preparing statement: {}", to_string(sql));
+    auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
+    LOG_DEBUG("Preparing statement: {}", to_string(str_sql));
     LOG_DEBUG("Statement object: {}", reinterpret_cast<uintptr_t>(stmt));
 
     init_error(error);
@@ -77,7 +78,7 @@ void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError
             set_error(error, ErrorCode::Database, "StatementError", "Statement is null");
             return;
         }
-        nanodbc::prepare(*stmt, sql);
+        nanodbc::prepare(*stmt, str_sql);
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "StatementError", e.what());
         LOG_ERROR("Database error during prepare: {}", e.what());
@@ -120,7 +121,8 @@ void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value,
         return set_value_with_error_handling(stmt, index, nullptr, error);
     }
     
-    set_value_with_error_handling(stmt, index, nanodbc::string(value), error);
+    auto str_value = value ? nanodbc::string(value) : nanodbc::string();
+    set_value_with_error_handling(stmt, index, str_value, error);
 }
 
 void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeError* error) {
