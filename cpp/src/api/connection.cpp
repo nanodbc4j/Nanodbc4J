@@ -300,35 +300,6 @@ nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeo
     return nullptr;
 }
 
-int execute_request_update(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) {
-    LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
-    init_error(error);
-    try {
-        if (!conn) {
-            LOG_ERROR("Connection is null, cannot execute_update");
-            set_error(error, ErrorCode::Database, "ExecuteError", "Connection is null");
-            return 0;
-        }
-
-        auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
-
-        auto results = nanodbc::execute(*conn, str_sql, BATCH_OPERATIONS, timeout);
-        int affected_rows = static_cast<int>(results.rowset_size());
-        LOG_DEBUG("Update executed successfully, affected rows: {}", affected_rows);
-        return affected_rows;
-    } catch (const nanodbc::database_error& e) {
-        set_error(error, ErrorCode::Database, "ExecuteError", e.what());
-        LOG_ERROR("Database error during execute_update: {}", e.what());
-    } catch (const exception& e) {
-        set_error(error, ErrorCode::Standard, "ExecuteError", e.what());
-        LOG_ERROR("Database error during execute_update: {}", e.what());
-    } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown execute_update connection error");
-        LOG_ERROR("Unknown exception during execute_update");
-    }
-    return 0;
-}
-
 void disconnect(Connection* connection, NativeError* error) {
     LOG_DEBUG("Disconnecting connection: {}", reinterpret_cast<uintptr_t>(connection));
     init_error(error);

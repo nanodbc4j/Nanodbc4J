@@ -31,8 +31,6 @@ extern "C" {
 
     ODBC_API nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeout, NativeError* error);
 
-    ODBC_API int execute_request_update(Connection* conn, const ApiChar* sql, int timeout, NativeError* error);
-
     ODBC_API nanodbc::statement* create_statement(Connection* conn, NativeError* error);
 
     ODBC_API void disconnect(Connection* conn, NativeError* error);

@@ -34,34 +34,12 @@ public final class StatementHandler {
         }
     }
 
-    public static int executeUpdate(ConnectionPtr conn, @NonNull String sql, int timeout) {
-        NativeError nativeError = new NativeError();
-        try {
-            int result = NativeDB.INSTANCE.execute_request_update(conn, sql + NUL_CHAR, timeout, nativeError);
-            throwIfNativeError(nativeError);
-            return result;
-        } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-        }
-    }
-
     public static ResultSetPtr execute(StatementPtr statementPtr, int timeout) {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute(statementPtr, timeout, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
-        } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-        }
-    }
-
-    public static int executeUpdate(StatementPtr statementPtr, int timeout) {
-        NativeError nativeError = new NativeError();
-        try {
-            int result = NativeDB.INSTANCE.execute_update(statementPtr, timeout, nativeError);
-            throwIfNativeError(nativeError);
-            return result;
         } finally {
             NativeDB.INSTANCE.clear_native_error(nativeError);
         }

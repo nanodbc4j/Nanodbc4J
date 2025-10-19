@@ -90,8 +90,6 @@ public interface NativeDB extends Library {
 
     ResultSetPtr execute_request(ConnectionPtr conn, String sql, int timeout, NativeError error);
 
-    int execute_request_update(ConnectionPtr conn, String sql, int timeout, NativeError error);
-
     StatementPtr create_statement(ConnectionPtr conn, NativeError error);
 
     void prepare_statement(StatementPtr stmt, String sql, NativeError error);
@@ -120,8 +118,6 @@ public interface NativeDB extends Library {
 
     ResultSetPtr execute(StatementPtr stmt, int timeout, NativeError error);
 
-    int execute_update(StatementPtr stmt, int timeout, NativeError error);
-
     void cancel_statement(StatementPtr stmt, NativeError error);
 
     byte next_result(ResultSetPtr results, NativeError error);
@@ -134,7 +130,9 @@ public interface NativeDB extends Library {
 
     byte absolute_result(ResultSetPtr results, int row, NativeError error);
 
-    int get_row_result(ResultSetPtr results, NativeError error);
+    int get_row_position_result(ResultSetPtr results, NativeError error);
+
+    int affected_rows_result(ResultSetPtr results, NativeError error);
 
     int get_int_value_by_index(ResultSetPtr results, int index, NativeError error);
 

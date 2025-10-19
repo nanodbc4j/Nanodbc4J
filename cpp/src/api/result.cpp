@@ -132,10 +132,18 @@ bool absolute_result(nanodbc::result* results, int row, NativeError* error) {
     error);
 }
 
-int get_row_result(nanodbc::result* results, NativeError* error) {
+int get_row_position_result(nanodbc::result* results, NativeError* error) {
     LOG_DEBUG("Calling get_row_result() on result: {}", reinterpret_cast<uintptr_t>(results));
     return execute_result_set_query<int>(results, [](nanodbc::result* results) {
         return results->position();
+    },
+    error);
+}
+
+int affected_rows_result(nanodbc::result* results, NativeError* error) {
+    LOG_DEBUG("Calling get_row_position_result() on result: {}", reinterpret_cast<uintptr_t>(results));
+    return execute_result_set_query<int>(results, [](nanodbc::result* results) {
+        return results->affected_rows();
     },
     error);
 }

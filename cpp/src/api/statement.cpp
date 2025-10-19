@@ -224,32 +224,6 @@ nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* err
     return nullptr;
 }
 
-int execute_update(nanodbc::statement* stmt, int timeout, NativeError* error) {
-    LOG_DEBUG("Executing update on statement: {}", reinterpret_cast<uintptr_t>(stmt));
-    init_error(error);
-    try {
-        if (!stmt) {
-            LOG_ERROR("Statement is null, cannot execute update");
-            set_error(error, ErrorCode::Database, "ExecuteError", "Statement is null");
-            return 0;
-        }
-        auto results = stmt->execute(BATCH_OPERATIONS, timeout);
-        int affected_rows = static_cast<int>(results.affected_rows());
-        LOG_DEBUG("Update executed successfully, affected rows: {}", affected_rows);
-        return affected_rows;
-    } catch (const nanodbc::database_error& e) {
-        set_error(error, ErrorCode::Database, "ExecuteError", e.what());
-        LOG_ERROR("Database error during execute_update: {}", e.what());
-    } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "ExecuteError", e.what());
-        LOG_ERROR("Standard exception during execute_update: {}", e.what());
-    } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown execute statement error");
-        LOG_ERROR("Unknown exception during execute_update");
-    }
-    return 0;
-}
-
 void cancel_statement(nanodbc::statement* stmt, NativeError* error) {
     LOG_DEBUG("Cancel statement: {}", reinterpret_cast<uintptr_t>(stmt));
     init_error(error);

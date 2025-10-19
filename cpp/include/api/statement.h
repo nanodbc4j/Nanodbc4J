@@ -35,8 +35,6 @@ extern "C" {
 
     ODBC_API nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* error);
 
-    ODBC_API int execute_update(nanodbc::statement* stmt, int timeout, NativeError* error);
-
     ODBC_API void cancel_statement(nanodbc::statement* stmt, NativeError* error);
 
     ODBC_API void close_statement(nanodbc::statement* stmt, NativeError* error);

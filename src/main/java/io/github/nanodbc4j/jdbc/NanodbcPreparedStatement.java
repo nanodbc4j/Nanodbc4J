@@ -4,6 +4,7 @@ import io.github.nanodbc4j.exceptions.NanodbcSQLException;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.NativeDB;
 import io.github.nanodbc4j.internal.cstruct.BinaryArray;
+import io.github.nanodbc4j.internal.handler.ResultSetHandler;
 import io.github.nanodbc4j.internal.handler.StatementHandler;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import io.github.nanodbc4j.internal.pointer.StatementPtr;
@@ -67,7 +68,10 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.executeUpdate");
         throwIfAlreadyClosed();
         try {
-            return StatementHandler.executeUpdate(statementPtr, queryTimeoutSeconds);
+            assert connection.get() != null;
+            ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr, queryTimeoutSeconds);
+            resultSet = new NanodbcResultSet(this, resultSetPtr);
+            return ResultSetHandler.getUpdateCount(resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -361,7 +365,6 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.execute");
         throwIfAlreadyClosed();
         try {
-            assert connection.get() != null;
             ResultSetPtr resultSetPtr = StatementHandler.execute(statementPtr, queryTimeoutSeconds);
             resultSet = new NanodbcResultSet(this, resultSetPtr);
             return true;

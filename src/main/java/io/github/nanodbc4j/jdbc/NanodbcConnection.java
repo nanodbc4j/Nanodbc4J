@@ -684,6 +684,7 @@ public class NanodbcConnection implements Connection {
         }
     }
 
+    @Log
     @AllArgsConstructor
     private static class ConnectionCleaner implements Runnable {
         private ConnectionPtr ptr;
@@ -693,8 +694,8 @@ public class NanodbcConnection implements Connection {
             if (ptr != null) {
                 try {
                     ConnectionHandler.disconnect(ptr);
-                } catch (Exception ignore) {
-                    // Suppress exception
+                } catch (Exception e) {
+                    log.warning("Exception while closing connection: " + e.getMessage());
                 } finally {
                     ptr = null;
                 }

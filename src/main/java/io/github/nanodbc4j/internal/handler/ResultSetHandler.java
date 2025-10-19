@@ -84,7 +84,18 @@ public final class ResultSetHandler {
     public static int getRow(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            int result = NativeDB.INSTANCE.get_row_result(resultSet, nativeError);
+            int result = NativeDB.INSTANCE.get_row_position_result(resultSet, nativeError);
+            throwIfNativeError(nativeError);
+            return result;
+        } finally {
+            NativeDB.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static int getUpdateCount(ResultSetPtr resultSet) {
+        NativeError nativeError = new NativeError();
+        try {
+            int result = NativeDB.INSTANCE.affected_rows_result(resultSet, nativeError);
             throwIfNativeError(nativeError);
             return result;
         } finally {

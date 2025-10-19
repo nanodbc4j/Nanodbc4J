@@ -20,7 +20,9 @@ extern "C" {
 
     ODBC_API bool absolute_result(nanodbc::result* results, int row, NativeError* error);
 
-    ODBC_API int get_row_result(nanodbc::result* results, NativeError* error);
+    ODBC_API int get_row_position_result(nanodbc::result* results, NativeError* error);
+
+    ODBC_API int affected_rows_result(nanodbc::result* results, NativeError* error);
 
     ODBC_API int get_int_value_by_index(nanodbc::result* results, int index, NativeError* error);
 
@@ -47,8 +49,6 @@ extern "C" {
     ODBC_API ChunkedBinaryStream* get_binary_stream_by_index(nanodbc::result* results, int index, NativeError* error);
 
     ODBC_API int read_binary_stream(ChunkedBinaryStream* stream, uint8_t* buffer, int offset, int length, NativeError* error);
-
-    ODBC_API int find_column_by_index(nanodbc::result* results, int index, NativeError* error);
 
     ODBC_API bool was_null_by_index(nanodbc::result* results, int index, NativeError* error);    
 

@@ -2,6 +2,7 @@ package io.github.nanodbc4j.jdbc;
 
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
 import io.github.nanodbc4j.exceptions.NativeException;
+import io.github.nanodbc4j.internal.handler.ResultSetHandler;
 import io.github.nanodbc4j.internal.handler.StatementHandler;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import io.github.nanodbc4j.internal.pointer.StatementPtr;
@@ -63,7 +64,9 @@ public class NanodbcStatement implements Statement {
         throwIfAlreadyClosed();
         try {
             assert connection.get() != null;
-            return StatementHandler.executeUpdate(connection.get().getConnectionPtr(), sql, queryTimeoutSeconds);
+            ResultSetPtr resultSetPtr = StatementHandler.execute(connection.get().getConnectionPtr(), sql, queryTimeoutSeconds);
+            resultSet = new NanodbcResultSet(this, resultSetPtr);
+            return ResultSetHandler.getUpdateCount(resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -227,8 +230,13 @@ public class NanodbcStatement implements Statement {
     @Override
     public int getUpdateCount() throws SQLException {
         log.finest("NanodbcStatement.getUpdateCount");
-        return -1;
-        //throw new SQLFeatureNotSupportedException(); todo
+        throwIfAlreadyClosed();
+        resultSet.throwIfAlreadyClosed();
+        try {
+            return ResultSetHandler.getUpdateCount(resultSet.resultSetPtr);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
     }
 
     /**
@@ -513,6 +521,7 @@ public class NanodbcStatement implements Statement {
         }
     }
 
+    @Log
     @AllArgsConstructor
     private static class StatementCleaner implements Runnable {
         private StatementPtr ptr;
@@ -522,8 +531,8 @@ public class NanodbcStatement implements Statement {
             if (ptr != null) {
                 try {
                     StatementHandler.close(ptr);
-                } catch (Exception ignore) {
-                    // Suppress exception
+                } catch (Exception e) {
+                    log.warning("Exception while closing statement: " + e.getMessage());
                 } finally {
                     ptr = null;
                 }

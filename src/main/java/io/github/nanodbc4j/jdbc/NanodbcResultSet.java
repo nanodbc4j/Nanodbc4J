@@ -2140,6 +2140,7 @@ public class NanodbcResultSet implements ResultSet {
         }
     }
 
+    @Log
     @AllArgsConstructor
     private static class ResultSetCleaner implements Runnable {
         private ResultSetPtr ptr;
@@ -2149,8 +2150,8 @@ public class NanodbcResultSet implements ResultSet {
             if (ptr != null) {
                 try {
                     ResultSetHandler.close(ptr);
-                } catch (Exception ignore) {
-                    // Suppress exception
+                } catch (Exception e) {
+                    log.warning("Exception while closing result set: " + e.getMessage());
                 } finally {
                     ptr = null;
                 }

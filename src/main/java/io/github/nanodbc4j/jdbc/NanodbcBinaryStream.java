@@ -5,6 +5,7 @@ import io.github.nanodbc4j.internal.cstruct.NativeError;
 import io.github.nanodbc4j.internal.pointer.BinaryStreamPtr;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,6 +78,7 @@ public class NanodbcBinaryStream extends InputStream {
         }
     }
 
+    @Log
     @AllArgsConstructor
     private static class BinaryStreamCleaner implements Runnable {
         private BinaryStreamPtr ptr;
@@ -86,8 +88,8 @@ public class NanodbcBinaryStream extends InputStream {
             if (ptr != null) {
                 try {
                     NativeDB.INSTANCE.close_binary_stream(ptr);
-                } catch (Exception ignore) {
-                    // Suppress exception
+                } catch (Exception e) {
+                    log.warning("Exception while closing binary stream: " + e.getMessage());
                 } finally {
                     ptr = null;
                 }
