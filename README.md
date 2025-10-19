@@ -2,8 +2,8 @@
 
 **A modern JDBC-ODBC bridge using nanodbc and JNA**
 
-> ✅ **Now working in DBeaver!**  
-> ⚠️ Still experimental — use with caution in non-production environments.
+>  **Now working in DBeaver!**  
+>  Still experimental — use with caution in non-production environments.
 
 Nanodbc4J is a **JDBC driver** that enables Java applications to access ODBC data sources directly, using the modern [nanodbc](https://github.com/nanodbc/nanodbc ) C++ library via **Java Native Access (JNA)**.
 
@@ -19,7 +19,7 @@ Nanodbc4J fills this gap by:
 - Providing a **JDBC-compliant interface** for use in Java applications.
 - Supporting cross-platform builds for **Windows (ODBC)** and **Linux (unixODBC)**.
 
-## ✅ Implemented Features
+##  Implemented Features
 
 - [x] JDBC `Driver` registration and URL parsing (`jdbc:nanodbc4j:...`)
 - [x] Connection via **DSN** or full **ODBC connection string**
@@ -31,7 +31,7 @@ Nanodbc4J fills this gap by:
 - [x] Basic ODBC error diagnostics and mapping to `SQLException`
 
 
-## ⚠️ Limitations & Notes
+##  Limitations & Notes
 
 - **Not 100% JDBC-compliant** — some methods throw `SQLFeatureNotSupportedException`.
 - **Requires JNA** — users must include `jna.jar`.
@@ -47,7 +47,7 @@ Nanodbc4J fills this gap by:
 - **ODBC driver** installed (e.g., PostgreSQL ODBC, SQL Server ODBC, etc.)
 - **(Optional)** For development: C++ compiler to rebuild native layer
 
-## 🧪 Usage Example (Java)
+##  Usage Example (Java)
 
 ```java
 import java.sql.*;
