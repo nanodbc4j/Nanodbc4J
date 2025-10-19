@@ -1,7 +1,7 @@
 #include "api/result_set_meta_data.h"
 #include "utils/logger.hpp"
 
-CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) {
+CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) noexcept {
 	LOG_DEBUG("Getting metadata from result: {}", reinterpret_cast<uintptr_t>(results));
 	init_error(error);
 	try {
@@ -25,7 +25,7 @@ CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) 
 	return nullptr;
 }
 
-void delete_meta_data(CResultSetMetaData* meta_data) {
+void delete_meta_data(CResultSetMetaData* meta_data) noexcept {
 	LOG_DEBUG("Deleting metadata: {}", reinterpret_cast<uintptr_t>(meta_data));
 	if (meta_data) {
 		delete meta_data;

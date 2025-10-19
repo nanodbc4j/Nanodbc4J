@@ -5,7 +5,7 @@
 #include "utils/logger.hpp"
 
 
-const Driver** drivers_list(int* count) {
+const Driver** drivers_list(int* count) noexcept {
 	LOG_DEBUG("Fetching list of ODBC drivers...");
     auto drivers_list = nanodbc::list_drivers();
     *count = static_cast<int>(drivers_list.size());
@@ -13,7 +13,7 @@ const Driver** drivers_list(int* count) {
     return converter::convert(drivers_list);
 }
 
-const Datasource** datasources_list(int* count) {
+const Datasource** datasources_list(int* count) noexcept {
 	LOG_DEBUG("Fetching list of ODBC data sources...");
     auto datasources = nanodbc::list_datasources();
     *count = static_cast<int>(datasources.size());
@@ -21,7 +21,7 @@ const Datasource** datasources_list(int* count) {
     return converter::convert(datasources);
 }
 
-int set_log_level(int level) {
+int set_log_level(int level) noexcept {
 	try {
 		auto result_level_name = set_spdlog_level(level);
 		LOG_DEBUG("Set log level: {}", result_level_name);
@@ -34,7 +34,7 @@ int set_log_level(int level) {
 	return 1;
 }
  
-void std_free(void* ptr) {
+void std_free(void* ptr) noexcept {
 	LOG_DEBUG("Freeing memory at address: {}", reinterpret_cast<uintptr_t>(ptr));
     if (ptr) {
         free(ptr);
@@ -44,12 +44,12 @@ void std_free(void* ptr) {
 }
 
 // очистить структуры ошибки
-void clear_native_error(NativeError* error) {
+void clear_native_error(NativeError* error) noexcept {
 	LOG_TRACE("clear_native_error: error={}", (void*)error);
 	NativeError::clear(error);
 }
 
-void delete_datasource(Datasource* datasource) {
+void delete_datasource(Datasource* datasource) noexcept {
 	LOG_DEBUG("Deleting Datasource object: {}", reinterpret_cast<uintptr_t>(datasource));
 	if (datasource) {
 		delete datasource;
@@ -57,7 +57,7 @@ void delete_datasource(Datasource* datasource) {
 	}
 }
 
-void delete_datasource_array(Datasource** datasource_array, int size) {
+void delete_datasource_array(Datasource** datasource_array, int size) noexcept {
 	LOG_DEBUG("Deleting array of Datasource objects: {} elements, address: {}", size, reinterpret_cast<uintptr_t>(datasource_array));
 	if (!datasource_array) {
 		LOG_ERROR("Datasource array is null, nothing to delete");
@@ -72,7 +72,7 @@ void delete_datasource_array(Datasource** datasource_array, int size) {
 	LOG_DEBUG("Datasource array deleted");
 }
 
-void delete_driver(Driver* driver) {
+void delete_driver(Driver* driver) noexcept {
 	LOG_DEBUG("Deleting Driver object: {}", reinterpret_cast<uintptr_t>(driver));
 	if (driver) {
 		delete driver;
@@ -80,7 +80,7 @@ void delete_driver(Driver* driver) {
 	}
 }
 
-void delete_driver_array(Driver** driver_array, int size) {
+void delete_driver_array(Driver** driver_array, int size) noexcept {
 	LOG_DEBUG("Deleting array of Driver objects: {} elements, address: {}", size, reinterpret_cast<uintptr_t>(driver_array));
 	if (!driver_array) {
 		LOG_ERROR("Driver array is null, nothing to delete");

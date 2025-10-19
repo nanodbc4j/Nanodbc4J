@@ -4,7 +4,7 @@
 using namespace utils;
 
 template<typename Func>
-static nanodbc::result* execute_metadata_query(nanodbc::connection* conn, Func&& func, NativeError* error, const std::string& operation_name) {
+static nanodbc::result* execute_metadata_query(nanodbc::connection* conn, Func&& func, NativeError* error, const std::string& operation_name) noexcept {
     LOG_DEBUG("Executing metadata query '{}' on connection: {}", operation_name, reinterpret_cast<uintptr_t>(conn));
     init_error(error);
 
@@ -36,7 +36,7 @@ static nanodbc::result* execute_metadata_query(nanodbc::connection* conn, Func&&
     return nullptr;
 }
 
-CDatabaseMetaData* get_database_meta_data(nanodbc::connection* conn, NativeError* error) {
+CDatabaseMetaData* get_database_meta_data(nanodbc::connection* conn, NativeError* error) noexcept {
 	LOG_DEBUG("Getting metadata from connection: {}", reinterpret_cast<uintptr_t>(conn));
 	init_error(error);
 	try {
@@ -60,7 +60,7 @@ CDatabaseMetaData* get_database_meta_data(nanodbc::connection* conn, NativeError
 	return nullptr;
 }
 
-bool database_meta_data_support_convert (nanodbc::connection* conn, int from_type, int to_type, NativeError* error) {
+bool database_meta_data_support_convert (nanodbc::connection* conn, int from_type, int to_type, NativeError* error) noexcept {
 	LOG_TRACE("Support convert fromType: {}, toType: {}", from_type, to_type);
 	init_error(error);
 	try {
@@ -84,27 +84,27 @@ bool database_meta_data_support_convert (nanodbc::connection* conn, int from_typ
 	return false;
 }
 
-nanodbc::result* get_database_meta_data_schemas(nanodbc::connection* conn, NativeError* error) {
+nanodbc::result* get_database_meta_data_schemas(nanodbc::connection* conn, NativeError* error) noexcept {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta){
 		return meta.getSchemas();
 	}, error, "getSchemas");
 }
 
-nanodbc::result* get_database_meta_data_catalogs(nanodbc::connection* conn, NativeError* error) {
+nanodbc::result* get_database_meta_data_catalogs(nanodbc::connection* conn, NativeError* error) noexcept {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
 		return meta.getCatalogs();
 	}, error, "getCatalogs");
 	
 }
 
-nanodbc::result* get_database_meta_data_table_types(nanodbc::connection* conn, NativeError* error) {
+nanodbc::result* get_database_meta_data_table_types(nanodbc::connection* conn, NativeError* error) noexcept {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
 		return meta.getTableTypes();
 	}, error, "getTableTypes");
 }
 
 nanodbc::result* get_database_meta_data_tables(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, const ApiChar* type, NativeError* error) {
+		const ApiChar* table, const ApiChar* type, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
@@ -116,7 +116,7 @@ nanodbc::result* get_database_meta_data_tables(nanodbc::connection* conn, const 
 }
 
 nanodbc::result* get_database_meta_data_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, const ApiChar* column, NativeError* error) {
+		const ApiChar* table, const ApiChar* column, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
@@ -128,7 +128,7 @@ nanodbc::result* get_database_meta_data_columns(nanodbc::connection* conn, const
 }
 
 nanodbc::result* get_database_meta_data_primary_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, NativeError* error) {
+		const ApiChar* table, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
@@ -139,7 +139,7 @@ nanodbc::result* get_database_meta_data_primary_keys(nanodbc::connection* conn, 
 }
 
 nanodbc::result* get_database_meta_data_imported_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, NativeError* error) {
+		const ApiChar* table, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
@@ -150,7 +150,7 @@ nanodbc::result* get_database_meta_data_imported_keys(nanodbc::connection* conn,
 }
 
 nanodbc::result* get_database_meta_data_exported_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, NativeError* error) {
+		const ApiChar* table, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
@@ -160,14 +160,14 @@ nanodbc::result* get_database_meta_data_exported_keys(nanodbc::connection* conn,
 	}, error, "getExportedKeys");
 }
 
-nanodbc::result* get_database_meta_data_type_info(nanodbc::connection* conn, NativeError* error) {
+nanodbc::result* get_database_meta_data_type_info(nanodbc::connection* conn, NativeError* error) noexcept {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
 		return meta.getTypeInfo();
 	}, error, "getTypeInfo");
 }
 
 nanodbc::result* get_database_meta_data_procedures(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* procedure, NativeError* error) {
+		const ApiChar* procedure, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_procedure = procedure ? nanodbc::string(procedure) : nanodbc::string();
@@ -178,7 +178,7 @@ nanodbc::result* get_database_meta_data_procedures(nanodbc::connection* conn, co
 }
 
 nanodbc::result* get_database_meta_data_procedure_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* procedure, const ApiChar* column, NativeError* error) {
+		const ApiChar* procedure, const ApiChar* column, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_procedure = procedure ? nanodbc::string(procedure) : nanodbc::string();
@@ -190,7 +190,7 @@ nanodbc::result* get_database_meta_data_procedure_columns(nanodbc::connection* c
 }
 
 nanodbc::result* get_database_meta_data_column_privileges(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, const ApiChar* columnNamePattern, NativeError* error) {
+		const ApiChar* table, const ApiChar* columnNamePattern, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
@@ -202,7 +202,7 @@ nanodbc::result* get_database_meta_data_column_privileges(nanodbc::connection* c
 }
 
 nanodbc::result* get_database_meta_data_table_privileges(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema_pattern,
-		const ApiChar* table_name_pattern, NativeError* error) {
+		const ApiChar* table_name_pattern, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema_pattern ? nanodbc::string(schema_pattern) : nanodbc::string();
 	auto str_table = table_name_pattern ? nanodbc::string(table_name_pattern) : nanodbc::string();
@@ -213,7 +213,7 @@ nanodbc::result* get_database_meta_data_table_privileges(nanodbc::connection* co
 }
 
 nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, int scope, bool nullable, NativeError* error) {
+		const ApiChar* table, int scope, bool nullable, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
@@ -224,7 +224,7 @@ nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection*
 }
 
 nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, NativeError* error) {
+		const ApiChar* table, NativeError* error) noexcept {
 	auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
 	auto str_schema = schema ? nanodbc::string(schema) : nanodbc::string();
 	auto str_table = table ? nanodbc::string(table) : nanodbc::string();
@@ -235,7 +235,7 @@ nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* con
 }
 
 nanodbc::result* get_database_meta_data_cross_reference(nanodbc::connection* conn, const ApiChar* parent_catalog, const ApiChar* parent_schema,
-		const ApiChar* parent_table, const ApiChar* foreign_catalog, const ApiChar* foreign_schema, const ApiChar* foreign_table, NativeError* error) {
+		const ApiChar* parent_table, const ApiChar* foreign_catalog, const ApiChar* foreign_schema, const ApiChar* foreign_table, NativeError* error) noexcept {
 	auto str_parent_catalog = parent_catalog ? nanodbc::string(parent_catalog) : nanodbc::string();
 	auto str_parent_schema = parent_schema ? nanodbc::string(parent_schema) : nanodbc::string();
 	auto str_parent_table = parent_table ? nanodbc::string(parent_table) : nanodbc::string();
@@ -250,13 +250,13 @@ nanodbc::result* get_database_meta_data_cross_reference(nanodbc::connection* con
 }
 
 nanodbc::result* get_database_meta_data_index_info(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
-		const ApiChar* table, bool unique, bool approximate, NativeError* error) {
+		const ApiChar* table, bool unique, bool approximate, NativeError* error) noexcept {
 	return execute_metadata_query(conn, [=](const DatabaseMetaData& meta) {
 		return meta.getIndexInfo(catalog, schema, table, unique, approximate);
 	}, error, "getIndexInfo");
 }
 
-void delete_database_meta_data(CDatabaseMetaData* meta_data) {
+void delete_database_meta_data(CDatabaseMetaData* meta_data) noexcept {
 	LOG_DEBUG("Deleting metadata: {}", reinterpret_cast<uintptr_t>(meta_data));
 	if (meta_data) {
 		delete meta_data;

@@ -7,7 +7,7 @@ using namespace utils;
 #define BATCH_OPERATIONS 1
 
 template<typename T>
-static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const T& value, NativeError* error) {
+static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const T& value, NativeError* error) noexcept {
     init_error(error);
     try {        
         stmt->bind(index, &value);
@@ -26,7 +26,7 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
     }
 }
 
-static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const nanodbc::string& value, NativeError* error) {
+static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const nanodbc::string& value, NativeError* error) noexcept {
     init_error(error);
     try {
         // Оборачиваем одну строку в вектор
@@ -47,7 +47,7 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
     }
 }
 
-static void set_value_with_error_handling(nanodbc::statement* stmt, int index, nullptr_t, NativeError* error) {
+static void set_value_with_error_handling(nanodbc::statement* stmt, int index, nullptr_t, NativeError* error) noexcept {
     init_error(error);
     try {
         stmt->bind_null(index);
@@ -66,7 +66,7 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
     }
 }
 
-void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError* error) {
+void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError* error) noexcept {
     auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
     LOG_DEBUG("Preparing statement: {}", to_string(str_sql));
     LOG_DEBUG("Statement object: {}", reinterpret_cast<uintptr_t>(stmt));
@@ -91,32 +91,32 @@ void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError
     }
 }
 
-void set_int_value(nanodbc::statement* stmt, int index, int value, NativeError* error) {
+void set_int_value(nanodbc::statement* stmt, int index, int value, NativeError* error) noexcept {
     set_value_with_error_handling(stmt, index, value, error);
 }
 
-void set_long_value(nanodbc::statement* stmt, int index, long value, NativeError* error) {
+void set_long_value(nanodbc::statement* stmt, int index, long value, NativeError* error) noexcept {
     set_value_with_error_handling(stmt, index, value, error);
 }
 
-void set_double_value(nanodbc::statement* stmt, int index, double value, NativeError* error) {
+void set_double_value(nanodbc::statement* stmt, int index, double value, NativeError* error) noexcept {
     set_value_with_error_handling(stmt, index, value, error);
 }
 
-void set_bool_value(nanodbc::statement* stmt, int index, bool value, NativeError* error) {
+void set_bool_value(nanodbc::statement* stmt, int index, bool value, NativeError* error) noexcept {
     // тип bool не поддерживается nanodbc, используем short
     set_value_with_error_handling<short>(stmt, index, value, error);
 }
 
-void set_float_value(nanodbc::statement* stmt, int index, float value, NativeError* error) {
+void set_float_value(nanodbc::statement* stmt, int index, float value, NativeError* error) noexcept {
     set_value_with_error_handling(stmt, index, value, error);
 }
 
-void set_short_value(nanodbc::statement* stmt, int index, short value, NativeError* error) {
+void set_short_value(nanodbc::statement* stmt, int index, short value, NativeError* error) noexcept {
     set_value_with_error_handling(stmt, index, value, error);
 }
 
-void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value, NativeError* error) {
+void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value, NativeError* error) noexcept {
     if (!value) {
         set_value_with_error_handling(stmt, index, nullptr, error);
         return;
@@ -125,7 +125,7 @@ void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value,
     set_value_with_error_handling(stmt, index, nanodbc::string(value), error);
 }
 
-void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeError* error) {
+void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeError* error) noexcept {
     if (!value) {
         set_value_with_error_handling(stmt, index, nullptr, error);
         return;
@@ -139,7 +139,7 @@ void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeErr
     set_value_with_error_handling(stmt, index, d, error);
 }
 
-void set_time_value(nanodbc::statement* stmt, int index, CTime* value, NativeError* error) {
+void set_time_value(nanodbc::statement* stmt, int index, CTime* value, NativeError* error) noexcept {
     if (!value) {
         set_value_with_error_handling(stmt, index, nullptr, error);
         return;
@@ -153,7 +153,7 @@ void set_time_value(nanodbc::statement* stmt, int index, CTime* value, NativeErr
     set_value_with_error_handling(stmt, index, t, error);
 }
 
-void set_timestamp_value(nanodbc::statement* stmt, int index, CTimestamp* value, NativeError* error) {
+void set_timestamp_value(nanodbc::statement* stmt, int index, CTimestamp* value, NativeError* error) noexcept {
     if (!value) {
         set_value_with_error_handling(stmt, index, nullptr, error);
         return;
@@ -171,7 +171,7 @@ void set_timestamp_value(nanodbc::statement* stmt, int index, CTimestamp* value,
     set_value_with_error_handling(stmt, index, ts, error);
 }
 
-void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* value, NativeError* error) {
+void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* value, NativeError* error) noexcept {
     if (!value) {
         set_value_with_error_handling(stmt, index, nullptr, error);
         return;
@@ -197,7 +197,7 @@ void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* va
     }
 }
 
-nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* error) {
+nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* error) noexcept {
     LOG_DEBUG("Executing statement: {}", reinterpret_cast<uintptr_t>(stmt));
     init_error(error);
     try {
@@ -224,7 +224,7 @@ nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* err
     return nullptr;
 }
 
-void cancel_statement(nanodbc::statement* stmt, NativeError* error) {
+void cancel_statement(nanodbc::statement* stmt, NativeError* error) noexcept {
     LOG_DEBUG("Cancel statement: {}", reinterpret_cast<uintptr_t>(stmt));
     init_error(error);
     try {
@@ -246,7 +246,7 @@ void cancel_statement(nanodbc::statement* stmt, NativeError* error) {
     }
 }
 
-void close_statement(nanodbc::statement* stmt, NativeError* error) {
+void close_statement(nanodbc::statement* stmt, NativeError* error) noexcept {
     LOG_DEBUG("Closing statement: {}", reinterpret_cast<uintptr_t>(stmt));
     init_error(error);
     try {

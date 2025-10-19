@@ -9,7 +9,7 @@ using namespace utils;
 
 #define BATCH_OPERATIONS 1
 
-static Connection* connection_with_error_handling(const function<Connection* ()>& operation, NativeError* error) {
+static Connection* connection_with_error_handling(const function<Connection* ()>& operation, NativeError* error) noexcept {
     init_error(error);
     try {
         return operation();
@@ -26,7 +26,7 @@ static Connection* connection_with_error_handling(const function<Connection* ()>
     return nullptr;
 }
 
-Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) {
+Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) noexcept {
     auto str_connection_string = connection_string ? nanodbc::string(connection_string) : nanodbc::string();
 
     LOG_DEBUG("Connection_string={}, timeout={}", utils::to_string(str_connection_string), timeout);
@@ -38,7 +38,7 @@ Connection* connection_with_timeout(const ApiChar* connection_string, long timeo
     );
 }
 
-Connection* connection_with_user_pass_timeout(const ApiChar* dsn, const ApiChar* user, const ApiChar* pass, long timeout, NativeError* error) {
+Connection* connection_with_user_pass_timeout(const ApiChar* dsn, const ApiChar* user, const ApiChar* pass, long timeout, NativeError* error) noexcept {
     auto str_dsn = dsn ? nanodbc::string(dsn) : nanodbc::string();
     auto str_user = user ? nanodbc::string(user) : nanodbc::string();
     auto str_pass = pass ? nanodbc::string(pass) : nanodbc::string();
@@ -55,7 +55,7 @@ Connection* connection_with_user_pass_timeout(const ApiChar* dsn, const ApiChar*
     );
 }
 
-nanodbc::statement* create_statement(Connection* conn, NativeError* error) {
+nanodbc::statement* create_statement(Connection* conn, NativeError* error) noexcept {
     LOG_DEBUG("Creating statement for connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -72,7 +72,7 @@ nanodbc::statement* create_statement(Connection* conn, NativeError* error) {
     return nullptr;
 }
 
-void set_auto_commit_transaction(Connection* conn, bool autoCommit, NativeError* error) {
+void set_auto_commit_transaction(Connection* conn, bool autoCommit, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -93,7 +93,7 @@ void set_auto_commit_transaction(Connection* conn, bool autoCommit, NativeError*
     }
 }
 
-void commit_transaction(Connection* conn, NativeError* error) {
+void commit_transaction(Connection* conn, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -114,7 +114,7 @@ void commit_transaction(Connection* conn, NativeError* error) {
     }
 }
 
-void rollback_transaction(Connection* conn, NativeError* error) {
+void rollback_transaction(Connection* conn, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -135,7 +135,7 @@ void rollback_transaction(Connection* conn, NativeError* error) {
     }
 }
 
-bool get_auto_commit_transaction(Connection* conn, NativeError* error) {
+bool get_auto_commit_transaction(Connection* conn, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -158,7 +158,7 @@ bool get_auto_commit_transaction(Connection* conn, NativeError* error) {
     return true;
 }
 
-const ApiChar* get_catalog_name(Connection* conn, NativeError* error) {
+const ApiChar* get_catalog_name(Connection* conn, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -183,7 +183,7 @@ const ApiChar* get_catalog_name(Connection* conn, NativeError* error) {
     return nullptr;
 }
 
-void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* error) {
+void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -207,7 +207,7 @@ void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* err
     }
 }
 
-bool is_connected(Connection* conn, NativeError* error) {
+bool is_connected(Connection* conn, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -224,7 +224,7 @@ bool is_connected(Connection* conn, NativeError* error) {
     return false;
 }
 
-void set_transaction_isolation_level(Connection* conn, int level, NativeError* error) {
+void set_transaction_isolation_level(Connection* conn, int level, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -247,7 +247,7 @@ void set_transaction_isolation_level(Connection* conn, int level, NativeError* e
     }
 }
 
-int get_transaction_isolation_level(Connection* conn, NativeError* error) {
+int get_transaction_isolation_level(Connection* conn, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -271,7 +271,7 @@ int get_transaction_isolation_level(Connection* conn, NativeError* error) {
     return 0;
 }
 
-nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) {
+nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) noexcept {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -300,7 +300,7 @@ nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeo
     return nullptr;
 }
 
-void disconnect(Connection* connection, NativeError* error) {
+void disconnect(Connection* connection, NativeError* error) noexcept {
     LOG_DEBUG("Disconnecting connection: {}", reinterpret_cast<uintptr_t>(connection));
     init_error(error);
     try {
