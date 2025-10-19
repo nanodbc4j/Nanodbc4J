@@ -73,6 +73,23 @@ Driver::~Driver() {
 	}
 }
 
+const Driver** Driver::convert(const std::list<nanodbc::driver>& drivers) {
+	LOG_DEBUG("Converting {} nanodbc::driver entries", drivers.size());
+	if (drivers.empty()) {
+		LOG_DEBUG("Input drivers list is empty, returning nullptr array");
+	}
+
+	const Driver** result = new const Driver* [drivers.size()];
+
+	size_t i = 0;
+	for (const auto& drv : drivers) {
+		result[i++] = new Driver(drv);
+	}
+
+	LOG_DEBUG("Conversion of drivers completed, returned array of {} pointers", drivers.size());
+	return result;
+}
+
 Datasource::Datasource(const Datasource& other) {
 	LOG_TRACE("Copying Datasource from {}", (void*)&other);
 	name = duplicate_string(other.name);
@@ -92,6 +109,23 @@ Datasource::~Datasource() {
 	if (driver) {
 		free((void*) driver);
 	}
+}
+
+const Datasource** Datasource::convert(const std::list<nanodbc::datasource>& datasources) {
+	LOG_DEBUG("Converting {} nanodbc::datasource entries", datasources.size());
+	if (datasources.empty()) {
+		LOG_DEBUG("Input datasources list is empty, returning nullptr array");
+	}
+
+	const Datasource** result = new const Datasource* [datasources.size()];
+
+	size_t i = 0;
+	for (const auto& source : datasources) {
+		result[i++] = new Datasource(source);
+	}
+
+	LOG_DEBUG("Conversion of datasources completed, returned array of {} pointers", datasources.size());
+	return result;
 }
 
 CDate::CDate(const CDate& other) {

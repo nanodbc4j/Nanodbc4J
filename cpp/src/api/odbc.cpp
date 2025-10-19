@@ -1,7 +1,6 @@
 #include "api/odbc.h"
 #include <exception>
 #include "utils/string_utils.hpp"
-#include "utils/struct_converter.hpp"
 #include "utils/logger.hpp"
 
 
@@ -10,7 +9,7 @@ const Driver** drivers_list(int* count) noexcept {
     auto drivers_list = nanodbc::list_drivers();
     *count = static_cast<int>(drivers_list.size());
 	LOG_DEBUG("Found {} ODBC drivers", *count);
-    return converter::convert(drivers_list);
+    return Driver::convert(drivers_list);
 }
 
 const Datasource** datasources_list(int* count) noexcept {
@@ -18,7 +17,7 @@ const Datasource** datasources_list(int* count) noexcept {
     auto datasources = nanodbc::list_datasources();
     *count = static_cast<int>(datasources.size());
 	LOG_DEBUG("Found {} ODBC data sources", *count);
-    return converter::convert(datasources);
+    return Datasource::convert(datasources);
 }
 
 int set_log_level(int level) noexcept {

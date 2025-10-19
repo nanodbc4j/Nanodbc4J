@@ -1,7 +1,6 @@
 #include "api/connection.h"
 #include <exception>
 #include "utils/string_utils.hpp"
-#include "utils/struct_converter.hpp"
 #include "utils/logger.hpp"
 
 using namespace std;
