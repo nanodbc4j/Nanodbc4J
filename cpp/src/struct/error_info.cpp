@@ -20,13 +20,6 @@ void NativeError::clear(NativeError* error) {
     }
 }
 
-NativeError::NativeError() {
-    LOG_TRACE("Default constructing NativeError");
-    error_code = ErrorCode::Success;
-    error_message = nullptr;
-    error_type = nullptr;
-}
-
 NativeError::NativeError(const NativeError& other) {
     LOG_TRACE("Copying NativeError from {}", (void*)&other);
     error_code = other.error_code;

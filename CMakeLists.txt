@@ -4,13 +4,14 @@ project(nanodbc4j CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(BUILD_TESTS "Build native unit tests" ON)
+
 if(MSVC)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel" OR CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)    #link time optimization
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)    # link time optimization
 endif()
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/cpp/include)
@@ -29,7 +30,7 @@ set(NANODBC_ENABLE_SHARED OFF)
 set(NANODBC_ENABLE_UNICODE ON)
 set(NANODBC_DISABLE_EXAMPLES ON)
 set(NANODBC_DISABLE_TESTS ON)
-set(NANODBC_FORCE_LIBCXX  ON)
+set(NANODBC_FORCE_LIBCXX ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 set(SPDLOG_FMT_EXTERNAL ON)
 
@@ -40,13 +41,17 @@ add_subdirectory(third_party/nanodbc)
 add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/spdlog)
 
-# Ищем все исходники в src/
-file(GLOB_RECURSE SRC_FILES "${SOURCE_DIR}/*.cpp" )
+if(BUILD_TESTS)
+    add_subdirectory(cpp/tests)
+endif()
 
-# Создаём один DLL файл с содержимым src
+# Find all source files in src/
+file(GLOB_RECURSE SRC_FILES "${SOURCE_DIR}/*.cpp")
+
+# Create single DLL file with contents from src
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
-# Подключаем заголовочные файлы проекта
+# Include project header files
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
 if(WIN32)
@@ -55,14 +60,14 @@ if(WIN32)
     add_definitions(-DSPDLOG_WCHAR_TO_UTF8_SUPPORT)
 endif()
 
-# Отключаем вывод имени файла и номера строки в исключениях nanodbc
+# Disable filename and line number output in nanodbc exceptions
 target_compile_definitions(nanodbc PRIVATE NANODBC_THROW_NO_SOURCE_LOCATION)
 
 # utfcpp
 add_library(utfcpp INTERFACE)
 target_include_directories(utfcpp INTERFACE third_party/utfcpp/source)
 
-# Линкуем зависимости
+# Link dependencies
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     nanodbc 
     fmt::fmt
@@ -79,11 +84,11 @@ if(UNIX AND NOT APPLE)
     endif()
 endif()
 
-# === Настройки на Linux: переносимость и статическая линковка ===
+# === Linux settings: portability and static linking ===
 if(UNIX AND NOT APPLE)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        target_link_options(${PROJECT_NAME} PRIVATE   -static-libgcc    -static-libstdc++     -Wl,--gc-sections)
+        target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++ -Wl,--gc-sections)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        target_link_options(${PROJECT_NAME} PRIVATE   -static-libstdc++   -Wl,--gc-sections)
+        target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++ -Wl,--gc-sections)
     endif()
 endif()

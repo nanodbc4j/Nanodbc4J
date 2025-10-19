@@ -6,11 +6,11 @@ extern "C" {
 #endif
 
     struct NativeError {
-        int error_code;
-        char* error_message;
-        char* error_type;
+        int error_code = ErrorCode::Success;
+        char* error_message = nullptr;
+        char* error_type = nullptr;
 
-        NativeError();
+        NativeError() = default;
         explicit NativeError(const NativeError& other);
         ~NativeError();
         static void clear(NativeError* error);

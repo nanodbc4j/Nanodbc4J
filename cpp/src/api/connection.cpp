@@ -29,7 +29,7 @@ static Connection* connection_with_error_handling(const function<Connection* ()>
 Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) {
     auto str_connection_string = connection_string ? nanodbc::string(connection_string) : nanodbc::string();
 
-    LOG_DEBUG("Сonnection_string={}, timeout={}", utils::to_string(str_connection_string), timeout);
+    LOG_DEBUG("Connection_string={}, timeout={}", utils::to_string(str_connection_string), timeout);
     return connection_with_error_handling(
         [&]() {
             return new Connection(str_connection_string, timeout);

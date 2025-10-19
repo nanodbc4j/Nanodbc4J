@@ -23,7 +23,8 @@ std::string set_spdlog_level(int level) {
 
     // Используем встроенную функцию spdlog для получения имени уровня
     const auto& sv = spdlog::level::to_string_view(spdlog_level);
-    return std::string(sv.data(), sv.size());
+    std::string result(sv.data(), sv.size());
+    return result;
 }
 
 void ensure_initialized() {
