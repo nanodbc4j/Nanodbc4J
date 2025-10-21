@@ -21,6 +21,11 @@ int32_t IsolationLevel::to_odbc() const {
     }
 }
 
+/// \brief Convert to integer for C API compatibility.
+IsolationLevel::operator int() const {
+    return static_cast<int>(to_odbc());
+}
+
 // Map ODBC constant back to our enum
 IsolationLevel IsolationLevel::from_odbc(int32_t odbc_level) {
     switch (odbc_level) {

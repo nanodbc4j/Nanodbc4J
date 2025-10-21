@@ -8,9 +8,9 @@
 extern "C" {
 #endif
     
-    ODBC_API const Driver** drivers_list(int* count) noexcept;
+    ODBC_API Driver** drivers_list(int* count) noexcept;
 
-    ODBC_API const Datasource** datasources_list(int* count) noexcept;
+    ODBC_API Datasource** datasources_list(int* count) noexcept;
 
     ODBC_API void std_free(void* ptr) noexcept;
 

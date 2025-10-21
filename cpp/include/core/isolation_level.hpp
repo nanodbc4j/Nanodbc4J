@@ -17,6 +17,9 @@ public:
     /// \brief Convert to ODBC constant (32-bit signed integer).
     std::int32_t to_odbc() const;
 
+    /// \brief Convert to integer for C API compatibility.
+    operator int() const;
+
     /// \brief Convert from ODBC constant.
     static IsolationLevel from_odbc(std::int32_t odbc_level);
 
@@ -31,6 +34,16 @@ public:
         return !(a == b);
     }
 
+    static const IsolationLevel READ_UNCOMMITTED;
+    static const IsolationLevel READ_COMMITTED;
+    static const IsolationLevel REPEATABLE_READ;
+    static const IsolationLevel SERIALIZABLE;
+
 private:
     Value value_;
 };
+
+inline constexpr const IsolationLevel IsolationLevel::READ_UNCOMMITTED{ Value::READ_UNCOMMITTED };
+inline constexpr const IsolationLevel IsolationLevel::READ_COMMITTED{ Value::READ_COMMITTED };
+inline constexpr const IsolationLevel IsolationLevel::REPEATABLE_READ{ Value::REPEATABLE_READ };
+inline constexpr const IsolationLevel IsolationLevel::SERIALIZABLE{ Value::SERIALIZABLE };

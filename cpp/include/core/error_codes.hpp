@@ -17,7 +17,7 @@ public:
         return static_cast<int>(value_);
     }
 
-    /// \brief Convert to 32-bit signed integer for C API compatibility.
+    /// \brief Convert to integer for C API compatibility.
     constexpr operator int() const noexcept {
         return static_cast<int>(value_);
     }

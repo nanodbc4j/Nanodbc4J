@@ -4,7 +4,7 @@
 #include "utils/logger.hpp"
 
 
-const Driver** drivers_list(int* count) noexcept {
+Driver** drivers_list(int* count) noexcept {
 	LOG_DEBUG("Fetching list of ODBC drivers...");
     auto drivers_list = nanodbc::list_drivers();
     *count = static_cast<int>(drivers_list.size());
@@ -12,7 +12,7 @@ const Driver** drivers_list(int* count) noexcept {
     return Driver::convert(drivers_list);
 }
 
-const Datasource** datasources_list(int* count) noexcept {
+Datasource** datasources_list(int* count) noexcept {
 	LOG_DEBUG("Fetching list of ODBC data sources...");
     auto datasources = nanodbc::list_datasources();
     *count = static_cast<int>(datasources.size());

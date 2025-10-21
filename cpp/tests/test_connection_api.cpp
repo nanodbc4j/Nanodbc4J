@@ -4,6 +4,7 @@
 #include "api/connection.h"
 #include "api/result.h"
 #include "core/database_metadata.hpp"
+#include "core/isolation_level.hpp"
 #include "utils/logger.hpp"
 #include "struct/error_info.h"
 
@@ -71,14 +72,32 @@ TEST(ConnectionAPITest, TransactionControl) {
     EXPECT_FALSE(autoCommit);
     assert_no_error(error);
 
-    if (metadata.supportsTransactionIsolationLevel() & 2) {
+    int current_level = get_transaction_isolation_level(conn, &error);
+    assert_no_error(error);
+    int supportsTransactionIsolationLevel = metadata.supportsTransactionIsolationLevel();
+
+    std::vector<int> levels;
+    levels.push_back(IsolationLevel::READ_COMMITTED);
+    levels.push_back(IsolationLevel::READ_UNCOMMITTED);
+    levels.push_back(IsolationLevel::REPEATABLE_READ);
+    levels.push_back(IsolationLevel::SERIALIZABLE);
+
+    auto find = std::find_if(levels.begin(), levels.end(), [&](int level) {
+        return (level != current_level) && (supportsTransactionIsolationLevel & level);
+    });
+
+    if (find != levels.end()) {
         // Set isolation level
-        set_transaction_isolation_level(conn, 2, &error); // READ COMMITTED
+        set_transaction_isolation_level(conn, *find, &error);
         assert_no_error(error);
 
+        std::cout << "set transaction isolation level " << *find << std::endl;
+
         int level = get_transaction_isolation_level(conn, &error);
-        EXPECT_EQ(level, 2);
         assert_no_error(error);
+        EXPECT_EQ(level, *find);
+    } else {
+        std::cout << "supports only transaction isolation level " << supportsTransactionIsolationLevel << std::endl;
     }
 
     // Commit (even though we haven't done anything)
@@ -108,7 +127,6 @@ TEST(ConnectionAPITest, ExecuteSimpleQuery) {
 
     // Insert data
     ApiString insert_sql = NANODBC_TEXT("INSERT INTO test VALUES (1, 'Alice');");
-    std::cout << 8 << std::endl;
     res = execute_request(conn, insert_sql.c_str(), 10, &error);
     EXPECT_NE(res, nullptr);
     assert_no_error(error);

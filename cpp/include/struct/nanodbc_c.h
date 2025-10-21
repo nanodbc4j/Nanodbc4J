@@ -28,7 +28,7 @@ extern "C" {
         explicit Driver(const nanodbc::driver& other);
         ~Driver();
 
-        static const Driver** convert(const std::list<nanodbc::driver>& drivers);
+        static Driver** convert(const std::list<nanodbc::driver>& drivers);
     };
 
     struct Datasource {
@@ -40,7 +40,7 @@ extern "C" {
         explicit Datasource(const nanodbc::datasource& other);
         ~Datasource();
 
-        static const Datasource** convert(const std::list<nanodbc::datasource>& datasources);
+        static Datasource** convert(const std::list<nanodbc::datasource>& datasources);
     };
 
     struct CDate {
