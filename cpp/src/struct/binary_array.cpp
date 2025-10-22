@@ -1,6 +1,14 @@
 #include "struct/binary_array.h"
 #include <cstring>
 
+BinaryArray::BinaryArray(const uint8_t* data_ptr, int32_t data_length) {
+    if (data_ptr != nullptr && data_length > 0) {
+        length = data_length;
+        data = new int8_t[length];
+        std::memcpy(data, data_ptr, length);
+    }
+}
+
 BinaryArray::BinaryArray(const std::vector<uint8_t>& vec) {
     if (!vec.empty()) {
         length = static_cast<int32_t>(vec.size());

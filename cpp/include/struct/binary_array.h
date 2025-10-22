@@ -12,7 +12,9 @@ extern "C" {
 
         BinaryArray() = default;
 
-        explicit BinaryArray(const std::vector<uint8_t>& vec);
+        BinaryArray(const uint8_t* data_ptr, int32_t data_length);
+
+        BinaryArray(const std::vector<uint8_t>& vec);
 
         ~BinaryArray();
 

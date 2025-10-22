@@ -14,7 +14,7 @@ extern "C" {
             const ApiChar* value = nullptr;   ///< Driver attribute value.
 
             Attribute() = default;
-            explicit Attribute(const Attribute& other);
+            Attribute(const Attribute& other);
             explicit Attribute(const nanodbc::driver::attribute& other);
             ~Attribute();
         };
@@ -24,7 +24,7 @@ extern "C" {
         int attribute_count = 0;
 
         Driver() = default;
-        explicit Driver(const Driver& other);
+        Driver(const Driver& other);
         explicit Driver(const nanodbc::driver& other);
         ~Driver();
 
@@ -36,7 +36,7 @@ extern "C" {
         const ApiChar* driver = nullptr; ///< Driver description.
 
         Datasource() = default;
-        explicit Datasource(const Datasource& other);
+        Datasource(const Datasource& other);
         explicit Datasource(const nanodbc::datasource& other);
         ~Datasource();
 
@@ -49,7 +49,8 @@ extern "C" {
         int16_t day = 1;   ///< Day of the month [1-31].
 
         CDate() = default;
-        explicit CDate(const CDate& other);
+        CDate(int16_t y, int16_t m, int16_t d);
+        CDate(const CDate& other);
         explicit CDate(const nanodbc::date& other);
     };
 
@@ -59,7 +60,8 @@ extern "C" {
         int16_t second = 0;  ///< Seconds after the minute.
 
         CTime() = default;
-        explicit CTime(const CTime& other);
+        CTime(int16_t h, int16_t m, int16_t s);
+        CTime(const CTime& other);
         explicit CTime(const nanodbc::time& other);
     };
 
@@ -73,7 +75,8 @@ extern "C" {
         int32_t fract = 0;    ///< Fractional seconds.
 
         CTimestamp() = default;
-        explicit CTimestamp(const CTimestamp& other);
+        CTimestamp(int16_t y, int16_t m, int16_t d, int16_t h = 0, int16_t min = 0, int16_t s = 0, int32_t f = 0);
+        CTimestamp(const CTimestamp& other);
         explicit CTimestamp(const nanodbc::timestamp& other);
     };    
 

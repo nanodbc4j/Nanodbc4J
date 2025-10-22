@@ -128,6 +128,10 @@ Datasource** Datasource::convert(const std::list<nanodbc::datasource>& datasourc
 	return result;
 }
 
+CDate::CDate(int16_t y, int16_t m, int16_t d)
+	: year(y), month(m), day(d) {
+}
+
 CDate::CDate(const CDate& other) {
 	LOG_TRACE("Copying CDate: {}/{}/{}", other.day, other.month, other.year);
 	day = other.day;
@@ -142,6 +146,10 @@ CDate::CDate(const nanodbc::date& other) {
 	year = other.year;
 }
 
+CTime::CTime(int16_t h, int16_t m, int16_t s)
+	: hour(h), minute(m), second(s) {
+}
+
 CTime::CTime(const CTime& other) {
 	LOG_TRACE("Copying CTime: {}:{}:{}", other.hour, other.minute, other.second);
 	hour = other.hour;
@@ -154,6 +162,10 @@ CTime::CTime(const nanodbc::time& other) {
 	hour = other.hour;
 	minute = other.min;
 	second = other.sec;
+}
+
+CTimestamp::CTimestamp(int16_t y, int16_t m, int16_t d, int16_t h, int16_t min, int16_t s, int32_t f)
+	: year(y), month(m), day(d), hour(h), minute(min), second(s), fract(f) {
 }
 
 CTimestamp::CTimestamp(const CTimestamp& other) {

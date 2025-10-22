@@ -282,8 +282,10 @@ nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeo
 
         auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
 
-        auto results = nanodbc::execute(*conn, str_sql, BATCH_OPERATIONS, timeout);
-        auto result_ptr = new nanodbc::result(results);
+        nanodbc::statement stmt(*conn);
+        stmt.prepare(str_sql);
+        auto result = stmt.execute(BATCH_OPERATIONS, timeout);
+        auto result_ptr = new nanodbc::result(std::move(result));
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
     } catch (const nanodbc::database_error& e) {

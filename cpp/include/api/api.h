@@ -1,13 +1,9 @@
 #pragma once
-#include <string>
+#include <nanodbc/nanodbc.h>
 
-#ifdef _WIN32
-typedef wchar_t ApiChar;
-typedef std::wstring ApiString;
-#else
-typedef char16_t ApiChar;
-typedef std::u16string ApiString;
-#endif
+typedef nanodbc::string::value_type ApiChar;
+typedef nanodbc::string ApiString;
+
 
 #ifdef _WIN32
 #ifdef ODBC_EXPORTS
