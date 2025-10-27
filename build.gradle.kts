@@ -93,8 +93,6 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
-            artifact(tasks.named("sourcesJar").get())
-            artifact(tasks.named("javadocJar").get())
 
             pom {
                 name.set("Nanodbc4J")
