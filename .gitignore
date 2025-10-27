@@ -6,6 +6,7 @@ logs/
 /src/main/resources/natives/
 
 ### IntelliJ IDEA ###
+.gradle
 .idea
 *.iws
 *.iml
