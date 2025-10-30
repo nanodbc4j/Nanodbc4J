@@ -13,9 +13,6 @@ group = "io.github.nanodbc4j"
 version = "1.0-SNAPSHOT"
 description = "JDBC Type 1 driver implementation using nanodbc C++ library for ODBC connectivity. Open-source replacement for the removed JDBC-ODBC Bridge."
 
-val jnaVersion = "5.17.0"
-val lombokVersion = "1.18.38"
-
 java {
     // Use Java toolchain to target Java 17 (source/target)
     toolchain {
@@ -30,12 +27,26 @@ repositories {
     mavenCentral()
 }
 
+val props = Properties().apply {
+    val propertiesFile = File(File("$projectDir"), "gradle.properties")
+    propertiesFile.inputStream().use { load(it) }
+}
+
+val jnaVersion: String = props.getProperty("jnaVersion")
+val lombokVersion: String= props.getProperty("lombokVersion")
+val assertjVersion: String = props.getProperty("assertjVersion")
+val junitVersion: String = props.getProperty("junitVersion")
+
 dependencies {
     implementation("net.java.dev.jna:jna:$jnaVersion")
 
-    // Lombok in Maven was 'provided' -> use compileOnly + annotationProcessor
     compileOnly("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+
+    testImplementation("org.assertj:assertj-core:${assertjVersion}")
+    testImplementation(platform("org.junit:junit-bom:${junitVersion}"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 val nativeProfile = providers.gradleProperty("nativeProfile").getOrElse("release").lowercase(Locale.getDefault())
@@ -86,6 +97,14 @@ tasks.jar {
 tasks.withType<Javadoc> {
     (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
     options.encoding = "UTF-8"
+}
+
+// JUnit tests
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 // Publishing configuration: produces POM metadata
