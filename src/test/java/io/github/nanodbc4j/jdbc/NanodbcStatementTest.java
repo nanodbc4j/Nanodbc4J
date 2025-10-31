@@ -11,18 +11,18 @@ import java.sql.Statement;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class NanodbcStatementTest {
+class NanodbcStatementTest {
 
     private Connection conn;
     private Statement stmt;
 
-    @BeforeAll
+    @BeforeEach
     void setUp() throws SQLException {
         conn = DriverManager.getConnection("jdbc:nanodbc4j:DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
         stmt = conn.createStatement();
     }
 
-    @AfterAll
+    @AfterEach
     void tearDown() throws SQLException {
         if (stmt != null) stmt.close();
         if (conn != null) conn.close();

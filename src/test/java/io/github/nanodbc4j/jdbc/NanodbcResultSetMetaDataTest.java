@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * Mirrors the logic of the C++ ResultSetMetaDataTest.BasicMetadata test.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class NanodbcResultSetMetaDataTest {
+class NanodbcResultSetMetaDataTest {
 
     private Connection connection;
 
-    @BeforeAll
+    @BeforeEach
     void setUp() throws SQLException {
         connection = DriverManager.getConnection("jdbc:nanodbc4j:DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
 
@@ -23,7 +23,7 @@ public class NanodbcResultSetMetaDataTest {
         insertTestData();
     }
 
-    @AfterAll
+    @AfterEach
     void tearDown() throws SQLException {
         if (connection != null && !connection.isClosed()) {
             connection.close();

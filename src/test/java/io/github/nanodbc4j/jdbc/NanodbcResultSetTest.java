@@ -7,13 +7,13 @@ import java.sql.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class NanodbcResultSetTest {
+class NanodbcResultSetTest {
 
     private Connection conn;
     private Statement stmt;
     private ResultSet rs;
 
-    @BeforeAll
+    @BeforeEach
     void setUp() throws SQLException {
         conn = DriverManager.getConnection("jdbc:nanodbc4j:DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
         stmt = conn.createStatement();
@@ -22,7 +22,7 @@ public class NanodbcResultSetTest {
         rs = stmt.executeQuery("SELECT id, name FROM test_rs");
     }
 
-    @AfterAll
+    @AfterEach
     void tearDown() throws SQLException {
         if (rs != null) rs.close();
         if (stmt != null) stmt.close();

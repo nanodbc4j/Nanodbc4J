@@ -69,7 +69,7 @@ tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     listOf(nativeWindowsDir, nativeLinuxDir).forEach { dir ->
-        if (!file(dir).exists()) {
+        if (nativeProfile != "debug" && !file(dir).exists()) {
             throw GradleException("Native directory does not exist: $dir. Build native libraries first.")
         }
     }
