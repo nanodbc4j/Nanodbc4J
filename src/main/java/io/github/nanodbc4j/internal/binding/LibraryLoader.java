@@ -1,4 +1,4 @@
-package io.github.nanodbc4j.internal;
+package io.github.nanodbc4j.internal.binding;
 
 import com.sun.jna.Function;
 import com.sun.jna.Library;

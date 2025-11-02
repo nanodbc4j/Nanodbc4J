@@ -1,11 +1,13 @@
 package io.github.nanodbc4j.internal.handler;
 
 import com.sun.jna.Pointer;
+import io.github.nanodbc4j.internal.binding.OdbcApi;
+import io.github.nanodbc4j.internal.binding.ResultApi;
+import io.github.nanodbc4j.internal.binding.ResultSetMetaDataApi;
 import io.github.nanodbc4j.internal.cstruct.BinaryArray;
 import io.github.nanodbc4j.internal.cstruct.ResultSetMetaDataStruct;
 import io.github.nanodbc4j.internal.dto.ResultSetMetadataDto;
 import io.github.nanodbc4j.jdbc.NanodbcResultSetMetaData;
-import io.github.nanodbc4j.internal.NativeDB;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import io.github.nanodbc4j.internal.cstruct.DateStruct;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
@@ -29,77 +31,77 @@ public final class ResultSetHandler {
     public static boolean next(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.next_result(resultSet, nativeError) != 0;
+            boolean result = ResultApi.INSTANCE.next_result(resultSet, nativeError) != 0;
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static boolean previous(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.previous_result(resultSet, nativeError) != 0;
+            boolean result = ResultApi.INSTANCE.previous_result(resultSet, nativeError) != 0;
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static boolean first(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.first_result(resultSet, nativeError) != 0;
+            boolean result = ResultApi.INSTANCE.first_result(resultSet, nativeError) != 0;
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static boolean last(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.last_result(resultSet, nativeError) != 0;
+            boolean result = ResultApi.INSTANCE.last_result(resultSet, nativeError) != 0;
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static boolean absolute(ResultSetPtr resultSet, int row) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.absolute_result(resultSet, row, nativeError) != 0;
+            boolean result = ResultApi.INSTANCE.absolute_result(resultSet, row, nativeError) != 0;
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static int getRow(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            int result = NativeDB.INSTANCE.get_row_position_result(resultSet, nativeError);
+            int result = ResultApi.INSTANCE.get_row_position_result(resultSet, nativeError);
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static int getUpdateCount(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            int result = NativeDB.INSTANCE.affected_rows_result(resultSet, nativeError);
+            int result = ResultApi.INSTANCE.affected_rows_result(resultSet, nativeError);
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -110,7 +112,7 @@ public final class ResultSetHandler {
             throwIfNativeError(nativeError);
             return value;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -121,7 +123,7 @@ public final class ResultSetHandler {
             throwIfNativeError(nativeError);
             return value;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -129,13 +131,13 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         Pointer strPtr = null;
         try {
-            strPtr = NativeDB.INSTANCE.get_string_value_by_index(resultSet, index - 1, nativeError);
+            strPtr = ResultApi.INSTANCE.get_string_value_by_index(resultSet, index - 1, nativeError);
             throwIfNativeError(nativeError);
 
             return getWideString(strPtr);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.std_free(strPtr);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.std_free(strPtr);
         }
     }
 
@@ -143,11 +145,11 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         DateStruct dateStruct = null;
         try {
-            dateStruct = NativeDB.INSTANCE.get_date_value_by_index(resultSet, index - 1, nativeError);
+            dateStruct = ResultApi.INSTANCE.get_date_value_by_index(resultSet, index - 1, nativeError);
             return convert(dateStruct, nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_date(dateStruct);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            ResultApi.INSTANCE.delete_date(dateStruct);
         }
     }
 
@@ -155,11 +157,11 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         TimeStruct timeStruct = null;
         try {
-            timeStruct = NativeDB.INSTANCE.get_time_value_by_index(resultSet, index - 1, nativeError);
+            timeStruct = ResultApi.INSTANCE.get_time_value_by_index(resultSet, index - 1, nativeError);
             return convert(timeStruct, nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_time(timeStruct);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            ResultApi.INSTANCE.delete_time(timeStruct);
         }
     }
 
@@ -167,11 +169,11 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         TimestampStruct timestampStruct = null;
         try {
-            timestampStruct = NativeDB.INSTANCE.get_timestamp_value_by_index(resultSet, index - 1, nativeError);
+            timestampStruct = ResultApi.INSTANCE.get_timestamp_value_by_index(resultSet, index - 1, nativeError);
             return convert(timestampStruct, nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_timestamp(timestampStruct);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            ResultApi.INSTANCE.delete_timestamp(timestampStruct);
         }
     }
 
@@ -179,15 +181,15 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         BinaryArray array = null;
         try {
-            array = NativeDB.INSTANCE.get_bytes_array_by_index(resultSet, index - 1, nativeError);
+            array = ResultApi.INSTANCE.get_bytes_array_by_index(resultSet, index - 1, nativeError);
             throwIfNativeError(nativeError);
             if (array == null) {
                 return new byte[0];
             }
             return array.getBytes();
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_binary_array(array);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            ResultApi.INSTANCE.delete_binary_array(array);
         }
     }
 
@@ -195,16 +197,16 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         BinaryArray array = null;
         try {
-            array = NativeDB.INSTANCE.get_bytes_array_by_name(resultSet, name + NUL_CHAR, nativeError);
+            array = ResultApi.INSTANCE.get_bytes_array_by_name(resultSet, name + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
             if (array == null) {
                 return new byte[0];
             }
             return array.getBytes();
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
             if (array != null) {
-                NativeDB.INSTANCE.delete_binary_array(array);
+                ResultApi.INSTANCE.delete_binary_array(array);
             }
         }
     }
@@ -213,13 +215,13 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         Pointer strPtr = null;
         try {
-            strPtr = NativeDB.INSTANCE.get_string_value_by_name(resultSet, name + NUL_CHAR, nativeError);
+            strPtr = ResultApi.INSTANCE.get_string_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
             return getWideString(strPtr);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
             if (strPtr != null) {
-                NativeDB.INSTANCE.std_free(strPtr);
+                OdbcApi.INSTANCE.std_free(strPtr);
             }
         }
     }
@@ -229,12 +231,12 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         DateStruct dateStruct = null;
         try {
-            dateStruct = NativeDB.INSTANCE.get_date_value_by_name(resultSet, name + NUL_CHAR, nativeError);
+            dateStruct = ResultApi.INSTANCE.get_date_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             return convert(dateStruct, nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
             if (dateStruct != null) {
-                NativeDB.INSTANCE.delete_date(dateStruct);
+                ResultApi.INSTANCE.delete_date(dateStruct);
             }
         }
     }
@@ -243,12 +245,12 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         TimeStruct timeStruct = null;
         try {
-            timeStruct = NativeDB.INSTANCE.get_time_value_by_name(resultSet, name + NUL_CHAR, nativeError);
+            timeStruct = ResultApi.INSTANCE.get_time_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             return convert(timeStruct, nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
             if (timeStruct != null) {
-                NativeDB.INSTANCE.delete_time(timeStruct);
+                ResultApi.INSTANCE.delete_time(timeStruct);
             }
         }
     }
@@ -257,12 +259,12 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         TimestampStruct timestampStruct = null;
         try {
-            timestampStruct = NativeDB.INSTANCE.get_timestamp_value_by_name(resultSet, name + NUL_CHAR, nativeError);
+            timestampStruct = ResultApi.INSTANCE.get_timestamp_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             return convert(timestampStruct, nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
             if (timestampStruct != null) {
-                NativeDB.INSTANCE.delete_timestamp(timestampStruct);
+                ResultApi.INSTANCE.delete_timestamp(timestampStruct);
             }
         }
     }
@@ -275,9 +277,9 @@ public final class ResultSetHandler {
         try {
             boolean isNull;
             if (lastColumn instanceof Integer column) {
-                isNull = NativeDB.INSTANCE.was_null_by_index(resultSet, column - 1, nativeError) != 0;
+                isNull = ResultApi.INSTANCE.was_null_by_index(resultSet, column - 1, nativeError) != 0;
             } else if (lastColumn instanceof String column) {
-                isNull = NativeDB.INSTANCE.was_null_by_name(resultSet, column + NUL_CHAR, nativeError) != 0;
+                isNull = ResultApi.INSTANCE.was_null_by_name(resultSet, column + NUL_CHAR, nativeError) != 0;
             } else {
                 throw new InvalidClassException("lastColumn is not of type Integer or String");
             }
@@ -285,18 +287,18 @@ public final class ResultSetHandler {
             throwIfNativeError(nativeError);
             return isNull;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static int findColumn(ResultSetPtr resultSet, @NonNull String name) {
         NativeError nativeError = new NativeError();
         try {
-            int col = NativeDB.INSTANCE.find_column_by_name(resultSet, name + NUL_CHAR, nativeError) + 1;
+            int col = ResultApi.INSTANCE.find_column_by_name(resultSet, name + NUL_CHAR, nativeError) + 1;
             throwIfNativeError(nativeError);
             return col;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -304,7 +306,7 @@ public final class ResultSetHandler {
         NativeError nativeError = new NativeError();
         ResultSetMetaDataStruct metaDataStruct = null;
         try {
-            metaDataStruct = NativeDB.INSTANCE.get_meta_data(resultSet, nativeError);
+            metaDataStruct = ResultSetMetaDataApi.INSTANCE.get_meta_data(resultSet, nativeError);
             throwIfNativeError(nativeError);
 
             if (metaDataStruct == null) {
@@ -314,18 +316,18 @@ public final class ResultSetHandler {
             ResultSetMetadataDto metaData = ResultSetMetaDataHandler.processerMetaData(metaDataStruct);
             return new NanodbcResultSetMetaData(metaData);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_meta_data(metaDataStruct);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            ResultSetMetaDataApi.INSTANCE.delete_meta_data(metaDataStruct);
         }
     }
 
     public static void close(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.close_result(resultSet, nativeError);
+            ResultApi.INSTANCE.close_result(resultSet, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 

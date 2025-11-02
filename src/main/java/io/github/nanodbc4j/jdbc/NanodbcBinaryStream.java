@@ -1,6 +1,7 @@
 package io.github.nanodbc4j.jdbc;
 
-import io.github.nanodbc4j.internal.NativeDB;
+import io.github.nanodbc4j.internal.binding.OdbcApi;
+import io.github.nanodbc4j.internal.binding.ResultApi;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
 import io.github.nanodbc4j.internal.pointer.BinaryStreamPtr;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
@@ -25,22 +26,22 @@ public class NanodbcBinaryStream extends InputStream {
     public NanodbcBinaryStream(ResultSetPtr resultSetPtr, int columnIndex) {
         NativeError error = new NativeError();
         try {
-            streamPtr = NativeDB.INSTANCE.get_binary_stream_by_index(resultSetPtr, columnIndex - 1, error);
+            streamPtr = ResultApi.INSTANCE.get_binary_stream_by_index(resultSetPtr, columnIndex - 1, error);
             cleanable = cleaner.register(this, new BinaryStreamCleaner(streamPtr));
             throwIfNativeError(error);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(error);
+            OdbcApi.INSTANCE.clear_native_error(error);
         }
     }
 
     public NanodbcBinaryStream(ResultSetPtr resultSetPtr, String columnName) {
         NativeError error = new NativeError();
         try {
-            streamPtr = NativeDB.INSTANCE.get_binary_stream_by_name(resultSetPtr, columnName + NUL_CHAR, error);
+            streamPtr = ResultApi.INSTANCE.get_binary_stream_by_name(resultSetPtr, columnName + NUL_CHAR, error);
             cleanable = cleaner.register(this, new BinaryStreamCleaner(streamPtr));
             throwIfNativeError(error);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(error);
+            OdbcApi.INSTANCE.clear_native_error(error);
         }
     }
 
@@ -58,13 +59,13 @@ public class NanodbcBinaryStream extends InputStream {
 
         NativeError error = new NativeError();
         try {
-            int bytesRead = NativeDB.INSTANCE.read_binary_stream(streamPtr, buffer, offset, length, error);
+            int bytesRead = ResultApi.INSTANCE.read_binary_stream(streamPtr, buffer, offset, length, error);
             throwIfNativeError(error);
             return bytesRead;
         } catch (Exception e) {
             throw new IOException("Failed to read from binary stream", e);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(error);
+            OdbcApi.INSTANCE.clear_native_error(error);
         }
     }
 
@@ -87,7 +88,7 @@ public class NanodbcBinaryStream extends InputStream {
         public void run() {
             if (ptr != null) {
                 try {
-                    NativeDB.INSTANCE.close_binary_stream(ptr);
+                    ResultApi.INSTANCE.close_binary_stream(ptr);
                 } catch (Exception e) {
                     log.warning("Exception while closing binary stream: " + e.getMessage());
                 } finally {

@@ -2,7 +2,7 @@ package io.github.nanodbc4j.jdbc;
 
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
 import io.github.nanodbc4j.exceptions.NativeException;
-import io.github.nanodbc4j.internal.NativeDB;
+import io.github.nanodbc4j.internal.binding.StatementApi;
 import io.github.nanodbc4j.internal.cstruct.BinaryArray;
 import io.github.nanodbc4j.internal.handler.ResultSetHandler;
 import io.github.nanodbc4j.internal.handler.StatementHandler;
@@ -95,7 +95,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         throwIfAlreadyClosed();
         try {
             byte value = (byte) (x ? 1 : 0);
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, NativeDB.INSTANCE::set_bool_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, StatementApi.INSTANCE::set_bool_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -119,7 +119,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.setShort");
         throwIfAlreadyClosed();
         try {
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, NativeDB.INSTANCE::set_short_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, StatementApi.INSTANCE::set_short_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -133,7 +133,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.setInt");
         throwIfAlreadyClosed();
         try {
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, NativeDB.INSTANCE::set_int_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, StatementApi.INSTANCE::set_int_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -147,7 +147,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.setLong");
         throwIfAlreadyClosed();
         try {
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, NativeDB.INSTANCE::set_long_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, StatementApi.INSTANCE::set_long_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -161,7 +161,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.setFloat");
         throwIfAlreadyClosed();
         try {
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, NativeDB.INSTANCE::set_float_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, StatementApi.INSTANCE::set_float_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -175,7 +175,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.setDouble");
         throwIfAlreadyClosed();
         try {
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, NativeDB.INSTANCE::set_double_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x, StatementApi.INSTANCE::set_double_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -199,7 +199,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         log.finest("NanodbcPreparedStatement.setString");
         throwIfAlreadyClosed();
         try {
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x == null ? null : x + NUL_CHAR, NativeDB.INSTANCE::set_string_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, x == null ? null : x + NUL_CHAR, StatementApi.INSTANCE::set_string_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -214,7 +214,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         throwIfAlreadyClosed();
         try {
             var value = new BinaryArray(x);
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, NativeDB.INSTANCE::set_binary_array_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, StatementApi.INSTANCE::set_binary_array_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -229,7 +229,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         throwIfAlreadyClosed();
         try {
             var value = StatementHandler.convert(x);
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, NativeDB.INSTANCE::set_date_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, StatementApi.INSTANCE::set_date_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -244,7 +244,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         throwIfAlreadyClosed();
         try {
             var value = StatementHandler.convert(x);
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, NativeDB.INSTANCE::set_time_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, StatementApi.INSTANCE::set_time_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -259,7 +259,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
         throwIfAlreadyClosed();
         try {
             var value = StatementHandler.convert(x);
-            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, NativeDB.INSTANCE::set_timestamp_value);
+            StatementHandler.setValueByIndex(statementPtr, parameterIndex, value, StatementApi.INSTANCE::set_timestamp_value);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }

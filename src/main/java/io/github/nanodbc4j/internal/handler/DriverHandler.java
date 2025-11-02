@@ -2,10 +2,10 @@ package io.github.nanodbc4j.internal.handler;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import io.github.nanodbc4j.internal.binding.OdbcApi;
 import io.github.nanodbc4j.internal.dto.DatasourceDto;
 import io.github.nanodbc4j.internal.dto.DriverDto;
 import io.github.nanodbc4j.jdbc.SpdLogLevel;
-import io.github.nanodbc4j.internal.NativeDB;
 import io.github.nanodbc4j.internal.cstruct.DatasourceStruct;
 import io.github.nanodbc4j.internal.cstruct.DriverStruct;
 import lombok.experimental.UtilityClass;
@@ -22,7 +22,7 @@ import static io.github.nanodbc4j.internal.handler.Handler.*;
 public final class DriverHandler {
 
     public static void setLogLevel(SpdLogLevel level) {
-        if (NativeDB.INSTANCE.set_log_level(level.getValue()) != 0) {
+        if (OdbcApi.INSTANCE.set_log_level(level.getValue()) != 0) {
             throw new InternalError("set_log_level failed");
         }
     }
@@ -30,7 +30,7 @@ public final class DriverHandler {
     public static List<DriverDto> driversList() {
         List<DriverDto> drivers = new ArrayList<>();
         IntByReference count = new IntByReference();
-        Pointer driversListPtrs = NativeDB.INSTANCE.drivers_list(count);
+        Pointer driversListPtrs = OdbcApi.INSTANCE.drivers_list(count);
         try {
             for (int i = 0; i < count.getValue(); i++) {
                 DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(POINTER_SIZE * i));
@@ -47,7 +47,7 @@ public final class DriverHandler {
                 drivers.add(new DriverDto(name, driverAttributes));
             }
         } finally {
-            NativeDB.INSTANCE.delete_driver_array(driversListPtrs, count.getValue());
+            OdbcApi.INSTANCE.delete_driver_array(driversListPtrs, count.getValue());
         }
         return drivers;
     }
@@ -55,7 +55,7 @@ public final class DriverHandler {
     public static List<DatasourceDto> datasourcesList() {
         List<DatasourceDto> datasources = new ArrayList<>();
         IntByReference count = new IntByReference();
-        Pointer datasourcesListPtrs = NativeDB.INSTANCE.datasources_list(count);
+        Pointer datasourcesListPtrs = OdbcApi.INSTANCE.datasources_list(count);
         try {
             for (int i = 0; i < count.getValue(); i++) {
                 DatasourceStruct ds = new DatasourceStruct(datasourcesListPtrs.getPointer(POINTER_SIZE * i));
@@ -64,7 +64,7 @@ public final class DriverHandler {
                 datasources.add(new DatasourceDto(name, driver));
             }
         } finally {
-            NativeDB.INSTANCE.delete_datasource_array(datasourcesListPtrs, count.getValue());
+            OdbcApi.INSTANCE.delete_datasource_array(datasourcesListPtrs, count.getValue());
         }
 
         return datasources;

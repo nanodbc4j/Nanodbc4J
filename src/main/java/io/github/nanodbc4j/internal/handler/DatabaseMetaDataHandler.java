@@ -1,6 +1,7 @@
 package io.github.nanodbc4j.internal.handler;
 
-import io.github.nanodbc4j.internal.NativeDB;
+import io.github.nanodbc4j.internal.binding.DatabaseMetaDataApi;
+import io.github.nanodbc4j.internal.binding.OdbcApi;
 import io.github.nanodbc4j.internal.cstruct.NativeError;
 import io.github.nanodbc4j.internal.dto.DatabaseMetaDataDto;
 import io.github.nanodbc4j.internal.cstruct.DatabaseMetaDataStruct;
@@ -170,7 +171,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_tables(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_tables(conn,
                             catalog + NUL_CHAR, schema + NUL_CHAR,
                             table + NUL_CHAR,
                             type + NUL_CHAR,
@@ -178,51 +179,51 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static boolean supportsConvert(ConnectionPtr conn, int fromType, int toType) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.database_meta_data_support_convert(conn, fromType, toType, nativeError) != 0;
+            boolean result = DatabaseMetaDataApi.INSTANCE.database_meta_data_support_convert(conn, fromType, toType, nativeError) != 0;
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static ResultSetPtr getSchemas(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_schemas(conn, nativeError);
+            ResultSetPtr resultSetPtr = DatabaseMetaDataApi.INSTANCE.get_database_meta_data_schemas(conn, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static ResultSetPtr getCatalogs(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_catalogs(conn, nativeError);
+            ResultSetPtr resultSetPtr = DatabaseMetaDataApi.INSTANCE.get_database_meta_data_catalogs(conn, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static ResultSetPtr getTableTypes(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.get_database_meta_data_table_types(conn, nativeError);
+            ResultSetPtr resultSetPtr = DatabaseMetaDataApi.INSTANCE.get_database_meta_data_table_types(conn, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -235,7 +236,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_columns(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_columns(conn,
                             catalog + NUL_CHAR,
                             schema + NUL_CHAR,
                             table + NUL_CHAR,
@@ -244,7 +245,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -256,7 +257,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_primary_keys(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_primary_keys(conn,
                             catalog + NUL_CHAR,
                             schema + NUL_CHAR,
                             table + NUL_CHAR,
@@ -264,7 +265,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -276,7 +277,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_imported_keys(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_imported_keys(conn,
                             catalog + NUL_CHAR,
                             schema + NUL_CHAR,
                             table + NUL_CHAR,
@@ -284,7 +285,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -296,7 +297,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_exported_keys(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_exported_keys(conn,
                             catalog + NUL_CHAR,
                             schema + NUL_CHAR,
                             table + NUL_CHAR,
@@ -304,7 +305,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -312,11 +313,11 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_type_info(conn, nativeError);
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_type_info(conn, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -328,7 +329,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_procedures(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_procedures(conn,
                             catalog + NUL_CHAR,
                             schemaPattern + NUL_CHAR,
                             procedureNamePattern + NUL_CHAR,
@@ -336,7 +337,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -349,7 +350,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_procedure_columns(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_procedure_columns(conn,
                             catalog + NUL_CHAR,
                             schemaPattern + NUL_CHAR,
                             procedureNamePattern + NUL_CHAR,
@@ -358,7 +359,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -371,7 +372,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_column_privileges(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_column_privileges(conn,
                             catalog + NUL_CHAR,
                             schema + NUL_CHAR,
                             table + NUL_CHAR,
@@ -380,7 +381,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -392,7 +393,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_table_privileges(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_table_privileges(conn,
                             catalog + NUL_CHAR,
                             schemaPattern + NUL_CHAR,
                             tableNamePattern + NUL_CHAR,
@@ -400,7 +401,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -413,7 +414,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_best_row_identifier(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_best_row_identifier(conn,
                             catalog + NUL_CHAR,
                             schema + NUL_CHAR,
                             table + NUL_CHAR,
@@ -423,7 +424,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -435,14 +436,14 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_version_columns(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_version_columns(conn,
                             catalog + NUL_CHAR,
                             schema + NUL_CHAR,
                             table + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -458,7 +459,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_cross_reference(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_cross_reference(conn,
                             parentCatalog + NUL_CHAR,
                             parentSchema + NUL_CHAR,
                             parentTable + NUL_CHAR,
@@ -469,7 +470,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -483,7 +484,7 @@ public class DatabaseMetaDataHandler {
         NativeError nativeError = new NativeError();
         try {
             ResultSetPtr resultSetPtr =
-                    NativeDB.INSTANCE.get_database_meta_data_index_info(conn,
+                    DatabaseMetaDataApi.INSTANCE.get_database_meta_data_index_info(conn,
                             catalog + NUL_CHAR,
                             schema + NUL_CHAR,
                             table + NUL_CHAR,
@@ -493,7 +494,7 @@ public class DatabaseMetaDataHandler {
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 }

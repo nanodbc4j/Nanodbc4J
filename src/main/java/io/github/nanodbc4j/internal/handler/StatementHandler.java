@@ -1,6 +1,8 @@
 package io.github.nanodbc4j.internal.handler;
 
-import io.github.nanodbc4j.internal.NativeDB;
+import io.github.nanodbc4j.internal.binding.ConnectionApi;
+import io.github.nanodbc4j.internal.binding.OdbcApi;
+import io.github.nanodbc4j.internal.binding.StatementApi;
 import io.github.nanodbc4j.internal.cstruct.DateStruct;
 import io.github.nanodbc4j.internal.cstruct.TimeStruct;
 import io.github.nanodbc4j.internal.cstruct.TimestampStruct;
@@ -26,22 +28,22 @@ public final class StatementHandler {
     public static ResultSetPtr execute(ConnectionPtr conn, @NonNull String sql, int timeout) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute_request(conn, sql + NUL_CHAR, timeout, nativeError);
+            ResultSetPtr resultSetPtr = ConnectionApi.INSTANCE.execute_request(conn, sql + NUL_CHAR, timeout, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static ResultSetPtr execute(StatementPtr statementPtr, int timeout) {
         NativeError nativeError = new NativeError();
         try {
-            ResultSetPtr resultSetPtr = NativeDB.INSTANCE.execute(statementPtr, timeout, nativeError);
+            ResultSetPtr resultSetPtr = StatementApi.INSTANCE.execute(statementPtr, timeout, nativeError);
             throwIfNativeError(nativeError);
             return resultSetPtr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -51,27 +53,27 @@ public final class StatementHandler {
             function.accept(statementPtr, index - 1, value,  nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static void cancel(StatementPtr statement) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.cancel_statement(statement, nativeError);
+            StatementApi.INSTANCE.cancel_statement(statement, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static void close(StatementPtr statement) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.close_statement(statement, nativeError);
+            StatementApi.INSTANCE.close_statement(statement, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 

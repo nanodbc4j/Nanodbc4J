@@ -1,7 +1,10 @@
 package io.github.nanodbc4j.internal.handler;
 
 import com.sun.jna.Pointer;
-import io.github.nanodbc4j.internal.NativeDB;
+import io.github.nanodbc4j.internal.binding.ConnectionApi;
+import io.github.nanodbc4j.internal.binding.DatabaseMetaDataApi;
+import io.github.nanodbc4j.internal.binding.OdbcApi;
+import io.github.nanodbc4j.internal.binding.StatementApi;
 import io.github.nanodbc4j.internal.cstruct.DatabaseMetaDataStruct;
 import io.github.nanodbc4j.internal.dto.DatabaseMetaDataDto;
 import io.github.nanodbc4j.internal.pointer.ConnectionPtr;
@@ -26,11 +29,11 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             ConnectionPtr ptr =
-                    NativeDB.INSTANCE.connection_with_timeout(connection_string + NUL_CHAR, timeout, nativeError);
+                    ConnectionApi.INSTANCE.connection_with_timeout(connection_string + NUL_CHAR, timeout, nativeError);
             throwIfNativeError(nativeError);
             return ptr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -40,63 +43,63 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         try {
             ConnectionPtr ptr =
-                    NativeDB.INSTANCE.connection_with_user_pass_timeout(dsn + NUL_CHAR, user + NUL_CHAR, pass + NUL_CHAR, timeout, nativeError);
+                    ConnectionApi.INSTANCE.connection_with_user_pass_timeout(dsn + NUL_CHAR, user + NUL_CHAR, pass + NUL_CHAR, timeout, nativeError);
             throwIfNativeError(nativeError);
             return ptr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static StatementPtr create(ConnectionPtr connectionPtr) {
         NativeError nativeError = new NativeError();
         try {
-            StatementPtr ptr = NativeDB.INSTANCE.create_statement(connectionPtr, nativeError);
+            StatementPtr ptr = ConnectionApi.INSTANCE.create_statement(connectionPtr, nativeError);
             throwIfNativeError(nativeError);
             return ptr;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static void prepared(StatementPtr statementPtr, @NonNull String sql) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.prepare_statement(statementPtr, sql + NUL_CHAR, nativeError);
+            StatementApi.INSTANCE.prepare_statement(statementPtr, sql + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static void disconnect(ConnectionPtr ptr) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.disconnect(ptr, nativeError);
+            ConnectionApi.INSTANCE.disconnect(ptr, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static boolean isConnected(ConnectionPtr ptr) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.is_connected(ptr, nativeError) != 0;
+            boolean result = ConnectionApi.INSTANCE.is_connected(ptr, nativeError) != 0;
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static void setCatalog(ConnectionPtr conn, @NonNull String catalog) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.set_catalog_name(conn, catalog, nativeError);
+            ConnectionApi.INSTANCE.set_catalog_name(conn, catalog, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -104,74 +107,74 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         Pointer catalogPtr = Pointer.NULL;
         try {
-            catalogPtr = NativeDB.INSTANCE.get_catalog_name(conn, nativeError);
+            catalogPtr = ConnectionApi.INSTANCE.get_catalog_name(conn, nativeError);
             throwIfNativeError(nativeError);
             return getWideString(catalogPtr);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.std_free(catalogPtr);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.std_free(catalogPtr);
         }
     }
 
     public static void setTransactionIsolation(ConnectionPtr conn, int level) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.set_transaction_isolation_level(conn, level, nativeError);
+            ConnectionApi.INSTANCE.set_transaction_isolation_level(conn, level, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static int getTransactionIsolation(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
-            int level = NativeDB.INSTANCE.get_transaction_isolation_level(conn, nativeError);
+            int level = ConnectionApi.INSTANCE.get_transaction_isolation_level(conn, nativeError);
             throwIfNativeError(nativeError);
             return level;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static void setAutoCommitTransaction(ConnectionPtr conn, boolean autoCommit) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.set_auto_commit_transaction(conn, (byte) (autoCommit ? 1 : 0), nativeError);
+            ConnectionApi.INSTANCE.set_auto_commit_transaction(conn, (byte) (autoCommit ? 1 : 0), nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static void commitTransaction(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.commit_transaction(conn, nativeError);
+            ConnectionApi.INSTANCE.commit_transaction(conn, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static void rollbackTransaction(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
-            NativeDB.INSTANCE.rollback_transaction(conn, nativeError);
+            ConnectionApi.INSTANCE.rollback_transaction(conn, nativeError);
             throwIfNativeError(nativeError);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
     public static boolean getAutoCommitTransaction(ConnectionPtr conn) {
         NativeError nativeError = new NativeError();
         try {
-            boolean result = NativeDB.INSTANCE.get_auto_commit_transaction(conn, nativeError) != 0;
+            boolean result = ConnectionApi.INSTANCE.get_auto_commit_transaction(conn, nativeError) != 0;
             throwIfNativeError(nativeError);
             return result;
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
         }
     }
 
@@ -179,7 +182,7 @@ public final class ConnectionHandler {
         NativeError nativeError = new NativeError();
         DatabaseMetaDataStruct metaDataStruct = null;
         try {
-            metaDataStruct = NativeDB.INSTANCE.get_database_meta_data(connectionPtr, nativeError);
+            metaDataStruct = DatabaseMetaDataApi.INSTANCE.get_database_meta_data(connectionPtr, nativeError);
             throwIfNativeError(nativeError);
 
             if (metaDataStruct == null) {
@@ -189,8 +192,8 @@ public final class ConnectionHandler {
             DatabaseMetaDataDto metaData = DatabaseMetaDataHandler.processerMetaData(metaDataStruct);
             return new NanodbcDatabaseMetaData(connection, metaData);
         } finally {
-            NativeDB.INSTANCE.clear_native_error(nativeError);
-            NativeDB.INSTANCE.delete_database_meta_data(metaDataStruct);
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            DatabaseMetaDataApi.INSTANCE.delete_database_meta_data(metaDataStruct);
         }
     }
 }
