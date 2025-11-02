@@ -213,6 +213,11 @@ CDate* get_date_value_by_index(nanodbc::result* results, int index, NativeError*
         return nullptr;
     }
     auto date = get_value_by_index<nanodbc::date>(results, index, error, {});
+    if (date.year <= 0 || date.month <= 0 || date.month > 12 || date.day <= 0 || date.day > 31) {
+        LOG_DEBUG("Treating zero date as NULL for column {}", index);
+        return nullptr;
+    }
+
     return new CDate(date);
 }
 
@@ -222,6 +227,11 @@ CTime* get_time_value_by_index(nanodbc::result* results, int index, NativeError*
         return nullptr;
     }
     auto time = get_value_by_index<nanodbc::time>(results, index, error, {});
+    if (time.hour < 0 || time.hour > 23 || time.min < 0 || time.min > 59 || time.sec < 0 || time.sec > 60) {
+        LOG_DEBUG("Invalid time treated as NULL for column {}", index);
+        return nullptr;
+    }
+
     return new CTime(time);
 }
 
@@ -230,8 +240,13 @@ CTimestamp* get_timestamp_value_by_index(nanodbc::result* results, int index, Na
         LOG_DEBUG("Column '{}' is NULL", index);
         return nullptr;
     }
-    auto timestamp = get_value_by_index<nanodbc::timestamp>(results, index, error, {});
-    return new CTimestamp(timestamp);
+    auto ts = get_value_by_index<nanodbc::timestamp>(results, index, error, {});
+    if (ts.year <= 0 || ts.month < 1 || ts.month > 12 || ts.day < 1 || ts.day > 31 || ts.hour < 0 || ts.hour > 23 || ts.min < 0 || ts.min > 59 || ts.sec < 0 || ts.sec > 60) {
+        LOG_DEBUG("Invalid timestamp treated as NULL for column {}", index);
+        return nullptr;
+    }
+
+    return new CTimestamp(ts);
 }
 
 ChunkedBinaryStream* get_binary_stream_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
@@ -415,6 +430,11 @@ CDate* get_date_value_by_name(nanodbc::result* results, const ApiChar* name, Nat
         return nullptr;
     }
     auto date = get_value_by_name<nanodbc::date>(results, str_name, error, {});
+    if (date.year <= 0 || date.month <= 0 || date.month > 12 || date.day <= 0 || date.day > 31) {
+        LOG_DEBUG("Treating zero date as NULL for column '{}'", to_string(str_name));
+        return nullptr;
+    }
+
     return new CDate(date);
 }
 
@@ -425,6 +445,11 @@ CTime* get_time_value_by_name(nanodbc::result* results, const ApiChar* name, Nat
         return nullptr;
     }
     auto time = get_value_by_name<nanodbc::time>(results, str_name, error, {});
+    if (time.hour < 0 || time.hour > 23 || time.min < 0 || time.min > 59 || time.sec < 0 || time.sec > 60) {
+        LOG_DEBUG("Invalid time treated as NULL for column '{}'", to_string(str_name));
+        return nullptr;
+    }
+
     return new CTime(time);
 }
 
@@ -434,8 +459,13 @@ CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const ApiChar*
         LOG_DEBUG("Column '{}' is NULL", to_string(str_name));
         return nullptr;
     }
-    auto timestamp = get_value_by_name<nanodbc::timestamp>(results, str_name, error, {});
-    return new CTimestamp(timestamp);
+    auto ts = get_value_by_name<nanodbc::timestamp>(results, str_name, error, {});
+    if (ts.year <= 0 || ts.month < 1 || ts.month > 12 || ts.day < 1 || ts.day > 31 || ts.hour < 0 || ts.hour > 23 || ts.min < 0 || ts.min > 59 || ts.sec < 0 || ts.sec > 60) {
+        LOG_DEBUG("Invalid timestamp treated as NULL for column '{}'", to_string(str_name));
+        return nullptr;
+    }
+
+    return new CTimestamp(ts);
 }
 
 BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {

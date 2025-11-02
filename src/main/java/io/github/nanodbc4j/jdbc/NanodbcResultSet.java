@@ -695,7 +695,7 @@ public class NanodbcResultSet implements ResultSet {
         log.finest("NanodbcResultSet.getBigDecimal");
         throwIfAlreadyClosed();
         String s = getString(columnIndex);
-        return s == null ? null : new BigDecimal(s);
+        return s == null || s.isEmpty() ? null : new BigDecimal(s);
     }
 
     /**
@@ -706,7 +706,7 @@ public class NanodbcResultSet implements ResultSet {
         log.finest("NanodbcResultSet.getBigDecimal");
         throwIfAlreadyClosed();
         String s = getString(columnLabel);
-        return s == null ? null : new BigDecimal(s);
+        return s == null || s.isEmpty() ? null : new BigDecimal(s);
     }
 
     /**
@@ -2079,7 +2079,7 @@ public class NanodbcResultSet implements ResultSet {
         // First, try reading as a string — this is the most portable and widely supported approach
         try {
             String uuidStr = ResultSetHandler.getStringValueByIndex(resultSetPtr, columnIndex);
-            if (uuidStr == null) {
+            if (uuidStr == null || uuidStr.isEmpty()) {
                 return null;
             }
             return UUID.fromString(uuidStr.trim());
@@ -2091,7 +2091,7 @@ public class NanodbcResultSet implements ResultSet {
         // Fallback: attempt to read as raw bytes (e.g., PostgreSQL uuid, MySQL BINARY(16), etc.)
         try {
             byte[] bytes = ResultSetHandler.getBytesByIndex(resultSetPtr, columnIndex);
-            if (bytes == null) {
+            if (bytes.length == 0) {
                 return null;
             }
             if (bytes.length != 16) {
