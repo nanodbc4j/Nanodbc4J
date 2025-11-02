@@ -1,17 +1,11 @@
 package io.github.nanodbc4j.internal;
 
-import com.sun.jna.Function;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import io.github.nanodbc4j.internal.pointer.*;
 import io.github.nanodbc4j.internal.cstruct.*;
-
-import java.nio.ByteOrder;
-import java.util.HashMap;
-import java.util.Map;
 
 public interface NativeDB extends Library {
     NativeDB INSTANCE = initialize();
@@ -19,29 +13,10 @@ public interface NativeDB extends Library {
     private static NativeDB initialize() {
         try {
             LibraryLoader.load();
-            return Native.load(NativeDB.class, getOptions());
+            return Native.load(NativeDB.class, LibraryLoader.getNativeLibraryOptions());
         } catch (Throwable t) {
             throw new ExceptionInInitializerError(t);
         }
-    }
-
-    private static Map<String, Object> getOptions() {
-        Map<String, Object> options = new HashMap<>();
-        if (Platform.isWindows()) {
-            // Windows: wchar_t - обычно UTF-16LE
-            options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
-        } else {
-            // Unix/Linux: char16_t - UTF-16 в native byte order (зависит от платформы)
-            // Обычно это UTF-16 в big-endian или little-endian в зависимости от архитектуры
-            if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-                options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
-            } else {
-                options.put(Library.OPTION_STRING_ENCODING, "UTF-16BE");
-            }
-        }
-        options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
-        options.put(Library.OPTION_CALLING_CONVENTION, Function.C_CONVENTION);
-        return options;
     }
 
     /**

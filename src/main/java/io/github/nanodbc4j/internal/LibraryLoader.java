@@ -1,11 +1,15 @@
 package io.github.nanodbc4j.internal;
 
+import com.sun.jna.Function;
+import com.sun.jna.Library;
 import com.sun.jna.Platform;
 import lombok.experimental.UtilityClass;
+import lombok.extern.java.Log;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteOrder;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -15,34 +19,49 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Logger;
 
+@Log
 @UtilityClass
 public class LibraryLoader {
-    private static final Logger logger = Logger.getLogger(LibraryLoader.class.getName());
     private static final String LIBRARY_NAME = "nanodbc4j";
     private static final String TEMP_LIB_PREFIX = "nanodbc4j_";
     private static final String LOCK_EXT = ".lck";
     private static volatile boolean isLoaded = false;
 
-    public static synchronized void load() throws IOException {
+    /**
+     * Loads native library from JAR resources.
+     * Performs cleanup, extracts library to temp directory and loads it.
+     * Thread-safe and idempotent.
+     *
+     * @throws IOException if library extraction fails or library not found in JAR
+     */
+    static synchronized void load() throws IOException {
         if (isLoaded) {
             return;
         }
 
-        // Только при первом запуске — чистим старые файлы
+        // Only on first run - clean up old files
         cleanup();
 
-        // Преобразуем имя библиотеки в системное (libodbc.so, odbc.dll, libodbc.dylib)
+        // Convert library name to system-specific (libodbc.so, odbc.dll, libodbc.dylib)
         String libName = System.mapLibraryName(LIBRARY_NAME);
-        // Определяем путь внутри JAR: например, /natives/odbc.dll
+        // Define path inside JAR: e.g., /natives/odbc.dll
         String resourcePath = "natives" + '/' + libName;
 
         loadLibraryFromJar(resourcePath);
         isLoaded = true;
     }
 
+    /**
+     * Extracts and loads native library from JAR resource.
+     * Creates temp files with UUID and lock file for cleanup tracking.
+     *
+     * @param resourcePath path to native library in JAR
+     * @throws IOException if file operations fail or library not found in JAR
+     */
     private static void loadLibraryFromJar(String resourcePath) throws IOException {
         String libFileName = new File(resourcePath).getName();
         String uuid = UUID.randomUUID().toString();
@@ -55,33 +74,37 @@ public class LibraryLoader {
 
         try (InputStream in = LibraryLoader.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (in == null) {
-                throw new RuntimeException("Cannot find native library in JAR: " + resourcePath);
+                throw new IOException("Cannot find native library in JAR: " + resourcePath);
             }
 
             Files.copy(in, libFile, StandardCopyOption.REPLACE_EXISTING);
 
-            // Создаём .lck файл — маркер "библиотека используется"
+            // Create .lck file - marker "library in use"
             Files.createFile(lckFile);
 
-            // Гарантируем удаление при выходе (на Linux/macOS может сработать)
+            // Guarantee deletion on exit (may work on Linux/macOS)
             libFile.toFile().deleteOnExit();
             lckFile.toFile().deleteOnExit();
 
-            // Устанавливаем права на выполнение (не нужно на Windows)
+            // Set execute permissions (not needed on Windows)
             if (!Platform.isWindows()) {
                 boolean isSetExecutable = libFile.toFile().setExecutable(true);
                 if (!isSetExecutable) {
-                    logger.warning("Could not set executable permission: " + libFile);
-                    // Не фатально, но предупреждаем
+                    log.warning("Could not set executable permission: " + libFile);
+                    // Not fatal, but warn
                 }
             }
 
             System.load(libFile.toString());
-            logger.info("Successfully loaded native library from JAR: " + libFile);
+            log.info("Successfully loaded native library from JAR: " + libFile);
         }
     }
 
-    // === Аналог cleanup() из sqlite-jdbc ===
+    /**
+     * Cleans up stale temporary native libraries.
+     * Deletes library files that don't have corresponding lock files.
+     * Suppresses all exceptions during cleanup.
+     */
     private static void cleanup() {
         try {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
@@ -95,9 +118,8 @@ public class LibraryLoader {
                             if (!Files.exists(lckFile)) {
                                 try {
                                     Files.delete(file);
-                                    logger.fine("Deleted stale temp lib: " + file);
-                                } catch (Exception e) {
-                                    // ignore
+                                    log.fine("Deleted stale temp lib: " + file);
+                                } catch (Exception ignore) {
                                 }
                             }
                         }
@@ -106,7 +128,29 @@ public class LibraryLoader {
                 }
             });
         } catch (Exception e) {
-            logger.warning("Failed to cleanup old native libs: " + e.getMessage());
+            log.warning("Failed to cleanup old native libs: " + e.getMessage());
         }
+    }
+
+    /**
+     * Returns native library configuration options.
+     * Configures string encoding based on platform and calling convention.
+     *
+     * @return map with library options (string encoding and calling convention)
+     */
+    static Map<String, Object> getNativeLibraryOptions() {
+        Map<String, Object> options = new HashMap<>();
+        if (Platform.isWindows()) {
+            options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
+        } else {
+            if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+                options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
+            } else {
+                options.put(Library.OPTION_STRING_ENCODING, "UTF-16BE");
+            }
+        }
+        options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
+        options.put(Library.OPTION_CALLING_CONVENTION, Function.C_CONVENTION);
+        return options;
     }
 }
