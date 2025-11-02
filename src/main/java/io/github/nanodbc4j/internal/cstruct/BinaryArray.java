@@ -3,15 +3,13 @@ package io.github.nanodbc4j.internal.cstruct;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Structure.FieldOrder({"data", "length"})
-public class BinaryArray extends Structure {
+public final class BinaryArray extends Structure {
     public Pointer data;    // int8_t* в C -> byte[] в Java
     public int length;      // int32_t в C
-
-    public BinaryArray() {
-        super();
-    }
 
     public BinaryArray(Pointer peer) {
         super(peer);

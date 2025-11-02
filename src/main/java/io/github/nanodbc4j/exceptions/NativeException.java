@@ -1,7 +1,9 @@
 package io.github.nanodbc4j.exceptions;
 
 import io.github.nanodbc4j.internal.cstruct.NativeError;
+import lombok.Getter;
 
+@Getter
 public final class NativeException extends RuntimeException {
     private final int errorCode;
     private final String errorType;
@@ -18,11 +20,4 @@ public final class NativeException extends RuntimeException {
         this.errorType = errorType;
     }
 
-    public int getErrorCode() {
-        return errorCode;
-    }
-
-    public String getErrorType() {
-        return errorType;
-    }
 }

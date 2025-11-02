@@ -24,7 +24,7 @@ public final class DriverStruct extends Structure {
 
     @NoArgsConstructor
     @Structure.FieldOrder({"keyword", "value"})
-    public static class AttributeStruct extends Structure {
+    public static final class AttributeStruct extends Structure {
         public Pointer keyword; ///< Driver keyword attribute.
         public Pointer value;   ///< Driver attribute value.
 

@@ -44,7 +44,7 @@ public final class ResultSetMetaDataStruct extends Structure {
             "columnTypeName",
             "columnClassName"
     })
-    public static class ColumnMetaDataStruct extends Structure {
+    public static final class ColumnMetaDataStruct extends Structure {
         public byte isAutoIncrement;
         public byte isCaseSensitive;
         public byte isSearchable;

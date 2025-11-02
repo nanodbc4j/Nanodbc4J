@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @Log
 @UtilityClass
-public class LibraryLoader {
+class LibraryLoader {
     private static final String LIBRARY_NAME = "nanodbc4j";
     private static final String TEMP_LIB_PREFIX = "nanodbc4j_";
     private static final String LOCK_EXT = ".lck";

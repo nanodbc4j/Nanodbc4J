@@ -144,7 +144,7 @@ import lombok.NoArgsConstructor;
         "getMaxIndexLength",
         "getMaxProcedureNameLength"
 })
-public class DatabaseMetaDataStruct extends Structure {
+public final class DatabaseMetaDataStruct extends Structure {
     // === Строковые значения ===
     public Pointer databaseProductName;
     public Pointer databaseProductVersion;
