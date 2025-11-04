@@ -4,13 +4,11 @@ plugins {
     // Java plugin for building jars
     java
     // Publishing to Maven repositories
-    `maven-publish`
-    // Signing artifacts (GPG)
-    signing
+    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
 group = "io.github.nanodbc4j"
-version = "1.0-SNAPSHOT"
+version = "1.0-beta-1"
 description = "JDBC Type 1 driver implementation using nanodbc C++ library for ODBC connectivity. Open-source replacement for the removed JDBC-ODBC Bridge."
 
 java {
@@ -108,50 +106,32 @@ tasks.test {
 }
 
 // Publishing configuration: produces POM metadata
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
+mavenPublishing {
+    coordinates(group.toString(), name.toString(), version.toString())
 
-            pom {
-                name.set("Nanodbc4J")
-                description.set(project.description)
-                url.set("https://github.com/nanodbc4j/Nanodbc4J")
-
-                licenses {
-                    license {
-                        name.set("Apache License 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                        distribution.set("repo")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git://github.com/nanodbc4j/Nanodbc4J.git")
-                    developerConnection.set("scm:git:ssh://github.com/nanodbc4j/Nanodbc4J.git")
-                    url.set("https://github.com/nanodbc4j/Nanodbc4J")
-                }
-
-                developers {
-                    developer {
-                        id.set("nanodbc4j")
-                        name.set("nanodbc4j")
-                    }
-                }
+    pom {
+        name.set("Nanodbc4J")
+        description.set(project.description)
+        inceptionYear.set("2025")
+        url.set("https://github.com/nanodbc4j/Nanodbc4J")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
-    }
-}
-
-// Signing configuration: use in-memory PGP key if provided via properties or environment variables.
-signing {
-    val signingKey: String? = findProperty("signing.key") as String? ?: System.getenv("SIGNING_KEY")
-    val signingPassword: String? = findProperty("signing.password") as String? ?: System.getenv("SIGNING_PASSWORD")
-
-    if (!signingKey.isNullOrBlank()) {
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign(publishing.publications["mavenJava"])
-    } else {
-        // No key provided: no-op. CI should provide keys for signing during release.
+        developers {
+            developer {
+                id.set("Michael1297")
+                name.set("Michael1297")
+                url.set("https://github.com/Michael1297")
+            }
+        }
+        scm {
+            url.set("https://github.com/nanodbc4j/Nanodbc4J")
+            connection.set("scm:git:git://github.com/nanodbc4j/Nanodbc4J.git")
+            developerConnection.set("scm:git:ssh://github.com/nanodbc4j/Nanodbc4J.git")
+        }
     }
 }

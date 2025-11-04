@@ -2,7 +2,6 @@
 
 **A modern JDBC-ODBC bridge using nanodbc and JNA**
 
->  **Now working in DBeaver!**  
 >  Still experimental — use with caution in non-production environments.
 
 Nanodbc4J is a **JDBC driver** that enables Java applications to access ODBC data sources directly, using the modern [nanodbc](https://github.com/nanodbc/nanodbc ) C++ library via **Java Native Access (JNA)**.
