@@ -66,15 +66,23 @@ jobs:
       - name: Build native binaries
         run: cmake --build ${{ steps.paths.outputs.build-dir }} --config ${{ matrix.build_type }}
 
-      - name: Run native tests
-        working-directory: ${{ steps.paths.outputs.build-dir }}
-        run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
+      - name: Run native tests (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          ${{ steps.paths.outputs.build-dir }}/cpp/tests/MinSizeRel/nanodbc4j_tests.exe
+        shell: bash
+
+      - name: Run native tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          ${{ steps.paths.outputs.build-dir }}/cpp/tests/nanodbc4j_tests
+        shell: bash
 
       - name: Package native artifacts (dll)
         if: matrix.os == 'windows-latest'
         run: |
           # Adjust according to your actual DLL output location
-          cp ${{ steps.paths.outputs.build-dir }}/*.dll out/build/x64-MinSizeRel/ || true
+          cp ${{ steps.paths.outputs.build-dir }}/MinSizeRel/*.dll out/build/x64-MinSizeRel/ || true
         shell: bash
 
       - name: Package native artifacts (so)
