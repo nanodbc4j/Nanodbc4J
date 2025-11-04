@@ -127,6 +127,16 @@ jobs:
           ls -lh out/build/x64-MinSizeRel
           ls -lh out/build/WSL-GCC-MinSizeRel
 
+      - name: Move Windows native binaries to expected Gradle directory
+        run: |
+          mkdir -p out/build/x64-Release
+          cp out/build/x64-MinSizeRel/*.dll out/build/x64-Release/
+
+      - name: Move Linux native binaries to expected Gradle directory
+        run: |
+          mkdir -p out/build/WSL-GCC-Release
+          cp out/build/WSL-GCC-MinSizeRel/*.so out/build/WSL-GCC-Release/
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
