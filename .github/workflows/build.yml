@@ -6,7 +6,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  native-build:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -18,22 +18,28 @@ jobs:
             cpp_compiler: cl
             build_type: MinSizeRel
             # Use -k to ignore SSL certificate issues
-            install_script: |
+            # Ensure DLL output dir exists
+            install_script: |            
               curl -k -L -o sqliteodbc.exe https://www.ch-werner.de/sqliteodbc/sqliteodbc_w64.exe
-              start-process -Wait -FilePath .\sqliteodbc.exe -ArgumentList '/S'            
+              start-process -Wait -FilePath .\sqliteodbc.exe -ArgumentList '/S'
+              mkdir out/build/x64-MinSizeRel
 
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
             build_type: MinSizeRel
             # sudo apt-get install -y ninja-build cmake g++ gdb
+            # Ensure SO output dir exists
             install_script: |
               sudo apt-get update              
               sudo apt-get install -y sqlite3 libsqlite3-dev unixodbc unixodbc-dev libsqliteodbc
+              mkdir -p out/build/WSL-GCC-MinSizeRel
             
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       - name: Install dependencies and SQLite ODBC driver
         shell: bash
@@ -53,9 +59,76 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -S ${{ github.workspace }}
 
-      - name: Build
+      - name: Build native binaries
         run: cmake --build ${{ steps.paths.outputs.build-dir }} --config ${{ matrix.build_type }}
 
-      - name: Run tests
+      - name: Run native tests
         working-directory: ${{ steps.paths.outputs.build-dir }}
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
+
+      - name: Package native artifacts (dll)
+        if: matrix.os == 'windows-latest'
+        run: |
+          # Adjust according to your actual DLL output location
+          cp ${{ steps.paths.outputs.build-dir }}/*.dll out/build/x64-MinSizeRel/ || true
+        shell: bash
+
+      - name: Package native artifacts (so)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          # Adjust according to your actual SO output location
+          cp ${{ steps.paths.outputs.build-dir }}/*.so out/build/WSL-GCC-MinSizeRel/ || true
+        shell: bash
+
+      - name: Upload native artifacts (dll/so)
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-binaries-${{ matrix.os }}
+          path: |
+            out/build/x64-MinSizeRel/*.dll
+            out/build/WSL-GCC-MinSizeRel/*.so
+
+  java-build:
+    name: Build JAR and Run Java Tests
+    runs-on: ubuntu-latest
+    needs: native-build
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Download native Windows binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: native-binaries-windows-latest
+          path: out/build/x64-MinSizeRel
+
+      - name: Download native Linux binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: native-binaries-ubuntu-latest
+          path: out/build/WSL-GCC-MinSizeRel
+
+      - name: Verify native binaries presence
+        run: |
+          ls -lh out/build/x64-MinSizeRel
+          ls -lh out/build/WSL-GCC-MinSizeRel
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Build Java library (JAR)
+        run: ./gradlew clean build -i
+
+      - name: Run Java tests
+        run: ./gradlew test --info
+
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nanodbc4j-jar
+          path: build/libs/*.jar
