@@ -84,14 +84,14 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           # Adjust according to your actual DLL output location
-          cp "${{ steps.paths.outputs.build-dir }}/x64-Release"/*.dll out/build/x64-Release/ || true
+          cp "${{ steps.paths.outputs.build-dir }}/MinSizeRel"/*.dll out/build/x64-Release/
         shell: bash
 
       - name: Package native artifacts (so)
         if: matrix.os == 'ubuntu-latest'
         run: |
           # Adjust according to your actual SO output location
-          cp ${{ steps.paths.outputs.build-dir }}/*.so out/build/WSL-GCC-Release/ || true
+          cp ${{ steps.paths.outputs.build-dir }}/*.so out/build/WSL-GCC-Release/
         shell: bash
 
       - name: Upload native artifacts (dll/so)
