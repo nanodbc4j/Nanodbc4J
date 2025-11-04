@@ -80,27 +80,21 @@ jobs:
         shell: bash
         continue-on-error: true
 
-      - name: Package native artifacts (dll)
+      - name: Upload native artifacts (.dll)
         if: matrix.os == 'windows-latest'
-        run: |
-          # Adjust according to your actual DLL output location
-          cp "${{ steps.paths.outputs.build-dir }}/MinSizeRel"/*.dll out/build/x64-Release/
-        shell: bash
-
-      - name: Package native artifacts (so)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          # Adjust according to your actual SO output location
-          cp ${{ steps.paths.outputs.build-dir }}/*.so out/build/WSL-GCC-Release/
-        shell: bash
-
-      - name: Upload native artifacts (dll/so)
         uses: actions/upload-artifact@v4
         with:
           name: native-binaries-${{ matrix.os }}
-          path: |
-            out/build/x64-Release/*.dll
-            out/build/WSL-GCC-Release/*.so
+          path: "${{ steps.paths.outputs.build-dir }}/MinSizeRel/nanodbc4j.dll"
+          if-no-files-found: warn
+
+      - name: Upload native artifacts (.so)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-binaries-${{ matrix.os }}
+          path: "${{ steps.paths.outputs.build-dir }}/libnanodbc4j.so"
+          if-no-files-found: warn
 
   java-build:
     name: Build JAR and Run Java Tests
