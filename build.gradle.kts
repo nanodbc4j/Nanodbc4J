@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.Platform
 import java.util.*
 
 plugins {
@@ -16,9 +17,6 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
-    // Attach sources and javadoc jars (required for Maven Central)
-    withSourcesJar()
-    withJavadocJar()
 }
 
 repositories {
