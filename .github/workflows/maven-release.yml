@@ -132,7 +132,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Java library (JAR, sources, javadoc)
-        run: ./gradlew clean assemble javadocJar sourcesJar
+        run: ./gradlew clean publishToMavenCentral
 
       - name: Run Java tests (optional, do not fail job)
         run: ./gradlew test --info

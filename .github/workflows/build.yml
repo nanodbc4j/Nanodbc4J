@@ -131,8 +131,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build Java library (JAR, sources, javadoc)
-        run: ./gradlew clean assemble javadocJar sourcesJar
+      - name: Build Java library (JAR)
+        run: ./gradlew clean assemble
 
       - name: Run Java tests (optional, do not fail job)
         run: ./gradlew test --info
