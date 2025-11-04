@@ -17,33 +17,37 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             build_type: MinSizeRel
-            # Use -k to ignore SSL certificate issues
-            # Ensure DLL output dir exists
-            install_script: |            
-              curl -k -L -o sqliteodbc.exe https://www.ch-werner.de/sqliteodbc/sqliteodbc_w64.exe
-              ./sqliteodbc.exe /S
-              mkdir out/build/x64-MinSizeRel
 
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
             build_type: MinSizeRel
-            # sudo apt-get install -y ninja-build cmake g++ gdb
-            # Ensure SO output dir exists
-            install_script: |
-              sudo apt-get update              
-              sudo apt-get install -y sqlite3 libsqlite3-dev unixodbc unixodbc-dev libsqliteodbc
-              mkdir -p out/build/WSL-GCC-MinSizeRel
-            
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
-      - name: Install dependencies and SQLite ODBC driver
+      - name: Install dependencies and SQLite ODBC driver (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        # Ensure DLL output dir exists
+        run: |
+          Invoke-WebRequest -Uri "http://www.ch-werner.de/sqliteodbc/sqliteodbc_w64.exe" -OutFile "sqliteodbc_w64.exe"
+          $expectedHash = "A4804E4F54F42C721DF1323C5FCAC101A8C7A577E7F20979227324CEAB572D51"
+          if ((Get-FileHash 'sqliteodbc_w64.exe').Hash -ne $expectedHash) {Write "Hash mismatch"; Exit 1}
+          Start-Process -FilePath ".\sqliteodbc_w64.exe" -ArgumentList "/S" -Wait
+          mkdir out/build/x64-MinSizeRel
+
+      - name: Install dependencies and SQLite ODBC driver (Linux)
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
-        run: ${{ matrix.install_script }}
+        # sudo apt-get install -y ninja-build cmake g++ gdb
+        # Ensure SO output dir exists
+        run: |
+          sudo apt-get update              
+          sudo apt-get install -y sqlite3 libsqlite3-dev unixodbc unixodbc-dev libsqliteodbc
+          mkdir -p out/build/WSL-GCC-MinSizeRel
 
       - name: Set build directory
         id: paths
