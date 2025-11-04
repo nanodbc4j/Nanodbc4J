@@ -21,7 +21,7 @@ jobs:
             # Ensure DLL output dir exists
             install_script: |            
               curl -k -L -o sqliteodbc.exe https://www.ch-werner.de/sqliteodbc/sqliteodbc_w64.exe
-              start-process -Wait -FilePath .\sqliteodbc.exe -ArgumentList '/S'
+              ./sqliteodbc.exe /S
               mkdir out/build/x64-MinSizeRel
 
           - os: ubuntu-latest
