@@ -6,6 +6,7 @@
 
 #ifdef _WIN32
 // needs to be included above sql.h for windows
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 

@@ -3,6 +3,15 @@
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
 
+#ifdef _WIN32
+// needs to be included above sql.h for windows
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
+#include <sqlext.h>
+#include <stdexcept>
+
 using namespace std;
 using namespace utils;
 
@@ -188,6 +197,26 @@ const ApiChar* get_string_value_by_index(nanodbc::result* results, int index, Na
             return nullptr;
         }
 
+        int datatype = results->column_c_datatype(index);
+        if (datatype == SQL_C_CHAR || datatype == SQL_C_BINARY) {
+            std::string value = results->get<std::string>(index);
+            LOG_DEBUG("String value retrieved from index {}: '{}'", index, value);
+#ifdef _WIN32
+            // On Windows, ODBC drivers typically return SQL_C_CHAR data in the system's active ANSI code page
+            // (e.g., CP1251 for Russian locales), NOT in UTF-8. However, our string conversion utilities (like
+            // to_wstring) expect input to be valid UTF-8. To avoid corruption (e.g., "пїЅ" mojibake or invalid
+            // UTF-8 errors), we explicitly convert the ANSI-encoded string to UTF-8 using Windows APIs before
+            // passing it to the UTF-8-aware conversion functions.
+            std::string utf8str = ansi_to_utf8(value);
+            nanodbc::string result = to_wstring(utf8str);
+#else
+            // On Unix - like systems(Linux / macOS), ODBC drivers generally return strings in UTF - 8 by default,
+            // so no extra conversion is needed — we can safely pass the string directly to to_u16string().
+            nanodbc::string result = to_u16string(value);
+#endif
+            return duplicate_string(result.c_str(), result.length());
+        }
+
         auto value = results->get<nanodbc::string>(index);
         LOG_DEBUG("String value retrieved from index {}: '{}'", index, to_string(value));
         return duplicate_string(value.c_str(), value.length());
@@ -275,10 +304,10 @@ ChunkedBinaryStream* get_binary_stream_by_index(nanodbc::result* results, int in
         LOG_ERROR("Type incompatible error at index {}: {}", index, e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception in get_string_value_by_index {}: {}", index, e.what());
+        LOG_ERROR("Exception in get_binary_stream_by_index {}: {}", index, e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
-        LOG_ERROR("Unknown exception in get_string_value_by_index {}", index);
+        LOG_ERROR("Unknown exception in get_binary_stream_by_index {}", index);
     }
     return nullptr;
 }
@@ -336,10 +365,10 @@ BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, Nativ
             LOG_ERROR("Type incompatible error at index {}: {}", index, e.what());
         } catch (const std::exception& e) {
             set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-            LOG_ERROR("Exception in get_string_value_by_index {}: {}", index, e.what());
+            LOG_ERROR("Exception in get_bytes_array_by_index {}: {}", index, e.what());
         } catch (...) {
             set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
-            LOG_ERROR("Unknown exception in get_string_value_by_index {}", index);
+            LOG_ERROR("Unknown exception in get_bytes_array_by_index {}", index);
         }
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
@@ -349,10 +378,10 @@ BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, Nativ
         LOG_ERROR("Type incompatible error at index {}: {}", index, e.what());
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception in get_string_value_by_index {}: {}", index, e.what());
+        LOG_ERROR("Exception in get_bytes_array_by_index {}: {}", index, e.what());
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
-        LOG_ERROR("Unknown exception in get_string_value_by_index {}", index);
+        LOG_ERROR("Unknown exception in get_bytes_array_by_index {}", index);
     } 
     return nullptr;
 }
