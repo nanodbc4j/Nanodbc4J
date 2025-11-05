@@ -1,5 +1,6 @@
 package io.github.nanodbc4j.jdbc;
 
+import io.github.nanodbc4j.internal.dto.DriverProperties;
 import org.junit.jupiter.api.*;
 
 import java.sql.*;
@@ -13,9 +14,18 @@ class NanodbcResultSetTest {
     private Statement stmt;
     private ResultSet rs;
 
+    String connectionString;
+
+    @BeforeAll
+    void setUpConnectionString() {
+        var driver = NanodbcDriver.driversList().stream().map(DriverProperties::name).filter(s -> s.toLowerCase().contains("sqlite")).findFirst().orElse(null);
+        assertNotNull(driver, "SQLite driver not found");
+        connectionString = "jdbc:nanodbc4j:DRIVER={" + driver + "};Database=:memory:;Timeout=1000;";
+    }
+
     @BeforeEach
     void setUp() throws SQLException {
-        conn = DriverManager.getConnection("jdbc:nanodbc4j:DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
+        conn = DriverManager.getConnection(connectionString);
         stmt = conn.createStatement();
         stmt.executeUpdate("CREATE TABLE IF NOT EXISTS test_rs (id INT, name VARCHAR(50))");
         stmt.executeUpdate("INSERT INTO test_rs VALUES (100, 'Alice')");

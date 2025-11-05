@@ -5,27 +5,14 @@
 #include "api/result.h"
 #include "core/database_metadata.hpp"
 #include "core/isolation_level.hpp"
+#include <../tests/test_utils.hpp>
 #include "utils/logger.hpp"
 #include "struct/error_info.h"
-
-// Helper function: verify that no error is set
-static void assert_no_error(const NativeError& err) {
-    EXPECT_EQ(err.error_type, nullptr);
-    EXPECT_EQ(err.error_code, 0);
-    EXPECT_EQ(err.error_message, nullptr);
-}
-
-// Helper function: verify that an error is set
-static void assert_has_error(const NativeError& err) {
-    EXPECT_NE(err.error_type, nullptr) << "SQL state should not be empty on error";
-    // error_code may be 0 in some cases, but message must not be null
-    EXPECT_NE(err.error_message, nullptr) << "Error message should not be empty";
-}
 
 // Test: connect using a valid connection string
 TEST(ConnectionAPITest, ConnectWithConnectionString) {
     NativeError error;
-    ApiString conn_str = NANODBC_TEXT("DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
+    ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
@@ -52,7 +39,7 @@ TEST(ConnectionAPITest, ConnectWithInvalidConnectionString) {
 // Test: transaction handling
 TEST(ConnectionAPITest, TransactionControl) {
     NativeError error;
-    ApiString conn_str = NANODBC_TEXT("DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
+    ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
@@ -112,7 +99,7 @@ TEST(ConnectionAPITest, TransactionControl) {
 TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     NativeError error;
 
-    ApiString conn_str = NANODBC_TEXT("DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
+    ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
 

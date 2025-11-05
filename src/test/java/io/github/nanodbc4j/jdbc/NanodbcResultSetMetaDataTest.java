@@ -1,5 +1,6 @@
 package io.github.nanodbc4j.jdbc;
 
+import io.github.nanodbc4j.internal.dto.DriverProperties;
 import org.junit.jupiter.api.*;
 import java.sql.*;
 
@@ -14,9 +15,18 @@ class NanodbcResultSetMetaDataTest {
 
     private Connection connection;
 
+    String connectionString;
+
+    @BeforeAll
+    void setUpConnectionString() {
+        var driver = NanodbcDriver.driversList().stream().map(DriverProperties::name).filter(s -> s.toLowerCase().contains("sqlite")).findFirst().orElse(null);
+        assertNotNull(driver, "SQLite driver not found");
+        connectionString = "jdbc:nanodbc4j:DRIVER={" + driver + "};Database=:memory:;Timeout=1000;";
+    }
+
     @BeforeEach
     void setUp() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:nanodbc4j:DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
+        connection = DriverManager.getConnection(connectionString);
 
         // Create and populate test table
         createTestTable();

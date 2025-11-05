@@ -1,7 +1,7 @@
 package io.github.nanodbc4j.jdbc;
 
-import io.github.nanodbc4j.internal.dto.DatasourceDto;
-import io.github.nanodbc4j.internal.dto.DriverDto;
+import io.github.nanodbc4j.internal.dto.DatasourceProperties;
+import io.github.nanodbc4j.internal.dto.DriverProperties;
 import io.github.nanodbc4j.internal.handler.DriverHandler;
 import io.github.nanodbc4j.logging.EnhancedSimpleFormatter;
 import lombok.extern.java.Log;
@@ -189,12 +189,12 @@ public class NanodbcDriver implements Driver {
         DriverHandler.setLogLevel(level);
     }
 
-    public static List<DriverDto> driversList() {
+    public static List<DriverProperties> driversList() {
         log.log(Level.FINEST, "NanodbcDriver.driversList");
         return DriverHandler.driversList();
     }
 
-    public static List<DatasourceDto> datasourcesList() {
+    public static List<DatasourceProperties> datasourcesList() {
         log.log(Level.FINEST, "NanodbcDriver.datasourcesList");
         return DriverHandler.datasourcesList();
     }

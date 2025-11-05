@@ -4,6 +4,11 @@ project(nanodbc4j_tests CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 # Include GoogleTest from submodule
 set(GTEST_BINARY_DIR ${CMAKE_BINARY_DIR}/third_party/googletest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/googletest ${GTEST_BINARY_DIR} EXCLUDE_FROM_ALL)

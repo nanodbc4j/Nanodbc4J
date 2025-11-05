@@ -74,7 +74,9 @@ if(WIN32)
 endif()
 
 # Disable filename and line number output in nanodbc exceptions
-target_compile_definitions(nanodbc PRIVATE NANODBC_THROW_NO_SOURCE_LOCATION)
+if(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel" OR CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_definitions(nanodbc PRIVATE NANODBC_THROW_NO_SOURCE_LOCATION)
+endif()
 
 # utfcpp
 add_library(utfcpp INTERFACE)

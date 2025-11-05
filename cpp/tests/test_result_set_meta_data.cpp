@@ -6,21 +6,9 @@
 #include "api/statement.h"
 #include "api/result.h"
 #include "api/result_set_meta_data.h"
+#include <../tests/test_utils.hpp>
 #include "struct/error_info.h"
 #include "struct/binary_array.h"
-
-// Helpers
-static void assert_no_error(const NativeError& err) {
-    EXPECT_EQ(err.error_type, nullptr);
-    EXPECT_EQ(err.error_code, 0);
-    EXPECT_EQ(err.error_message, nullptr);
-}
-
-static void assert_has_error(const NativeError& err) {
-    EXPECT_NE(err.error_code, 0);
-    EXPECT_NE(err.error_type, nullptr);
-    EXPECT_NE(err.error_message, nullptr);
-}
 
 static void count_check(Connection* conn, NativeError& error) {
     ApiString count_sql = NANODBC_TEXT("SELECT COUNT(*) FROM test_data;");
@@ -30,11 +18,6 @@ static void count_check(Connection* conn, NativeError& error) {
     std::cout << "count_res:\t" << count << std::endl;
     EXPECT_EQ(count, 1);
     close_result(count_res, &error);
-}
-
-static Connection* create_in_memory_db(NativeError& error) {
-    ApiString conn_str = NANODBC_TEXT("DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
-    return connection_with_timeout(conn_str.c_str(), 10, &error);
 }
 
 // Вспомогательная функция: подготовить тестовую таблицу

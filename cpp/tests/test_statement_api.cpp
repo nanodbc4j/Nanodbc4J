@@ -8,25 +8,7 @@
 #include "struct/error_info.h"
 #include "struct/nanodbc_c.h"
 #include "struct/binary_array.h"
-
-// Helper: verify no error
-static void assert_no_error(const NativeError& err) {
-    EXPECT_EQ(err.error_type, nullptr);
-    EXPECT_EQ(err.error_code, 0);
-    EXPECT_EQ(err.error_message, nullptr);
-}
-
-// Helper: verify error is set
-static void assert_has_error(const NativeError& err) {
-    EXPECT_NE(err.error_type, nullptr) << "Error type should not be null";
-    EXPECT_NE(err.error_message, nullptr) << "Error message should not be null";
-}
-
-// Helper: create in-memory SQLite connection
-static Connection* create_in_memory_db(NativeError& error) {
-    ApiString conn_str = NANODBC_TEXT("DRIVER={SQLite3 ODBC Driver};Database=:memory:;Timeout=1000;");
-    return connection_with_timeout(conn_str.c_str(), 10, &error);
-}
+#include <../tests/test_utils.hpp>
 
 // Test: prepare and execute a simple parameterized query
 TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {

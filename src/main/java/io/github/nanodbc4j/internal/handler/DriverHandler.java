@@ -3,8 +3,8 @@ package io.github.nanodbc4j.internal.handler;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import io.github.nanodbc4j.internal.binding.OdbcApi;
-import io.github.nanodbc4j.internal.dto.DatasourceDto;
-import io.github.nanodbc4j.internal.dto.DriverDto;
+import io.github.nanodbc4j.internal.dto.DatasourceProperties;
+import io.github.nanodbc4j.internal.dto.DriverProperties;
 import io.github.nanodbc4j.jdbc.SpdLogLevel;
 import io.github.nanodbc4j.internal.cstruct.DatasourceStruct;
 import io.github.nanodbc4j.internal.cstruct.DriverStruct;
@@ -27,24 +27,24 @@ public final class DriverHandler {
         }
     }
 
-    public static List<DriverDto> driversList() {
-        List<DriverDto> drivers = new ArrayList<>();
+    public static List<DriverProperties> driversList() {
+        List<DriverProperties> drivers = new ArrayList<>();
         IntByReference count = new IntByReference();
         Pointer driversListPtrs = OdbcApi.INSTANCE.drivers_list(count);
         try {
             for (int i = 0; i < count.getValue(); i++) {
                 DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(POINTER_SIZE * i));
-                List<DriverDto.Attribute> driverAttributes = new ArrayList<>(ds.attribute_count);
+                List<DriverProperties.AttributeProperties> driverAttributes = new ArrayList<>(ds.attribute_count);
                 String name = getWideString(ds.name);
 
                 for (int j = 0; j < ds.attribute_count; j++) {
                     DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ds.attributes.getPointer(POINTER_SIZE * j));
                     String keyword = getWideString(attr.keyword);
                     String value = getWideString(attr.value);
-                    driverAttributes.add(new DriverDto.Attribute(keyword, value));
+                    driverAttributes.add(new DriverProperties.AttributeProperties(keyword, value));
                 }
 
-                drivers.add(new DriverDto(name, driverAttributes));
+                drivers.add(new DriverProperties(name, driverAttributes));
             }
         } finally {
             OdbcApi.INSTANCE.delete_driver_array(driversListPtrs, count.getValue());
@@ -52,8 +52,8 @@ public final class DriverHandler {
         return drivers;
     }
 
-    public static List<DatasourceDto> datasourcesList() {
-        List<DatasourceDto> datasources = new ArrayList<>();
+    public static List<DatasourceProperties> datasourcesList() {
+        List<DatasourceProperties> datasources = new ArrayList<>();
         IntByReference count = new IntByReference();
         Pointer datasourcesListPtrs = OdbcApi.INSTANCE.datasources_list(count);
         try {
@@ -61,7 +61,7 @@ public final class DriverHandler {
                 DatasourceStruct ds = new DatasourceStruct(datasourcesListPtrs.getPointer(POINTER_SIZE * i));
                 String name = getWideString(ds.name);
                 String driver = getWideString(ds.driver);
-                datasources.add(new DatasourceDto(name, driver));
+                datasources.add(new DatasourceProperties(name, driver));
             }
         } finally {
             OdbcApi.INSTANCE.delete_datasource_array(datasourcesListPtrs, count.getValue());

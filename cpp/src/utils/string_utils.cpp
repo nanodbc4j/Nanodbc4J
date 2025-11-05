@@ -3,6 +3,7 @@
 #include <memory>
 #include <cstring>
 #include <vector>
+#include <algorithm>
 #include <exception>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
@@ -218,6 +219,13 @@ std::u16string utils::to_u16string(const std::wstring& str) {
 }
 
 std::u16string utils::to_u16string(const std::u16string& str) {
+    return str;
+}
+
+std::string utils::to_lower(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { 
+        return std::tolower(c);
+    });
     return str;
 }
 
