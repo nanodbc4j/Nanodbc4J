@@ -67,9 +67,9 @@ add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 # Include project header files
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE ODBC_EXPORTS)
+
 if(WIN32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE ODBC_EXPORTS)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
     add_definitions(-DSPDLOG_WCHAR_TO_UTF8_SUPPORT)
 endif()
 
@@ -93,17 +93,20 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 if(UNIX AND NOT APPLE)
-    find_library(LIBDL dl)
-    if(LIBDL)
-        target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBDL})
-    endif()
+    find_library(LIBDL dl REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBDL})
 endif()
 
-# === Linux settings: portability and static linking ===
-if(UNIX AND NOT APPLE)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++ -Wl,--gc-sections)
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++ -Wl,--gc-sections)
+# === Unix settings: portability and static linking ===
+if(UNIX)
+    # target_compile_options(${PROJECT_NAME} PRIVATE -fvisibility=hidden)
+    if(NOT APPLE)
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++ -Wl,--gc-sections)
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++ -Wl,--gc-sections)
+        endif()
+    else()
+        target_link_options(${PROJECT_NAME} PRIVATE -Wl,-dead_strip)
     endif()
 endif()

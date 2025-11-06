@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "api/api.h"
+#include "api/odbc.h"
 #include "struct/error_info.h"
 #include "api/connection.h"
 #include "utils/string_utils.hpp"
@@ -18,20 +19,21 @@ void assert_has_error(const NativeError& err) {
 
 ApiString get_connection_string() {
     static ApiString result{};
-    // HACK: static used to avoid heap corruption
-    // Safe only because this is test-only code
-    static std::string lower_name;
 
     if (!result.empty()) {
         return result;
     }
 
     for (const auto& driver : nanodbc::list_drivers()) {
-        lower_name = utils::to_lower(utils::to_string(driver.name));
+        // HACK: duplicate_string used to avoid heap corruption
+        auto* lower_name_c_str = utils::duplicate_string(utils::to_lower(utils::to_string(driver.name)).c_str());
+        std::string lower_name = lower_name_c_str ? std::string(lower_name_c_str) : std::string();
 
         if (lower_name.find("sqlite") != std::string::npos) {
             result = NANODBC_TEXT("DRIVER={") + driver.name + NANODBC_TEXT("};Database=:memory:;Timeout=1000;");
         }
+
+        std_free(lower_name_c_str);
     }
 
     if (result.empty()) {
