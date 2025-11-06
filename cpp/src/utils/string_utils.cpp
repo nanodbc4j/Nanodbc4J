@@ -43,12 +43,14 @@ std::string utils::to_string(const std::wstring& str) {
     // Windows: wstring is UTF-16
     static_assert(sizeof(wchar_t) == 2, "wchar_t must be 16-bit on Windows");
     std::string result;
+    result.reserve(str.size() * 2);
     utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #else
     // Linux/macOS: wstring is UTF-32
     static_assert(sizeof(wchar_t) == 4, "wchar_t must be 32-bit on Unix-like systems");
     std::string result;
+    result.reserve(str.size() * 4);
     utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #endif
@@ -56,12 +58,14 @@ std::string utils::to_string(const std::wstring& str) {
 
 std::string utils::to_string(const std::u16string& str) {
     std::string result;
+    result.reserve(str.size() * 3);
     utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }
 
 std::string utils::to_string(const std::u32string& str) {
     std::string result;
+    result.reserve(str.size() * 4);
     utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }
@@ -104,18 +108,21 @@ std::wstring utils::to_wstring(const std::string& str) {
 
     //Replaces all invalid sequences
     std::string cleaned;
+    cleaned.reserve(str.size());
     utf8::replace_invalid(str.begin(), str.end(), std::back_inserter(cleaned));
 
 #ifdef _WIN32
     // Windows: wstring is UTF-16
     static_assert(sizeof(wchar_t) == 2, "wchar_t must be 16-bit on Windows");
     std::wstring result;
+    result.reserve(cleaned.size());
     utf8::utf8to16(cleaned.begin(), cleaned.end(), std::back_inserter(result));
     return result;
 #else
     // Linux/macOS: wstring is UTF-32
     static_assert(sizeof(wchar_t) == 4, "wchar_t must be 32-bit on Unix-like systems");
     std::wstring result;
+    result.reserve(cleaned.size());
     utf8::utf8to32(cleaned.begin(), cleaned.end(), std::back_inserter(result));
     return result;
 #endif
@@ -128,8 +135,14 @@ std::wstring utils::to_wstring(const std::wstring& str) {
 std::u16string utils::to_u16string(const std::string& str) {
     LOG_TRACE("input string length = {}", str.length());
     //Replaces all invalid sequences
-    std::string cleaned = utf8::replace_invalid(str);
-    return utf8::utf8to16(cleaned);
+    std::string cleaned;
+    cleaned.reserve(str.size());
+    utf8::replace_invalid(str.begin(), str.end(), std::back_inserter(cleaned));
+
+    std::u16string result;
+    result.reserve(cleaned.size());
+    utf8::utf8to16(cleaned.begin(), cleaned.end(), std::back_inserter(result));
+    return result;
 }
 
 std::u16string utils::to_u16string(const std::u32string& str) {
@@ -224,9 +237,11 @@ std::u16string utils::to_u16string(const std::u16string& str) {
 
 #ifdef WIN32
 std::string utils::utf8_to_ansi(const std::string& utf8) {
-    int wn = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), utf8.size(), NULL, 0);
+    size_t len = utf8.length();
+    if (len == 0) return {};
+    int wn = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), len, NULL, 0);
     LPWSTR pwB = new WCHAR[wn];
-    wn = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), utf8.size(), pwB, wn);
+    wn = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), len, pwB, wn);
 
     int an = WideCharToMultiByte(CP_ACP, 0, pwB, wn, NULL, 0, NULL, NULL);
     LPSTR pB = new CHAR[an];
@@ -242,9 +257,11 @@ std::string utils::utf8_to_ansi(const std::string& utf8) {
 }
 
 std::string utils::ansi_to_utf8(const std::string& ansi) {
-    int wn = MultiByteToWideChar(CP_ACP, 0, ansi.c_str(), ansi.size(), NULL, 0);
+    size_t len = ansi.length();
+    if (len == 0) return {};
+    int wn = MultiByteToWideChar(CP_ACP, 0, ansi.c_str(), len, NULL, 0);
     LPWSTR pwB = new WCHAR[wn];
-    wn = MultiByteToWideChar(CP_ACP, 0, ansi.c_str(), ansi.size(), pwB, wn);
+    wn = MultiByteToWideChar(CP_ACP, 0, ansi.c_str(), len, pwB, wn);
 
     int an = WideCharToMultiByte(CP_UTF8, 0, pwB, wn, NULL, 0, NULL, NULL);
     LPSTR pB = new CHAR[an];
