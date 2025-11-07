@@ -27,9 +27,9 @@ namespace utils {
 	std::u16string to_u16string(const std::u16string& str);
 
 #ifdef WIN32
-	std::string utf8_to_ansi(const std::string& utf8);
+	std::string wstring_to_ansi(const std::wstring& wstr);
 
-	std::string ansi_to_utf8(const std::string& ansi);
+	std::wstring ansi_to_wstring(const std::string& ansi);
 #endif
 
 	std::string to_lower(std::string str);

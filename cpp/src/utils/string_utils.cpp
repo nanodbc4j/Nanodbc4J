@@ -236,44 +236,42 @@ std::u16string utils::to_u16string(const std::u16string& str) {
 
 
 #ifdef WIN32
-std::string utils::utf8_to_ansi(const std::string& utf8) {
-    size_t len = utf8.length();
-    if (len == 0) return {};
-    int wn = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), len, NULL, 0);
-    LPWSTR pwB = new WCHAR[wn];
-    wn = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), len, pwB, wn);
+std::string utils::wstring_to_ansi(const std::wstring& wstr) {
+    if (wstr.empty()) return {};   
 
-    int an = WideCharToMultiByte(CP_ACP, 0, pwB, wn, NULL, 0, NULL, NULL);
-    LPSTR pB = new CHAR[an];
-    an = WideCharToMultiByte(CP_ACP, 0, pwB, wn, pB, an, NULL, NULL);
-
-    std::string tmp;
-    tmp.assign(pB, an);
-
-    delete[] pwB;
-    delete[] pB;
-
-    return tmp;
+    int len = WideCharToMultiByte(CP_ACP, 0, wstr.data(), static_cast<int>(wstr.size()), nullptr, 0, nullptr, nullptr);
+    if (len <= 0) {
+        DWORD err = GetLastError();
+        LOG_ERROR("WideCharToMultiByte(CP_ACP) length query failed, error={}", err);
+        throw std::runtime_error(fmt::format("wstring_to_ansi length query failed (error {})", err));
+    }
+    std::string result(len, 0);
+    int written = WideCharToMultiByte(CP_ACP, 0, wstr.data(), static_cast<int>(wstr.size()), result.data(), len, nullptr, nullptr);
+    if (written != len) {
+        DWORD err = GetLastError();
+        LOG_ERROR("WideCharToMultiByte(CP_ACP) conversion failed, expected={}, written={}, error={}", len, written, err);
+        throw std::runtime_error(fmt::format("wstring_to_ansi conversion failed (error {})", err));
+    }
+    return result;
 }
 
-std::string utils::ansi_to_utf8(const std::string& ansi) {
-    size_t len = ansi.length();
-    if (len == 0) return {};
-    int wn = MultiByteToWideChar(CP_ACP, 0, ansi.c_str(), len, NULL, 0);
-    LPWSTR pwB = new WCHAR[wn];
-    wn = MultiByteToWideChar(CP_ACP, 0, ansi.c_str(), len, pwB, wn);
+std::wstring utils::ansi_to_wstring(const std::string& ansi) {
+    if (ansi.empty()) return {};
 
-    int an = WideCharToMultiByte(CP_UTF8, 0, pwB, wn, NULL, 0, NULL, NULL);
-    LPSTR pB = new CHAR[an];
-    an = WideCharToMultiByte(CP_UTF8, 0, pwB, wn, pB, an, NULL, NULL);
-
-    std::string tmp;
-    tmp.assign(pB, an);
-
-    delete[] pwB;
-    delete[] pB;
-
-    return tmp;
+    int wlen = MultiByteToWideChar(CP_ACP, 0, ansi.data(), static_cast<int>(ansi.size()), nullptr, 0);
+    if (wlen <= 0) {
+        DWORD err = GetLastError();
+        LOG_ERROR("MultiByteToWideChar(CP_ACP) length query failed, error={}", err);
+        throw std::runtime_error(fmt::format("ansi_to_wstring length query failed (error {})", err));
+    }
+    std::wstring result(wlen, 0);
+    int written = MultiByteToWideChar(CP_ACP, 0, ansi.data(), static_cast<int>(ansi.size()), result.data(), wlen);
+    if (written != wlen) {
+        DWORD err = GetLastError();
+        LOG_ERROR("MultiByteToWideChar(CP_ACP) conversion failed, expected={}, written={}, error={}", wlen, written, err);
+        throw std::runtime_error(fmt::format("ansi_to_wstring conversion failed (error {})", err));
+    }
+    return result;
 }
 #endif
 

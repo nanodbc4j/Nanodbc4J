@@ -204,12 +204,11 @@ const ApiChar* get_string_value_by_index(nanodbc::result* results, int index, Na
             LOG_DEBUG("String value retrieved from index {}: '{}'", index, value);
 #ifdef _WIN32
             // On Windows, ODBC drivers typically return SQL_C_CHAR data in the system's active ANSI code page
-            // (e.g., CP1251 for Russian locales), NOT in UTF-8. However, our string conversion utilities (like
-            // to_wstring) expect input to be valid UTF-8. To avoid corruption (e.g., "пїЅ" mojibake or invalid
-            // UTF-8 errors), we explicitly convert the ANSI-encoded string to UTF-8 using Windows APIs before
-            // passing it to the UTF-8-aware conversion functions.
-            std::string utf8str = ansi_to_utf8(value);
-            nanodbc::string result = to_wstring(utf8str);
+            // (e.g., CP1251 for Russian locales), NOT in UTF-8. Since our internal string representation uses
+            // std::wstring (UTF-16 on Windows), we explicitly convert the ANSI-encoded buffer to std::wstring
+            // using MultiByteToWideChar(CP_ACP). This avoids mojibake (e.g., "пїЅ") and ensures correct handling
+            // of locale-specific characters without relying on UTF-8 assumptions.
+            nanodbc::string result = ansi_to_wstring(value);
 #else
             // On Unix - like systems(Linux / macOS), ODBC drivers generally return strings in UTF - 8 by default,
             // so no extra conversion is needed — we can safely pass the string directly to to_u16string().
