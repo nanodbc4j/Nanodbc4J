@@ -12,14 +12,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-22.04, windows-latest]
         include:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
             build_type: MinSizeRel
 
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             c_compiler: gcc
             cpp_compiler: g++
             build_type: MinSizeRel
@@ -41,7 +41,7 @@ jobs:
           mkdir out/build/x64-Release
 
       - name: Install dependencies and SQLite ODBC driver (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         shell: bash
         # sudo apt-get install -y ninja-build cmake g++ gdb
         # Ensure SO output dir exists
@@ -75,7 +75,7 @@ jobs:
         continue-on-error: true
 
       - name: Run native tests (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         run: |
           ${{ steps.paths.outputs.build-dir }}/cpp/tests/nanodbc4j_tests
         shell: bash
@@ -85,15 +85,15 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: native-binaries-${{ matrix.os }}
+          name: native-binaries-windows
           path: "${{ steps.paths.outputs.build-dir }}/MinSizeRel/nanodbc4j.dll"
           if-no-files-found: warn
 
       - name: Upload native artifacts (.so)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         uses: actions/upload-artifact@v4
         with:
-          name: native-binaries-${{ matrix.os }}
+          name: native-binaries-linux
           path: "${{ steps.paths.outputs.build-dir }}/libnanodbc4j.so"
           if-no-files-found: warn
 
@@ -108,13 +108,13 @@ jobs:
       - name: Download native Windows binaries
         uses: actions/download-artifact@v4
         with:
-          name: native-binaries-windows-latest
+          name: native-binaries-windows
           path: out/build/x64-Release
 
       - name: Download native Linux binaries
         uses: actions/download-artifact@v4
         with:
-          name: native-binaries-ubuntu-latest
+          name: native-binaries-linux
           path: out/build/WSL-GCC-Release
 
       - name: Verify native binaries presence
