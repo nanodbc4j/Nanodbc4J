@@ -23,7 +23,6 @@ jobs:
             c_compiler: gcc
             cpp_compiler: g++
             build_type: MinSizeRel
-            install: sudo apt-get install -y sqlite3 libsqlite3-dev unixodbc unixodbc-dev libsqliteodbc
 
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +39,16 @@ jobs:
           if ((Get-FileHash 'sqliteodbc_w64.exe').Hash -ne $expectedHash) {Write "Hash mismatch"; Exit 1}
           Start-Process -FilePath ".\sqliteodbc_w64.exe" -ArgumentList "/S" -Wait
           mkdir out/build/x64-Release
+
+      - name: Install dependencies and SQLite ODBC driver (Linux)
+        if: matrix.os == 'ubuntu-22.04'
+        shell: bash
+        # sudo apt-get install -y ninja-build cmake g++ gdb
+        # Ensure SO output dir exists
+        run: |
+          sudo apt-get update              
+          sudo apt-get install -y sqlite3 libsqlite3-dev unixodbc unixodbc-dev libsqliteodbc
+          mkdir -p out/build/WSL-GCC-Release
 
       - name: Set build directory
         id: paths
