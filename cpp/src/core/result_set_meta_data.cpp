@@ -2,7 +2,6 @@
 #include <string>
 #include <algorithm>
 #include <locale>
-#include <codecvt>
 
 #ifdef _WIN32
 // needs to be included above sql.h for windows
@@ -183,13 +182,12 @@ bool ResultSetMetaData::isAutoIncrement(int column) const {
     }
 
     // Дополнительные проверки через другие атрибуты
-    value = getColumnNumericAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
-    nanodbc::string name = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
+    const nanodbc::string name = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
 
     // Ёвристика: если им¤ содержит "id" или "identity", возможно это автоинкремент
     std::string lowerName = to_string(name);
 
-    std::for_each(lowerName.begin(), lowerName.end(), [](char& c) {
+    std::ranges::for_each(lowerName, [](char& c) {
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));    
     });
 

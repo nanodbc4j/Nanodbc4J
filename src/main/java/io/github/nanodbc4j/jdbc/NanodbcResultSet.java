@@ -602,8 +602,7 @@ public class NanodbcResultSet implements ResultSet {
         log.finest("NanodbcResultSet.getObject");
         throwIfAlreadyClosed();
         lastColumn = columnIndex;
-        ResultSetMetaData metaData = getMetaData();
-        String className = metaData.getColumnClassName(columnIndex);
+        String className = getMetaData().getColumnClassName(columnIndex);
 
         try {
             return switch (className) {

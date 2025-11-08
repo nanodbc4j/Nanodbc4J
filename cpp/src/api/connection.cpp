@@ -58,6 +58,12 @@ nanodbc::statement* create_statement(Connection* conn, NativeError* error) noexc
     LOG_DEBUG("Creating statement for connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
+        if (!conn) {
+            LOG_ERROR("Connection is null, cannot set auto commit transaction");
+            set_error(error, ErrorCode::Database, "TransactionError", "Connection is null");
+            return nullptr;
+        }
+
         auto stmt = new nanodbc::statement(*conn);
         LOG_DEBUG("Statement created successfully: {}", reinterpret_cast<uintptr_t>(stmt));
         return stmt;
@@ -78,6 +84,7 @@ void set_auto_commit_transaction(Connection* conn, bool autoCommit, NativeError*
         if (!conn) {
             LOG_ERROR("Connection is null, cannot set auto commit transaction");
             set_error(error, ErrorCode::Database, "TransactionError", "Connection is null");
+            return;
         }
         conn->set_auto_commit(autoCommit);
     } catch (const nanodbc::database_error& e) {
@@ -99,6 +106,7 @@ void commit_transaction(Connection* conn, NativeError* error) noexcept {
         if (!conn) {
             LOG_ERROR("Connection is null, cannot commit transaction");
             set_error(error, ErrorCode::Database, "TransactionError", "Connection is null");
+            return;
         }
         conn->commit();
     } catch (const nanodbc::database_error& e) {
@@ -120,6 +128,7 @@ void rollback_transaction(Connection* conn, NativeError* error) noexcept {
         if (!conn) {
             LOG_ERROR("Connection is null, cannot rollback transaction");
             set_error(error, ErrorCode::Database, "TransactionError", "Connection is null");
+            return;
         }
         conn->rollback();
     } catch (const nanodbc::database_error& e) {
@@ -189,6 +198,7 @@ void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* err
         if (!conn) {
             LOG_ERROR("Connection is null, cannot set catalog name");
             set_error(error, ErrorCode::Database, "ConnectionError", "Connection is null");
+            return;
         }
 
         auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();

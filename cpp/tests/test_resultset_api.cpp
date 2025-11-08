@@ -5,19 +5,15 @@
 #include "api/connection.h"
 #include "api/statement.h"
 #include "api/result.h"
-#include "api/result_set_meta_data.h"
-#include "api/database_metadata.h"
 #include "struct/error_info.h"
 #include "struct/binary_array.h"
-#include "core/chunked_binary_stream.hpp"
 #include <../tests/test_utils.hpp>
-#include <api/odbc.h>
 
 static void count_check(Connection* conn, NativeError& error) {
-    ApiString count_sql = NANODBC_TEXT("SELECT COUNT(*) FROM test_data;");
+    const ApiString count_sql = NANODBC_TEXT("SELECT COUNT(*) FROM test_data;");
     nanodbc::result* count_res = execute_request(conn, count_sql.c_str(), 10, &error);
     EXPECT_TRUE(count_res->next());
-    int count = count_res->get<int>(0);
+    const int count = count_res->get<int>(0);
     std::cout << "count_res:\t" << count << std::endl;
     EXPECT_EQ(count, 1);
     close_result(count_res, &error);
@@ -25,7 +21,7 @@ static void count_check(Connection* conn, NativeError& error) {
 
 // Вспомогательная функция: подготовить тестовую таблицу
 static void setup_test_table(Connection* conn, NativeError& error) {
-    ApiString create = NANODBC_TEXT(
+    const ApiString create = NANODBC_TEXT(
         "CREATE TABLE test_data ("
         "id INTEGER PRIMARY KEY, "
         "name VARCHAR(50), "
@@ -46,13 +42,13 @@ static void setup_test_table(Connection* conn, NativeError& error) {
     // Вставляем данные
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    ApiString insert = NANODBC_TEXT(
+    const ApiString insert = NANODBC_TEXT(
         "INSERT INTO test_data VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?);"
     );
     prepare_statement(stmt, insert.c_str(), &error);
     assert_no_error(error);
 
-    ApiString text = NANODBC_TEXT("Alice");
+    const ApiString text = NANODBC_TEXT("Alice");
     set_string_value(stmt, 0, text.data(), &error);
     assert_no_error(error);
     set_bool_value(stmt, 1, true, &error);
@@ -94,7 +90,7 @@ TEST(ResultSetAPITest, GetValueByIndex) {
 
     count_check(conn, error);
 
-    ApiString select = NANODBC_TEXT("SELECT * FROM test_data;");
+    const ApiString select = NANODBC_TEXT("SELECT * FROM test_data;");
     nanodbc::result* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);
@@ -132,7 +128,7 @@ TEST(ResultSetAPITest, GetValueByName) {
 
     count_check(conn, error);
 
-    ApiString select = NANODBC_TEXT("SELECT * FROM test_data;");
+    const ApiString select = NANODBC_TEXT("SELECT * FROM test_data;");
     nanodbc::result* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);
@@ -170,17 +166,17 @@ TEST(ResultSetAPITest, NullAndBinaryHandling) {
     Connection* conn = create_in_memory_db(error);
     ASSERT_NE(conn, nullptr);
 
-    ApiString create = NANODBC_TEXT("CREATE TABLE null_test (val INTEGER);");
+    const ApiString create = NANODBC_TEXT("CREATE TABLE null_test (val INTEGER);");
     nanodbc::result* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
 
-    ApiString insert = NANODBC_TEXT("INSERT INTO null_test VALUES (NULL);");
+    const ApiString insert = NANODBC_TEXT("INSERT INTO null_test VALUES (NULL);");
     res = execute_request(conn, insert.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
 
-    ApiString select = NANODBC_TEXT("SELECT val FROM null_test;");
+    const ApiString select = NANODBC_TEXT("SELECT val FROM null_test;");
     res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     EXPECT_TRUE(next_result(res, &error));

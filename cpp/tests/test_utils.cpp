@@ -24,13 +24,13 @@ ApiString get_connection_string() {
         return result;
     }
 
-    for (const auto& driver : nanodbc::list_drivers()) {
+    for (const auto&[name, attributes] : nanodbc::list_drivers()) {
         // HACK: duplicate_string used to avoid heap corruption
-        auto* lower_name_c_str = utils::duplicate_string(utils::to_lower(utils::to_string(driver.name)).c_str());
+        auto* lower_name_c_str = utils::duplicate_string(utils::to_lower(utils::to_string(name)).c_str());
         std::string lower_name = lower_name_c_str ? std::string(lower_name_c_str) : std::string();
 
         if (lower_name.find("sqlite") != std::string::npos) {
-            result = NANODBC_TEXT("DRIVER={") + driver.name + NANODBC_TEXT("};Database=:memory:;Timeout=1000;");
+            result = NANODBC_TEXT("DRIVER={") + name + NANODBC_TEXT("};Database=:memory:;Timeout=1000;");
         }
 
         std_free(lower_name_c_str);
@@ -45,6 +45,6 @@ ApiString get_connection_string() {
 
 // Helper: create in-memory SQLite connection
 Connection* create_in_memory_db(NativeError& error) {
-    ApiString conn_str = get_connection_string();
+    const ApiString conn_str = get_connection_string();
     return connection_with_timeout(conn_str.c_str(), 10, &error);
 }

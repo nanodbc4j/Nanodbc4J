@@ -4,7 +4,7 @@
 
 using namespace utils;
 
-Driver::Attribute::Attribute(const Driver::Attribute& other) {
+Driver::Attribute::Attribute(const Attribute& other) {
 	LOG_TRACE("Copying Driver::Attribute from {}", (void*)&other);
 	keyword = duplicate_string(other.keyword);
 	value = duplicate_string(other.value);

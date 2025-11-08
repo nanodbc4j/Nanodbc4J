@@ -12,7 +12,7 @@
 // Test: connect using a valid connection string
 TEST(ConnectionAPITest, ConnectWithConnectionString) {
     NativeError error;
-    ApiString conn_str = get_connection_string();
+    const ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
@@ -39,7 +39,7 @@ TEST(ConnectionAPITest, ConnectWithInvalidConnectionString) {
 // Test: transaction handling
 TEST(ConnectionAPITest, TransactionControl) {
     NativeError error;
-    ApiString conn_str = get_connection_string();
+    const ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
@@ -99,12 +99,12 @@ TEST(ConnectionAPITest, TransactionControl) {
 TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     NativeError error;
 
-    ApiString conn_str = get_connection_string();
+    const ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
 
     // Create table
-    ApiString create_sql = NANODBC_TEXT("CREATE TABLE test (id INTEGER, name VARCHAR(50));");
+    const ApiString create_sql = NANODBC_TEXT("CREATE TABLE test (id INTEGER, name VARCHAR(50));");
     nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
     EXPECT_NE(res, nullptr);
     assert_no_error(error);
@@ -113,7 +113,7 @@ TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Insert data
-    ApiString insert_sql = NANODBC_TEXT("INSERT INTO test VALUES (1, 'Alice');");
+    const ApiString insert_sql = NANODBC_TEXT("INSERT INTO test VALUES (1, 'Alice');");
     res = execute_request(conn, insert_sql.c_str(), 10, &error);
     EXPECT_NE(res, nullptr);
     assert_no_error(error);
@@ -122,13 +122,13 @@ TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Select data
-    ApiString select_sql = NANODBC_TEXT("SELECT name FROM test WHERE id = 1;");
+    const ApiString select_sql = NANODBC_TEXT("SELECT name FROM test WHERE id = 1;");
     res = execute_request(conn, select_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);
 
     EXPECT_TRUE(res->next());
-    std::string name = res->get<std::string>(0);
+    auto name = res->get<std::string>(0);
     EXPECT_EQ(name, "Alice");
 
     close_result(res, &error);

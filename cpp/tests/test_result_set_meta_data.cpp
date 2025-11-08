@@ -11,7 +11,7 @@
 #include "struct/binary_array.h"
 
 static void count_check(Connection* conn, NativeError& error) {
-    ApiString count_sql = NANODBC_TEXT("SELECT COUNT(*) FROM test_data;");
+    const ApiString count_sql = NANODBC_TEXT("SELECT COUNT(*) FROM test_data;");
     nanodbc::result* count_res = execute_request(conn, count_sql.c_str(), 10, &error);
     EXPECT_TRUE(count_res->next());
     int count = count_res->get<int>(0);
@@ -22,7 +22,7 @@ static void count_check(Connection* conn, NativeError& error) {
 
 // Вспомогательная функция: подготовить тестовую таблицу
 static void setup_test_table(Connection* conn, NativeError& error) {
-    ApiString create = NANODBC_TEXT(
+    const ApiString create = NANODBC_TEXT(
         "CREATE TABLE test_data ("
         "id INTEGER PRIMARY KEY, "
         "name VARCHAR(50), "
@@ -43,7 +43,7 @@ static void setup_test_table(Connection* conn, NativeError& error) {
     // Вставляем данные
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    ApiString insert = NANODBC_TEXT(
+    const ApiString insert = NANODBC_TEXT(
         "INSERT INTO test_data VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
     );
     prepare_statement(stmt, insert.c_str(), &error);
@@ -83,7 +83,7 @@ TEST(ResultSetMetaDataTest, BasicMetadata) {
     ASSERT_NE(conn, nullptr);
     setup_test_table(conn, error);
 
-    ApiString select = NANODBC_TEXT("SELECT id, name FROM test_data;");
+    const ApiString select = NANODBC_TEXT("SELECT id, name FROM test_data;");
     nanodbc::result* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
 

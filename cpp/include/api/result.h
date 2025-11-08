@@ -100,7 +100,7 @@ extern "C" {
     /// \param index Zero-based column index.
     /// \param error Error information structure to populate on failure.
     /// \return String value from specified column.
-    ODBC_API const ApiChar* get_string_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept;
+    ODBC_API const ApiChar* get_string_value_by_index(const nanodbc::result* results, int index, NativeError* error) noexcept;
 
     /// \brief Retrieves date value from result set by column index.
     /// \param results Pointer to the result set object.

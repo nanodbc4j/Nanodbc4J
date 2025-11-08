@@ -9,7 +9,7 @@
 
 // Вспомогательная функция: подготовить тестовую таблицу
 static void setup_test_table(Connection* conn, NativeError& error) {
-    ApiString create = NANODBC_TEXT(
+    const ApiString create = NANODBC_TEXT(
         "CREATE TABLE test_data ("
         "id INTEGER PRIMARY KEY, "
         "name VARCHAR(50), "

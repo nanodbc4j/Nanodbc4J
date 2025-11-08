@@ -18,7 +18,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Create table
-    ApiString create_sql = NANODBC_TEXT("CREATE TABLE users (id INTEGER, name VARCHAR(50));");
+    const ApiString create_sql = NANODBC_TEXT("CREATE TABLE users (id INTEGER, name VARCHAR(50));");
     nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -30,7 +30,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
     ASSERT_NE(stmt, nullptr);
     assert_no_error(error);
 
-    ApiString insert_sql = NANODBC_TEXT("INSERT INTO users (id, name) VALUES (?, ?);");
+    const ApiString insert_sql = NANODBC_TEXT("INSERT INTO users (id, name) VALUES (?, ?);");
     prepare_statement(stmt, insert_sql.c_str(), &error);
     assert_no_error(error);
 
@@ -38,7 +38,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
     set_int_value(stmt, 0, 42, &error);
     assert_no_error(error);
 
-    ApiString name_val = NANODBC_TEXT("Bob");
+    const ApiString name_val = NANODBC_TEXT("Bob");
     set_string_value(stmt, 1, name_val.c_str(), &error);
     assert_no_error(error);
 
@@ -50,7 +50,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Verify insertion
-    ApiString select_sql = NANODBC_TEXT("SELECT name FROM users LIMIT 1;");
+    const ApiString select_sql = NANODBC_TEXT("SELECT name FROM users LIMIT 1;");
     res = execute_request(conn, select_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     EXPECT_TRUE(res->next());
@@ -72,7 +72,7 @@ TEST(StatementAPITest, SetNumericParameterTypes) {
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
 
-    ApiString create_sql = NANODBC_TEXT("CREATE TABLE nums (i16 SMALLINT, i32 INTEGER, i64 BIGINT, f32 REAL, f64 DOUBLE PRECISION);");
+    const ApiString create_sql = NANODBC_TEXT("CREATE TABLE nums (i16 SMALLINT, i32 INTEGER, i64 BIGINT, f32 REAL, f64 DOUBLE PRECISION);");
     nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -80,7 +80,7 @@ TEST(StatementAPITest, SetNumericParameterTypes) {
 
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    ApiString insert_sql = NANODBC_TEXT("INSERT INTO nums VALUES (?, ?, ?, ?, ?);");
+    const ApiString insert_sql = NANODBC_TEXT("INSERT INTO nums VALUES (?, ?, ?, ?, ?);");
     prepare_statement(stmt, insert_sql.c_str(), &error);
     assert_no_error(error);
 
@@ -109,7 +109,7 @@ TEST(StatementAPITest, SetDateTimeAndBool) {
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
 
-    ApiString create_sql = NANODBC_TEXT("CREATE TABLE events (active BOOLEAN, event_date DATE, event_time TIME, event_ts TIMESTAMP);");
+    const ApiString create_sql = NANODBC_TEXT("CREATE TABLE events (active BOOLEAN, event_date DATE, event_time TIME, event_ts TIMESTAMP);");
     nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -117,7 +117,7 @@ TEST(StatementAPITest, SetDateTimeAndBool) {
 
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    ApiString insert_sql = NANODBC_TEXT("INSERT INTO events VALUES (?, ?, ?, ?);");
+    const ApiString insert_sql = NANODBC_TEXT("INSERT INTO events VALUES (?, ?, ?, ?);");
     prepare_statement(stmt, insert_sql.c_str(), &error);
     assert_no_error(error);
 
@@ -151,7 +151,7 @@ TEST(StatementAPITest, SetBinaryData) {
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
 
-    ApiString create_sql = NANODBC_TEXT("CREATE TABLE blobs (data BLOB);");
+    const ApiString create_sql = NANODBC_TEXT("CREATE TABLE blobs (data BLOB);");
     nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -159,7 +159,7 @@ TEST(StatementAPITest, SetBinaryData) {
 
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    ApiString insert_sql = NANODBC_TEXT("INSERT INTO blobs VALUES (?);");
+    const ApiString insert_sql = NANODBC_TEXT("INSERT INTO blobs VALUES (?);");
     prepare_statement(stmt, insert_sql.c_str(), &error);
     assert_no_error(error);
 
@@ -187,7 +187,7 @@ TEST(StatementAPITest, ExecuteWithTimeout) {
 
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    ApiString sql = NANODBC_TEXT("SELECT 1;");
+    const ApiString sql = NANODBC_TEXT("SELECT 1;");
     prepare_statement(stmt, sql.c_str(), &error);
     assert_no_error(error);
 
