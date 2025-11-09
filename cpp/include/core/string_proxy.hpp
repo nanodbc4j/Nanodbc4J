@@ -13,7 +13,7 @@ class StringProxy {
 
     explicit StringProxy(const CharT* str);
 
-    explicit StringProxy(StringT& str);
+    explicit StringProxy(const StringT& str);
 
     explicit StringProxy(StringT&& str);
 

@@ -68,7 +68,7 @@ TEST(ConnectionAPITest, TransactionControl) {
     levels.push_back(IsolationLevel::REPEATABLE_READ);
     levels.push_back(IsolationLevel::SERIALIZABLE);
 
-    auto find = std::find_if(levels.begin(), levels.end(), [&](int level) {
+    const auto find = std::ranges::find_if(levels, [&](const int level) {
         return (level != current_level) && (supportsTransactionIsolationLevel & level);
     });
 

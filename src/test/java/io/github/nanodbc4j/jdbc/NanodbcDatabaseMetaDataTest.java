@@ -24,6 +24,7 @@ class NanodbcDatabaseMetaDataTest {
                 .findFirst().orElse(null);
         assertNotNull(driver, "SQLite driver not found");
         connectionString = "jdbc:nanodbc4j:DRIVER={" + driver + "};Database=:memory:;Timeout=1000;";
+        System.out.println("Connection string: " + connectionString);
     }
 
     @BeforeEach

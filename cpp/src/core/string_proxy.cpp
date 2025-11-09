@@ -10,7 +10,7 @@ StringProxy<CharT, Traits, Alloc>::StringProxy(const CharT* str)
 }
 
 template <typename CharT, typename Traits, typename Alloc>
-StringProxy<CharT, Traits, Alloc>::StringProxy(StringT& str)
+StringProxy<CharT, Traits, Alloc>::StringProxy(const StringT& str)
     : data(str) {
 }
 

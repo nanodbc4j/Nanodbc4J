@@ -1,6 +1,7 @@
 #include "api/statement.h"
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
+#include "core/string_proxy.hpp"
 
 using namespace utils;
 
@@ -26,11 +27,12 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
     }
 }
 
-static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const nanodbc::string& value, NativeError* error) noexcept {
+static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const StringProxy<wchar_t> & value, NativeError* error) noexcept {
     init_error(error);
     try {
         // Оборачиваем одну строку в вектор
-        std::vector<nanodbc::string> vec{ value };
+        std::vector<nanodbc::string> vec;
+        vec.emplace_back(value);
         stmt->bind_strings(index, vec);
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
@@ -67,18 +69,19 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
 }
 
 void prepare_statement(nanodbc::statement* stmt, const wchar_t* sql, NativeError* error) noexcept {
-    auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
-    LOG_DEBUG("Preparing statement: {}", to_string(str_sql));
-    LOG_DEBUG("Statement object: {}", reinterpret_cast<uintptr_t>(stmt));
-
+    const StringProxy str_sql (sql);
     init_error(error);
+
     try {
+        LOG_DEBUG("Preparing statement: {}", str_sql);
+        LOG_DEBUG("Statement object: {}", reinterpret_cast<uintptr_t>(stmt));
+
         if (!stmt) {
             LOG_ERROR("Statement is null, cannot prepare");
             set_error(error, ErrorCode::Database, "StatementError", "Statement is null");
             return;
         }
-        nanodbc::prepare(*stmt, str_sql);
+        nanodbc::prepare(*stmt, static_cast<nanodbc::string>(str_sql));
     } catch (const nanodbc::database_error& e) {
         set_error(error, ErrorCode::Database, "StatementError", e.what());
         LOG_ERROR("Database error during prepare: {}", e.what());
@@ -121,8 +124,8 @@ void set_string_value(nanodbc::statement* stmt, int index, const wchar_t* value,
         set_value_with_error_handling(stmt, index, nullptr, error);
         return;
     }
-    
-    set_value_with_error_handling(stmt, index, nanodbc::string(value), error);
+    const StringProxy str_value (value);
+    set_value_with_error_handling(stmt, index, str_value, error);
 }
 
 void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeError* error) noexcept {
@@ -132,9 +135,9 @@ void set_date_value(nanodbc::statement* stmt, int index, CDate* value, NativeErr
     }
 
     nanodbc::date d{};
-    d.year = static_cast<short>(value->year);
-    d.month = static_cast<short>(value->month);
-    d.day = static_cast<short>(value->day);
+    d.year = value->year;
+    d.month = value->month;
+    d.day = value->day;
 
     set_value_with_error_handling(stmt, index, d, error);
 }
