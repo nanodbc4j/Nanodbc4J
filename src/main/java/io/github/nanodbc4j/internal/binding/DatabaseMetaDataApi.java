@@ -16,8 +16,8 @@ public interface DatabaseMetaDataApi extends Library {
 
     private static DatabaseMetaDataApi initialize() {
         try {
-            LibraryLoader.load();
-            return Native.load(DatabaseMetaDataApi.class, LibraryLoader.getNativeLibraryOptions());
+            String lib = LibraryLoader.load();
+            return Native.load(lib, DatabaseMetaDataApi.class, LibraryLoader.getNativeLibraryOptions());
         } catch (Throwable t) {
             throw new ExceptionInInitializerError(t);
         }

@@ -19,8 +19,8 @@ public interface StatementApi extends Library {
 
     private static StatementApi initialize() {
         try {
-            LibraryLoader.load();
-            return Native.load(StatementApi.class, LibraryLoader.getNativeLibraryOptions());
+            String lib = LibraryLoader.load();
+            return Native.load(lib, StatementApi.class, LibraryLoader.getNativeLibraryOptions());
         } catch (Throwable t) {
             throw new ExceptionInInitializerError(t);
         }

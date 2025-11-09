@@ -20,8 +20,8 @@ public interface ResultApi extends Library {
 
     private static ResultApi initialize() {
         try {
-            LibraryLoader.load();
-            return Native.load(ResultApi.class, LibraryLoader.getNativeLibraryOptions());
+            String lib = LibraryLoader.load();
+            return Native.load(lib, ResultApi.class, LibraryLoader.getNativeLibraryOptions());
         } catch (Throwable t) {
             throw new ExceptionInInitializerError(t);
         }

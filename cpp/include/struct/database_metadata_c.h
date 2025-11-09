@@ -146,7 +146,7 @@ extern "C" {
         int getMaxProcedureNameLength = 0;
 
         CDatabaseMetaData() = default;
-        explicit CDatabaseMetaData(const CDatabaseMetaData& other);
+        CDatabaseMetaData(const CDatabaseMetaData& other);
         explicit CDatabaseMetaData(const DatabaseMetaData& other);
         ~CDatabaseMetaData();
     };

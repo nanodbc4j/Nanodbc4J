@@ -16,7 +16,6 @@ public final class DriverStruct extends Structure {
         read();
     }
 
-    // Публичный метод для установки указателя
     public void setPointer(Pointer p) {
         useMemory(p);
         read();
@@ -33,7 +32,6 @@ public final class DriverStruct extends Structure {
             read();
         }
 
-        // Публичный метод для установки указателя
         public void setPointer(Pointer p) {
             useMemory(p);
             read();

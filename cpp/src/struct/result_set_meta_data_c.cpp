@@ -12,7 +12,7 @@ static ApiChar* convert(const ApiString& str) {
 }
 
 CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) {
-    LOG_TRACE("Copying ColumnMetaData from {}", (void*)&other);
+    LOG_TRACE("Copying ColumnMetaData from {}", reinterpret_cast<uintptr_t>(&other));
     isAutoIncrement = other.isAutoIncrement;
     isCaseSensitive = other.isCaseSensitive;
     isSearchable = other.isSearchable;
@@ -36,8 +36,8 @@ CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) 
 }
 
 CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
-    auto str_free = [&](const ApiChar* str) {
-        if (str) free(const_cast<ApiChar*>(str));
+    auto str_free = [&](const auto* str) {
+        if (str) free(const_cast<void*>(static_cast<const void*>(str)));
     };
 
     str_free(columnLabel);
@@ -50,7 +50,7 @@ CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
 }
 
 CResultSetMetaData::CResultSetMetaData(const CResultSetMetaData& other) {
-    LOG_TRACE("Copying CResultSetMetaData from {}", (void*)&other);
+    LOG_TRACE("Copying CResultSetMetaData from {}", reinterpret_cast<uintptr_t>(&other));
     columnCount = other.columnCount;
 
     if (columnCount) {
@@ -70,7 +70,7 @@ CResultSetMetaData::CResultSetMetaData(const ResultSetMetaData& other) {
         column = new const ColumnMetaData * [columnCount];
         for (int i = 0; i < columnCount; ++i) {
             LOG_TRACE("Processing column [{}]", i);
-            ColumnMetaData* data = new ColumnMetaData();
+            auto* data = new ColumnMetaData();
 
             // Отсчет начинается с 1
             data->isAutoIncrement = other.isAutoIncrement(i + 1);

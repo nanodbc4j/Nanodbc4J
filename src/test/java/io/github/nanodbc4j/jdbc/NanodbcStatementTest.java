@@ -21,7 +21,12 @@ class NanodbcStatementTest {
 
     @BeforeAll
     void setUpConnectionString() {
-        var driver = NanodbcDriver.driversList().stream().map(DriverProperties::name).filter(s -> s.toLowerCase().contains("sqlite")).findFirst().orElse(null);
+        var driver = NanodbcDriver.driversList()
+                .stream()
+                .map(DriverProperties::name)
+                .peek(System.out::println)
+                .filter(s -> s.toLowerCase().contains("sqlite"))
+                .findFirst().orElse(null);
         assertNotNull(driver, "SQLite driver not found");
         connectionString = "jdbc:nanodbc4j:DRIVER={" + driver + "};Database=:memory:;Timeout=1000;";
     }

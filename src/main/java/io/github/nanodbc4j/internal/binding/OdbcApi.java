@@ -17,8 +17,8 @@ public interface OdbcApi extends Library {
 
     private static OdbcApi initialize() {
         try {
-            LibraryLoader.load();
-            return Native.load(OdbcApi.class, LibraryLoader.getNativeLibraryOptions());
+            String library = LibraryLoader.load();
+            return Native.load(library, OdbcApi.class, LibraryLoader.getNativeLibraryOptions());
         } catch (Throwable t) {
             throw new ExceptionInInitializerError(t);
         }

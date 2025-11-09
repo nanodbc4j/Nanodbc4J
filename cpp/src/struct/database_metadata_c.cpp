@@ -8,6 +8,7 @@ static const ApiChar* convert(const ApiString& str) {
     LOG_TRACE("Converting wstring to ApiChar*: '{}'", to_string(str));
     const ApiChar* result = duplicate_string(str.c_str(), str.length());
     LOG_TRACE("Converted string duplicated at {}", (void*)result);
+    LOG_TRACE("Converted string duplicated at {}", reinterpret_cast<uintptr_t>(result));
     return result;
 }
 
@@ -291,8 +292,8 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
 }
 
 CDatabaseMetaData::~CDatabaseMetaData() {
-    auto str_free = [&](const ApiChar* str) {
-        if (str) free(const_cast<ApiChar*>(str));
+    auto str_free = [&](const auto* str) {
+        if (str) free(const_cast<void*>(static_cast<const void*>(str)));
     };
 
     // === Строковые значения ===

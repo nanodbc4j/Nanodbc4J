@@ -46,7 +46,7 @@ void init_error(NativeError* error) {
 // Установка ошибки
 void set_error(NativeError* error, ErrorCode code, const char* type, const char* message) {
     LOG_TRACE("set_error: error={}, code={}, type='{}', message='{}'",
-        (void*)error,
+        reinterpret_cast<uintptr_t>(error),
         code.to_int(),
         type ? type : "(null)",
         message ? message : "(null)");

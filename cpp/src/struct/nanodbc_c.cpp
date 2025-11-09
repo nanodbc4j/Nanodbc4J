@@ -79,7 +79,7 @@ Driver** Driver::convert(const std::list<nanodbc::driver>& drivers) {
 		LOG_DEBUG("Input drivers list is empty, returning nullptr array");
 	}
 
-	Driver** result = new Driver* [drivers.size()];
+	auto** result = new Driver* [drivers.size()];
 
 	size_t i = 0;
 	for (const auto& drv : drivers) {
@@ -117,7 +117,7 @@ Datasource** Datasource::convert(const std::list<nanodbc::datasource>& datasourc
 		LOG_DEBUG("Input datasources list is empty, returning nullptr array");
 	}
 
-	Datasource** result = new Datasource* [datasources.size()];
+	auto** result = new Datasource* [datasources.size()];
 
 	size_t i = 0;
 	for (const auto& source : datasources) {

@@ -17,8 +17,8 @@ public interface ConnectionApi extends Library {
 
     private static ConnectionApi initialize() {
         try {
-            LibraryLoader.load();
-            return Native.load(ConnectionApi.class, LibraryLoader.getNativeLibraryOptions());
+            String lib = LibraryLoader.load();
+            return Native.load(lib, ConnectionApi.class, LibraryLoader.getNativeLibraryOptions());
         } catch (Throwable t) {
             throw new ExceptionInInitializerError(t);
         }

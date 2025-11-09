@@ -15,8 +15,8 @@ public interface ResultSetMetaDataApi extends Library {
 
     private static ResultSetMetaDataApi initialize() {
         try {
-            LibraryLoader.load();
-            return Native.load(ResultSetMetaDataApi.class, LibraryLoader.getNativeLibraryOptions());
+            String lib = LibraryLoader.load();
+            return Native.load(lib, ResultSetMetaDataApi.class, LibraryLoader.getNativeLibraryOptions());
         } catch (Throwable t) {
             throw new ExceptionInInitializerError(t);
         }

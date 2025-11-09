@@ -191,7 +191,7 @@ nanodbc::string DatabaseMetaData::getNumericFunctions() const {
     LOG_TRACE("Called");
     SQLUINTEGER mask = 0;
     SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_NUMERIC_FUNCTIONS, &mask, sizeof(mask), nullptr);
-    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+    if (!SQL_SUCCEEDED(ret)) {
         LOG_ERROR("SQLGetInfo(SQL_NUMERIC_FUNCTIONS) failed: {}", ret);
         LOG_TRACE("Returning: L\"\"");
         return NANODBC_TEXT("");
@@ -234,7 +234,7 @@ nanodbc::string DatabaseMetaData::getStringFunctions() const {
     LOG_TRACE("Called");
     SQLUINTEGER mask = 0;
     SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_STRING_FUNCTIONS, &mask, sizeof(mask), nullptr);
-    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+    if (!SQL_SUCCEEDED(ret)) {
         LOG_ERROR("SQLGetInfo(SQL_STRING_FUNCTIONS) failed: {}", ret);
         LOG_TRACE("Returning: L\"\"");
         return NANODBC_TEXT("");
@@ -273,7 +273,7 @@ nanodbc::string DatabaseMetaData::getSystemFunctions() const {
     LOG_TRACE("Called");
     SQLUINTEGER mask = 0;
     SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_SYSTEM_FUNCTIONS, &mask, sizeof(mask), nullptr);
-    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+    if (!SQL_SUCCEEDED(ret)) {
         LOG_ERROR("SQLGetInfo(SQL_SYSTEM_FUNCTIONS) failed: {}", ret);
         LOG_TRACE("Returning: \"\"");
         return NANODBC_TEXT("");
@@ -299,7 +299,7 @@ nanodbc::string DatabaseMetaData::getTimeDateFunctions() const {
     LOG_TRACE("Called");
     SQLUINTEGER mask = 0;
     SQLRETURN ret = SQLGetInfo(connection_.native_dbc_handle(), SQL_TIMEDATE_FUNCTIONS, &mask, sizeof(mask), nullptr);
-    if (ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO) {
+    if (!SQL_SUCCEEDED(ret)) {
         LOG_ERROR("SQLGetInfo(SQL_TIMEDATE_FUNCTIONS) failed: {}", ret);
         LOG_TRACE("Returning: \"\"");
         return NANODBC_TEXT("");

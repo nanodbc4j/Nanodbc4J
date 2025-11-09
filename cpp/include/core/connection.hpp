@@ -7,7 +7,7 @@ class Connection : public nanodbc::connection {
     std::unique_ptr<nanodbc::transaction> transaction_;
 
 public:
-    using nanodbc::connection::connection; // Inherit base constructors
+    using connection::connection; // Inherit base constructors
 
     /// \brief Sets the current catalog (database) using ODBC SQLSetConnectAttr.
     /// Behavior depends on ODBC driver — some may require reconnect or execute USE/SET commands internally.
@@ -27,7 +27,7 @@ public:
     IsolationLevel get_isolation_level() const;
 
     /// \brief Enables or disables auto-commit mode
-    /// \param autoCommit - true to enable auto-commit, false to start a transaction
+    /// \param auto_commit - true to enable auto-commit, false to start a transaction
     /// \throws std::runtime_error if connection is not active
     void set_auto_commit(bool auto_commit);
 

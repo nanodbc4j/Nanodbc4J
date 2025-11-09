@@ -32,7 +32,7 @@ extern "C" {
             ApiChar* columnClassName = nullptr;
 
             ColumnMetaData() = default;
-            explicit ColumnMetaData(const ColumnMetaData& other);
+            ColumnMetaData(const ColumnMetaData& other);
             ~ColumnMetaData();
         };
 
@@ -40,7 +40,7 @@ extern "C" {
         const ColumnMetaData** column = nullptr;
 
         CResultSetMetaData() = default;
-        explicit CResultSetMetaData(const CResultSetMetaData& other);
+        CResultSetMetaData(const CResultSetMetaData& other);
         explicit CResultSetMetaData(const ResultSetMetaData& other);
         ~CResultSetMetaData();
 	};
