@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <fmt/ostream.h>
 
 template <typename CharT,
           typename Traits = std::char_traits<CharT>,
@@ -34,10 +35,35 @@ class StringProxy {
 };
 
 template<typename CharT, typename Traits, typename Alloc>
-std::ostream& operator<<(std::ostream& os, const StringProxy<CharT, Traits, Alloc> & proxy);
+std::ostream& operator<<(std::ostream& os, const StringProxy<CharT, Traits, Alloc>& proxy);
 
 template<typename CharT, typename Traits, typename Alloc>
-std::wostream& operator<<(std::wostream& os, const StringProxy<CharT, Traits, Alloc> & proxy);
+std::wostream& operator<<(std::wostream& os, const StringProxy<CharT, Traits, Alloc>& proxy);
+
+
+template<typename CharT>
+struct fmt::formatter<StringProxy<CharT>, char> {
+    constexpr auto parse(format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto format(const StringProxy<CharT>& proxy, FormatContext& ctx) const {
+        return fmt::format_to(ctx.out(), "{}", static_cast<std::string>(proxy));
+    }
+};
+
+template<typename CharT>
+struct fmt::formatter<StringProxy<CharT>, wchar_t> {
+    constexpr auto parse(format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto format(const StringProxy<CharT>& proxy, FormatContext& ctx) const {
+        return fmt::format_to(ctx.out(), L"{}", static_cast<std::wstring>(proxy));
+    }
+};
 
 extern template class StringProxy<char>;
 extern template class StringProxy<wchar_t>;

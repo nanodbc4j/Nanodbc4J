@@ -60,13 +60,13 @@ bool StringProxy<CharT, Traits, Alloc>::empty() const {
 }
 
 template<typename CharT, typename Traits, typename Alloc>
-ostream& operator<<(ostream& os, const StringProxy<CharT, Traits, Alloc> & proxy) {
+ostream& operator<<(ostream& os, const StringProxy<CharT, Traits, Alloc>& proxy) {
     os <<  static_cast<string>(proxy);
     return os;
 }
 
 template<typename CharT, typename Traits, typename Alloc>
-wostream& operator<<(wostream& os, const StringProxy<CharT, Traits, Alloc> & proxy) {
+wostream& operator<<(wostream& os, const StringProxy<CharT, Traits, Alloc>& proxy) {
     os <<  static_cast<wstring>(proxy);
     return os;
 }
