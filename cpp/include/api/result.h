@@ -100,7 +100,7 @@ extern "C" {
     /// \param index Zero-based column index.
     /// \param error Error information structure to populate on failure.
     /// \return String value from specified column.
-    ODBC_API const ApiChar* get_string_value_by_index(const nanodbc::result* results, int index, NativeError* error) noexcept;
+    ODBC_API const wchar_t* get_string_value_by_index(const nanodbc::result* results, int index, NativeError* error) noexcept;
 
     /// \brief Retrieves date value from result set by column index.
     /// \param results Pointer to the result set object.
@@ -158,98 +158,98 @@ extern "C" {
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Integer value from specified column.
-    ODBC_API int get_int_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API int get_int_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves long value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Long value from specified column.
-    ODBC_API long get_long_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API long get_long_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves double value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Double value from specified column.
-    ODBC_API double get_double_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API double get_double_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves boolean value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Boolean value from specified column.
-    ODBC_API bool get_bool_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API bool get_bool_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves float value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Float value from specified column.
-    ODBC_API float get_float_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API float get_float_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves short value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Short value from specified column.
-    ODBC_API short get_short_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API short get_short_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves string value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return String value from specified column.
-    ODBC_API const ApiChar* get_string_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API const wchar_t* get_string_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves date value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Date value from specified column.
-    ODBC_API CDate* get_date_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API CDate* get_date_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves time value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Time value from specified column.
-    ODBC_API CTime* get_time_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API CTime* get_time_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves timestamp value from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Timestamp value from specified column.
-    ODBC_API CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves binary array from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Binary array from specified column.
-    ODBC_API BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Retrieves binary stream from result set by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return Binary stream from specified column.
-    ODBC_API ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Finds column index by column name.
     /// \param results Pointer to the result set object.
     /// \param name Column name to find.
     /// \param error Error information structure to populate on failure.
     /// \return Zero-based column index, -1 if not found.
-    ODBC_API int find_column_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API int find_column_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Checks if the value at specified column name was NULL.
     /// \param results Pointer to the result set object.
     /// \param name Column name.
     /// \param error Error information structure to populate on failure.
     /// \return true if value was NULL, false otherwise.
-    ODBC_API bool was_null_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept;
+    ODBC_API bool was_null_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept;
 
     /// \brief Closes and releases result set resources.
     /// \param results Pointer to the result set object.

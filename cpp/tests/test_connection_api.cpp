@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <string>
-#include "api/api.h"
 #include "api/connection.h"
 #include "api/result.h"
 #include "core/database_metadata.hpp"
@@ -12,7 +11,7 @@
 // Test: connect using a valid connection string
 TEST(ConnectionAPITest, ConnectWithConnectionString) {
     NativeError error;
-    const ApiString conn_str = get_connection_string();
+    const std::wstring conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
@@ -29,8 +28,8 @@ TEST(ConnectionAPITest, ConnectWithConnectionString) {
 TEST(ConnectionAPITest, ConnectWithInvalidConnectionString) {
     NativeError error;
 
-    const ApiChar* bad_conn = NANODBC_TEXT("DRIVER={NonExistentDriver};Database=foo;");
-    Connection* conn = connection_with_timeout(bad_conn, 5, &error);
+    const std::wstring bad_conn = L"DRIVER={NonExistentDriver};Database=foo;";
+    Connection* conn = connection_with_timeout(bad_conn.c_str(), 5, &error);
 
     EXPECT_EQ(conn, nullptr);
     assert_has_error(error);
@@ -39,7 +38,7 @@ TEST(ConnectionAPITest, ConnectWithInvalidConnectionString) {
 // Test: transaction handling
 TEST(ConnectionAPITest, TransactionControl) {
     NativeError error;
-    const ApiString conn_str = get_connection_string();
+    const std::wstring conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
@@ -99,12 +98,12 @@ TEST(ConnectionAPITest, TransactionControl) {
 TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     NativeError error;
 
-    const ApiString conn_str = get_connection_string();
+    const std::wstring conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
 
     // Create table
-    const ApiString create_sql = NANODBC_TEXT("CREATE TABLE test (id INTEGER, name VARCHAR(50));");
+    const std::wstring create_sql = L"CREATE TABLE test (id INTEGER, name VARCHAR(50));";
     nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
     EXPECT_NE(res, nullptr);
     assert_no_error(error);
@@ -113,7 +112,7 @@ TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Insert data
-    const ApiString insert_sql = NANODBC_TEXT("INSERT INTO test VALUES (1, 'Alice');");
+    const std::wstring insert_sql = L"INSERT INTO test VALUES (1, 'Alice');";
     res = execute_request(conn, insert_sql.c_str(), 10, &error);
     EXPECT_NE(res, nullptr);
     assert_no_error(error);
@@ -122,7 +121,7 @@ TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Select data
-    const ApiString select_sql = NANODBC_TEXT("SELECT name FROM test WHERE id = 1;");
+    const std::wstring select_sql = L"SELECT name FROM test WHERE id = 1;";
     res = execute_request(conn, select_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);

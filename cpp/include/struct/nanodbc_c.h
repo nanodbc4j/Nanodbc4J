@@ -1,7 +1,5 @@
 #pragma once
-#include <cstdint>
 #include <nanodbc/nanodbc.h>
-#include "api/api.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,8 +8,8 @@ extern "C" {
     struct Driver {
         /// \brief Driver attributes.
         struct Attribute {
-            const ApiChar* keyword = nullptr; ///< Driver keyword attribute.
-            const ApiChar* value = nullptr;   ///< Driver attribute value.
+            const wchar_t* keyword = nullptr; ///< Driver keyword attribute.
+            const wchar_t* value = nullptr;   ///< Driver attribute value.
 
             Attribute() = default;
             Attribute(const Attribute& other);
@@ -19,7 +17,7 @@ extern "C" {
             ~Attribute();
         };
 
-        const ApiChar* name = nullptr;            ///< Driver name.
+        const wchar_t* name = nullptr;            ///< Driver name.
         const Attribute** attributes = nullptr; ///< Driver attributes.
         int attribute_count = 0;
 
@@ -32,8 +30,8 @@ extern "C" {
     };
 
     struct Datasource {
-        const ApiChar* name = nullptr;   ///< DSN name.
-        const ApiChar* driver = nullptr; ///< Driver description.
+        const wchar_t* name = nullptr;   ///< DSN name.
+        const wchar_t* driver = nullptr; ///< Driver description.
 
         Datasource() = default;
         Datasource(const Datasource& other);

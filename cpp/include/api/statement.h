@@ -13,7 +13,7 @@ extern "C" {
     /// \param stmt Pointer to the statement object.
     /// \param sql The SQL statement to prepare.
     /// \param error Error information structure to populate on failure.
-    ODBC_API void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError* error) noexcept;
+    ODBC_API void prepare_statement(nanodbc::statement* stmt, const wchar_t* sql, NativeError* error) noexcept;
 
     /// \brief Binds an integer value to a parameter in the prepared statement.
     /// \param stmt Pointer to the statement object.
@@ -62,7 +62,7 @@ extern "C" {
     /// \param index Zero-based parameter index.
     /// \param value String value to bind.
     /// \param error Error information structure to populate on failure.
-    ODBC_API void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value, NativeError* error) noexcept;
+    ODBC_API void set_string_value(nanodbc::statement* stmt, int index, const wchar_t* value, NativeError* error) noexcept;
 
     /// \brief Binds a date value to a parameter in the prepared statement.
     /// \param stmt Pointer to the statement object.

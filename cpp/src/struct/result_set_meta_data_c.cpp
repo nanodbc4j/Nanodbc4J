@@ -4,10 +4,11 @@
 
 using namespace utils;
 
-static ApiChar* convert(const ApiString& str) {
+static const wchar_t* convert(const nanodbc::string& str) {
     LOG_TRACE("Converting string to char array: '{}'", to_string(str));
-    ApiChar* result = duplicate_string(str.c_str(), str.length());
-    LOG_TRACE("Converted string duplicated at {}", (void*)result);
+    const auto wstr = to_wstring(str);
+    const wchar_t* result = duplicate_string(wstr.c_str(), wstr.length());
+    LOG_TRACE("Converted string duplicated at {}", reinterpret_cast<uintptr_t>(result));
     return result;
 }
 

@@ -1,9 +1,4 @@
 #pragma once
-#include <nanodbc/nanodbc.h>
-
-typedef nanodbc::string::value_type ApiChar;
-typedef nanodbc::string ApiString;
-
 
 #ifdef _WIN32
 	#ifdef ODBC_EXPORTS

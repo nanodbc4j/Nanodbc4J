@@ -25,8 +25,8 @@ static Connection* connection_with_error_handling(const function<Connection* ()>
     return nullptr;
 }
 
-Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) noexcept {
-    auto str_connection_string = connection_string ? nanodbc::string(connection_string) : nanodbc::string();
+Connection* connection_with_timeout(const wchar_t* connection_string, long timeout, NativeError* error) noexcept {
+    auto str_connection_string = connection_string ? wstring(connection_string) : wstring();
 
     LOG_DEBUG("Connection_string={}, timeout={}", utils::to_string(str_connection_string), timeout);
     return connection_with_error_handling(
@@ -37,10 +37,10 @@ Connection* connection_with_timeout(const ApiChar* connection_string, long timeo
     );
 }
 
-Connection* connection_with_user_pass_timeout(const ApiChar* dsn, const ApiChar* user, const ApiChar* pass, long timeout, NativeError* error) noexcept {
-    auto str_dsn = dsn ? nanodbc::string(dsn) : nanodbc::string();
-    auto str_user = user ? nanodbc::string(user) : nanodbc::string();
-    auto str_pass = pass ? nanodbc::string(pass) : nanodbc::string();
+Connection* connection_with_user_pass_timeout(const wchar_t* dsn, const wchar_t* user, const wchar_t* pass, long timeout, NativeError* error) noexcept {
+    auto str_dsn = dsn ? wstring(dsn) : wstring();
+    auto str_user = user ? wstring(user) : wstring();
+    auto str_pass = pass ? wstring(pass) : wstring();
 
     LOG_DEBUG("DSN={}, User={}, Pass=***, Timeout={}",
         utils::to_string(str_dsn),
@@ -166,7 +166,7 @@ bool get_auto_commit_transaction(Connection* conn, NativeError* error) noexcept 
     return true;
 }
 
-const ApiChar* get_catalog_name(Connection* conn, NativeError* error) noexcept {
+const wchar_t* get_catalog_name(Connection* conn, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -191,7 +191,7 @@ const ApiChar* get_catalog_name(Connection* conn, NativeError* error) noexcept {
     return nullptr;
 }
 
-void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* error) noexcept {
+void set_catalog_name(Connection* conn, const wchar_t* catalog, NativeError* error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -201,7 +201,7 @@ void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* err
             return;
         }
 
-        auto str_catalog = catalog ? nanodbc::string(catalog) : nanodbc::string();
+        auto str_catalog = catalog ? wstring(catalog) : wstring();
 
         conn->set_catalog(str_catalog);
     } catch (const nanodbc::database_error& e) {
@@ -280,7 +280,7 @@ int get_transaction_isolation_level(Connection* conn, NativeError* error) noexce
     return 0;
 }
 
-nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) noexcept {
+nanodbc::result* execute_request(Connection* conn, const wchar_t* sql, int timeout, NativeError* error) noexcept {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -290,7 +290,7 @@ nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeo
             return nullptr;
         }
 
-        auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
+        auto str_sql = sql ? wstring(sql) : wstring();
 
         nanodbc::statement stmt(*conn);
         stmt.prepare(str_sql);

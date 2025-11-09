@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "api/api.h"
 #include "api/odbc.h"
 #include "struct/error_info.h"
 #include "api/connection.h"
+#include "spdlog/fmt/bundled/xchar.h"
 #include "utils/string_utils.hpp"
 
 void assert_no_error(const NativeError& err) {
@@ -17,8 +17,8 @@ void assert_has_error(const NativeError& err) {
     EXPECT_NE(err.error_message, nullptr);
 }
 
-ApiString get_connection_string() {
-    static ApiString result{};
+nanodbc::string get_connection_string() {
+    static nanodbc::string result{};
 
     if (!result.empty()) {
         return result;
@@ -45,6 +45,6 @@ ApiString get_connection_string() {
 
 // Helper: create in-memory SQLite connection
 Connection* create_in_memory_db(NativeError& error) {
-    const ApiString conn_str = get_connection_string();
+    const auto conn_str = utils::to_wstring(get_connection_string()) ;
     return connection_with_timeout(conn_str.c_str(), 10, &error);
 }

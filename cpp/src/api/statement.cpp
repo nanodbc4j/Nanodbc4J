@@ -66,7 +66,7 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, n
     }
 }
 
-void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError* error) noexcept {
+void prepare_statement(nanodbc::statement* stmt, const wchar_t* sql, NativeError* error) noexcept {
     auto str_sql = sql ? nanodbc::string(sql) : nanodbc::string();
     LOG_DEBUG("Preparing statement: {}", to_string(str_sql));
     LOG_DEBUG("Statement object: {}", reinterpret_cast<uintptr_t>(stmt));
@@ -116,7 +116,7 @@ void set_short_value(nanodbc::statement* stmt, int index, short value, NativeErr
     set_value_with_error_handling(stmt, index, value, error);
 }
 
-void set_string_value(nanodbc::statement* stmt, int index, const ApiChar* value, NativeError* error) noexcept {
+void set_string_value(nanodbc::statement* stmt, int index, const wchar_t* value, NativeError* error) noexcept {
     if (!value) {
         set_value_with_error_handling(stmt, index, nullptr, error);
         return;
