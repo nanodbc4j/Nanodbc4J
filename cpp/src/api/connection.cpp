@@ -16,10 +16,10 @@ connection_with_error_handling(const function<Connection*()> &operation, NativeE
         return operation();
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "DatabaseError", e.what());
-        LOG_ERROR("Database error: {}", e.what());
+        LOG_ERROR("Database error: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Standard exception: {}", e.what());
+        LOG_ERROR("Standard exception: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown connection error");
         LOG_ERROR("Unknown exception in connection_with_error_handling");
@@ -27,19 +27,19 @@ connection_with_error_handling(const function<Connection*()> &operation, NativeE
     return nullptr;
 }
 
-Connection *connection_with_timeout(const wchar_t *connection_string, long timeout, NativeError *error) noexcept {
+Connection *connection_with_timeout(const ApiChar *connection_string, long timeout, NativeError *error) noexcept {
     StringProxy str_connection_string(connection_string);
 
     LOG_DEBUG("Connection_string={}, timeout={}", str_connection_string, timeout);
     return connection_with_error_handling(
-        [&]() {
+        [&] {
             return new Connection(static_cast<nanodbc::string>(str_connection_string), timeout);
         },
         error
     );
 }
 
-Connection *connection_with_user_pass_timeout(const wchar_t *dsn, const wchar_t *user, const wchar_t *pass,
+Connection *connection_with_user_pass_timeout(const ApiChar *dsn, const ApiChar *user, const ApiChar *pass,
                                               long timeout, NativeError *error) noexcept {
     const StringProxy str_dsn(dsn);
     const StringProxy str_user(user);
@@ -47,7 +47,7 @@ Connection *connection_with_user_pass_timeout(const wchar_t *dsn, const wchar_t 
 
     LOG_DEBUG("DSN={}, User={}, Pass=***, Timeout={}", str_dsn, str_user, timeout);
     return connection_with_error_handling(
-        [&]() {
+        [&] {
             return new Connection(
                 static_cast<nanodbc::string>(str_dsn),
                 static_cast<nanodbc::string>(str_user),
@@ -73,7 +73,7 @@ nanodbc::statement *create_statement(Connection *conn, NativeError *error) noexc
         return stmt;
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "StatementError", e.what());
-        LOG_ERROR("Exception in create_statement: {}", e.what());
+        LOG_ERROR("Exception in create_statement: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown create statement error");
         LOG_ERROR("Unknown exception in create_statement");
@@ -93,10 +93,10 @@ void set_auto_commit_transaction(Connection *conn, bool autoCommit, NativeError 
         conn->set_auto_commit(autoCommit);
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "TransactionError", e.what());
-        LOG_ERROR("Database error during set auto commit: {}", e.what());
+        LOG_ERROR("Database error during set auto commit: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "TransactionError", e.what());
-        LOG_ERROR("Database error during set auto commit: {}", e.what());
+        LOG_ERROR("Database error during set auto commit: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown set auto commit error");
         LOG_ERROR("Unknown exception during set auto commit transaction");
@@ -115,10 +115,10 @@ void commit_transaction(Connection *conn, NativeError *error) noexcept {
         conn->commit();
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "TransactionError", e.what());
-        LOG_ERROR("Database error during commit transaction: {}", e.what());
+        LOG_ERROR("Database error during commit transaction: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "TransactionError", e.what());
-        LOG_ERROR("Database error during commit transaction: {}", e.what());
+        LOG_ERROR("Database error during commit transaction: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown commit transaction error");
         LOG_ERROR("Unknown exception during commit transaction");
@@ -137,10 +137,10 @@ void rollback_transaction(Connection *conn, NativeError *error) noexcept {
         conn->rollback();
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "TransactionError", e.what());
-        LOG_ERROR("Database error during rollback transaction: {}", e.what());
+        LOG_ERROR("Database error during rollback transaction: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "TransactionError", e.what());
-        LOG_ERROR("Database error during rollback transaction: {}", e.what());
+        LOG_ERROR("Database error during rollback transaction: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown rollback transaction error");
         LOG_ERROR("Unknown exception during rollback");
@@ -159,10 +159,10 @@ bool get_auto_commit_transaction(Connection *conn, NativeError *error) noexcept 
         return conn->get_auto_commit();
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "TransactionError", e.what());
-        LOG_ERROR("Database error during get auto commit transaction: {}", e.what());
+        LOG_ERROR("Database error during get auto commit transaction: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "TransactionError", e.what());
-        LOG_ERROR("Database error during get auto commit transaction: {}", e.what());
+        LOG_ERROR("Database error during get auto commit transaction: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get auto commit transaction error");
         LOG_ERROR("Unknown exception during get auto commit transaction");
@@ -170,7 +170,7 @@ bool get_auto_commit_transaction(Connection *conn, NativeError *error) noexcept 
     return true;
 }
 
-const wchar_t *get_catalog_name(Connection *conn, NativeError *error) noexcept {
+const ApiChar *get_catalog_name(Connection *conn, NativeError *error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -185,10 +185,10 @@ const wchar_t *get_catalog_name(Connection *conn, NativeError *error) noexcept {
         return duplicate_string(result.c_str(), result.length());
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "ConnectionError", e.what());
-        LOG_ERROR("Database error during get catalog name: {}", e.what());
+        LOG_ERROR("Database error during get catalog name: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "ConnectionError", e.what());
-        LOG_ERROR("Database error during get catalog name: {}", e.what());
+        LOG_ERROR("Database error during get catalog name: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get catalog name error");
         LOG_ERROR("Unknown exception during get catalog name");
@@ -196,7 +196,7 @@ const wchar_t *get_catalog_name(Connection *conn, NativeError *error) noexcept {
     return nullptr;
 }
 
-void set_catalog_name(Connection *conn, const wchar_t *catalog, NativeError *error) noexcept {
+void set_catalog_name(Connection *conn, const ApiChar *catalog, NativeError *error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -211,10 +211,10 @@ void set_catalog_name(Connection *conn, const wchar_t *catalog, NativeError *err
         conn->set_catalog(static_cast<const nanodbc::string>(str_catalog));
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "ConnectionError", e.what());
-        LOG_ERROR("Database error during set catalog name: {}", e.what());
+        LOG_ERROR("Database error during set catalog name: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "ConnectionError", e.what());
-        LOG_ERROR("Database error during set catalog name: {}", e.what());
+        LOG_ERROR("Database error during set catalog name: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown set catalog name error");
         LOG_ERROR("Unknown exception during set catalog name");
@@ -225,12 +225,12 @@ bool is_connected(Connection *conn, NativeError *error) noexcept {
     LOG_DEBUG("Checking connection: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
-        bool connected = conn && conn->connected();
-        LOG_DEBUG("Connection status: {}", connected ? "true" : "false");
+        const bool connected = conn && conn->connected();
+        LOG_DEBUG("Connection status: {}", connected);
         return connected;
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "ConnectionCheckError", e.what());
-        LOG_ERROR("Exception in is_connected: {}", e.what());
+        LOG_ERROR("Exception in is_connected: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown connection check error");
         LOG_ERROR("Unknown exception in is_connected");
@@ -251,10 +251,10 @@ void set_transaction_isolation_level(Connection *conn, int level, NativeError *e
         conn->set_isolation_level(IsolationLevel::from_odbc(level));
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "TransactionError", e.what());
-        LOG_ERROR("Database error during set transaction isolation level: {}", e.what());
+        LOG_ERROR("Database error during set transaction isolation level: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "TransactionError", e.what());
-        LOG_ERROR("Database error during set transaction isolation level: {}", e.what());
+        LOG_ERROR("Database error during set transaction isolation level: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown set transaction isolation level error");
         LOG_ERROR("Unknown exception during set transaction isolation level");
@@ -274,10 +274,10 @@ int get_transaction_isolation_level(Connection *conn, NativeError *error) noexce
         return conn->get_isolation_level().to_odbc();
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "TransactionError", e.what());
-        LOG_ERROR("Database error during get transaction isolation level: {}", e.what());
+        LOG_ERROR("Database error during get transaction isolation level: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "TransactionError", e.what());
-        LOG_ERROR("Database error during get transaction isolation level: {}", e.what());
+        LOG_ERROR("Database error during get transaction isolation level: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get transaction isolation level error");
         LOG_ERROR("Unknown exception during get transaction isolation level");
@@ -285,7 +285,7 @@ int get_transaction_isolation_level(Connection *conn, NativeError *error) noexce
     return 0;
 }
 
-nanodbc::result *execute_request(Connection *conn, const wchar_t *sql, int timeout, NativeError *error) noexcept {
+nanodbc::result *execute_request(Connection *conn, const ApiChar *sql, int timeout, NativeError *error) noexcept {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -306,10 +306,10 @@ nanodbc::result *execute_request(Connection *conn, const wchar_t *sql, int timeo
         return result_ptr;
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "ExecuteError", e.what());
-        LOG_ERROR("Database error during execute: {}", e.what());
+        LOG_ERROR("Database error during execute: {}", StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "ExecuteError", e.what());
-        LOG_ERROR("Database error during execute: {}", e.what());
+        LOG_ERROR("Database error during execute: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown execute connection error");
         LOG_ERROR("Unknown exception during execute");
@@ -335,7 +335,7 @@ void disconnect(Connection *connection, NativeError *error) noexcept {
         }
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "DisconnectError", e.what());
-        LOG_ERROR("Exception in disconnect: {}", e.what());
+        LOG_ERROR("Exception in disconnect: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown disconnect error");
         LOG_ERROR("Unknown exception in disconnect");

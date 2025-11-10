@@ -3,7 +3,6 @@
 #include <nanodbc/nanodbc.h>
 
 class DatabaseMetaData {
-private:
     nanodbc::connection& connection_;
 
 public:

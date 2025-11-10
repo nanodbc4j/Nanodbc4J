@@ -48,8 +48,8 @@ extern "C" {
     /// \param type Table type filter (can be null for any).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing table information.
-    ODBC_API nanodbc::result* get_database_meta_data_tables(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, const wchar_t* type, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_tables(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, const ApiChar* type, NativeError* error) noexcept;
 
     /// \brief Retrieves columns matching specified criteria.
     /// \param conn Pointer to the nanodbc connection object.
@@ -59,8 +59,8 @@ extern "C" {
     /// \param column Column name filter (can be null for any).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing column information.
-    ODBC_API nanodbc::result* get_database_meta_data_columns(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, const wchar_t* column, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, const ApiChar* column, NativeError* error) noexcept;
 
     /// \brief Retrieves primary key information for specified table.
     /// \param conn Pointer to the nanodbc connection object.
@@ -69,8 +69,8 @@ extern "C" {
     /// \param table Table name (required).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing primary key information.
-    ODBC_API nanodbc::result* get_database_meta_data_primary_keys(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_primary_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, NativeError* error) noexcept;
 
     /// \brief Retrieves imported foreign keys for specified table.
     /// \param conn Pointer to the nanodbc connection object.
@@ -79,8 +79,8 @@ extern "C" {
     /// \param table Table name (required).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing imported key information.
-    ODBC_API nanodbc::result* get_database_meta_data_imported_keys(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_imported_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, NativeError* error) noexcept;
 
     /// \brief Retrieves exported foreign keys for specified table.
     /// \param conn Pointer to the nanodbc connection object.
@@ -89,8 +89,8 @@ extern "C" {
     /// \param table Table name (required).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing exported key information.
-    ODBC_API nanodbc::result* get_database_meta_data_exported_keys(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_exported_keys(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, NativeError* error) noexcept;
 
     /// \brief Retrieves data type information supported by the database.
     /// \param conn Pointer to the nanodbc connection object.
@@ -105,8 +105,8 @@ extern "C" {
     /// \param procedure Procedure name filter (can be null for any).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing procedure information.
-    ODBC_API nanodbc::result* get_database_meta_data_procedures(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* procedure, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_procedures(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* procedure, NativeError* error) noexcept;
 
     /// \brief Retrieves procedure columns matching specified criteria.
     /// \param conn Pointer to the nanodbc connection object.
@@ -116,8 +116,8 @@ extern "C" {
     /// \param column Column name filter (can be null for any).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing procedure column information.
-    ODBC_API nanodbc::result* get_database_meta_data_procedure_columns(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* procedure, const wchar_t* column, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_procedure_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* procedure, const ApiChar* column, NativeError* error) noexcept;
 
     /// \brief Retrieves column privilege information.
     /// \param conn Pointer to the nanodbc connection object.
@@ -127,8 +127,8 @@ extern "C" {
     /// \param column_name_pattern Column name pattern filter (can be null for any).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing column privilege information.
-    ODBC_API nanodbc::result* get_database_meta_data_column_privileges(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, const wchar_t* column_name_pattern, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_column_privileges(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, const ApiChar* column_name_pattern, NativeError* error) noexcept;
 
     /// \brief Retrieves table privilege information.
     /// \param conn Pointer to the nanodbc connection object.
@@ -137,8 +137,8 @@ extern "C" {
     /// \param table_name_pattern Table name pattern filter (can be null for any).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing table privilege information.
-    ODBC_API nanodbc::result* get_database_meta_data_table_privileges(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema_pattern,
-        const wchar_t* table_name_pattern, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_table_privileges(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema_pattern,
+        const ApiChar* table_name_pattern, NativeError* error) noexcept;
 
     /// \brief Retrieves optimal set of columns that uniquely identify a row.
     /// \param conn Pointer to the nanodbc connection object.
@@ -149,8 +149,8 @@ extern "C" {
     /// \param nullable Whether to include nullable columns.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing best row identifier information.
-    ODBC_API nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, int scope, bool nullable, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, int scope, bool nullable, NativeError* error) noexcept;
 
     /// \brief Retrieves columns that are automatically updated when any value in a row is updated.
     /// \param conn Pointer to the nanodbc connection object.
@@ -159,8 +159,8 @@ extern "C" {
     /// \param table Table name (required).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing version column information.
-    ODBC_API nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, NativeError* error) noexcept;
 
     /// \brief Retrieves foreign key relationships between two tables.
     /// \param conn Pointer to the nanodbc connection object.
@@ -172,8 +172,8 @@ extern "C" {
     /// \param foreign_table Foreign table name (required).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing cross-reference information.
-    ODBC_API nanodbc::result* get_database_meta_data_cross_reference(nanodbc::connection* conn, const wchar_t* parent_catalog, const wchar_t* parent_schema,
-        const wchar_t* parent_table, const wchar_t* foreign_catalog, const wchar_t* foreign_schema, const wchar_t* foreign_table, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_cross_reference(nanodbc::connection* conn, const ApiChar* parent_catalog, const ApiChar* parent_schema,
+        const ApiChar* parent_table, const ApiChar* foreign_catalog, const ApiChar* foreign_schema, const ApiChar* foreign_table, NativeError* error) noexcept;
 
     /// \brief Retrieves index information for specified table.
     /// \param conn Pointer to the nanodbc connection object.
@@ -184,8 +184,8 @@ extern "C" {
     /// \param approximate true to return approximate values for some numeric columns.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing index information.
-    ODBC_API nanodbc::result* get_database_meta_data_index_info(nanodbc::connection* conn, const wchar_t* catalog, const wchar_t* schema,
-        const wchar_t* table, bool unique, bool approximate, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* get_database_meta_data_index_info(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
+        const ApiChar* table, bool unique, bool approximate, NativeError* error) noexcept;
 
     /// \brief Releases database metadata resources.
     /// \param meta_data Pointer to database metadata object to delete.

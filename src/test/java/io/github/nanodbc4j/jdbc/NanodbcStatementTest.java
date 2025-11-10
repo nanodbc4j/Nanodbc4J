@@ -1,6 +1,5 @@
 package io.github.nanodbc4j.jdbc;
 
-import io.github.nanodbc4j.internal.dto.DriverProperties;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -11,26 +10,10 @@ import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class NanodbcStatementTest {
+class NanodbcStatementTest extends BaseTest {
 
     private Connection conn;
     private Statement stmt;
-
-    String connectionString;
-
-    @BeforeAll
-    void setUpConnectionString() {
-        var driver = NanodbcDriver.driversList()
-                .stream()
-                .map(DriverProperties::name)
-                .peek(System.out::println)
-                .filter(s -> s.toLowerCase().contains("sqlite"))
-                .findFirst().orElse(null);
-        assertNotNull(driver, "SQLite driver not found");
-        connectionString = "jdbc:nanodbc4j:DRIVER={" + driver + "};Database=:memory:;Timeout=1000;";
-        System.out.println("Connection string: " + connectionString);
-    }
 
     @BeforeEach
     void setUp() throws SQLException {

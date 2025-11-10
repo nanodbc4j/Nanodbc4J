@@ -28,10 +28,10 @@ static nanodbc::result *execute_metadata_query(nanodbc::connection *conn, Func &
         return result_ptr;
     } catch (const nanodbc::database_error &e) {
         set_error(error, ErrorCode::Database, "MetaDataError", e.what());
-        LOG_ERROR("Database error in '{}': {}", operation_name, e.what());
+        LOG_ERROR("Database error in '{}': {}", operation_name, StringProxy(e.what()));
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "MetaDataError", e.what());
-        LOG_ERROR("Exception in '{}': {}", operation_name, e.what());
+        LOG_ERROR("Exception in '{}': {}", operation_name, StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in '{}'", operation_name);
@@ -56,7 +56,7 @@ CDatabaseMetaData *get_database_meta_data(nanodbc::connection *conn, NativeError
         return meta_data;
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "DatabaseMetaData", e.what());
-        LOG_ERROR("Exception in get_database_meta_data: {}", e.what());
+        LOG_ERROR("Exception in get_database_meta_data: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
         LOG_ERROR("Unknown exception in get_database_meta_data");
@@ -81,7 +81,7 @@ bool database_meta_data_support_convert(nanodbc::connection *conn, int from_type
         return result;
     } catch (const exception &e) {
         set_error(error, ErrorCode::Standard, "DatabaseMetaData", e.what());
-        LOG_ERROR("Exception in database_meta_data_support_convert: {}", e.what());
+        LOG_ERROR("Exception in database_meta_data_support_convert: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
         LOG_ERROR("Unknown exception in database_meta_data_support_convert");
@@ -107,8 +107,8 @@ nanodbc::result *get_database_meta_data_table_types(nanodbc::connection *conn, N
     }, error, "getTableTypes");
 }
 
-nanodbc::result *get_database_meta_data_tables(nanodbc::connection *conn, const wchar_t *catalog, const wchar_t *schema,
-                                               const wchar_t *table, const wchar_t *type, NativeError *error) noexcept {
+nanodbc::result *get_database_meta_data_tables(nanodbc::connection *conn, const ApiChar *catalog, const ApiChar *schema,
+                                               const ApiChar *table, const ApiChar *type, NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
     const StringProxy str_table(table);
@@ -123,9 +123,9 @@ nanodbc::result *get_database_meta_data_tables(nanodbc::connection *conn, const 
     }, error, "getTables");
 }
 
-nanodbc::result *get_database_meta_data_columns(nanodbc::connection *conn, const wchar_t *catalog,
-                                                const wchar_t *schema,
-                                                const wchar_t *table, const wchar_t *column,
+nanodbc::result *get_database_meta_data_columns(nanodbc::connection *conn, const ApiChar *catalog,
+                                                const ApiChar *schema,
+                                                const ApiChar *table, const ApiChar *column,
                                                 NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
@@ -141,9 +141,9 @@ nanodbc::result *get_database_meta_data_columns(nanodbc::connection *conn, const
     }, error, "getColumns");
 }
 
-nanodbc::result *get_database_meta_data_primary_keys(nanodbc::connection *conn, const wchar_t *catalog,
-                                                     const wchar_t *schema,
-                                                     const wchar_t *table, NativeError *error) noexcept {
+nanodbc::result *get_database_meta_data_primary_keys(nanodbc::connection *conn, const ApiChar *catalog,
+                                                     const ApiChar *schema,
+                                                     const ApiChar *table, NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
     const StringProxy str_table(table);
@@ -156,9 +156,9 @@ nanodbc::result *get_database_meta_data_primary_keys(nanodbc::connection *conn, 
     }, error, "getPrimaryKeys");
 }
 
-nanodbc::result *get_database_meta_data_imported_keys(nanodbc::connection *conn, const wchar_t *catalog,
-                                                      const wchar_t *schema,
-                                                      const wchar_t *table, NativeError *error) noexcept {
+nanodbc::result *get_database_meta_data_imported_keys(nanodbc::connection *conn, const ApiChar *catalog,
+                                                      const ApiChar *schema,
+                                                      const ApiChar *table, NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
     const StringProxy str_table(table);
@@ -171,9 +171,9 @@ nanodbc::result *get_database_meta_data_imported_keys(nanodbc::connection *conn,
     }, error, "getImportedKeys");
 }
 
-nanodbc::result *get_database_meta_data_exported_keys(nanodbc::connection *conn, const wchar_t *catalog,
-                                                      const wchar_t *schema,
-                                                      const wchar_t *table, NativeError *error) noexcept {
+nanodbc::result *get_database_meta_data_exported_keys(nanodbc::connection *conn, const ApiChar *catalog,
+                                                      const ApiChar *schema,
+                                                      const ApiChar *table, NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
     const StringProxy str_table(table);
@@ -192,9 +192,9 @@ nanodbc::result *get_database_meta_data_type_info(nanodbc::connection *conn, Nat
     }, error, "getTypeInfo");
 }
 
-nanodbc::result *get_database_meta_data_procedures(nanodbc::connection *conn, const wchar_t *catalog,
-                                                   const wchar_t *schema,
-                                                   const wchar_t *procedure, NativeError *error) noexcept {
+nanodbc::result *get_database_meta_data_procedures(nanodbc::connection *conn, const ApiChar *catalog,
+                                                   const ApiChar *schema,
+                                                   const ApiChar *procedure, NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
     const StringProxy str_procedure(procedure);
@@ -207,9 +207,9 @@ nanodbc::result *get_database_meta_data_procedures(nanodbc::connection *conn, co
     }, error, "getProcedures");
 }
 
-nanodbc::result *get_database_meta_data_procedure_columns(nanodbc::connection *conn, const wchar_t *catalog,
-                                                          const wchar_t *schema,
-                                                          const wchar_t *procedure, const wchar_t *column,
+nanodbc::result *get_database_meta_data_procedure_columns(nanodbc::connection *conn, const ApiChar *catalog,
+                                                          const ApiChar *schema,
+                                                          const ApiChar *procedure, const ApiChar *column,
                                                           NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
@@ -225,9 +225,9 @@ nanodbc::result *get_database_meta_data_procedure_columns(nanodbc::connection *c
     }, error, "getProcedureColumns");
 }
 
-nanodbc::result *get_database_meta_data_column_privileges(nanodbc::connection *conn, const wchar_t *catalog,
-                                                          const wchar_t *schema,
-                                                          const wchar_t *table, const wchar_t *columnNamePattern,
+nanodbc::result *get_database_meta_data_column_privileges(nanodbc::connection *conn, const ApiChar *catalog,
+                                                          const ApiChar *schema,
+                                                          const ApiChar *table, const ApiChar *columnNamePattern,
                                                           NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
@@ -243,9 +243,9 @@ nanodbc::result *get_database_meta_data_column_privileges(nanodbc::connection *c
     }, error, "getColumnPrivileges");
 }
 
-nanodbc::result *get_database_meta_data_table_privileges(nanodbc::connection *conn, const wchar_t *catalog,
-                                                         const wchar_t *schema_pattern,
-                                                         const wchar_t *table_name_pattern,
+nanodbc::result *get_database_meta_data_table_privileges(nanodbc::connection *conn, const ApiChar *catalog,
+                                                         const ApiChar *schema_pattern,
+                                                         const ApiChar *table_name_pattern,
                                                          NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema_pattern);
@@ -259,9 +259,9 @@ nanodbc::result *get_database_meta_data_table_privileges(nanodbc::connection *co
     }, error, "getTablePrivileges");
 }
 
-nanodbc::result *get_database_meta_data_best_row_identifier(nanodbc::connection *conn, const wchar_t *catalog,
-                                                            const wchar_t *schema,
-                                                            const wchar_t *table, int scope, bool nullable,
+nanodbc::result *get_database_meta_data_best_row_identifier(nanodbc::connection *conn, const ApiChar *catalog,
+                                                            const ApiChar *schema,
+                                                            const ApiChar *table, int scope, bool nullable,
                                                             NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
@@ -275,9 +275,9 @@ nanodbc::result *get_database_meta_data_best_row_identifier(nanodbc::connection 
     }, error, "getBestRowIdentifier");
 }
 
-nanodbc::result *get_database_meta_data_version_columns(nanodbc::connection *conn, const wchar_t *catalog,
-                                                        const wchar_t *schema,
-                                                        const wchar_t *table, NativeError *error) noexcept {
+nanodbc::result *get_database_meta_data_version_columns(nanodbc::connection *conn, const ApiChar *catalog,
+                                                        const ApiChar *schema,
+                                                        const ApiChar *table, NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);
     const StringProxy str_table(table);
@@ -290,10 +290,10 @@ nanodbc::result *get_database_meta_data_version_columns(nanodbc::connection *con
     }, error, "getVersionColumns");
 }
 
-nanodbc::result *get_database_meta_data_cross_reference(nanodbc::connection *conn, const wchar_t *parent_catalog,
-                                                        const wchar_t *parent_schema,
-                                                        const wchar_t *parent_table, const wchar_t *foreign_catalog,
-                                                        const wchar_t *foreign_schema, const wchar_t *foreign_table,
+nanodbc::result *get_database_meta_data_cross_reference(nanodbc::connection *conn, const ApiChar *parent_catalog,
+                                                        const ApiChar *parent_schema,
+                                                        const ApiChar *parent_table, const ApiChar *foreign_catalog,
+                                                        const ApiChar *foreign_schema, const ApiChar *foreign_table,
                                                         NativeError *error) noexcept {
     const StringProxy str_parent_catalog(parent_catalog);
     const StringProxy str_parent_schema(parent_schema);
@@ -313,9 +313,9 @@ nanodbc::result *get_database_meta_data_cross_reference(nanodbc::connection *con
     }, error, "getCrossReference");
 }
 
-nanodbc::result *get_database_meta_data_index_info(nanodbc::connection *conn, const wchar_t *catalog,
-                                                   const wchar_t *schema,
-                                                   const wchar_t *table, bool unique, bool approximate,
+nanodbc::result *get_database_meta_data_index_info(nanodbc::connection *conn, const ApiChar *catalog,
+                                                   const ApiChar *schema,
+                                                   const ApiChar *table, bool unique, bool approximate,
                                                    NativeError *error) noexcept {
     const StringProxy str_catalog(catalog);
     const StringProxy str_schema(schema);

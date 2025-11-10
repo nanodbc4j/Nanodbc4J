@@ -2,7 +2,7 @@
 #include <exception>
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
-
+#include "core/string_proxy.hpp"
 
 Driver** drivers_list(int* count) noexcept {
 	LOG_DEBUG("Fetching list of ODBC drivers...");
@@ -26,7 +26,7 @@ int set_log_level(int level) noexcept {
 		LOG_DEBUG("Set log level: {}", result_level_name);
 		return ErrorCode::Success;
 	} catch (const std::exception& e) {
-		LOG_ERROR("Exception in set_log_level: {}", e.what());
+		LOG_ERROR("Exception in set_log_level: {}", StringProxy(e.what()));
 	} catch (...) {
 		LOG_ERROR("Unknown exception in get_value");
 	}

@@ -1,4 +1,5 @@
 #pragma once
+#include "api/api.h"
 #include "core/database_metadata.hpp"
 
 #ifdef __cplusplus
@@ -7,23 +8,23 @@ extern "C" {
 
     struct CDatabaseMetaData {
         // === Строковые значения ===
-        const wchar_t* databaseProductName = nullptr;
-        const wchar_t* databaseProductVersion = nullptr;
-        const wchar_t* driverName = nullptr;
-        const wchar_t* driverVersion = nullptr;
-        const wchar_t* identifierQuoteString = nullptr;
-        const wchar_t* schemaTerm = nullptr;
-        const wchar_t* procedureTerm = nullptr;
-        const wchar_t* catalogTerm = nullptr;
-        const wchar_t* catalogSeparator = nullptr;
-        const wchar_t* sqlKeywords = nullptr;
-        const wchar_t* numericFunctions = nullptr;
-        const wchar_t* stringFunctions = nullptr;
-        const wchar_t* systemFunctions = nullptr;
-        const wchar_t* timeDateFunctions = nullptr;
-        const wchar_t* searchStringEscape = nullptr;
-        const wchar_t* extraNameCharacters = nullptr;
-        const wchar_t* userName = nullptr;
+        const ApiChar* databaseProductName = nullptr;
+        const ApiChar* databaseProductVersion = nullptr;
+        const ApiChar* driverName = nullptr;
+        const ApiChar* driverVersion = nullptr;
+        const ApiChar* identifierQuoteString = nullptr;
+        const ApiChar* schemaTerm = nullptr;
+        const ApiChar* procedureTerm = nullptr;
+        const ApiChar* catalogTerm = nullptr;
+        const ApiChar* catalogSeparator = nullptr;
+        const ApiChar* sqlKeywords = nullptr;
+        const ApiChar* numericFunctions = nullptr;
+        const ApiChar* stringFunctions = nullptr;
+        const ApiChar* systemFunctions = nullptr;
+        const ApiChar* timeDateFunctions = nullptr;
+        const ApiChar* searchStringEscape = nullptr;
+        const ApiChar* extraNameCharacters = nullptr;
+        const ApiChar* userName = nullptr;
 
         // === Булевы значения ===
         bool isReadOnly = false;

@@ -1,13 +1,15 @@
 #include "struct/result_set_meta_data_c.h"
 #include "utils/string_utils.hpp"
+#include "core/string_proxy.hpp"
 #include "utils/logger.hpp"
 
 using namespace utils;
 
-static const wchar_t* convert(const nanodbc::string& str) {
-    LOG_TRACE("Converting string to char array: '{}'", to_string(str));
-    const auto wstr = to_wstring(str);
-    const wchar_t* result = duplicate_string(wstr.c_str(), wstr.length());
+static const ApiChar* convert(const nanodbc::string& str) {
+    const StringProxy str_proxy(str);
+    LOG_TRACE("Converting string to char array: '{}'", str_proxy);
+    const auto api_string = static_cast<ApiString>(str_proxy);
+    const auto* result = duplicate_string(api_string.c_str(), api_string.length());
     LOG_TRACE("Converted string duplicated at {}", reinterpret_cast<uintptr_t>(result));
     return result;
 }

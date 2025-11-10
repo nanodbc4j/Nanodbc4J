@@ -12,7 +12,7 @@ extern "C" {
     /// \param timeout Seconds before connection timeout.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to Connection object on success, nullptr on failure.
-    ODBC_API Connection* connection_with_timeout(const wchar_t* connection_string, long timeout, NativeError* error) noexcept;
+    ODBC_API Connection* connection_with_timeout(const ApiChar* connection_string, long timeout, NativeError* error) noexcept;
 
     /// \brief Creates a connection using DSN, username, password and timeout.
     /// \param dsn The name of the data source (DSN).
@@ -21,7 +21,7 @@ extern "C" {
     /// \param timeout Seconds before connection timeout.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to Connection object on success, nullptr on failure.
-    ODBC_API Connection* connection_with_user_pass_timeout(const wchar_t* dsn, const wchar_t* user, const wchar_t* pass, long timeout, NativeError* error) noexcept;
+    ODBC_API Connection* connection_with_user_pass_timeout(const ApiChar* dsn, const ApiChar* user, const ApiChar* pass, long timeout, NativeError* error) noexcept;
 
     /// \brief Checks if the connection is currently active and valid.
     /// \param conn Pointer to the Connection object.
@@ -33,13 +33,13 @@ extern "C" {
     /// \param conn Pointer to the Connection object.
     /// \param error Error information structure to populate on failure.
     /// \return Current catalog name as string.
-    ODBC_API const wchar_t* get_catalog_name(Connection* conn, NativeError* error) noexcept;
+    ODBC_API const ApiChar* get_catalog_name(Connection* conn, NativeError* error) noexcept;
 
     /// \brief Sets the current catalog name.
     /// \param conn Pointer to the Connection object.
     /// \param catalog The catalog name to set as current.
     /// \param error Error information structure to populate on failure.
-    ODBC_API void set_catalog_name(Connection* conn, const wchar_t* catalog, NativeError* error) noexcept;
+    ODBC_API void set_catalog_name(Connection* conn, const ApiChar* catalog, NativeError* error) noexcept;
 
     /// \brief Sets the transaction isolation level.
     /// \param conn Pointer to the Connection object.
@@ -81,7 +81,7 @@ extern "C" {
     /// \param timeout Seconds before query timeout.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result object on success, nullptr on failure.
-    ODBC_API nanodbc::result* execute_request(Connection* conn, const wchar_t* sql, int timeout, NativeError* error) noexcept;
+    ODBC_API nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) noexcept;
 
     /// \brief Creates a prepared statement for parameterized queries.
     /// \param conn Pointer to the Connection object.

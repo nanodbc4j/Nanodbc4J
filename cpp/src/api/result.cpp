@@ -35,13 +35,13 @@ static T get_value_by_index(nanodbc::result* results, int index, NativeError* er
         return value;
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error in get_value: {}", e.what());
+        LOG_ERROR("Index range error in get_value: {}", StringProxy(e.what()));
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR("Type incompatible error in get_value: {}", e.what());
+        LOG_ERROR("Type incompatible error in get_value: {}", StringProxy(e.what()));
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Standard exception in get_value: {}", e.what());
+        LOG_ERROR("Standard exception in get_value: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in get_value");
@@ -50,7 +50,7 @@ static T get_value_by_index(nanodbc::result* results, int index, NativeError* er
 }
 
 template<typename T>
-static T get_value_by_name(nanodbc::result* results, const StringProxy<wchar_t>& column_name, NativeError* error, T fallback = T{}) noexcept {
+static T get_value_by_name(nanodbc::result* results, const StringProxy<ApiChar>& column_name, NativeError* error, T fallback = T{}) noexcept {
     int index = find_column_by_name(results, column_name.c_str(), error);
     if (error && error->error_code) {
         return fallback;
@@ -72,7 +72,7 @@ static T execute_result_set_query(nanodbc::result* results, const function<T(nan
         return result;
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "ResultError", e.what());
-        LOG_ERROR("Exception: {}", e.what());
+        LOG_ERROR("Exception: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in next_result");
@@ -161,7 +161,7 @@ short get_short_value_by_index(nanodbc::result* results, int index, NativeError*
     return get_value_by_index<short>(results, index, error, 0);
 }
 
-const wchar_t* get_string_value_by_index(const nanodbc::result* results, int index, NativeError* error) noexcept {
+const ApiChar* get_string_value_by_index(const nanodbc::result* results, int index, NativeError* error) noexcept {
     LOG_DEBUG("Getting string value by index: {}", index);
     init_error(error);
     try {
@@ -209,13 +209,13 @@ const wchar_t* get_string_value_by_index(const nanodbc::result* results, int ind
         return duplicate_string(wstr_result.c_str(), wstr_result.length());
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error at index {}: {}", index, e.what());
+        LOG_ERROR("Index range error at index {}: {}", index, StringProxy(e.what()));
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR("Type incompatible error at index {}: {}", index, e.what());
+        LOG_ERROR("Type incompatible error at index {}: {}", index, StringProxy(e.what()));
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception in get_string_value_by_index {}: {}", index, e.what());
+        LOG_ERROR("Exception in get_string_value_by_index {}: {}", index, StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in get_string_value_by_index {}", index);
@@ -291,13 +291,13 @@ ChunkedBinaryStream* get_binary_stream_by_index(nanodbc::result* results, int in
         return result;
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error at index {}: {}", index, e.what());
+        LOG_ERROR("Index range error at index {}: {}", index, StringProxy(e.what()));
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR("Type incompatible error at index {}: {}", index, e.what());
+        LOG_ERROR("Type incompatible error at index {}: {}", index, StringProxy(e.what()));
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception in get_binary_stream_by_index {}: {}", index, e.what());
+        LOG_ERROR("Exception in get_binary_stream_by_index {}: {}", index, StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in get_binary_stream_by_index {}", index);
@@ -326,7 +326,7 @@ int read_binary_stream(ChunkedBinaryStream* stream, uint8_t* buffer, int offset,
         return result;
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception in read_binary_stream: {}", e.what());
+        LOG_ERROR("Exception in read_binary_stream: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception");
@@ -365,13 +365,13 @@ BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, Nativ
         }
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error at index {}: {}", index, e.what());
+        LOG_ERROR("Index range error at index {}: {}", index, StringProxy(e.what()));
     } catch (const nanodbc::type_incompatible_error& e) {
         set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR("Type incompatible error at index {}: {}", index, e.what());
+        LOG_ERROR("Type incompatible error at index {}: {}", index, StringProxy(e.what()));
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception in get_bytes_array_by_index {}: {}", index, e.what());
+        LOG_ERROR("Exception in get_bytes_array_by_index {}: {}", index, StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception in get_bytes_array_by_index {}", index);
@@ -392,10 +392,10 @@ bool was_null_by_index(nanodbc::result* results, int index, NativeError* error) 
         return is_null;
     }  catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error for column '{}': {}", index, e.what());
+        LOG_ERROR("Index range error for column '{}': {}", index, StringProxy(e.what()));
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception '{}': {}", index, e.what());
+        LOG_ERROR("Exception '{}': {}", index, StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception '{}'", index);
@@ -403,38 +403,38 @@ bool was_null_by_index(nanodbc::result* results, int index, NativeError* error) 
     return true;
 }
 
-int get_int_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+int get_int_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<int>(results, str_name, error, 0);
 }
 
-long get_long_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+long get_long_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<long>(results, str_name, error, 0L);
 }
 
-double get_double_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+double get_double_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<double>(results, str_name, error, 0.0);
 }
 
-bool get_bool_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+bool get_bool_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     // result->get<bool>() не работает
     return get_value_by_name<short>(results, str_name, error, 0);
 }
 
-float get_float_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+float get_float_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<float>(results, str_name, error, 0.0f);
 }
 
-short get_short_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+short get_short_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<short>(results, str_name, error, 0);
 }
 
-const wchar_t* get_string_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+const ApiChar* get_string_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const int index = find_column_by_name(results, name, error);
     if (error->error_code) {
         return nullptr;
@@ -445,7 +445,7 @@ const wchar_t* get_string_value_by_name(nanodbc::result* results, const wchar_t*
     return get_string_value_by_index(results, index, error);
 }
 
-CDate* get_date_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+CDate* get_date_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     auto date = get_value_by_name<nanodbc::date>(results, str_name, error, {});
     if (error && error->error_code) {
@@ -465,7 +465,7 @@ CDate* get_date_value_by_name(nanodbc::result* results, const wchar_t* name, Nat
     return new CDate(date);
 }
 
-CTime* get_time_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+CTime* get_time_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     const auto time = get_value_by_name<nanodbc::time>(results, str_name, error, {});
 
@@ -486,7 +486,7 @@ CTime* get_time_value_by_name(nanodbc::result* results, const wchar_t* name, Nat
     return new CTime(time);
 }
 
-CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     const auto ts = get_value_by_name<nanodbc::timestamp>(results, str_name, error, {});
     if (error && error->error_code) {
@@ -506,7 +506,7 @@ CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const wchar_t*
     return new CTimestamp(ts);
 }
 
-BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     int index = find_column_by_name(results, name, error);
     if (error && error->error_code) {
         return nullptr;
@@ -514,7 +514,7 @@ BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const wchar_t* na
     return get_bytes_array_by_index(results, index, error);
 }
 
-ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     int index = find_column_by_name(results, name, error);
     if (error && error->error_code) {
         return nullptr;
@@ -522,7 +522,7 @@ ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const w
     return get_binary_stream_by_index(results, index, error);
 }
 
-int find_column_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+int find_column_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     const StringProxy str_name (name);
     init_error(error);
@@ -536,10 +536,10 @@ int find_column_by_name(nanodbc::result* results, const wchar_t* name, NativeErr
         return index;
     }  catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error for column '{}': {}", str_name, e.what());
+        LOG_ERROR("Index range error for column '{}': {}", str_name, StringProxy(e.what()));
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception '{}': {}", str_name, e.what());
+        LOG_ERROR("Exception '{}': {}", str_name, StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception '{}'", str_name);
@@ -547,7 +547,7 @@ int find_column_by_name(nanodbc::result* results, const wchar_t* name, NativeErr
     return 0;
 }
 
-bool was_null_by_name(nanodbc::result* results, const wchar_t* name, NativeError* error) noexcept {
+bool was_null_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     const StringProxy str_name (name);
     init_error(error);
@@ -561,10 +561,10 @@ bool was_null_by_name(nanodbc::result* results, const wchar_t* name, NativeError
         return is_null;
     }  catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error for column '{}': {}", str_name, e.what());
+        LOG_ERROR("Index range error for column '{}': {}", str_name, StringProxy(e.what()));
     } catch (const std::exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
-        LOG_ERROR("Exception '{}': {}", str_name, e.what());
+        LOG_ERROR("Exception '{}': {}", str_name, StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
         LOG_ERROR("Unknown exception '{}'", str_name);
@@ -584,7 +584,7 @@ void close_result(nanodbc::result* results, NativeError* error) noexcept {
         LOG_DEBUG("Result successfully closed and deleted");
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "ResultError", e.what());
-        LOG_ERROR("Exception in close_result: {}", e.what());
+        LOG_ERROR("Exception in close_result: {}", StringProxy(e.what()));
     } catch (...) {
         set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown close result error");
         LOG_ERROR("Unknown exception in close_result");

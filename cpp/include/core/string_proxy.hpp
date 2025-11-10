@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <fmt/ostream.h>
+#include <fmt/base.h>
 
 template <typename CharT,
           typename Traits = std::char_traits<CharT>,

@@ -1,4 +1,8 @@
 #pragma once
+#include <string>
+
+typedef wchar_t ApiChar;
+typedef std::wstring ApiString;
 
 #ifdef _WIN32
 	#ifdef ODBC_EXPORTS
