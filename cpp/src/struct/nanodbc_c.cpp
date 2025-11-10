@@ -1,11 +1,21 @@
 #include "struct/nanodbc_c.h"
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
+#include "core/string_proxy.hpp"
 
 using namespace utils;
 
+static const wchar_t* convert_string(const nanodbc::string& str) {
+	StringProxy str_proxy(str);
+	LOG_TRACE("Converting string to char array: '{}'", str_proxy);
+	const auto api_string = static_cast<ApiString>(str_proxy);
+	const auto* result = duplicate_string(api_string.c_str(), api_string.length());
+	LOG_TRACE("Converted string duplicated at {}", reinterpret_cast<uintptr_t>(result));
+	return result;
+}
+
 Driver::Attribute::Attribute(const Attribute& other) {
-	LOG_TRACE("Copying Driver::Attribute from {}", (void*)&other);
+	LOG_TRACE("Copying Driver::Attribute from {}", reinterpret_cast<uintptr_t>(&other));
 	keyword = duplicate_string(other.keyword);
 	value = duplicate_string(other.value);
 }
@@ -13,22 +23,22 @@ Driver::Attribute::Attribute(const Attribute& other) {
 
 Driver::Attribute::Attribute(const nanodbc::driver::attribute& other) {
 	LOG_TRACE("Constructing Driver::Attribute from nanodbc::driver::attribute");
-	keyword = duplicate_string(other.keyword.c_str(), other.keyword.length());
-	value = duplicate_string(other.value.c_str(), other.value.length());
+	keyword = convert_string(other.keyword);
+	value = convert_string(other.value);
 }
 
 Driver::Attribute::~Attribute() {
 	if (keyword) {
-		free((void*) keyword);		
+		free(const_cast<void*>(static_cast<const void*>(keyword)));
 	}
 
 	if (value){
-		free((void*) value);		
+		free(const_cast<void*>(static_cast<const void*>(value)));
 	}
 }
 
 Driver::Driver(const Driver& other) {
-	LOG_TRACE("Copying Driver from {}", (void*)&other);
+	LOG_TRACE("Copying Driver from {}", reinterpret_cast<uintptr_t>(&other));
 	attribute_count = static_cast<int>(other.attribute_count);
 	name = duplicate_string(other.name);
 	attributes = nullptr;
@@ -44,7 +54,7 @@ Driver::Driver(const Driver& other) {
 Driver::Driver(const nanodbc::driver& other) {
 	LOG_TRACE("Constructing Driver from nanodbc::driver");
 	attribute_count = static_cast<int>(other.attributes.size());
-	name = duplicate_string(other.name.c_str(), other.name.length());
+	name = convert_string(other.name);
 	attributes = nullptr;
 
 	if (attribute_count > 0) {		
@@ -62,7 +72,7 @@ Driver::Driver(const nanodbc::driver& other) {
 
 Driver::~Driver() {
 	if (name) {
-		free((void*) name);		
+		free(const_cast<void*>(static_cast<const void*>(name)));
 	}
 
 	if (attributes) {
@@ -91,23 +101,23 @@ Driver** Driver::convert(const std::list<nanodbc::driver>& drivers) {
 }
 
 Datasource::Datasource(const Datasource& other) {
-	LOG_TRACE("Copying Datasource from {}", (void*)&other);
+	LOG_TRACE("Copying Datasource from {}", reinterpret_cast<uintptr_t>(&other));
 	name = duplicate_string(other.name);
 	driver = duplicate_string(other.driver);
 }
 
 Datasource::Datasource(const nanodbc::datasource& other) {
 	LOG_TRACE("Constructing Datasource from nanodbc::datasource");
-	name = duplicate_string(other.name.c_str(), other.name.length());
-	driver = duplicate_string(other.driver.c_str(), other.driver.length());
+	name = convert_string(other.name);
+	driver = convert_string(other.driver);
 }
 
 Datasource::~Datasource() {
 	if (name) {
-		free((void*) name);
+		free(const_cast<void*>(static_cast<const void*>(name)));
 	}
 	if (driver) {
-		free((void*) driver);
+		free(const_cast<void*>(static_cast<const void*>(driver)));
 	}
 }
 

@@ -96,7 +96,7 @@ public final class ConnectionHandler {
     public static void setCatalog(ConnectionPtr conn, @NonNull String catalog) {
         NativeError nativeError = new NativeError();
         try {
-            ConnectionApi.INSTANCE.set_catalog_name(conn, catalog, nativeError);
+            ConnectionApi.INSTANCE.set_catalog_name(conn, catalog + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
         } finally {
             OdbcApi.INSTANCE.clear_native_error(nativeError);

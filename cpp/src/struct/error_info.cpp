@@ -5,7 +5,7 @@
 #include "utils/logger.hpp"
 
 void NativeError::clear(NativeError* error) {
-    LOG_TRACE("clear_native_error: error={}", (void*)error);
+    LOG_TRACE("clear_native_error: error={}", reinterpret_cast<uintptr_t>(error));
     if (error) {
         error->error_code = 0;
         if (error->error_message) {
@@ -21,7 +21,7 @@ void NativeError::clear(NativeError* error) {
 }
 
 NativeError::NativeError(const NativeError& other) {
-    LOG_TRACE("Copying NativeError from {}", (void*)&other);
+    LOG_TRACE("Copying NativeError from {}", reinterpret_cast<uintptr_t>(&other));
     error_code = other.error_code;
     error_message = utils::duplicate_string(other.error_message);
     error_type = utils::duplicate_string(other.error_type);
@@ -38,7 +38,7 @@ NativeError::~NativeError() {
 
 // Инициализация структуры ошибки
 void init_error(NativeError* error) {
-    LOG_TRACE("init_error: error={}", (void*)error);
+    LOG_TRACE("init_error: error={}", reinterpret_cast<uintptr_t>(error));
     NativeError::clear(error);
     LOG_TRACE("NativeError initialized");
 }

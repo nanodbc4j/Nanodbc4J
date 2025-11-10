@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
-#include "api/api.h"
 #include "api/connection.h"
 #include "api/statement.h"
 #include "api/result.h"
@@ -10,7 +9,7 @@
 #include <../tests/test_utils.hpp>
 
 static void count_check(Connection* conn, NativeError& error) {
-    const ApiString count_sql = NANODBC_TEXT("SELECT COUNT(*) FROM test_data;");
+    const std::wstring count_sql = L"SELECT COUNT(*) FROM test_data;";
     nanodbc::result* count_res = execute_request(conn, count_sql.c_str(), 10, &error);
     EXPECT_TRUE(count_res->next());
     const int count = count_res->get<int>(0);
@@ -21,19 +20,18 @@ static void count_check(Connection* conn, NativeError& error) {
 
 // Вспомогательная функция: подготовить тестовую таблицу
 static void setup_test_table(Connection* conn, NativeError& error) {
-    const ApiString create = NANODBC_TEXT(
-        "CREATE TABLE test_data ("
-        "id INTEGER PRIMARY KEY, "
-        "name VARCHAR(50), "
-        "active BOOLEAN, "
-        "score REAL, "
-        "balance DOUBLE, "
-        "created_date DATE, "
-        "created_time TIME, "
-        "created_ts TIMESTAMP, "
-        "blob_data BLOB"
-        ");"
-    );
+    const std::wstring create = LR"(
+        CREATE TABLE test_data (
+        id INTEGER PRIMARY KEY,
+        name VARCHAR(50),
+        active BOOLEAN,
+        score REAL,
+        balance DOUBLE,
+        created_date DATE,
+        created_time TIME,
+        created_ts TIMESTAMP,
+        blob_data BLOB
+        );)";
     nanodbc::result* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -42,13 +40,11 @@ static void setup_test_table(Connection* conn, NativeError& error) {
     // Вставляем данные
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    const ApiString insert = NANODBC_TEXT(
-        "INSERT INTO test_data VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?);"
-    );
+    const std::wstring insert = L"INSERT INTO test_data VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?);";
     prepare_statement(stmt, insert.c_str(), &error);
     assert_no_error(error);
 
-    const ApiString text = NANODBC_TEXT("Alice");
+    const std::wstring text = L"Alice";
     set_string_value(stmt, 0, text.data(), &error);
     assert_no_error(error);
     set_bool_value(stmt, 1, true, &error);
@@ -90,7 +86,7 @@ TEST(ResultSetAPITest, GetValueByIndex) {
 
     count_check(conn, error);
 
-    const ApiString select = NANODBC_TEXT("SELECT * FROM test_data;");
+    const std::wstring select = L"SELECT * FROM test_data;";
     nanodbc::result* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);
@@ -101,7 +97,7 @@ TEST(ResultSetAPITest, GetValueByIndex) {
     // By index
     EXPECT_EQ(get_long_value_by_index(res, 0, &error), 1);
     assert_no_error(error);
-    EXPECT_EQ(ApiString(get_string_value_by_index(res, 1, &error)), ApiString(NANODBC_TEXT("Alice")));
+    EXPECT_EQ(std::wstring(get_string_value_by_index(res, 1, &error)), std::wstring(L"Alice"));
     assert_no_error(error);
 
     // error on unix sqlite odbc
@@ -111,7 +107,7 @@ TEST(ResultSetAPITest, GetValueByIndex) {
 #endif
 
     // find_column
-    int idx = find_column_by_name(res, NANODBC_TEXT("score"), &error);
+    int idx = find_column_by_name(res, L"score", &error);
     EXPECT_EQ(idx, 3);
     assert_no_error(error);
 
@@ -128,7 +124,7 @@ TEST(ResultSetAPITest, GetValueByName) {
 
     count_check(conn, error);
 
-    const ApiString select = NANODBC_TEXT("SELECT * FROM test_data;");
+    const std::wstring select = L"SELECT * FROM test_data;";
     nanodbc::result* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);
@@ -137,11 +133,11 @@ TEST(ResultSetAPITest, GetValueByName) {
     assert_no_error(error);
 
     // By name
-    ApiString name = NANODBC_TEXT("id");
+    std::wstring name = L"id";
     EXPECT_EQ(get_long_value_by_name(res, name.data(), &error), 1);
     assert_no_error(error);
-    name = NANODBC_TEXT("name");
-    EXPECT_EQ(ApiString(get_string_value_by_name(res, name.data(), &error)), ApiString(NANODBC_TEXT("Alice")));
+    name = L"name";
+    EXPECT_EQ(std::wstring(get_string_value_by_name(res, name.data(), &error)), std::wstring(L"Alice"));
     assert_no_error(error);
 
     // error on unix sqlite odbc
@@ -152,7 +148,7 @@ TEST(ResultSetAPITest, GetValueByName) {
 #endif
 
     // find_column
-    int idx = find_column_by_name(res, NANODBC_TEXT("score"), &error);
+    int idx = find_column_by_name(res, L"score", &error);
     EXPECT_EQ(idx, 3);
     assert_no_error(error);
 
@@ -166,17 +162,17 @@ TEST(ResultSetAPITest, NullAndBinaryHandling) {
     Connection* conn = create_in_memory_db(error);
     ASSERT_NE(conn, nullptr);
 
-    const ApiString create = NANODBC_TEXT("CREATE TABLE null_test (val INTEGER);");
+    const std::wstring create = L"CREATE TABLE null_test (val INTEGER);";
     nanodbc::result* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
 
-    const ApiString insert = NANODBC_TEXT("INSERT INTO null_test VALUES (NULL);");
+    const std::wstring insert = L"INSERT INTO null_test VALUES (NULL);";
     res = execute_request(conn, insert.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
 
-    const ApiString select = NANODBC_TEXT("SELECT val FROM null_test;");
+    const std::wstring select = L"SELECT val FROM null_test;";
     res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     EXPECT_TRUE(next_result(res, &error));
@@ -184,7 +180,7 @@ TEST(ResultSetAPITest, NullAndBinaryHandling) {
     std::cout << "null_test val:\t" << res->get<int>(0) << std::endl;
 
     EXPECT_TRUE(was_null_by_index(res, 0, &error));
-    EXPECT_TRUE(was_null_by_name(res, NANODBC_TEXT("val"), &error));
+    EXPECT_TRUE(was_null_by_name(res, L"val", &error));
     assert_no_error(error);
 
     close_result(res, &error);

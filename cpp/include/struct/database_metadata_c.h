@@ -1,6 +1,6 @@
 #pragma once
-#include "core/database_metadata.hpp"
 #include "api/api.h"
+#include "core/database_metadata.hpp"
 
 #ifdef __cplusplus
 extern "C" {

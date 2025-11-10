@@ -149,7 +149,7 @@ extern "C" {
     /// \param nullable Whether to include nullable columns.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing best row identifier information.
-    ODBC_API nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema, 
+    ODBC_API nanodbc::result* get_database_meta_data_best_row_identifier(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
         const ApiChar* table, int scope, bool nullable, NativeError* error) noexcept;
 
     /// \brief Retrieves columns that are automatically updated when any value in a row is updated.
@@ -159,7 +159,7 @@ extern "C" {
     /// \param table Table name (required).
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing version column information.
-    ODBC_API nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema, 
+    ODBC_API nanodbc::result* get_database_meta_data_version_columns(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
         const ApiChar* table, NativeError* error) noexcept;
 
     /// \brief Retrieves foreign key relationships between two tables.
@@ -184,7 +184,7 @@ extern "C" {
     /// \param approximate true to return approximate values for some numeric columns.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set containing index information.
-    ODBC_API nanodbc::result* get_database_meta_data_index_info(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema, 
+    ODBC_API nanodbc::result* get_database_meta_data_index_info(nanodbc::connection* conn, const ApiChar* catalog, const ApiChar* schema,
         const ApiChar* table, bool unique, bool approximate, NativeError* error) noexcept;
 
     /// \brief Releases database metadata resources.

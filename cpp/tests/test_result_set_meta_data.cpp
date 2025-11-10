@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
-#include "api/api.h"
 #include "api/connection.h"
 #include "api/statement.h"
 #include "api/result.h"
@@ -11,7 +10,7 @@
 #include "struct/binary_array.h"
 
 static void count_check(Connection* conn, NativeError& error) {
-    const ApiString count_sql = NANODBC_TEXT("SELECT COUNT(*) FROM test_data;");
+    const std::wstring count_sql = L"SELECT COUNT(*) FROM test_data;";
     nanodbc::result* count_res = execute_request(conn, count_sql.c_str(), 10, &error);
     EXPECT_TRUE(count_res->next());
     int count = count_res->get<int>(0);
@@ -22,19 +21,18 @@ static void count_check(Connection* conn, NativeError& error) {
 
 // Вспомогательная функция: подготовить тестовую таблицу
 static void setup_test_table(Connection* conn, NativeError& error) {
-    const ApiString create = NANODBC_TEXT(
-        "CREATE TABLE test_data ("
-        "id INTEGER PRIMARY KEY, "
-        "name VARCHAR(50), "
-        "active BOOLEAN, "
-        "score REAL, "
-        "balance DOUBLE PRECISION, "
-        "created_date DATE, "
-        "created_time TIME, "
-        "created_ts TIMESTAMP, "
-        "blob_data BLOB"
-        ");"
-    );
+    const std::wstring create = LR"(
+        CREATE TABLE test_data (
+        id INTEGER PRIMARY KEY,
+        name VARCHAR(50),
+        active BOOLEAN,
+        score REAL,
+        balance DOUBLE PRECISION,
+        created_date DATE,
+        created_time TIME,
+        created_ts TIMESTAMP,
+        blob_data BLOB
+        );)";
     nanodbc::result* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -43,14 +41,12 @@ static void setup_test_table(Connection* conn, NativeError& error) {
     // Вставляем данные
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    const ApiString insert = NANODBC_TEXT(
-        "INSERT INTO test_data VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
-    );
+    const std::wstring insert = L"INSERT INTO test_data VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
     prepare_statement(stmt, insert.c_str(), &error);
     assert_no_error(error);
 
     set_long_value(stmt, 0, 1, &error);
-    set_string_value(stmt, 1, NANODBC_TEXT("Alice"), &error);
+    set_string_value(stmt, 1, L"Alice", &error);
     set_bool_value(stmt, 2, true, &error);
     set_float_value(stmt, 3, 95.5f, &error);
     set_double_value(stmt, 4, 1234567.89, &error);
@@ -83,7 +79,7 @@ TEST(ResultSetMetaDataTest, BasicMetadata) {
     ASSERT_NE(conn, nullptr);
     setup_test_table(conn, error);
 
-    const ApiString select = NANODBC_TEXT("SELECT id, name FROM test_data;");
+    const std::wstring select = L"SELECT id, name FROM test_data;";
     nanodbc::result* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
 
@@ -93,8 +89,8 @@ TEST(ResultSetMetaDataTest, BasicMetadata) {
 
     EXPECT_EQ(meta->columnCount, 2);
 
-    EXPECT_EQ(ApiString(meta->column[0]->columnName), ApiString(NANODBC_TEXT("id")));
-    EXPECT_EQ(ApiString(meta->column[1]->columnName), ApiString(NANODBC_TEXT("name")));
+    EXPECT_EQ(std::wstring(meta->column[0]->columnName), std::wstring(L"id"));
+    EXPECT_EQ(std::wstring(meta->column[1]->columnName), std::wstring(L"name"));
 
     delete_meta_data(meta);
     close_result(res, &error);
