@@ -2,7 +2,6 @@
 #include <nanodbc/nanodbc.h>
 
 class ChunkedBinaryStream {
-private:
     static constexpr size_t DEFAULT_CHUNK_SIZE = 8192; // 8KB
 
     nanodbc::result* rs_;

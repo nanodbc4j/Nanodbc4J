@@ -2,7 +2,6 @@
 #include <nanodbc/nanodbc.h>
 
 class ResultSetMetaData {
-private:
     const nanodbc::result& result_;
 
 public:

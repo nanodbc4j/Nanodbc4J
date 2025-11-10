@@ -15,18 +15,19 @@
 #include "utils/logger.hpp"
 #include "utils/string_utils.hpp"
 #include "core/nanodbc_defs.h"
+#include "core/string_proxy.hpp"
 
 #define BUFFER_SIZE 1024
 
 using namespace utils;
 
 // Вспомогательный метод для определения по имени типа
-static const nanodbc::string determineClassNameByTypeName(int column, int sqlType, const nanodbc::string& typeName) {
-    LOG_TRACE("column={}, sqlType={}, typeName={}", column, sqlType, to_string(typeName));
+static nanodbc::string determineClassNameByTypeName(int column, int sqlType, const nanodbc::string &typeName) {
+    LOG_TRACE("column={}, sqlType={}, typeName={}", column, sqlType, StringProxy(typeName));
 
     try {
         std::string lowerTypeName = to_string(typeName);
-        std::for_each(lowerTypeName.begin(), lowerTypeName.end(), [](char& c) {
+        std::ranges::for_each(lowerTypeName, [](char& c) {
             c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
         });
 
@@ -96,11 +97,11 @@ static const nanodbc::string determineClassNameByTypeName(int column, int sqlTyp
         }
 
         // Для известных SQL типов без конкретного case
-        LOG_DEBUG("No match found, falling back to java.lang.String for type: {}", to_string(typeName));
+        LOG_DEBUG("No match found, falling back to java.lang.String for type: {}", StringProxy(typeName));
         return NANODBC_TEXT("java.lang.String");
 
     } catch (const std::exception& e) {
-        LOG_DEBUG("Exception in determineClassNameByTypeName: {}", e.what());
+        LOG_DEBUG("Exception in determineClassNameByTypeName: {}", StringProxy(e.what()));
         return NANODBC_TEXT("java.lang.Object");
     } catch (...) {
         LOG_DEBUG("Unknown exception in determineClassNameByTypeName");
@@ -109,14 +110,14 @@ static const nanodbc::string determineClassNameByTypeName(int column, int sqlTyp
 }
 
 template <std::size_t N>
-inline std::size_t size(NANODBC_SQLCHAR const (&array)[N]) noexcept {
+static std::size_t size(NANODBC_SQLCHAR const (&array)[N]) noexcept {
     auto const n = std::char_traits<NANODBC_SQLCHAR>::length(array);
     assert(n < N);
     return n < N ? n : N - 1;
 }
 
 // Получение строкового атрибута колонки через ODBC
-inline static nanodbc::string getColumnStringAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
+static nanodbc::string getColumnStringAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
     LOG_TRACE("hStmt={}, column={}, field={}", hStmt, column, field);
 
     NANODBC_SQLCHAR buffer[BUFFER_SIZE] = { 0 };
@@ -138,7 +139,7 @@ inline static nanodbc::string getColumnStringAttribute(const SQLHSTMT& hStmt, co
 }
 
 // Получение числового атрибута колонки через ODBC
-inline static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
+static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
     LOG_TRACE("hStmt={}, column={}, field={}", hStmt, column, field);
 
     SQLLEN value = 0;
@@ -194,7 +195,7 @@ bool ResultSetMetaData::isAutoIncrement(int column) const {
     bool heuristicMatch = (lowerName.find("id") != std::string::npos ||
                            lowerName.find("identity") != std::string::npos);
     if (heuristicMatch) {
-        LOG_DEBUG("Heuristic: column {} name '{}' suggests auto-increment", column, lowerName);
+        LOG_DEBUG("Heuristic: column {} name '{}' suggests auto-increment", column, StringProxy(lowerName));
     }
     return heuristicMatch;
 }
@@ -237,14 +238,14 @@ bool ResultSetMetaData::isCurrency(int column) const {
     // проверка по имени типа
     std::string typeName = to_string(getColumnTypeName(column));
 
-    std::for_each(typeName.begin(), typeName.end(), [](char& c) {
+    std::ranges::for_each(typeName, [](char& c) {
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
     });
 
     bool isCurrency = (typeName.find("money") != std::string::npos ||
                         typeName.find("currency") != std::string::npos);
     if (isCurrency) {
-        LOG_DEBUG("Column {} type name '{}' suggests currency", column, typeName);
+        LOG_DEBUG("Column {} type name '{}' suggests currency", column, StringProxy(typeName));
     }
     return isCurrency;
 }
@@ -296,7 +297,7 @@ int ResultSetMetaData::getColumnDisplaySize(int column) const {
         LOG_DEBUG("Column {} display size: {}", column, size);
         return size;
     } catch (const std::exception& e) {
-        LOG_DEBUG("Exception in getColumnDisplaySize({}): {}", column, e.what());
+        LOG_DEBUG("Exception in getColumnDisplaySize({}): {}", column, StringProxy(e.what()));
     } catch (...) {
         LOG_DEBUG("Unknown exception in getColumnDisplaySize({})", column);
     }
@@ -307,13 +308,13 @@ nanodbc::string ResultSetMetaData::getColumnLabel(int column) const {
     LOG_TRACE("column={}", column);
     nanodbc::string label = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_LABEL);
     if (!label.empty()) {
-        LOG_DEBUG("Column {} label: '{}'", column, to_string(label));
+        LOG_DEBUG("Column {} label: '{}'", column, StringProxy(label));
         return label;
     }
 
     // если нет специального label, используем имя
     nanodbc::string name = getColumnName(column);
-    LOG_DEBUG("Using column name as label: '{}'", to_string(name));
+    LOG_DEBUG("Using column name as label: '{}'", StringProxy(name));
     return name;
 }
 
@@ -322,10 +323,10 @@ nanodbc::string ResultSetMetaData::getColumnName(int column) const {
 
     try {
         nanodbc::string name = result_.column_name(column - 1);
-        LOG_DEBUG("Column {} name: '{}'", column, to_string(name));
+        LOG_DEBUG("Column {} name: '{}'", column, StringProxy(name));
         return name;
     } catch (const std::exception& e) {
-        LOG_DEBUG("Exception in getColumnName({}): {}", column, e.what());
+        LOG_DEBUG("Exception in getColumnName({}): {}", column, StringProxy(e.what()));
     } catch (...) {
         LOG_DEBUG("Unknown exception in getColumnName({})", column);
     }
@@ -336,7 +337,7 @@ nanodbc::string ResultSetMetaData::getSchemaName(int column) const {
     LOG_TRACE("column={}", column);
     nanodbc::string schema = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_SCHEMA_NAME);
     if (!schema.empty()) {
-        LOG_DEBUG("Column {} schema: '{}'", column, to_string(schema));
+        LOG_DEBUG("Column {} schema: '{}'", column, StringProxy(schema));
     }
     return schema;
 }
@@ -370,7 +371,7 @@ int ResultSetMetaData::getScale(int column) const {
         LOG_DEBUG("Column {} scale: {}", column, scale);
         return scale;
     } catch (const std::exception& e) {
-        LOG_DEBUG("Exception in getScale({}): {}", column, e.what());
+        LOG_DEBUG("Exception in getScale({}): {}", column, StringProxy(e.what()));
     } catch (...) {
         LOG_DEBUG("Unknown exception in getScale({})", column);
     }
@@ -381,7 +382,7 @@ nanodbc::string ResultSetMetaData::getTableName(int column) const {
     LOG_TRACE("column={}", column);
     nanodbc::string table = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TABLE_NAME);
     if (!table.empty()) {
-        LOG_DEBUG("Column {} table: '{}'", column, to_string(table));
+        LOG_DEBUG("Column {} table: '{}'", column, StringProxy(table));
     }
     return table;
 }
@@ -390,7 +391,7 @@ nanodbc::string ResultSetMetaData::getCatalogName(int column) const {
     LOG_TRACE("column={}", column);
     nanodbc::string catalog = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_CATALOG_NAME);
     if (!catalog.empty()) {
-        LOG_DEBUG("Column {} catalog: '{}'", column, to_string(catalog));
+        LOG_DEBUG("Column {} catalog: '{}'", column, StringProxy(catalog));
     }
     return catalog;
 }
@@ -432,7 +433,7 @@ nanodbc::string ResultSetMetaData::getColumnTypeName(int column) const {
     // Сначала пробуем получить им¤ типа через ODBC
     nanodbc::string typeName = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TYPE_NAME);
     if (!typeName.empty()) {
-        LOG_DEBUG("Column {} type name: '{}'", column, to_string(typeName));
+        LOG_DEBUG("Column {} type name: '{}'", column, StringProxy(typeName));
         return typeName;
     }
 
@@ -566,7 +567,7 @@ nanodbc::string ResultSetMetaData::getColumnClassName(int column) const {
         default: {
             nanodbc::string typeName = getColumnTypeName(column);
             nanodbc::string className = determineClassNameByTypeName(column, sqlType, typeName);
-            LOG_DEBUG("Using determineClassNameByTypeName: type={}, typeName='{}' -> className='{}'", sqlType, to_string(typeName), to_string(className));
+            LOG_DEBUG("Using determineClassNameByTypeName: type={}, typeName='{}' -> className='{}'", sqlType, StringProxy(typeName), StringProxy(className));
             return className;
         }
     }

@@ -30,6 +30,7 @@ class LibraryLoader {
     private static final String TEMP_LIB_PREFIX = "nanodbc4j_";
     private static final String LOCK_EXT = ".lck";
     private static volatile boolean isLoaded = false;
+    private static volatile String libraryPath;
 
     /**
      * Loads native library from JAR resources.
@@ -38,9 +39,9 @@ class LibraryLoader {
      *
      * @throws IOException if library extraction fails or library not found in JAR
      */
-    static synchronized void load() throws IOException {
+    static synchronized String load() throws IOException {
         if (isLoaded) {
-            return;
+            return libraryPath;
         }
 
         // Only on first run - clean up old files
@@ -53,6 +54,7 @@ class LibraryLoader {
 
         loadLibraryFromJar(resourcePath);
         isLoaded = true;
+        return libraryPath;
     }
 
     /**
@@ -95,8 +97,9 @@ class LibraryLoader {
                 }
             }
 
-            System.load(libFile.toString());
-            log.info("Successfully loaded native library from JAR: " + libFile);
+            libraryPath = libFile.toString();
+            System.load(libraryPath);
+            log.info("Successfully loaded native library from JAR: " + libraryPath);
         }
     }
 
@@ -141,15 +144,16 @@ class LibraryLoader {
     static Map<String, Object> getNativeLibraryOptions() {
         Map<String, Object> options = new HashMap<>();
         if (Platform.isWindows()) {
+            // Windows uses 16-bit wchar_t with UTF-16LE encoding
             options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
         } else {
+            // Unix-like systems use 32-bit wchar_t with endianness-dependent encoding
             if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-                options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
+                options.put(Library.OPTION_STRING_ENCODING, "UTF-32LE");
             } else {
-                options.put(Library.OPTION_STRING_ENCODING, "UTF-16BE");
+                options.put(Library.OPTION_STRING_ENCODING, "UTF-32BE");
             }
         }
-        options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
         options.put(Library.OPTION_CALLING_CONVENTION, Function.C_CONVENTION);
         return options;
     }

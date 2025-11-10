@@ -13,6 +13,7 @@ public final class BinaryArray extends Structure {
 
     public BinaryArray(Pointer peer) {
         super(peer);
+        read();
     }
 
     public BinaryArray(byte[] bytes) {

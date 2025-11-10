@@ -11,7 +11,7 @@ extern "C" {
         char* error_type = nullptr;
 
         NativeError() = default;
-        explicit NativeError(const NativeError& other);
+        NativeError(const NativeError& other);
         ~NativeError();
         static void clear(NativeError* error);
     };

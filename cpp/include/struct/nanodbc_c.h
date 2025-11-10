@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 #include <nanodbc/nanodbc.h>
 #include "api/api.h"
 

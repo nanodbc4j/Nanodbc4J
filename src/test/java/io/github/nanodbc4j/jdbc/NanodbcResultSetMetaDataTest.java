@@ -10,19 +10,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests for ResultSetMetaData behavior in the custom JDBC driver.
  * Mirrors the logic of the C++ ResultSetMetaDataTest.BasicMetadata test.
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class NanodbcResultSetMetaDataTest {
+class NanodbcResultSetMetaDataTest extends  BaseTest {
 
     private Connection connection;
-
-    String connectionString;
-
-    @BeforeAll
-    void setUpConnectionString() {
-        var driver = NanodbcDriver.driversList().stream().map(DriverProperties::name).filter(s -> s.toLowerCase().contains("sqlite")).findFirst().orElse(null);
-        assertNotNull(driver, "SQLite driver not found");
-        connectionString = "jdbc:nanodbc4j:DRIVER={" + driver + "};Database=:memory:;Timeout=1000;";
-    }
 
     @BeforeEach
     void setUp() throws SQLException {

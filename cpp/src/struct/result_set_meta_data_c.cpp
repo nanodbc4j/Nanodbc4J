@@ -1,18 +1,21 @@
 #include "struct/result_set_meta_data_c.h"
 #include "utils/string_utils.hpp"
+#include "core/string_proxy.hpp"
 #include "utils/logger.hpp"
 
 using namespace utils;
 
-static ApiChar* convert(const ApiString& str) {
-    LOG_TRACE("Converting string to char array: '{}'", to_string(str));
-    ApiChar* result = duplicate_string(str.c_str(), str.length());
-    LOG_TRACE("Converted string duplicated at {}", (void*)result);
+static const ApiChar* convert(const nanodbc::string& str) {
+    const StringProxy str_proxy(str);
+    LOG_TRACE("Converting string to char array: '{}'", str_proxy);
+    const auto api_string = static_cast<ApiString>(str_proxy);
+    const auto* result = duplicate_string(api_string.c_str(), api_string.length());
+    LOG_TRACE("Converted string duplicated at {}", reinterpret_cast<uintptr_t>(result));
     return result;
 }
 
 CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) {
-    LOG_TRACE("Copying ColumnMetaData from {}", (void*)&other);
+    LOG_TRACE("Copying ColumnMetaData from {}", reinterpret_cast<uintptr_t>(&other));
     isAutoIncrement = other.isAutoIncrement;
     isCaseSensitive = other.isCaseSensitive;
     isSearchable = other.isSearchable;
@@ -36,8 +39,8 @@ CResultSetMetaData::ColumnMetaData::ColumnMetaData(const ColumnMetaData& other) 
 }
 
 CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
-    auto str_free = [&](const ApiChar* str) {
-        if (str) free(const_cast<ApiChar*>(str));
+    auto str_free = [&](const auto* str) {
+        if (str) free(const_cast<void*>(static_cast<const void*>(str)));
     };
 
     str_free(columnLabel);
@@ -50,7 +53,7 @@ CResultSetMetaData::ColumnMetaData::~ColumnMetaData() {
 }
 
 CResultSetMetaData::CResultSetMetaData(const CResultSetMetaData& other) {
-    LOG_TRACE("Copying CResultSetMetaData from {}", (void*)&other);
+    LOG_TRACE("Copying CResultSetMetaData from {}", reinterpret_cast<uintptr_t>(&other));
     columnCount = other.columnCount;
 
     if (columnCount) {
@@ -70,7 +73,7 @@ CResultSetMetaData::CResultSetMetaData(const ResultSetMetaData& other) {
         column = new const ColumnMetaData * [columnCount];
         for (int i = 0; i < columnCount; ++i) {
             LOG_TRACE("Processing column [{}]", i);
-            ColumnMetaData* data = new ColumnMetaData();
+            auto* data = new ColumnMetaData();
 
             // Отсчет начинается с 1
             data->isAutoIncrement = other.isAutoIncrement(i + 1);

@@ -5,7 +5,7 @@
 TEST(OdbcAPITest, DriversList) {
 	int count = 0;
 	const auto api_drivers = drivers_list(&count);
-	auto nanodbc_drivers = nanodbc::list_drivers();
+	const auto nanodbc_drivers = nanodbc::list_drivers();
 	EXPECT_EQ(count, static_cast<int>(nanodbc_drivers.size()));
 	delete_driver_array(api_drivers, count);
 }
@@ -13,8 +13,8 @@ TEST(OdbcAPITest, DriversList) {
 // Test: get datasource list
 TEST(OdbcAPITest, DatasourceList) {
 	int count = 0;
-	auto api_datasources = datasources_list (&count);
-	auto nanodbc_datasources = nanodbc::list_datasources();
+	const auto api_datasources = datasources_list (&count);
+	const auto nanodbc_datasources = nanodbc::list_datasources();
 	EXPECT_EQ(count, static_cast<int>(nanodbc_datasources.size()));
 	delete_datasource_array(api_datasources, count);
 }

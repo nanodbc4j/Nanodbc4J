@@ -1,5 +1,6 @@
 #include "api/result_set_meta_data.h"
 #include "utils/logger.hpp"
+#include "core/string_proxy.hpp"
 
 CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) noexcept {
 	LOG_DEBUG("Getting metadata from result: {}", reinterpret_cast<uintptr_t>(results));
@@ -17,7 +18,7 @@ CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) 
 		return meta_data;
 	} catch (const std::exception& e) {
 		set_error(error, ErrorCode::Standard, "MetaDataError", e.what());
-		LOG_ERROR("Exception in get_meta_data: {}", e.what());
+		LOG_ERROR("Exception in get_meta_data: {}", StringProxy(e.what()));
 	} catch (...) {
 		set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
 		LOG_ERROR("Unknown exception in get_meta_data");
