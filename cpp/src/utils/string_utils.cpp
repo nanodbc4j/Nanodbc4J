@@ -1,7 +1,4 @@
 #include "utils/string_utils.hpp"
-#include <type_traits>
-#include <memory>
-#include <cstring>
 #include <vector>
 #include <algorithm>
 #include <exception>
@@ -69,7 +66,7 @@ std::string utils::to_string(const std::wstring& str) {
     static_assert(alignof(wchar_t) == alignof(char16_t), "alignment mismatch");
     std::string result;
     result.reserve(str.size() * 2);
-    utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
+    utf8::unchecked::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #else
     // Linux/macOS: wstring is UTF-32
@@ -77,7 +74,7 @@ std::string utils::to_string(const std::wstring& str) {
     static_assert(alignof(wchar_t) == alignof(char32_t), "alignment mismatch");
     std::string result;
     result.reserve(str.size() * 4);
-    utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
+    utf8::unchecked::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 #endif
 }
@@ -85,14 +82,14 @@ std::string utils::to_string(const std::wstring& str) {
 std::string utils::to_string(const std::u16string& str) {
     std::string result;
     result.reserve(str.size() * 3);
-    utf8::utf16to8(str.begin(), str.end(), std::back_inserter(result));
+    utf8::unchecked::utf16to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }
 
 std::string utils::to_string(const std::u32string& str) {
     std::string result;
     result.reserve(str.size() * 4);
-    utf8::utf32to8(str.begin(), str.end(), std::back_inserter(result));
+    utf8::unchecked::utf32to8(str.begin(), str.end(), std::back_inserter(result));
     return result;
 }
 
@@ -140,7 +137,7 @@ std::wstring utils::to_wstring(const std::string& str) {
     //Replaces all invalid sequences
     std::string cleaned;
     cleaned.reserve(str.size());
-    utf8::replace_invalid(str.begin(), str.end(), std::back_inserter(cleaned));
+    utf8::unchecked::replace_invalid(str.begin(), str.end(), std::back_inserter(cleaned));
 
 #ifdef _WIN32
     // Windows: wstring is UTF-16
@@ -170,7 +167,7 @@ std::u16string utils::to_u16string(const std::string& str) {
     //Replaces all invalid sequences
     std::string cleaned;
     cleaned.reserve(str.size());
-    utf8::replace_invalid(str.begin(), str.end(), std::back_inserter(cleaned));
+    utf8::unchecked::replace_invalid(str.begin(), str.end(), std::back_inserter(cleaned));
 
     std::u16string result;
     result.reserve(cleaned.size());
