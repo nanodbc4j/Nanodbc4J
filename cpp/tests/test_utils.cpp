@@ -30,7 +30,7 @@ std::wstring get_connection_string() {
         std::string lower_name = lower_name_c_str ? std::string(lower_name_c_str) : std::string();
         std::wstring name_wstr = name_c_wstr ? std::wstring(name_c_wstr) : std::wstring();
 
-        if (lower_name.find("sqlite") != std::string::npos) {
+        if (lower_name.find("sqlite3") != std::string::npos) {
             result = L"DRIVER={" + name_wstr + L"};Database=:memory:;Timeout=1000;";
         }
 
