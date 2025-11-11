@@ -184,7 +184,7 @@ public final class ResultSetHandler {
             array = ResultApi.INSTANCE.get_bytes_array_by_index(resultSet, index - 1, nativeError);
             throwIfNativeError(nativeError);
             if (array == null) {
-                return new byte[0];
+                return null;
             }
             return array.getBytes();
         } finally {
@@ -200,7 +200,7 @@ public final class ResultSetHandler {
             array = ResultApi.INSTANCE.get_bytes_array_by_name(resultSet, name + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
             if (array == null) {
-                return new byte[0];
+                return null;
             }
             return array.getBytes();
         } finally {

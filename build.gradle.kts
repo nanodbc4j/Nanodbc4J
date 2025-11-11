@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.nanodbc4j"
-version = "1.0-beta-1"
+version = "1.0-alpha-1"
 description = "JDBC Type 1 driver implementation using nanodbc C++ library for ODBC connectivity. Open-source replacement for the removed JDBC-ODBC Bridge."
 
 java {
@@ -104,7 +104,7 @@ tasks.test {
 
 // Publishing configuration: produces POM metadata
 mavenPublishing {
-    coordinates(group.toString(), name.toString(), version.toString())
+    coordinates(group.toString(), name, version.toString())
 
     pom {
         name.set("Nanodbc4J")

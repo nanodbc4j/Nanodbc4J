@@ -26,16 +26,25 @@ StringProxy<CharT, Traits, Alloc>::StringProxy(CharT ch)
 
 template <typename CharT, typename Traits, typename Alloc>
 StringProxy<CharT, Traits, Alloc>::operator string() const {
+    if constexpr (is_same_v<StringT, string>) {
+        return data;
+    }
     return to_string(data);
 }
 
 template <typename CharT, typename Traits, typename Alloc>
 StringProxy<CharT, Traits, Alloc>::operator wstring() const {
+    if constexpr (is_same_v<StringT, wstring>) {
+        return data;
+    }
     return to_wstring(data);
 }
 
 template <typename CharT, typename Traits, typename Alloc>
 StringProxy<CharT, Traits, Alloc>::operator u16string() const {
+    if constexpr (is_same_v<StringT, u16string>) {
+        return data;
+    }
     return to_u16string(data);
 }
 

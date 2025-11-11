@@ -2090,7 +2090,7 @@ public class NanodbcResultSet implements ResultSet {
         // Fallback: attempt to read as raw bytes (e.g., PostgreSQL uuid, MySQL BINARY(16), etc.)
         try {
             byte[] bytes = ResultSetHandler.getBytesByIndex(resultSetPtr, columnIndex);
-            if (bytes.length == 0) {
+            if (bytes == null || bytes.length == 0) {
                 return null;
             }
             if (bytes.length != 16) {
