@@ -7,7 +7,8 @@ import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 
-import static io.github.nanodbc4j.internal.handler.Handler.*;
+import static com.sun.jna.Native.POINTER_SIZE;
+import static io.github.nanodbc4j.internal.handler.Handler.getWideString;
 
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcResultSetMetadata object.
@@ -22,7 +23,8 @@ public final class ResultSetMetaDataHandler {
 
         for (int i = 0; i < metaDataStruct.columnCount; i++) {
             var columnMetaData = new ResultSetMetadataDto.ColumnMetaData();
-            var columnMetaDataStruct = new ResultSetMetaDataStruct.ColumnMetaDataStruct(metaDataStruct.column.getPointer(POINTER_SIZE * i));
+            long offset = (long) POINTER_SIZE * i;
+            var columnMetaDataStruct = new ResultSetMetaDataStruct.ColumnMetaDataStruct(metaDataStruct.column.getPointer(offset));
 
             columnMetaData.isAutoIncrement = columnMetaDataStruct.isAutoIncrement != 0;
             columnMetaData.isCaseSensitive = columnMetaDataStruct.isCaseSensitive != 0;

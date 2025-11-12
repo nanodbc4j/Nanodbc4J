@@ -11,7 +11,6 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class Handler {
-    public static final long POINTER_SIZE = Platform.is64Bit() ? 8 : 4;
     public static final char NUL_CHAR = '\0';
     public static final String NUL_TERMINATOR = "" + NUL_CHAR;
 

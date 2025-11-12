@@ -200,7 +200,7 @@ nanodbc::string DatabaseMetaData::getNumericFunctions() const {
 
     std::vector<nanodbc::string> funcs;
 
-#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(NANODBC_TEXT(name))
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.emplace_back(NANODBC_TEXT(name))
 
     ADD_IF_SET(SQL_FN_NUM_ABS, "ABS");
     ADD_IF_SET(SQL_FN_NUM_ACOS, "ACOS");
@@ -243,7 +243,7 @@ nanodbc::string DatabaseMetaData::getStringFunctions() const {
 
     std::vector<nanodbc::string> funcs;
 
-#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(NANODBC_TEXT(name))
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.emplace_back(NANODBC_TEXT(name))
 
     ADD_IF_SET(SQL_FN_STR_ASCII, "ASCII");
     ADD_IF_SET(SQL_FN_STR_CHAR, "CHAR");
@@ -282,7 +282,7 @@ nanodbc::string DatabaseMetaData::getSystemFunctions() const {
 
     std::vector<nanodbc::string> funcs;
 
-#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(NANODBC_TEXT(name))
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.emplace_back(NANODBC_TEXT(name))
 
     ADD_IF_SET(SQL_FN_SYS_DBNAME, "DBNAME");
     ADD_IF_SET(SQL_FN_SYS_IFNULL, "IFNULL");
@@ -308,7 +308,7 @@ nanodbc::string DatabaseMetaData::getTimeDateFunctions() const {
 
     std::vector<nanodbc::string> funcs;
 
-#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.push_back(NANODBC_TEXT(name))
+#define ADD_IF_SET(bit, name) if (mask & (bit)) funcs.emplace_back(NANODBC_TEXT(name))
 
     ADD_IF_SET(SQL_FN_TD_CURDATE, "CURDATE");
     ADD_IF_SET(SQL_FN_TD_CURTIME, "CURTIME");

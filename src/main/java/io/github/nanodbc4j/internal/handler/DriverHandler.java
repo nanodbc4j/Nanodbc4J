@@ -13,6 +13,7 @@ import lombok.experimental.UtilityClass;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sun.jna.Native.POINTER_SIZE;
 import static io.github.nanodbc4j.internal.handler.Handler.*;
 
 /**
@@ -33,12 +34,14 @@ public final class DriverHandler {
         Pointer driversListPtrs = OdbcApi.INSTANCE.drivers_list(count);
         try {
             for (int i = 0; i < count.getValue(); i++) {
-                DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(POINTER_SIZE * i));
+                long driversListOffset = (long) POINTER_SIZE * i;
+                DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(driversListOffset));
                 List<DriverProperties.AttributeProperties> driverAttributes = new ArrayList<>(ds.attribute_count);
                 String name = getWideString(ds.name);
 
                 for (int j = 0; j < ds.attribute_count; j++) {
-                    DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ds.attributes.getPointer(POINTER_SIZE * j));
+                    long attributeListOffset =  (long) POINTER_SIZE * j;
+                    DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ds.attributes.getPointer(attributeListOffset));
                     String keyword = getWideString(attr.keyword);
                     String value = getWideString(attr.value);
                     driverAttributes.add(new DriverProperties.AttributeProperties(keyword, value));
@@ -58,7 +61,8 @@ public final class DriverHandler {
         Pointer datasourcesListPtrs = OdbcApi.INSTANCE.datasources_list(count);
         try {
             for (int i = 0; i < count.getValue(); i++) {
-                DatasourceStruct ds = new DatasourceStruct(datasourcesListPtrs.getPointer(POINTER_SIZE * i));
+                long datasourceListOffset = (long) POINTER_SIZE * i;
+                DatasourceStruct ds = new DatasourceStruct(datasourcesListPtrs.getPointer(datasourceListOffset));
                 String name = getWideString(ds.name);
                 String driver = getWideString(ds.driver);
                 datasources.add(new DatasourceProperties(name, driver));
