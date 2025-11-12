@@ -149,7 +149,7 @@ double get_double_value_by_index(nanodbc::result* results, int index, NativeErro
 }
 
 bool get_bool_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
-    // result->get<bool>() не работает
+    // result->get<bool>() does not work
     return get_value_by_index<short>(results, index, error, 0);
 }
 
@@ -335,21 +335,17 @@ int read_binary_stream(ChunkedBinaryStream* stream, uint8_t* buffer, int offset,
 }
 
 BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
-    if (was_null_by_index(results, index, error) || error && error->error_code) {
-        LOG_DEBUG("Column '{}' is NULL", index);
-        return nullptr;
-    }
     try {
-        // Пробуем получить как binary данные
+        // Try to get as binary data
         const auto binary_data = results->get<vector<uint8_t>>(static_cast<short>(index));
-        return new BinaryArray(binary_data);
+        return results->is_null(static_cast<short>(index)) ? nullptr : new BinaryArray(binary_data);
 
-    } catch (const nanodbc::database_error&) {
-        // Если не binary, пробуем как строку (для CLOB)
+    } catch (const nanodbc::type_incompatible_error&) {
+        // If not binary, try as string (for CLOB)
         try {
             auto string_data = results->get<std::string>(static_cast<short>(index));
             const vector<uint8_t> binary_data(string_data.begin(), string_data.end());
-            return new BinaryArray(binary_data);
+            return results->is_null(static_cast<short>(index)) ? nullptr : new BinaryArray(binary_data);
         } catch (const nanodbc::index_range_error& range_error) {
             set_error(error, ErrorCode::Database, "IndexError", range_error.what());
             LOG_ERROR("Index range error at index {}: {}", index, range_error.what());
@@ -366,9 +362,6 @@ BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, Nativ
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
         LOG_ERROR("Index range error at index {}: {}", index, StringProxy(e.what()));
-    } catch (const nanodbc::type_incompatible_error& e) {
-        set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR("Type incompatible error at index {}: {}", index, StringProxy(e.what()));
     } catch (const exception& e) {
         set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
         LOG_ERROR("Exception in get_bytes_array_by_index {}: {}", index, StringProxy(e.what()));

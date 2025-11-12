@@ -29,15 +29,15 @@ public final class BinaryArray extends Structure {
     }
 
     public byte[] getBytes() {
-        if (data != null && length > 0) {
-            byte[] bytes = new byte[length];
-            data.read(0, bytes, 0, length);
-            return bytes;
+        if(isNull()) {
+            return null;
         }
-        return new byte[0];
+        byte[] bytes = new byte[length];
+        data.read(0, bytes, 0, length);
+        return bytes;
     }
 
     public boolean isNull() {
-        return data == null || length == 0;
+        return data == null || data.equals(Pointer.NULL) || length <= 0;
     }
 }
