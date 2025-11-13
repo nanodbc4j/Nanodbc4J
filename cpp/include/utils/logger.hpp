@@ -4,10 +4,10 @@
 
 #define __FILENAME__ utils::extract_filename(__FILE__)
 
-// Объявление функции инициализации логгера
+// Logger initialization function declaration
 void ensure_initialized();
 
-// Установка уровня логирования
+// Set logging level
 std::string set_spdlog_level(int level = SPDLOG_LEVEL_INFO);
 
 // Ensure initialization before logging, but only if the log level is enabled

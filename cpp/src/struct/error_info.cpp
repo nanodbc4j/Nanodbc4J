@@ -36,14 +36,14 @@ NativeError::~NativeError() {
     }
 }
 
-// Инициализация структуры ошибки
+// Initialize error structure
 void init_error(NativeError* error) {
     LOG_TRACE("init_error: error={}", reinterpret_cast<uintptr_t>(error));
     NativeError::clear(error);
     LOG_TRACE("NativeError initialized");
 }
 
-// Установка ошибки
+// Set error
 void set_error(NativeError* error, ErrorCode code, const char* type, const char* message) {
     LOG_TRACE("set_error: error={}, code={}, type='{}', message='{}'",
         reinterpret_cast<uintptr_t>(error),

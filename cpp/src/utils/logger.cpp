@@ -21,7 +21,7 @@ std::string set_spdlog_level(int level) {
 
     spdlog::set_level(spdlog_level);
 
-    // Используем встроенную функцию spdlog для получения имени уровня
+    // Use built-in spdlog function to get level name
     const auto& sv = spdlog::level::to_string_view(spdlog_level);
     std::string result(sv.data(), sv.size());
     return result;

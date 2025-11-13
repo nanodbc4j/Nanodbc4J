@@ -21,7 +21,7 @@
 
 using namespace utils;
 
-// Вспомогательный метод для определения по имени типа
+// Helper method to determine by type name
 static nanodbc::string determineClassNameByTypeName(int column, int sqlType, const nanodbc::string &typeName) {
     LOG_TRACE("column={}, sqlType={}, typeName={}", column, sqlType, StringProxy(typeName));
 
@@ -90,13 +90,13 @@ static nanodbc::string determineClassNameByTypeName(int column, int sqlType, con
             return NANODBC_TEXT("java.util.UUID");
         }
 
-        // Fallback для неизвестных типов
+        // Fallback for unknown types
         if (sqlType == SQL_UNKNOWN_TYPE) {
             LOG_DEBUG("SQL type is unknown, falling back to java.lang.Object");
             return NANODBC_TEXT("java.lang.Object");
         }
 
-        // Для известных SQL типов без конкретного case
+        // For known SQL types without specific case
         LOG_DEBUG("No match found, falling back to java.lang.String for type: {}", StringProxy(typeName));
         return NANODBC_TEXT("java.lang.String");
 
@@ -116,7 +116,7 @@ static std::size_t size(NANODBC_SQLCHAR const (&array)[N]) noexcept {
     return n < N ? n : N - 1;
 }
 
-// Получение строкового атрибута колонки через ODBC
+// Get column string attribute via ODBC
 static nanodbc::string getColumnStringAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
     LOG_TRACE("hStmt={}, column={}, field={}", hStmt, column, field);
 
@@ -138,7 +138,7 @@ static nanodbc::string getColumnStringAttribute(const SQLHSTMT& hStmt, const SQL
     return nanodbc::string();
 }
 
-// Получение числового атрибута колонки через ODBC
+// Get column numeric attribute via ODBC
 static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLUSMALLINT& column, const SQLUSMALLINT& field) {
     LOG_TRACE("hStmt={}, column={}, field={}", hStmt, column, field);
 
@@ -182,10 +182,10 @@ bool ResultSetMetaData::isAutoIncrement(int column) const {
         return true;
     }
 
-    // Дополнительные проверки через другие атрибуты
+    // Additional checks via other attributes
     const nanodbc::string name = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_BASE_COLUMN_NAME);
 
-    // Ёвристика: если им¤ содержит "id" или "identity", возможно это автоинкремент
+    // Heuristic: if name contains "id" or "identity", it might be auto-increment
     std::string lowerName = to_string(name);
 
     std::ranges::for_each(lowerName, [](char& c) {
@@ -206,7 +206,7 @@ bool ResultSetMetaData::isCaseSensitive(int column) const {
     if (value == SQL_TRUE) return true;
     if (value == SQL_FALSE) return false;
 
-    // Fallback: проверка по типу данных
+    // Fallback: check by data type
     int type = getColumnType(column);
     bool isStringType = (type == SQL_VARCHAR || type == SQL_CHAR ||
                          type == SQL_WVARCHAR || type == SQL_WCHAR);
@@ -220,7 +220,7 @@ bool ResultSetMetaData::isSearchable(int column) const {
     if (value == SQL_PRED_NONE) return false;
     if (value == SQL_PRED_BASIC || value == SQL_PRED_CHAR || value == SQL_SEARCHABLE) return true;
 
-    // Fallback: исключаем BLOB-типы
+    // Fallback: exclude BLOB types
     int type = getColumnType(column);
     bool searchable = !(type == SQL_LONGVARBINARY || type == SQL_LONGVARCHAR);
     LOG_DEBUG("Fallback searchable check: type={}, searchable={}", type, searchable);
@@ -235,7 +235,7 @@ bool ResultSetMetaData::isCurrency(int column) const {
         return true;
     }
 
-    // проверка по имени типа
+    // check by type name
     std::string typeName = to_string(getColumnTypeName(column));
 
     std::ranges::for_each(typeName, [](char& c) {
@@ -281,7 +281,7 @@ bool ResultSetMetaData::isSigned(int column) const {
     if (value == SQL_FALSE) return true;
     if (value == SQL_TRUE) return false;
 
-    // Fallback: проверка по типу данных
+    // Fallback: check by data type
     int type = getColumnType(column);
     bool isSigned = (type == SQL_INTEGER || type == SQL_BIGINT || type == SQL_SMALLINT ||
         type == SQL_TINYINT || type == SQL_DECIMAL || type == SQL_NUMERIC ||
@@ -312,7 +312,7 @@ nanodbc::string ResultSetMetaData::getColumnLabel(int column) const {
         return label;
     }
 
-    // если нет специального label, используем имя
+    // if no specific label, use name
     nanodbc::string name = getColumnName(column);
     LOG_DEBUG("Using column name as label: '{}'", StringProxy(name));
     return name;
@@ -430,7 +430,7 @@ int ResultSetMetaData::getColumnType(int column) const {
 
 nanodbc::string ResultSetMetaData::getColumnTypeName(int column) const {
     LOG_TRACE("column={}", column);
-    // Сначала пробуем получить им¤ типа через ODBC
+    // First try to get type name via ODBC
     nanodbc::string typeName = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_TYPE_NAME);
     if (!typeName.empty()) {
         LOG_DEBUG("Column {} type name: '{}'", column, StringProxy(typeName));
@@ -439,7 +439,7 @@ nanodbc::string ResultSetMetaData::getColumnTypeName(int column) const {
 
     LOG_DEBUG("No type name from ODBC, using fallback mapping");
 
-    // Fallback: сопоставление по типу данных
+    // Fallback: mapping by data type
     int type = getColumnType(column);
     switch (type) {
         case SQL_INTEGER: return NANODBC_TEXT("INTEGER");

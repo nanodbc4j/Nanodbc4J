@@ -30,17 +30,9 @@ namespace {;
 
 }
 
-// === Для строк: использует nanodbc::connection::get_info<T> ===
-template <class T>
+// === For strings: uses nanodbc::connection::get_info<T> ===
+template <class T, typename = nanodbc::enable_if_string<T>>
 static T getInfoSafely(const nanodbc::connection& conn, SQLUSMALLINT attr, T defaultValue = T{}) {
-    // Статическая проверка: T должен быть строковым типом
-    static_assert(
-        std::is_same_v<T, std::string> ||
-        std::is_same_v<T, std::wstring> ||
-        std::is_same_v<T, nanodbc::string>,
-        "T must be a string type (std::string, std::wstring, nanodbc::string)"
-        );
-
     try {
         return conn.get_info<T>(attr);
     } catch (...) {
@@ -48,14 +40,8 @@ static T getInfoSafely(const nanodbc::connection& conn, SQLUSMALLINT attr, T def
     }
 }
 
-template<typename T>
+template<typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
 static T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = T{}) {
-    // Статическая проверка: T должен быть числовым типом
-    static_assert(
-        std::is_arithmetic_v<T>,
-        "T must be a numeric type (int, short, SQLUSMALLINT, etc.)"
-        );
-
     T value = 0;
     SQLRETURN ret = SQLGetInfo(hdbc, attr, &value, sizeof(T), nullptr);
 
@@ -68,7 +54,7 @@ static T getInfoSafely(SQLHDBC hdbc, SQLUSMALLINT attr, T defaultValue = T{}) {
 }
 
 static std::pair<int, int> processingVersionString(std::string ver) {
-    // Пропускаем не-цифры и не-знаки в начале строки
+    // Skip non-digits and non-signs at the beginning of the string
     auto it = ver.begin();
     while (it != ver.end() && !std::iswdigit(*it) && *it != '+' && *it != '-' && *it != '.') {
         ++it;
@@ -78,7 +64,7 @@ static std::pair<int, int> processingVersionString(std::string ver) {
         LOG_TRACE("No version info found; returning {{0, 0}}");
         return { 0, 0 };
     }
-    // Если строка начинается с точки — значит, major = 0
+    // If the string starts with a dot — major = 0
     bool leadingDot = (*it == '.');
     std::string cleaned = leadingDot ? ("0" + std::string(it, ver.end())) : std::string(it, ver.end());
     std::stringstream ss(cleaned);
@@ -86,37 +72,36 @@ static std::pair<int, int> processingVersionString(std::string ver) {
     int major = 0;
     int minor = 0;
 
-    // Пробуем прочитать major
+    // Try to read major
     if (!(ss >> major)) {
         LOG_TRACE("Failed to parse major version; returning {{0, 0}}");
         return { 0, 0 };
     }
 
-    // Читаем точку и minor, если есть
+    // Read dot and minor if present
     if (ss.peek() == '.') {
         char dot;
-        ss >> dot;  // Пропускаем точку
+        ss >> dot;  // Skip the dot
 
         if (!(ss >> minor)) {
             LOG_TRACE("Failed to parse minor version; minor set to 0");
-            minor = 0;  // не ошибка — minor может отсутствовать или быть некорректным
+            minor = 0;  // not an error — minor may be missing or invalid
         }
     } else {
         LOG_TRACE("No dot found after major; minor version is 0");
-        // minor уже 0 — ничего делать не нужно
+        // minor is already 0 — nothing to do
     }
 
     return { major, minor };
 }
 
-// === Конструктор ===
 DatabaseMetaData::DatabaseMetaData(nanodbc::connection& connection)
     : connection_(connection)
 {    
     LOG_TRACE("Initialized successfully");
 }
 
-// === Строковые методы ===
+// === String methods ===
 
 nanodbc::string DatabaseMetaData::getDatabaseProductName() const {
     LOG_TRACE("Called");
@@ -358,7 +343,7 @@ nanodbc::string DatabaseMetaData::getUserName() const {
     return result;
 }
 
-// === Булевы методы ===
+// === Boolean methods ===
 
 bool DatabaseMetaData::isReadOnly() const {
     LOG_TRACE("Called");
@@ -391,7 +376,7 @@ bool DatabaseMetaData::supportsNamedParameters() const {
 bool DatabaseMetaData::supportsBatchUpdates() const {
     LOG_TRACE("Called");
     auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_BATCH_SUPPORT, 0);
-    bool result = (val != 0); // Любое ненулевое значение — поддержка есть
+    bool result = (val != 0); // Any non-zero value — support exists
     LOG_TRACE("Returning: {}", result);
     return result;
 }
@@ -406,8 +391,8 @@ bool DatabaseMetaData::supportsUnion() const {
 
 bool DatabaseMetaData::supportsUnionAll() const {
     LOG_TRACE("Called");
-    // SQL_UNION_ALL не определён в некоторых SDK, но
-    // если SQL_UNION == SQL_TRUE, то UNION ALL тоже поддерживается
+    // SQL_UNION_ALL is not defined in some SDKs, but
+    // if SQL_UNION == SQL_TRUE, then UNION ALL is also supported
     bool result = supportsUnion(); // UNION implies UNION ALL
     LOG_TRACE("Returning: {}", result);
     return result;
@@ -732,7 +717,7 @@ bool DatabaseMetaData::supportsMultipleTransactions() const {
 
 bool DatabaseMetaData::autoCommitFailureClosesAllResultSets() const {
     LOG_TRACE("Called");
-    // SQL_MULT_RESULT_SETS: если поддерживает множественные результаты
+    // SQL_MULT_RESULT_SETS: if it supports multiple results
     auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_MULT_RESULT_SETS, SQL_FALSE);
     bool result = (val == SQL_TRUE);
     LOG_TRACE("Returning: {}", result);
@@ -747,7 +732,7 @@ bool DatabaseMetaData::supportsStoredFunctionsUsingCallSyntax() const {
 
 bool DatabaseMetaData::generatedKeyAlwaysReturned() const {
     LOG_TRACE("Called");
-    // SQL_GETDATA_EXTENSIONS: если поддерживает SQL_GD_OUTPUT_PARAMS
+    // SQL_GETDATA_EXTENSIONS: if it supports SQL_GD_OUTPUT_PARAMS
     auto val = getInfoSafely<SQLUINTEGER>(connection_.native_dbc_handle(), SQL_GETDATA_EXTENSIONS, 0);
     bool result = (val & SQL_GD_ANY_COLUMN) != 0;
     LOG_TRACE("Returning: {}", result);
@@ -888,7 +873,7 @@ bool DatabaseMetaData::supportsConvert(int fromType, int toType) const {
 
     SQLUSMALLINT odbcInfoType = 0;
 
-    // Mapping JDBC type to ODBC information type
+    // SQL_GETDATA_EXTENSIONS: if it supports SQL_GD_OUTPUT_PARAMS
     switch (fromType) {
         case SQL_BIT:
             odbcInfoType = SQL_CONVERT_BIT;
@@ -1150,7 +1135,7 @@ bool DatabaseMetaData::isCatalogAtStart() const {
     return result;
 }
 
-// === Целочисленные методы ===
+// === Integer methods ===
 int DatabaseMetaData::supportsTransactionIsolationLevel() const {
     LOG_TRACE("Called");
     SQLUINTEGER supported = 0;
@@ -1267,8 +1252,8 @@ int DatabaseMetaData::getMaxStatementLength() const {
 
 int DatabaseMetaData::getMaxStatements() const {
     LOG_TRACE("Called");
-    LOG_TRACE("Returning: 0 (неизвестно / не ограничено)");
-    return 0;  // неизвестно / не ограничено
+    LOG_TRACE("Returning: 0 (unknown / unlimited)");
+    return 0; // unknown / unlimited
 }
 
 int DatabaseMetaData::getMaxTablesInSelect() const {

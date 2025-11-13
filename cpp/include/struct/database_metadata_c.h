@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
     struct CDatabaseMetaData {
-        // === Строковые значения ===
+        // === String values ===
         const ApiChar* databaseProductName = nullptr;
         const ApiChar* databaseProductVersion = nullptr;
         const ApiChar* driverName = nullptr;
@@ -26,7 +26,7 @@ extern "C" {
         const ApiChar* extraNameCharacters = nullptr;
         const ApiChar* userName = nullptr;
 
-        // === Булевы значения ===
+        // === Boolean values ===
         bool isReadOnly = false;
         bool supportsTransactions = false;
         bool supportsSavepoints = false;
@@ -113,7 +113,7 @@ extern "C" {
         bool doesMaxRowSizeIncludeBlobs = false;
         bool isCatalogAtStart = false;
 
-        // === Целочисленные значения ===
+        // === Integer values ===
         int supportsTransactionIsolationLevel = 0;
         int nullCollation = 0;
         int sqlStateType = 0;

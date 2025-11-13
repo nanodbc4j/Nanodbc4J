@@ -75,7 +75,7 @@ CResultSetMetaData::CResultSetMetaData(const ResultSetMetaData& other) {
             LOG_TRACE("Processing column [{}]", i);
             auto* data = new ColumnMetaData();
 
-            // Отсчет начинается с 1
+            // Counting starts from 1
             data->isAutoIncrement = other.isAutoIncrement(i + 1);
             data->isCaseSensitive = other.isCaseSensitive(i + 1);
             data->isSearchable = other.isSearchable(i + 1);

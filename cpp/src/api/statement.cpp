@@ -3,6 +3,15 @@
 #include "utils/logger.hpp"
 #include "core/string_proxy.hpp"
 
+#ifdef _WIN32
+// needs to be included above sql.h for windows
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
+#include <sqlext.h>
+
 using namespace utils;
 
 #define BATCH_OPERATIONS 1
@@ -30,7 +39,7 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
 static void set_value_with_error_handling(nanodbc::statement* stmt, int index, const StringProxy<ApiChar> & value, NativeError* error) noexcept {
     init_error(error);
     try {
-        // Оборачиваем одну строку в вектор
+        // Wrap a single string in a vector
         std::vector<nanodbc::string> vec;
         vec.emplace_back(value);
         stmt->bind_strings(index, vec);
@@ -107,8 +116,8 @@ void set_double_value(nanodbc::statement* stmt, int index, double value, NativeE
 }
 
 void set_bool_value(nanodbc::statement* stmt, int index, bool value, NativeError* error) noexcept {
-    // тип bool не поддерживается nanodbc, используем short
-    set_value_with_error_handling<short>(stmt, index, value, error);
+    // bool type is not supported by nanodbc
+    set_value_with_error_handling<BOOL>(stmt, index, value, error);
 }
 
 void set_float_value(nanodbc::statement* stmt, int index, float value, NativeError* error) noexcept {

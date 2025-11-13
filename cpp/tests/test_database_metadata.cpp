@@ -6,7 +6,7 @@
 #include <../tests/test_utils.hpp>
 #include "struct/error_info.h"
 
-// Вспомогательная функция: подготовить тестовую таблицу
+// Helper function: prepare a test table
 static void setup_test_table(Connection* conn, NativeError& error) {
     const std::wstring create = LR"(
         CREATE TABLE test_data (

@@ -15,7 +15,7 @@ static const ApiChar* convert(const nanodbc::string& str) {
 }
 
 CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
-    // === Строковые значения ===
+    // === String values ===
     databaseProductName = duplicate_string(other.databaseProductName);
     databaseProductVersion = duplicate_string(other.databaseProductVersion);
     driverName = duplicate_string(other.driverName);
@@ -34,7 +34,7 @@ CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
     extraNameCharacters = duplicate_string(other.extraNameCharacters);
     userName = duplicate_string(other.userName);
 
-    // === Булевы значения ===
+    // === Boolean values ===
     isReadOnly = other.isReadOnly;
     supportsTransactions = other.supportsTransactions;
     supportsSavepoints = other.supportsSavepoints;
@@ -121,7 +121,7 @@ CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
     doesMaxRowSizeIncludeBlobs = other.doesMaxRowSizeIncludeBlobs;
     isCatalogAtStart = other.isCatalogAtStart;
 
-    // === Целочисленные значения ===
+    // === Integer values ===
     supportsTransactionIsolationLevel = other.supportsTransactionIsolationLevel;
     nullCollation = other.nullCollation;
     sqlStateType = other.sqlStateType;
@@ -155,7 +155,7 @@ CDatabaseMetaData::CDatabaseMetaData(const CDatabaseMetaData& other) {
 }
 
 CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
-    // === Строковые значения ===
+    // === String values ===
     databaseProductName = convert(other.getDatabaseProductName());
     databaseProductVersion = convert(other.getDatabaseProductVersion());
     driverName = convert(other.getDriverName());
@@ -173,7 +173,7 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     searchStringEscape = convert(other.getSearchStringEscape());
     extraNameCharacters = convert(other.getExtraNameCharacters());
 
-    // === Булевы значения ===
+    // === Boolean values ===
     isReadOnly = other.isReadOnly();
     supportsTransactions = other.supportsTransactions();
     supportsSavepoints = other.supportsSavepoints();
@@ -260,7 +260,7 @@ CDatabaseMetaData::CDatabaseMetaData(const DatabaseMetaData& other) {
     doesMaxRowSizeIncludeBlobs = other.doesMaxRowSizeIncludeBlobs();
     isCatalogAtStart = other.isCatalogAtStart();
 
-    // === Целочисленные значения ===
+    // === Integer values ===
     supportsTransactionIsolationLevel = other.supportsTransactionIsolationLevel();
     nullCollation = other.getNullCollation();
     sqlStateType = other.getSQLStateType();
@@ -298,7 +298,7 @@ CDatabaseMetaData::~CDatabaseMetaData() {
         if (str) free(const_cast<ApiChar*>(str));
     };
 
-    // === Строковые значения ===
+    // === String values ===
     str_free(databaseProductName);
     str_free(databaseProductVersion);
     str_free(driverName);

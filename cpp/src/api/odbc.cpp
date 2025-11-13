@@ -41,7 +41,6 @@ void std_free(void* ptr) noexcept {
     }
 }
 
-// очистить структуры ошибки
 void clear_native_error(NativeError* error) noexcept {
 	LOG_TRACE("clear_native_error: error={}", reinterpret_cast<uintptr_t>(error));
 	NativeError::clear(error);

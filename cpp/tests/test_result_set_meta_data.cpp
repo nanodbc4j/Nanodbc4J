@@ -19,7 +19,7 @@ static void count_check(Connection* conn, NativeError& error) {
     close_result(count_res, &error);
 }
 
-// Вспомогательная функция: подготовить тестовую таблицу
+// Helper function: prepare a test table
 static void setup_test_table(Connection* conn, NativeError& error) {
     const std::wstring create = LR"(
         CREATE TABLE test_data (
@@ -38,7 +38,7 @@ static void setup_test_table(Connection* conn, NativeError& error) {
     close_result(res, &error);
     assert_no_error(error);
 
-    // Вставляем данные
+    // Insert data
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
     const std::wstring insert = L"INSERT INTO test_data VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";

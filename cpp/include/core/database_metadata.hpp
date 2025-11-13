@@ -8,7 +8,7 @@ class DatabaseMetaData {
 public:
     explicit DatabaseMetaData(nanodbc::connection& connection);
 
-    // === Строковые методы ===
+    // === String methods ===
     nanodbc::string getDatabaseProductName() const;
     nanodbc::string getDatabaseProductVersion() const;
     nanodbc::string getDriverName() const;
@@ -27,7 +27,7 @@ public:
     nanodbc::string getExtraNameCharacters() const;
     nanodbc::string getUserName() const;
 
-    // === Булевы методы ===
+    // === Boolean methods ===
     bool isReadOnly() const;
     bool supportsTransactions() const;
     bool supportsSavepoints() const;
@@ -115,7 +115,7 @@ public:
     bool doesMaxRowSizeIncludeBlobs() const;
     bool isCatalogAtStart() const;
 
-    // === Целочисленные методы ===
+    // === Integer methods ===
     int supportsTransactionIsolationLevel() const;
     int getNullCollation() const;
     int getSQLStateType() const;

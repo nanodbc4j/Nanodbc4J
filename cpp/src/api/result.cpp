@@ -403,7 +403,6 @@ double get_double_value_by_name(nanodbc::result* results, const ApiChar* name, N
 
 bool get_bool_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
-    // result->get<bool>() не работает
     return get_value_by_name<BOOL>(results, str_name, error, 0);
 }
 

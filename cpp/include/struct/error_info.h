@@ -21,8 +21,8 @@ extern "C" {
 #endif
 
 
-// Инициализация структуры ошибки
+// Initialize error structure
 void init_error(NativeError* error);
 
-// Установка ошибки
+// Set error
 void set_error(NativeError* error, ErrorCode code, const char* type, const char* message);
