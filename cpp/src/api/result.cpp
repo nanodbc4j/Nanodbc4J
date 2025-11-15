@@ -3,6 +3,7 @@
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
 #include "core/string_proxy.hpp"
+#include "core/number_proxy.hpp"
 
 #ifdef _WIN32
 // needs to be included above sql.h for windows
@@ -26,13 +27,31 @@ static T get_value_by_index(nanodbc::result* results, int index, NativeError* er
             return fallback;
         }
 
-        auto value = results->get<T>(index, fallback);
+
+        T result = fallback;
+
+        const int datatype = results->column_c_datatype(static_cast<short>(index));
+
+        // For arithmetic types, parse string/binary data via `NumberProxy`
+        // otherwise, read directly—handles cases where ODBC returns numbers as strings.
+        if constexpr (is_arithmetic_v<T>) {
+            if (datatype == SQL_C_CHAR || datatype == SQL_C_BINARY) {
+                const auto str_value = results->get<std::string>(static_cast<short>(index), {});
+                NumberProxy number_proxy(str_value);
+                result = static_cast<T>(number_proxy);
+            } else {
+                result = results->get<T>(index, fallback);
+            }
+        } else {
+            result = results->get<T>(index, fallback);
+        }
+
         // for unbound columns, null indicator is determined by SQLGetData call
         if (results->is_null(static_cast<short>(index))) {
             LOG_DEBUG("Column is NULL, returning fallback");
             return fallback;
         }
-        return value;
+        return result;
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
         LOG_ERROR("Index range error in get_value: {}", StringProxy(e.what()));

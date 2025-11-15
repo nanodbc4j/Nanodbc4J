@@ -1,167 +1,209 @@
 #include "core/number_proxy.hpp"
 #include <stdexcept>
-#include <functional>
+#include "utils/strhash.hpp"
+
+using namespace std;
 
 template<typename T>
-template<typename U, typename>
-NumberProxy<T>::NumberProxy(const std::string &str)
-    : value(str.empty() ? NULL_NUMBER : str) {
-}
-
-template<typename T>
-template<typename U, typename>
-NumberProxy<T>::NumberProxy(const char *str)
-    : value(str && *str ? str : NULL_NUMBER) {
-}
-
-template<typename T>
-template<typename U, typename>
 NumberProxy<T>::NumberProxy(T num)
-    : value(std::move(num)) {
+    : value(move(num)) {
+}
+
+template<typename T>
+NumberProxy<T>::operator short() const {
+    return static_cast<short>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator int() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stoi(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<int>::max();
-        }
-    } else {
-        return static_cast<int>(value);
-    }
+    return static_cast<int>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator long() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stol(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<long>::max();
-        }
-    } else {
-        return static_cast<long>(value);
-    }
+    return static_cast<long>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator long long() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stoll(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<long long>::max();
-        }
-    } else {
-        return static_cast<long long>(value);
-    }
+    return static_cast<long long>(value);
+}
+
+template<typename T>
+NumberProxy<T>::operator unsigned short() const {
+    return static_cast<unsigned short>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator unsigned int() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stoul(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<unsigned int>::max();
-        }
-    } else {
-        return static_cast<unsigned int>(value);
-    }
+    return static_cast<unsigned int>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator unsigned long() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stoul(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<unsigned long>::max();
-        }
-    } else {
-        return static_cast<unsigned long>(value);
-    }
+    return static_cast<unsigned long>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator unsigned long long() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stoull(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<unsigned long long>::max();
-        }
-    } else {
-        return static_cast<unsigned long long>(value);
-    }
+    return static_cast<unsigned long long>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator float() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stof(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<float>::max();
-        }
-    } else {
-        return static_cast<float>(value);
-    }
+    return static_cast<float>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator double() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stod(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<double>::max();
-        }
-    } else {
-        return static_cast<double>(value);
-    }
+    return static_cast<double>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator long double() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        try {
-            return std::stold(value);
-        } catch (std::out_of_range&) {
-            return std::numeric_limits<long double>::max();
-        }
-    } else {
-        return static_cast<long double>(value);
-    }
+    return static_cast<long double>(value);
 }
 
 template<typename T>
 NumberProxy<T>::operator bool() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        return !value.empty() && value != "0" && value != "false";
-    } else {
-        return static_cast<bool>(value);
-    }
+    return static_cast<bool>(value);
 }
 
 template<typename T>
-NumberProxy<T>::operator std::string() const {
-    if constexpr (std::is_same_v<T, std::string>) {
-        return value;
-    } else {
-        if constexpr (std::is_same_v<T, bool>) {
-            return value ? "true" : "false";
-        } else {
-            return std::to_string(value);
-        }
+NumberProxy<T>::operator string() const {
+    return to_string(value);
+}
+
+NumberProxy<string>::NumberProxy(const string& str)
+    : value(str.empty() ? NULL_NUMBER : str) {
+    switch (hash_djb2a(value)) {
+        case "false"_sh:
+            value = "0";
+            break;
+        case "true"_sh:
+            value = "1";
+            break;
+        default:
+            break;
     }
 }
 
+
+NumberProxy<string>::NumberProxy(const char* str)
+    : value(str && *str ? str : NULL_NUMBER) {
+    switch (hash_djb2a(value)) {
+        case "false"_sh:
+            value = "0";
+            break;
+        case "true"_sh:
+            value = "1";
+            break;
+        default:
+            break;
+    }
+}
+
+NumberProxy<string>::operator short() const {
+    try {
+        return stoi(value);
+    } catch (out_of_range&) {
+        return numeric_limits<short>::max();
+    }
+}
+
+NumberProxy<string>::operator int() const {
+    try {
+        return stoi(value);
+    } catch (out_of_range&) {
+        return numeric_limits<int>::max();
+    }
+}
+
+NumberProxy<string>::operator long() const {
+    try {
+        return stol(value);
+    } catch (out_of_range&) {
+        return numeric_limits<long>::max();
+    }
+}
+
+NumberProxy<string>::operator long long() const {
+    try {
+        return stoll(value);
+    } catch (out_of_range&) {
+        return numeric_limits<long long>::max();
+    }
+}
+
+NumberProxy<string>::operator unsigned short() const {
+    try {
+        return stoul(value);
+    } catch (out_of_range&) {
+        return numeric_limits<unsigned short>::max();
+    }
+}
+
+NumberProxy<string>::operator unsigned int() const {
+    try {
+        return stoul(value);
+    } catch (out_of_range&) {
+        return numeric_limits<unsigned int>::max();
+    }
+}
+
+NumberProxy<string>::operator unsigned long() const {
+    try {
+        return stoul(value);
+    } catch (out_of_range&) {
+        return numeric_limits<unsigned long>::max();
+    }
+}
+
+NumberProxy<string>::operator unsigned long long() const {
+    try {
+        return stoull(value);
+    } catch (out_of_range&) {
+        return numeric_limits<unsigned long long>::max();
+    }
+}
+
+NumberProxy<string>::operator float() const {
+    try {
+        return stof(value);
+    } catch (out_of_range&) {
+        return numeric_limits<float>::max();
+    }
+}
+
+NumberProxy<string>::operator double() const {
+    try {
+        return stod(value);
+    } catch (out_of_range&) {
+        return numeric_limits<double>::max();
+    }
+}
+
+NumberProxy<string>::operator long double() const {
+    try {
+        return stold(value);
+    } catch (out_of_range&) {
+        return numeric_limits<long double>::max();
+    }
+}
+
+NumberProxy<string>::operator bool() const {
+    return !value.empty() && value != "0" && value != "false";
+}
+
+NumberProxy<string>::operator string() const {
+    return value;
+}
+
+template class NumberProxy<short>;
 template class NumberProxy<int>;
 template class NumberProxy<long>;
 template class NumberProxy<long long>;
+template class NumberProxy<unsigned short>;
 template class NumberProxy<unsigned int>;
 template class NumberProxy<unsigned long>;
 template class NumberProxy<unsigned long long>;
@@ -169,4 +211,3 @@ template class NumberProxy<float>;
 template class NumberProxy<double>;
 template class NumberProxy<long double>;
 template class NumberProxy<bool>;
-template class NumberProxy<std::string>;
