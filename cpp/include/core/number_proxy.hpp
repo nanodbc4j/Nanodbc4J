@@ -41,6 +41,7 @@ class NumberProxy<std::string> {
     static constexpr std::string_view NULL_NUMBER = "0";
 
     std::string value;
+    unsigned long hash;
 
 public:
     explicit NumberProxy(const std::string& str);

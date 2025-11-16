@@ -1,5 +1,6 @@
 #include "core/number_proxy.hpp"
 #include <stdexcept>
+#include <limits>
 #include "utils/strhash.hpp"
 
 using namespace std;
@@ -76,12 +77,15 @@ NumberProxy<T>::operator string() const {
 
 NumberProxy<string>::NumberProxy(const string& str)
     : value(str.empty() ? NULL_NUMBER : str) {
-    switch (hash_djb2a(value)) {
+    hash = hash_djb2a(value);
+    switch (hash) {
         case "false"_sh:
             value = "0";
+            hash = "0"_sh;
             break;
         case "true"_sh:
             value = "1";
+            hash = "1"_sh;
             break;
         default:
             break;
@@ -91,12 +95,15 @@ NumberProxy<string>::NumberProxy(const string& str)
 
 NumberProxy<string>::NumberProxy(const char* str)
     : value(str && *str ? str : NULL_NUMBER) {
-    switch (hash_djb2a(value)) {
+    hash = hash_djb2a(value);
+    switch (hash) {
         case "false"_sh:
             value = "0";
+            hash = "0"_sh;
             break;
         case "true"_sh:
             value = "1";
+            hash = "1"_sh;
             break;
         default:
             break;
@@ -192,7 +199,7 @@ NumberProxy<string>::operator long double() const {
 }
 
 NumberProxy<string>::operator bool() const {
-    return !value.empty() && value != "0" && value != "false";
+    return !value.empty() && hash != "0"_sh && hash != "false"_sh;
 }
 
 NumberProxy<string>::operator string() const {
