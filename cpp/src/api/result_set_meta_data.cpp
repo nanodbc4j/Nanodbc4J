@@ -2,7 +2,7 @@
 #include "utils/logger.hpp"
 #include "core/string_proxy.hpp"
 
-CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) noexcept {
+CResultSetMetaData* get_meta_data(ResultSet* results, NativeError* error) noexcept {
 	LOG_DEBUG("Getting metadata from result: {}", reinterpret_cast<uintptr_t>(results));
 	init_error(error);
 	try {

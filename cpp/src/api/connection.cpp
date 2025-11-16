@@ -285,7 +285,7 @@ int get_transaction_isolation_level(Connection *conn, NativeError *error) noexce
     return 0;
 }
 
-nanodbc::result *execute_request(Connection *conn, const ApiChar *sql, int timeout, NativeError *error) noexcept {
+ResultSet *execute_request(Connection *conn, const ApiChar *sql, int timeout, NativeError *error) noexcept {
     LOG_DEBUG("Executing request: {}", reinterpret_cast<uintptr_t>(conn));
     init_error(error);
     try {
@@ -301,7 +301,7 @@ nanodbc::result *execute_request(Connection *conn, const ApiChar *sql, int timeo
         stmt.prepare(static_cast<const nanodbc::string>(str_sql));
         auto result = stmt.execute(BATCH_OPERATIONS, timeout);
         result.unbind();
-        auto result_ptr = new nanodbc::result(std::move(result));
+        auto result_ptr = new ResultSet(std::move(result));
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
     } catch (const nanodbc::database_error &e) {

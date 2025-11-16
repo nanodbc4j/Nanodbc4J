@@ -18,7 +18,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
 
     // Create table
     const std::wstring create_sql = L"CREATE TABLE users (id INTEGER, name VARCHAR(50));";
-    nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
+    auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
     res = nullptr;
@@ -72,7 +72,7 @@ TEST(StatementAPITest, SetNumericParameterTypes) {
     assert_no_error(error);
 
     const std::wstring create_sql = L"CREATE TABLE nums (i16 SMALLINT, i32 INTEGER, i64 BIGINT, f32 REAL, f64 DOUBLE PRECISION);";
-    nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
+    auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
     assert_no_error(error);
@@ -109,7 +109,7 @@ TEST(StatementAPITest, SetDateTimeAndBool) {
     assert_no_error(error);
 
     const std::wstring create_sql = L"CREATE TABLE events (active BOOLEAN, event_date DATE, event_time TIME, event_ts TIMESTAMP);";
-    nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
+    auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
     assert_no_error(error);
@@ -151,7 +151,7 @@ TEST(StatementAPITest, SetBinaryData) {
     assert_no_error(error);
 
     const std::wstring create_sql = L"CREATE TABLE blobs (data BLOB);";
-    nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
+    auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
     assert_no_error(error);
@@ -190,7 +190,7 @@ TEST(StatementAPITest, ExecuteWithTimeout) {
     prepare_statement(stmt, sql.c_str(), &error);
     assert_no_error(error);
 
-    nanodbc::result* res = execute(stmt, 5, &error);  // 5 seconds timeout
+    auto* res = execute(stmt, 5, &error);  // 5 seconds timeout
     ASSERT_NE(res, nullptr);
     EXPECT_TRUE(res->next());
     EXPECT_EQ(res->get<int>(0), 1);

@@ -104,7 +104,7 @@ TEST(ConnectionAPITest, ExecuteSimpleQuery) {
 
     // Create table
     const std::wstring create_sql = L"CREATE TABLE test (id INTEGER, name VARCHAR(50));";
-    nanodbc::result* res = execute_request(conn, create_sql.c_str(), 10, &error);
+    auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     EXPECT_NE(res, nullptr);
     assert_no_error(error);
 

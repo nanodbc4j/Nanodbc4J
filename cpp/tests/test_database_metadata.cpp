@@ -20,7 +20,7 @@ static void setup_test_table(Connection* conn, NativeError& error) {
         created_ts TIMESTAMP,
         blob_data BLOB
         );)";
-    nanodbc::result* res = execute_request(conn, create.c_str(), 10, &error);
+    auto* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
     assert_no_error(error);   
@@ -43,7 +43,7 @@ TEST(DatabaseMetaDataTest, BasicInfo) {
     delete_database_meta_data(db_meta);
 
     // Tables
-    nanodbc::result* tables = get_database_meta_data_tables(conn, nullptr, nullptr, nullptr, nullptr, &error);    
+    auto* tables = get_database_meta_data_tables(conn, nullptr, nullptr, nullptr, nullptr, &error);
     ASSERT_NE(tables, nullptr);
     EXPECT_TRUE(next_result(tables, &error));
     close_result(tables, &error);

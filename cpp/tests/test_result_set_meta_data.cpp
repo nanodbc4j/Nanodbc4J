@@ -11,7 +11,7 @@
 
 static void count_check(Connection* conn, NativeError& error) {
     const std::wstring count_sql = L"SELECT COUNT(*) FROM test_data;";
-    nanodbc::result* count_res = execute_request(conn, count_sql.c_str(), 10, &error);
+    auto* count_res = execute_request(conn, count_sql.c_str(), 10, &error);
     EXPECT_TRUE(count_res->next());
     int count = count_res->get<int>(0);
     std::cout << "count_res:\t" << count << std::endl;
@@ -33,7 +33,7 @@ static void setup_test_table(Connection* conn, NativeError& error) {
         created_ts TIMESTAMP,
         blob_data BLOB
         );)";
-    nanodbc::result* res = execute_request(conn, create.c_str(), 10, &error);
+    auto* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
     assert_no_error(error);
@@ -80,7 +80,7 @@ TEST(ResultSetMetaDataTest, BasicMetadata) {
     setup_test_table(conn, error);
 
     const std::wstring select = L"SELECT id, name FROM test_data;";
-    nanodbc::result* res = execute_request(conn, select.c_str(), 10, &error);
+    auto* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
 
     CResultSetMetaData* meta = get_meta_data(res, &error);

@@ -21,15 +21,6 @@
 
 using namespace utils;
 
-namespace {;
-
-    class ResultSet : public nanodbc::result {
-    public:
-        ResultSet(nanodbc::statement&& statement, long rowset_size) : result(std::move(statement), rowset_size) {};
-    };
-
-}
-
 // === For strings: uses nanodbc::connection::get_info<T> ===
 template <class T, typename = nanodbc::enable_if_string<T>>
 static T getInfoSafely(const nanodbc::connection& conn, SQLUSMALLINT attr, T defaultValue = T{}) {
@@ -1364,7 +1355,7 @@ int DatabaseMetaData::getMaxProcedureNameLength() const {
 }
 
 // === Schemas ===
-nanodbc::result DatabaseMetaData::getSchemas() const {
+ResultSet DatabaseMetaData::getSchemas() const {
     nanodbc::statement stmt(connection_);
     RETCODE rc;
     NANODBC_CALL_RC(
@@ -1386,7 +1377,7 @@ nanodbc::result DatabaseMetaData::getSchemas() const {
 }
 
 // === Catalogs ===
-nanodbc::result DatabaseMetaData::getCatalogs() const {
+ResultSet DatabaseMetaData::getCatalogs() const {
     nanodbc::statement stmt(connection_);
     RETCODE rc;
     NANODBC_CALL_RC(
@@ -1408,7 +1399,7 @@ nanodbc::result DatabaseMetaData::getCatalogs() const {
 }
 
 // === TableTypes ===
-nanodbc::result DatabaseMetaData::getTableTypes() const {
+ResultSet DatabaseMetaData::getTableTypes() const {
     nanodbc::statement stmt(connection_);
     RETCODE rc;
     NANODBC_CALL_RC(
@@ -1430,7 +1421,7 @@ nanodbc::result DatabaseMetaData::getTableTypes() const {
 }
 
 // === Tables ===
-nanodbc::result DatabaseMetaData::getTables(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& type) const {
+ResultSet DatabaseMetaData::getTables(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& type) const {
     // Passing a null pointer to a search pattern argument does not
     // constrain the search for that argument; that is, a null pointer and
     // the search pattern % (any characters) are equivalent.
@@ -1460,7 +1451,7 @@ nanodbc::result DatabaseMetaData::getTables(const nanodbc::string& catalog, cons
 
 
 // === Columns ===
-nanodbc::result DatabaseMetaData::getColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& column) const {
+ResultSet DatabaseMetaData::getColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& column) const {
     nanodbc::statement stmt(connection_);
     RETCODE rc;
     NANODBC_CALL_RC(
@@ -1483,7 +1474,7 @@ nanodbc::result DatabaseMetaData::getColumns(const nanodbc::string& catalog, con
 
 
 // === Primary Keys ===
-nanodbc::result DatabaseMetaData::getPrimaryKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const {
+ResultSet DatabaseMetaData::getPrimaryKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const {
     nanodbc::statement stmt(connection_);
     RETCODE rc;
     NANODBC_CALL_RC(
@@ -1503,7 +1494,7 @@ nanodbc::result DatabaseMetaData::getPrimaryKeys(const nanodbc::string& catalog,
 }
 
 // === Imported Keys ===
-nanodbc::result DatabaseMetaData::getImportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const {
+ResultSet DatabaseMetaData::getImportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const {
     nanodbc::statement stmt(connection_);
     RETCODE rc;
     
@@ -1525,7 +1516,7 @@ nanodbc::result DatabaseMetaData::getImportedKeys(const nanodbc::string& catalog
 }
 
 // === Exported Keys ===
-nanodbc::result DatabaseMetaData::getExportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const {
+ResultSet DatabaseMetaData::getExportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const {
     nanodbc::statement stmt(connection_);
     RETCODE rc;
 
@@ -1547,7 +1538,7 @@ nanodbc::result DatabaseMetaData::getExportedKeys(const nanodbc::string& catalog
 }
 
 // === TypeInfo ===
-nanodbc::result DatabaseMetaData::getTypeInfo() const {
+ResultSet DatabaseMetaData::getTypeInfo() const {
     nanodbc::statement stmt(connection_);
     RETCODE rc = NANODBC_FUNC(SQLGetTypeInfo)(
         stmt.native_statement_handle(),
@@ -1558,7 +1549,7 @@ nanodbc::result DatabaseMetaData::getTypeInfo() const {
     return ResultSet(std::move(stmt), 1);
 }
 
-nanodbc::result DatabaseMetaData::getColumnPrivileges(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& columnNamePattern) const {
+ResultSet DatabaseMetaData::getColumnPrivileges(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& columnNamePattern) const {
     LOG_TRACE("Called getColumnPrivileges({}, {}, {}, {})", StringProxy(catalog), StringProxy(schema), StringProxy(table), StringProxy(columnNamePattern));
 
     nanodbc::statement stmt(connection_);
@@ -1577,7 +1568,7 @@ nanodbc::result DatabaseMetaData::getColumnPrivileges(const nanodbc::string& cat
     return ResultSet(std::move(stmt), 1);
 }
 
-nanodbc::result DatabaseMetaData::getTablePrivileges(const nanodbc::string& catalog, const nanodbc::string& schemaPattern, const nanodbc::string& tableNamePattern) const {
+ResultSet DatabaseMetaData::getTablePrivileges(const nanodbc::string& catalog, const nanodbc::string& schemaPattern, const nanodbc::string& tableNamePattern) const {
     LOG_TRACE("Called getTablePrivileges({}, {}, {})", StringProxy(catalog), StringProxy(schemaPattern), StringProxy(tableNamePattern));
 
     nanodbc::statement stmt(connection_);
@@ -1595,7 +1586,7 @@ nanodbc::result DatabaseMetaData::getTablePrivileges(const nanodbc::string& cata
     return ResultSet(std::move(stmt), 1);
 }
 
-nanodbc::result DatabaseMetaData::getBestRowIdentifier(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, int scope, bool nullable) const {
+ResultSet DatabaseMetaData::getBestRowIdentifier(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, int scope, bool nullable) const {
     LOG_TRACE("Called getBestRowIdentifier({}, {}, {}, {}, {})", StringProxy(catalog), StringProxy(schema), StringProxy(table), scope, nullable);
 
     nanodbc::statement stmt(connection_);
@@ -1616,7 +1607,7 @@ nanodbc::result DatabaseMetaData::getBestRowIdentifier(const nanodbc::string& ca
     return ResultSet(std::move(stmt), 1);
 }
 
-nanodbc::result DatabaseMetaData::getVersionColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const {
+ResultSet DatabaseMetaData::getVersionColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const {
     LOG_TRACE("Called getVersionColumns({}, {}, {})", StringProxy(catalog), StringProxy(schema), StringProxy(table));
 
     nanodbc::statement stmt(connection_);
@@ -1637,7 +1628,7 @@ nanodbc::result DatabaseMetaData::getVersionColumns(const nanodbc::string& catal
     return ResultSet(std::move(stmt), 1);
 }
 
-nanodbc::result DatabaseMetaData::getCrossReference(const nanodbc::string& parentCatalog, const nanodbc::string& parentSchema, const nanodbc::string& parentTable,
+ResultSet DatabaseMetaData::getCrossReference(const nanodbc::string& parentCatalog, const nanodbc::string& parentSchema, const nanodbc::string& parentTable,
                                                     const nanodbc::string& foreignCatalog, const nanodbc::string& foreignSchema, const nanodbc::string& foreignTable) const {
     LOG_TRACE("Called getCrossReference({}, {}, {}, {}, {}, {})",
         StringProxy(parentCatalog), StringProxy(parentSchema), StringProxy(parentTable), StringProxy(foreignCatalog), StringProxy(foreignSchema), StringProxy(foreignTable));
@@ -1660,7 +1651,7 @@ nanodbc::result DatabaseMetaData::getCrossReference(const nanodbc::string& paren
     return ResultSet(std::move(stmt), 1);
 }
 
-nanodbc::result DatabaseMetaData::getIndexInfo(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, bool unique, bool approximate) const {
+ResultSet DatabaseMetaData::getIndexInfo(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, bool unique, bool approximate) const {
     LOG_TRACE("Called getIndexInfo({}, {}, {}, {}, {})", StringProxy(catalog), StringProxy(schema), StringProxy(table), unique, approximate);
 
     nanodbc::statement stmt(connection_);
@@ -1681,7 +1672,7 @@ nanodbc::result DatabaseMetaData::getIndexInfo(const nanodbc::string& catalog, c
 }
 
 // === Procedures ===
-nanodbc::result DatabaseMetaData::getProcedures(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure) const {
+ResultSet DatabaseMetaData::getProcedures(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure) const {
     // Passing a null pointer to a search pattern argument does not
     // constrain the search for that argument; that is, a null pointer and
     // the search pattern % (any characters) are equivalent.
@@ -1708,7 +1699,7 @@ nanodbc::result DatabaseMetaData::getProcedures(const nanodbc::string& catalog, 
 }
 
 // === Procedure Columns ===
-nanodbc::result DatabaseMetaData::getProcedureColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure, const nanodbc::string& column) const {
+ResultSet DatabaseMetaData::getProcedureColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure, const nanodbc::string& column) const {
     nanodbc::statement stmt(connection_);
     RETCODE rc;
     NANODBC_CALL_RC(
