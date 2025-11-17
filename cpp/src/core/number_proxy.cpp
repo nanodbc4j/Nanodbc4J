@@ -7,7 +7,7 @@ using namespace std;
 
 template<typename T>
 NumberProxy<T>::NumberProxy(T num)
-    : value(move(num)) {
+    : value(std::move(num)) {
 }
 
 template<typename T>

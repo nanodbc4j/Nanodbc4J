@@ -209,7 +209,7 @@ void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* va
     }
 }
 
-nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* error) noexcept {
+ResultSet* execute(nanodbc::statement* stmt, int timeout, NativeError* error) noexcept {
     LOG_DEBUG("Executing statement: {}", reinterpret_cast<uintptr_t>(stmt));
     init_error(error);
     try {
@@ -220,7 +220,7 @@ nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* err
         }
         auto results = stmt->execute(BATCH_OPERATIONS, timeout);
         results.unbind();
-        auto result_ptr = new nanodbc::result(std::move(results));
+        auto result_ptr = new ResultSet(std::move(results));
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
     } catch (const nanodbc::database_error& e) {

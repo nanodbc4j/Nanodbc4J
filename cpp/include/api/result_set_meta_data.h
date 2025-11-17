@@ -1,4 +1,5 @@
 #pragma once
+#include "core/result_set.hpp"
 #include "struct/result_set_meta_data_c.h"
 #include "struct/error_info.h"
 #include "api/api.h"
@@ -11,7 +12,7 @@ extern "C" {
 	/// \param results Pointer to the result set object.
 	/// \param error Error information structure to populate on failure.
 	/// \return Pointer to result set metadata object, nullptr on failure.
-	ODBC_API CResultSetMetaData* get_meta_data(nanodbc::result* results, NativeError* error) noexcept;
+	ODBC_API CResultSetMetaData* get_meta_data(ResultSet* results, NativeError* error) noexcept;
 
 	/// \brief Releases result set metadata resources.
 	/// \param meta_data Pointer to CResultSetMetaData object to delete.

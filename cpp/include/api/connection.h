@@ -1,5 +1,6 @@
 #pragma once
 #include "core/connection.hpp"
+#include "core/result_set.hpp"
 #include "struct/error_info.h"
 #include "api/api.h"
 
@@ -81,7 +82,7 @@ extern "C" {
     /// \param timeout Seconds before query timeout.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result object on success, nullptr on failure.
-    ODBC_API nanodbc::result* execute_request(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) noexcept;
+    ODBC_API ResultSet* execute_request(Connection* conn, const ApiChar* sql, int timeout, NativeError* error) noexcept;
 
     /// \brief Creates a prepared statement for parameterized queries.
     /// \param conn Pointer to the Connection object.

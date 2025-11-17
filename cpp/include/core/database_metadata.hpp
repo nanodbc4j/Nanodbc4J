@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nanodbc/nanodbc.h>
+#include "core/result_set.hpp"
 
 class DatabaseMetaData {
     nanodbc::connection& connection_;
@@ -148,23 +148,23 @@ public:
     int getMaxIndexLength() const;
     int getMaxProcedureNameLength() const;
 
-    nanodbc::result getSchemas() const;
-    nanodbc::result getCatalogs() const;
-    nanodbc::result getTableTypes() const;
-    nanodbc::result getTables(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table, const nanodbc::string& type) const;    
-    nanodbc::result getColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& column) const;
-    nanodbc::result getPrimaryKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const;
-    nanodbc::result getImportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const;
-    nanodbc::result getExportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const;
-    nanodbc::result getTypeInfo() const;
-    nanodbc::result getColumnPrivileges(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& columnNamePattern) const;
-    nanodbc::result getTablePrivileges(const nanodbc::string& catalog, const nanodbc::string& schemaPattern, const nanodbc::string& tableNamePattern) const;
-    nanodbc::result getBestRowIdentifier(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, int scope, bool nullable) const;
-    nanodbc::result getVersionColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const;
-    nanodbc::result getCrossReference(const nanodbc::string& parentCatalog, const nanodbc::string& parentSchema, const nanodbc::string& parentTable,
+    ResultSet getSchemas() const;
+    ResultSet getCatalogs() const;
+    ResultSet getTableTypes() const;
+    ResultSet getTables(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table, const nanodbc::string& type) const;
+    ResultSet getColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& column) const;
+    ResultSet getPrimaryKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const;
+    ResultSet getImportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema,  const nanodbc::string& table) const;
+    ResultSet getExportedKeys(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const;
+    ResultSet getTypeInfo() const;
+    ResultSet getColumnPrivileges(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, const nanodbc::string& columnNamePattern) const;
+    ResultSet getTablePrivileges(const nanodbc::string& catalog, const nanodbc::string& schemaPattern, const nanodbc::string& tableNamePattern) const;
+    ResultSet getBestRowIdentifier(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, int scope, bool nullable) const;
+    ResultSet getVersionColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table) const;
+    ResultSet getCrossReference(const nanodbc::string& parentCatalog, const nanodbc::string& parentSchema, const nanodbc::string& parentTable,
                                       const nanodbc::string& foreignCatalog, const nanodbc::string& foreignSchema, const nanodbc::string& foreignTable) const;
-    nanodbc::result getIndexInfo(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, bool unique, bool approximate) const;
-    nanodbc::result getProcedures(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure) const;
-    nanodbc::result getProcedureColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure, const nanodbc::string& column) const;
+    ResultSet getIndexInfo(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& table, bool unique, bool approximate) const;
+    ResultSet getProcedures(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure) const;
+    ResultSet getProcedureColumns(const nanodbc::string& catalog, const nanodbc::string& schema, const nanodbc::string& procedure, const nanodbc::string& column) const;
 
 };

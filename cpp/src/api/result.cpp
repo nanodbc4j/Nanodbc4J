@@ -3,7 +3,6 @@
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
 #include "core/string_proxy.hpp"
-#include "core/number_proxy.hpp"
 
 #ifdef _WIN32
 // needs to be included above sql.h for windows
@@ -18,7 +17,7 @@ using namespace std;
 using namespace utils;
 
 template<typename T>
-static T get_value_by_index(nanodbc::result* results, int index, NativeError* error, T fallback = T{}) noexcept {
+static T get_value_by_index(ResultSet* results, int index, NativeError* error, T fallback = T{}) noexcept {
     init_error(error);
     try {
         if (!results) {
@@ -27,31 +26,14 @@ static T get_value_by_index(nanodbc::result* results, int index, NativeError* er
             return fallback;
         }
 
-
-        T result = fallback;
-
-        const int datatype = results->column_c_datatype(static_cast<short>(index));
-
-        // For arithmetic types, parse string/binary data via `NumberProxy`
-        // otherwise, read directly—handles cases where ODBC returns numbers as strings.
-        if constexpr (is_arithmetic_v<T>) {
-            if (datatype == SQL_C_CHAR || datatype == SQL_C_BINARY) {
-                const auto str_value = results->get<std::string>(static_cast<short>(index), {});
-                NumberProxy number_proxy(str_value);
-                result = static_cast<T>(number_proxy);
-            } else {
-                result = results->get<T>(index, fallback);
-            }
-        } else {
-            result = results->get<T>(index, fallback);
-        }
+        auto value = results->get<T>(index, fallback);
 
         // for unbound columns, null indicator is determined by SQLGetData call
         if (results->is_null(static_cast<short>(index))) {
             LOG_DEBUG("Column is NULL, returning fallback");
             return fallback;
         }
-        return result;
+        return value;
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
         LOG_ERROR("Index range error in get_value: {}", StringProxy(e.what()));
@@ -69,7 +51,7 @@ static T get_value_by_index(nanodbc::result* results, int index, NativeError* er
 }
 
 template<typename T>
-static T get_value_by_name(nanodbc::result* results, const StringProxy<ApiChar>& column_name, NativeError* error, T fallback = T{}) noexcept {
+static T get_value_by_name(ResultSet* results, const StringProxy<ApiChar>& column_name, NativeError* error, T fallback = T{}) noexcept {
     int index = find_column_by_name(results, column_name.c_str(), error);
     if (error && error->error_code) {
         return fallback;
@@ -78,7 +60,7 @@ static T get_value_by_name(nanodbc::result* results, const StringProxy<ApiChar>&
 }
 
 template<typename T>
-static T execute_result_set_query(nanodbc::result* results, const function<T(nanodbc::result*)>& func, NativeError* error) noexcept {
+static T execute_result_set_query(ResultSet* results, const function<T(ResultSet*)>& func, NativeError* error) noexcept {
     LOG_DEBUG("Executing result set query: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
     try {
@@ -99,88 +81,88 @@ static T execute_result_set_query(nanodbc::result* results, const function<T(nan
     return false;
 }
 
-bool next_result(nanodbc::result* results, NativeError* error) noexcept {
+bool next_result(ResultSet* results, NativeError* error) noexcept {
     LOG_DEBUG("Calling next() on result: {}", reinterpret_cast<uintptr_t>(results));
-    return execute_result_set_query<bool>(results, [](nanodbc::result* results) {
+    return execute_result_set_query<bool>(results, [](ResultSet* results) {
         return results->next();
     },
     error);
 }
 
-bool previous_result(nanodbc::result* results, NativeError* error) noexcept {
+bool previous_result(ResultSet* results, NativeError* error) noexcept {
     LOG_DEBUG("Calling previous_result() on result: {}", reinterpret_cast<uintptr_t>(results));
-    return execute_result_set_query<bool>(results, [](nanodbc::result* results) {
+    return execute_result_set_query<bool>(results, [](ResultSet* results) {
         return results->prior();
     },
     error);
 }
 
-bool first_result(nanodbc::result* results, NativeError* error) noexcept {
+bool first_result(ResultSet* results, NativeError* error) noexcept {
     LOG_DEBUG("Calling first_result() on result: {}", reinterpret_cast<uintptr_t>(results));
-    return execute_result_set_query<bool>(results, [](nanodbc::result* results) {
+    return execute_result_set_query<bool>(results, [](ResultSet* results) {
         return results->first();
     },
     error);
 }
 
-bool last_result(nanodbc::result* results, NativeError* error) noexcept {
+bool last_result(ResultSet* results, NativeError* error) noexcept {
     LOG_DEBUG("Calling last_result() on result: {}", reinterpret_cast<uintptr_t>(results));
-    return execute_result_set_query<bool>(results, [](nanodbc::result* results) {
+    return execute_result_set_query<bool>(results, [](ResultSet* results) {
         return results->last();
     },
     error);
 }
 
-bool absolute_result(nanodbc::result* results, int row, NativeError* error) noexcept {
+bool absolute_result(ResultSet* results, int row, NativeError* error) noexcept {
     LOG_DEBUG("Calling absolute_result() on result: {}", reinterpret_cast<uintptr_t>(results));
-    return execute_result_set_query<bool>(results, [row](nanodbc::result* results) {
+    return execute_result_set_query<bool>(results, [row](ResultSet* results) {
         return results->move(row);
     },
     error);
 }
 
-int get_row_position_result(nanodbc::result* results, NativeError* error) noexcept {
+int get_row_position_result(ResultSet* results, NativeError* error) noexcept {
     LOG_DEBUG("Calling get_row_result() on result: {}", reinterpret_cast<uintptr_t>(results));
-    return execute_result_set_query<int>(results, [](const nanodbc::result* results) {
+    return execute_result_set_query<int>(results, [](const ResultSet* results) {
         return results->position();
     },
     error);
 }
 
-int affected_rows_result(nanodbc::result* results, NativeError* error) noexcept {
+int affected_rows_result(ResultSet* results, NativeError* error) noexcept {
     LOG_DEBUG("Calling get_row_position_result() on result: {}", reinterpret_cast<uintptr_t>(results));
-    return execute_result_set_query<int>(results, [](const nanodbc::result* results) {
+    return execute_result_set_query<int>(results, [](const ResultSet* results) {
         return results->affected_rows();
     },
     error);
 }
 
-int get_int_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+int get_int_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     return get_value_by_index<int>(results, index, error, 0);
 }
 
-long get_long_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+long get_long_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     return get_value_by_index<long>(results, index, error, 0L);
 }
 
-double get_double_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+double get_double_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     return get_value_by_index<double>(results, index, error, 0.0);
 }
 
-bool get_bool_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+bool get_bool_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     // result->get<bool>() does not work
     return get_value_by_index<BOOL>(results, index, error, 0);
 }
 
-float get_float_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+float get_float_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     return get_value_by_index<float>(results, index, error, 0.0f);
 }
 
-short get_short_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+short get_short_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     return get_value_by_index<short>(results, index, error, 0);
 }
 
-const ApiChar* get_string_value_by_index(const nanodbc::result* results, int index, NativeError* error) noexcept {
+const ApiChar* get_string_value_by_index(const ResultSet* results, int index, NativeError* error) noexcept {
     LOG_DEBUG("Getting string value by index: {}", index);
     init_error(error);
     try {
@@ -188,32 +170,6 @@ const ApiChar* get_string_value_by_index(const nanodbc::result* results, int ind
             LOG_ERROR("Result is null");
             set_error(error, ErrorCode::Database, "ResultError", "Result is null");
             return nullptr;
-        }
-
-        int datatype = results->column_c_datatype(static_cast<short>(index));
-        if (datatype == SQL_C_CHAR || datatype == SQL_C_BINARY) {
-            auto value = results->get<std::string>(static_cast<short>(index), {});
-            LOG_DEBUG("String value retrieved from index {}: '{}'", index, value);
-#ifdef _WIN32
-            // On Windows, ODBC drivers typically return SQL_C_CHAR data in the system's active ANSI code page
-            // (e.g., CP1251 for Russian locales), NOT in UTF-8. Since our internal string representation uses
-            // std::wstring (UTF-16 on Windows), we explicitly convert the ANSI-encoded buffer to std::wstring
-            // using MultiByteToWideChar(CP_ACP). This avoids mojibake (e.g., "пїЅ") and ensures correct handling
-            // of locale-specific characters without relying on UTF-8 assumptions.
-            const StringProxy result (ansi_to_wstring(value));
-#else
-            // On Unix - like systems(Linux / macOS), ODBC drivers generally return strings in UTF - 8 by default,
-            const StringProxy result (value);
-#endif
-
-            // for unbound columns, null indicator is determined by SQLGetData call
-            if (results->is_null(static_cast<short>(index))) {
-                LOG_DEBUG("Column '{}' is NULL", index);
-                return nullptr;
-            }
-            LOG_DEBUG("String value retrieved from index {}: '{}'", index, result);
-            const auto wstr_result = static_cast<wstring> (result);
-            return duplicate_string(wstr_result.c_str(), wstr_result.length());
         }
 
         const StringProxy result (results->get<nanodbc::string>(static_cast<short>(index), {}));
@@ -242,7 +198,7 @@ const ApiChar* get_string_value_by_index(const nanodbc::result* results, int ind
     return nullptr;
 }
 
-CDate* get_date_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+CDate* get_date_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     const auto date = get_value_by_index<nanodbc::date>(results, index, error);
 
     if (was_null_by_index(results, index, error) || error && error->error_code) {
@@ -258,7 +214,7 @@ CDate* get_date_value_by_index(nanodbc::result* results, int index, NativeError*
     return new CDate(date);
 }
 
-CTime* get_time_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+CTime* get_time_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     const auto time = get_value_by_index<nanodbc::time>(results, index, error);
 
     if (was_null_by_index(results, index, error) || error && error->error_code) {
@@ -274,7 +230,7 @@ CTime* get_time_value_by_index(nanodbc::result* results, int index, NativeError*
     return new CTime(time);
 }
 
-CTimestamp* get_timestamp_value_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+CTimestamp* get_timestamp_value_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     const auto ts = get_value_by_index<nanodbc::timestamp>(results, index, error);
 
     if (was_null_by_index(results, index, error) || error && error->error_code) {
@@ -290,7 +246,7 @@ CTimestamp* get_timestamp_value_by_index(nanodbc::result* results, int index, Na
     return new CTimestamp(ts);
 }
 
-ChunkedBinaryStream* get_binary_stream_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+ChunkedBinaryStream* get_binary_stream_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     LOG_DEBUG("Getting binary stream by index: {}", index);
     init_error(error);
     try {
@@ -353,7 +309,7 @@ int read_binary_stream(ChunkedBinaryStream* stream, uint8_t* buffer, int offset,
     return -1;
 }
 
-BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+BinaryArray* get_bytes_array_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     try {
         try {
             // Try to get as binary data
@@ -381,7 +337,7 @@ BinaryArray* get_bytes_array_by_index(nanodbc::result* results, int index, Nativ
     return nullptr;
 }
 
-bool was_null_by_index(nanodbc::result* results, int index, NativeError* error) noexcept {
+bool was_null_by_index(ResultSet* results, int index, NativeError* error) noexcept {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
     try {
@@ -405,37 +361,37 @@ bool was_null_by_index(nanodbc::result* results, int index, NativeError* error) 
     return true;
 }
 
-int get_int_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+int get_int_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<int>(results, str_name, error, 0);
 }
 
-long get_long_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+long get_long_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<long>(results, str_name, error, 0L);
 }
 
-double get_double_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+double get_double_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<double>(results, str_name, error, 0.0);
 }
 
-bool get_bool_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+bool get_bool_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<BOOL>(results, str_name, error, 0);
 }
 
-float get_float_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+float get_float_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<float>(results, str_name, error, 0.0f);
 }
 
-short get_short_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+short get_short_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     return get_value_by_name<short>(results, str_name, error, 0);
 }
 
-const ApiChar* get_string_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+const ApiChar* get_string_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const int index = find_column_by_name(results, name, error);
     if (error->error_code) {
         return nullptr;
@@ -446,7 +402,7 @@ const ApiChar* get_string_value_by_name(nanodbc::result* results, const ApiChar*
     return get_string_value_by_index(results, index, error);
 }
 
-CDate* get_date_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+CDate* get_date_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     auto date = get_value_by_name<nanodbc::date>(results, str_name, error, {});
     if (error && error->error_code) {
@@ -466,7 +422,7 @@ CDate* get_date_value_by_name(nanodbc::result* results, const ApiChar* name, Nat
     return new CDate(date);
 }
 
-CTime* get_time_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+CTime* get_time_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     const auto time = get_value_by_name<nanodbc::time>(results, str_name, error, {});
 
@@ -487,7 +443,7 @@ CTime* get_time_value_by_name(nanodbc::result* results, const ApiChar* name, Nat
     return new CTime(time);
 }
 
-CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+CTimestamp* get_timestamp_value_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     const StringProxy str_name (name);
     const auto ts = get_value_by_name<nanodbc::timestamp>(results, str_name, error, {});
     if (error && error->error_code) {
@@ -507,7 +463,7 @@ CTimestamp* get_timestamp_value_by_name(nanodbc::result* results, const ApiChar*
     return new CTimestamp(ts);
 }
 
-BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+BinaryArray* get_bytes_array_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     int index = find_column_by_name(results, name, error);
     if (error && error->error_code) {
         return nullptr;
@@ -515,7 +471,7 @@ BinaryArray* get_bytes_array_by_name(nanodbc::result* results, const ApiChar* na
     return get_bytes_array_by_index(results, index, error);
 }
 
-ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+ChunkedBinaryStream* get_binary_stream_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     int index = find_column_by_name(results, name, error);
     if (error && error->error_code) {
         return nullptr;
@@ -523,7 +479,7 @@ ChunkedBinaryStream* get_binary_stream_by_name(nanodbc::result* results, const A
     return get_binary_stream_by_index(results, index, error);
 }
 
-int find_column_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+int find_column_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     const StringProxy str_name (name);
     init_error(error);
@@ -548,7 +504,7 @@ int find_column_by_name(nanodbc::result* results, const ApiChar* name, NativeErr
     return 0;
 }
 
-bool was_null_by_name(nanodbc::result* results, const ApiChar* name, NativeError* error) noexcept {
+bool was_null_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     const StringProxy str_name (name);
     init_error(error);
@@ -573,7 +529,7 @@ bool was_null_by_name(nanodbc::result* results, const ApiChar* name, NativeError
     return true;
 }
 
-void close_result(nanodbc::result* results, NativeError* error) noexcept {
+void close_result(ResultSet* results, NativeError* error) noexcept {
     LOG_DEBUG("Closing result: {}", reinterpret_cast<uintptr_t>(results));
     init_error(error);
     try {

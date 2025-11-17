@@ -1,5 +1,5 @@
 #pragma once
-#include <nanodbc/nanodbc.h>
+#include "core/result_set.hpp"
 #include "struct/error_info.h"
 #include "struct/nanodbc_c.h"
 #include "struct/binary_array.h"
@@ -97,7 +97,7 @@ extern "C" {
     /// \param timeout Seconds before execution timeout.
     /// \param error Error information structure to populate on failure.
     /// \return Pointer to result set object on success, nullptr on failure.
-    ODBC_API nanodbc::result* execute(nanodbc::statement* stmt, int timeout, NativeError* error) noexcept;
+    ODBC_API ResultSet* execute(nanodbc::statement* stmt, int timeout, NativeError* error) noexcept;
 
     /// \brief Cancels the current statement execution.
     /// \param stmt Pointer to the statement object.
