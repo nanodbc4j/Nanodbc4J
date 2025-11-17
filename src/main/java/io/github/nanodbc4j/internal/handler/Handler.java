@@ -1,6 +1,5 @@
 package io.github.nanodbc4j.internal.handler;
 
-import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.cstruct.NativeError;

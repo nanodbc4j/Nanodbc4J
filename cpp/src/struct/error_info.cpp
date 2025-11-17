@@ -51,12 +51,16 @@ void set_error(NativeError* error, ErrorCode code, const char* type, const char*
         type ? type : "(null)",
         message ? message : "(null)");
 
-    if (error) {
-        NativeError::clear(error);
-        error->error_code = code;
-        error->error_type = strdup(type);
-        error->error_message = strdup(message);
-        return;
+    try {
+        if (error) {
+            NativeError::clear(error);
+            error->error_code = code;
+            error->error_type = strdup(type);
+            error->error_message = strdup(message);
+            return;
+        }
+    } catch (...) {
     }
+
     LOG_TRACE("set_error: error is null, nothing to set");
 }

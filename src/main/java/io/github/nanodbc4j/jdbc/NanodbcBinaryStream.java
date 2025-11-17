@@ -6,6 +6,7 @@ import io.github.nanodbc4j.internal.cstruct.NativeError;
 import io.github.nanodbc4j.internal.pointer.BinaryStreamPtr;
 import io.github.nanodbc4j.internal.pointer.ResultSetPtr;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.java.Log;
 
 import java.io.IOException;
@@ -53,9 +54,8 @@ public class NanodbcBinaryStream extends InputStream {
     }
 
     @Override
-    public int read(byte[] buffer, int offset, int length) throws IOException {
+    public int read(byte @NonNull [] buffer, int offset, int length) throws IOException {
         if (closed) throw new IOException("Stream closed");
-        if (buffer == null) throw new NullPointerException();
 
         NativeError error = new NativeError();
         try {
