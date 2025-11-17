@@ -27,31 +27,14 @@ static T get_value_by_index(ResultSet* results, int index, NativeError* error, T
             return fallback;
         }
 
-
-        T result = fallback;
-
-        const int datatype = results->column_c_datatype(static_cast<short>(index));
-
-        // For arithmetic types, parse string/binary data via `NumberProxy`
-        // otherwise, read directly—handles cases where ODBC returns numbers as strings.
-        if constexpr (is_arithmetic_v<T>) {
-            if (datatype == SQL_C_CHAR || datatype == SQL_C_BINARY) {
-                const auto str_value = results->get<std::string>(static_cast<short>(index), {});
-                NumberProxy number_proxy(str_value);
-                result = static_cast<T>(number_proxy);
-            } else {
-                result = results->get<T>(index, fallback);
-            }
-        } else {
-            result = results->get<T>(index, fallback);
-        }
+        auto value = results->get<T>(index, fallback);
 
         // for unbound columns, null indicator is determined by SQLGetData call
         if (results->is_null(static_cast<short>(index))) {
             LOG_DEBUG("Column is NULL, returning fallback");
             return fallback;
         }
-        return result;
+        return value;
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
         LOG_ERROR("Index range error in get_value: {}", StringProxy(e.what()));
@@ -188,32 +171,6 @@ const ApiChar* get_string_value_by_index(const ResultSet* results, int index, Na
             LOG_ERROR("Result is null");
             set_error(error, ErrorCode::Database, "ResultError", "Result is null");
             return nullptr;
-        }
-
-        int datatype = results->column_c_datatype(static_cast<short>(index));
-        if (datatype == SQL_C_CHAR || datatype == SQL_C_BINARY) {
-            auto value = results->get<std::string>(static_cast<short>(index), {});
-            LOG_DEBUG("String value retrieved from index {}: '{}'", index, value);
-#ifdef _WIN32
-            // On Windows, ODBC drivers typically return SQL_C_CHAR data in the system's active ANSI code page
-            // (e.g., CP1251 for Russian locales), NOT in UTF-8. Since our internal string representation uses
-            // std::wstring (UTF-16 on Windows), we explicitly convert the ANSI-encoded buffer to std::wstring
-            // using MultiByteToWideChar(CP_ACP). This avoids mojibake (e.g., "пїЅ") and ensures correct handling
-            // of locale-specific characters without relying on UTF-8 assumptions.
-            const StringProxy result (ansi_to_wstring(value));
-#else
-            // On Unix - like systems(Linux / macOS), ODBC drivers generally return strings in UTF - 8 by default,
-            const StringProxy result (value);
-#endif
-
-            // for unbound columns, null indicator is determined by SQLGetData call
-            if (results->is_null(static_cast<short>(index))) {
-                LOG_DEBUG("Column '{}' is NULL", index);
-                return nullptr;
-            }
-            LOG_DEBUG("String value retrieved from index {}: '{}'", index, result);
-            const auto wstr_result = static_cast<wstring> (result);
-            return duplicate_string(wstr_result.c_str(), wstr_result.length());
         }
 
         const StringProxy result (results->get<nanodbc::string>(static_cast<short>(index), {}));

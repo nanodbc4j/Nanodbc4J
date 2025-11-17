@@ -16,7 +16,7 @@ StringProxy<CharT, Traits, Alloc>::StringProxy(const StringT& str)
 
 template <typename CharT, typename Traits, typename Alloc>
 StringProxy<CharT, Traits, Alloc>::StringProxy(StringT&& str)
-    : data(move(str)) {
+    : data(std::move(str)) {
 }
 
 template <typename CharT, typename Traits, typename Alloc>
