@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 @Log
 public class NanodbcDriver implements Driver {
     public static final String PREFIX = "jdbc:nanodbc4j:";
-    static final int MAJOR_VERSION = 1;
-    static final int MINOR_VERSION = 7;
+    static final int MAJOR_VERSION = 4;
+    static final int MINOR_VERSION = 0;
 
     static {
         try {
@@ -52,7 +52,16 @@ public class NanodbcDriver implements Driver {
 
         String connectionString = extractAddress(url).trim(); // ← remove jdbc:nanodbc4j:
         int loginTimeoutSeconds = DriverManager.getLoginTimeout();
-        return new NanodbcConnection(connectionString, loginTimeoutSeconds);
+
+        String user = info.getProperty("user");
+        String password = info.getProperty("password");
+        if (user != null || password != null) {
+            user = user == null ? "" : user;
+            password = password == null ? "" : password;
+            return new NanodbcConnection(connectionString, user, password, loginTimeoutSeconds);
+        } else {
+            return new NanodbcConnection(connectionString, loginTimeoutSeconds);
+        }
     }
 
     /**
@@ -155,33 +164,6 @@ public class NanodbcDriver implements Driver {
         } catch (Exception e) {
             log.log(Level.SEVERE, "Could not initialize logging", e);
         }
-    }
-
-    /**
-     * Creates a new database connection to a given URL.
-     *
-     * @param url  the URL
-     * @param prop the properties
-     * @return a Connection object that represents a connection to the URL
-     * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
-     */
-    public static NanodbcConnection createConnection(String url, Properties prop) throws SQLException {
-        if (!isValidURL(url)) return null;
-
-        String connectionString = extractAddress(url).trim(); // ← remove jdbc:nanodbc4j:
-        int loginTimeoutSeconds = DriverManager.getLoginTimeout();
-        return new NanodbcConnection(connectionString, loginTimeoutSeconds);
-    }
-
-    /**
-     * Creates a new database connection to a given URL.
-     *
-     * @param url the URL
-     * @return a Connection object that represents a connection to the URL
-     * @see java.sql.Driver#connect(java.lang.String, java.util.Properties)
-     */
-    public static NanodbcConnection createConnection(String url) throws SQLException {
-        return createConnection(url, null);
     }
 
     public static void setLogLevel(SpdLogLevel level) {
