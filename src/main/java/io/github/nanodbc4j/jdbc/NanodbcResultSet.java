@@ -2058,15 +2058,6 @@ public class NanodbcResultSet implements ResultSet {
 
     /**
      * Retrieves the value of the specified column as a {@link UUID}.
-     * <p>
-     * This method attempts to read the UUID in a database-agnostic way:
-     * <ol>
-     *   <li>First, it tries to read the value as a string and parse it using {@link UUID#fromString(String)}.
-     *   <li>If that fails (e.g., due to invalid format or native driver error), it falls back to reading raw bytes.
-     *   <li>When reading bytes, it expects exactly 16 bytes in big-endian order (standard Java/PostgreSQL/MySQL format).
-     * </ol>
-     * <p>
-     *
      * @param columnIndex the first column is 1, the second is 2, ...
      * @return the column value as a {@code UUID}, or {@code null} if the value is SQL {@code NULL}
      * @throws SQLException if the column value cannot be converted to a valid UUID
@@ -2075,35 +2066,27 @@ public class NanodbcResultSet implements ResultSet {
         throwIfAlreadyClosed();
         lastColumn = columnIndex;
 
-        // First, try reading as a string — this is the most portable and widely supported approach
-        try {
-            String uuidStr = ResultSetHandler.getStringValueByIndex(resultSetPtr, columnIndex);
-            if (uuidStr == null || uuidStr.isEmpty()) {
-                return null;
-            }
-            return UUID.fromString(uuidStr.trim());
-        } catch (IllegalArgumentException | NativeException e) {
-            // String is not a valid UUID format — proceed to byte fallback
-            // Native driver failed to retrieve as string — proceed to byte fallback
-        }
-
-        // Fallback: attempt to read as raw bytes (e.g., PostgreSQL uuid, MySQL BINARY(16), etc.)
         try {
             byte[] bytes = ResultSetHandler.getBytesByIndex(resultSetPtr, columnIndex);
             if (bytes == null || bytes.length == 0) {
                 return null;
             }
-            if (bytes.length != 16) {
-                throw new SQLException("Invalid UUID byte length: " + bytes.length + ". Expected 16 bytes.");
+            switch (bytes.length) {
+                case 16:    // Binary UUID format - 16 bytes for two longs
+                    ByteBuffer bb = ByteBuffer.wrap(bytes);
+                    long mostSigBits = bb.getLong();
+                    long leastSigBits = bb.getLong();
+                    return new UUID(mostSigBits, leastSigBits);
+                case 36:    // String UUID format - 36 ASCII characters
+                    String uuidStr = new String(bytes, StandardCharsets.US_ASCII);
+                    return UUID.fromString(uuidStr);
+                default:
+                    throw new SQLException("Invalid UUID byte length: " + bytes.length + ". Expected 16 or 36 bytes.");
             }
-            ByteBuffer bb = ByteBuffer.wrap(bytes);
-            long mostSigBits = bb.getLong();
-            long leastSigBits = bb.getLong();
-            return new UUID(mostSigBits, leastSigBits);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         } catch (BufferUnderflowException e) {
-            throw new SQLException("Not enough bytes to construct UUID", e);
+            throw new NanodbcSQLException("Not enough bytes to construct UUID", e);
         }
     }
 
