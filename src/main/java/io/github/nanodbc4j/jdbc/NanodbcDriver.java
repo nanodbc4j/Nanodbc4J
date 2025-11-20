@@ -1,5 +1,6 @@
 package io.github.nanodbc4j.jdbc;
 
+import io.github.nanodbc4j.exceptions.NanodbcSQLFeatureNotSupportedException;
 import io.github.nanodbc4j.internal.dto.DatasourceProperties;
 import io.github.nanodbc4j.internal.dto.DriverProperties;
 import io.github.nanodbc4j.internal.handler.DriverHandler;
@@ -127,7 +128,7 @@ public class NanodbcDriver implements Driver {
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         log.log(Level.FINEST, "NanodbcDriver.getParentLogger");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**

@@ -1,6 +1,7 @@
 package io.github.nanodbc4j.jdbc;
 
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
+import io.github.nanodbc4j.exceptions.NanodbcSQLFeatureNotSupportedException;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.handler.ConnectionHandler;
 import io.github.nanodbc4j.internal.pointer.ConnectionPtr;
@@ -22,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Savepoint;
@@ -108,7 +108,7 @@ public class NanodbcConnection implements Connection {
     public CallableStatement prepareCall(String sql) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.NanodbcConnection.prepareCall");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -225,7 +225,7 @@ public class NanodbcConnection implements Connection {
     public void setReadOnly(boolean readOnly) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.setReadOnly");
         // log.warning("throw SQLFeatureNotSupportedException");
-        // throw new SQLFeatureNotSupportedException(); TODO
+        // throw new NanodbcSQLFeatureNotSupportedException(); TODO
     }
 
     /**
@@ -236,7 +236,7 @@ public class NanodbcConnection implements Connection {
         log.log(Level.FINEST, "NanodbcConnection.isReadOnly");
         return true;
         //log.warning("throw SQLFeatureNotSupportedException");
-        //throw new SQLFeatureNotSupportedException(); TODO
+        //throw new NanodbcSQLFeatureNotSupportedException(); TODO
     }
 
     /**
@@ -327,10 +327,10 @@ public class NanodbcConnection implements Connection {
         log.log(Level.FINEST, "NanodbcConnection.createStatement");
         if (resultSetType != ResultSet.TYPE_SCROLL_INSENSITIVE && resultSetType != ResultSet.TYPE_FORWARD_ONLY) {
             // TYPE_SCROLL_SENSITIVE не поддерживается
-            throw new SQLFeatureNotSupportedException("Only TYPE_SCROLL_INSENSITIVE and TYPE_FORWARD_ONLY are supported");
+            throw new NanodbcSQLFeatureNotSupportedException("Only TYPE_SCROLL_INSENSITIVE and TYPE_FORWARD_ONLY are supported");
         }
         if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
-            throw new SQLFeatureNotSupportedException("Only CONCUR_READ_ONLY is supported");
+            throw new NanodbcSQLFeatureNotSupportedException("Only CONCUR_READ_ONLY is supported");
         }
 
         try {
@@ -349,10 +349,10 @@ public class NanodbcConnection implements Connection {
         log.log(Level.FINEST, "NanodbcConnection.prepareStatement");
         if (resultSetType != ResultSet.TYPE_SCROLL_INSENSITIVE && resultSetType != ResultSet.TYPE_FORWARD_ONLY) {
             // TYPE_SCROLL_SENSITIVE не поддерживается
-            throw new SQLFeatureNotSupportedException("Only TYPE_SCROLL_INSENSITIVE and TYPE_FORWARD_ONLY are supported");
+            throw new NanodbcSQLFeatureNotSupportedException("Only TYPE_SCROLL_INSENSITIVE and TYPE_FORWARD_ONLY are supported");
         }
         if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
-            throw new SQLFeatureNotSupportedException("Only CONCUR_READ_ONLY is supported");
+            throw new NanodbcSQLFeatureNotSupportedException("Only CONCUR_READ_ONLY is supported");
         }
 
         try {
@@ -371,7 +371,7 @@ public class NanodbcConnection implements Connection {
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.prepareCall");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -390,7 +390,7 @@ public class NanodbcConnection implements Connection {
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.setTypeMap");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -400,7 +400,7 @@ public class NanodbcConnection implements Connection {
     public void setHoldability(int holdability) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.setHoldability");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -525,7 +525,7 @@ public class NanodbcConnection implements Connection {
     public NClob createNClob() throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.createNClob");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -535,7 +535,7 @@ public class NanodbcConnection implements Connection {
     public SQLXML createSQLXML() throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.createSQLXML");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -580,7 +580,7 @@ public class NanodbcConnection implements Connection {
     public Properties getClientInfo() throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.getClientInfo");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -625,7 +625,7 @@ public class NanodbcConnection implements Connection {
     public void abort(Executor executor) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.abort");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -634,7 +634,7 @@ public class NanodbcConnection implements Connection {
     @Override
     public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
         log.log(Level.FINEST, "NanodbcConnection.setNetworkTimeout");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**

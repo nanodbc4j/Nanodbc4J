@@ -8,6 +8,12 @@ public final class NativeException extends RuntimeException {
     private final int errorCode;
     private final String errorType;
 
+    public NativeException(String message) {
+        super(message);
+        this.errorCode = 0;
+        this.errorType = null;
+    }
+
     public NativeException(NativeError error) {
         super(error.getErrorMessage());
         this.errorCode = error.error_code;
@@ -19,5 +25,4 @@ public final class NativeException extends RuntimeException {
         this.errorCode = errorCode;
         this.errorType = errorType;
     }
-
 }

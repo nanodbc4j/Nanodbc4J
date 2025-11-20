@@ -2,6 +2,7 @@ package io.github.nanodbc4j.internal.handler;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.binding.OdbcApi;
 import io.github.nanodbc4j.internal.dto.DatasourceProperties;
 import io.github.nanodbc4j.internal.dto.DriverProperties;
@@ -24,7 +25,7 @@ public final class DriverHandler {
 
     public static void setLogLevel(SpdLogLevel level) {
         if (OdbcApi.INSTANCE.set_log_level(level.getValue()) != 0) {
-            throw new InternalError("set_log_level failed");
+            throw new NativeException("set_log_level failed");
         }
     }
 

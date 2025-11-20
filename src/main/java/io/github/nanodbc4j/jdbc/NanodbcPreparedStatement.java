@@ -1,6 +1,7 @@
 package io.github.nanodbc4j.jdbc;
 
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
+import io.github.nanodbc4j.exceptions.NanodbcSQLFeatureNotSupportedException;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.binding.StatementApi;
 import io.github.nanodbc4j.internal.cstruct.BinaryArray;
@@ -26,7 +27,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -188,7 +188,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setBigDecimal(int parameterIndex, BigDecimal x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setBigDecimal");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -272,7 +272,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setAsciiStream(int parameterIndex, InputStream x, int length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setAsciiStream");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -282,7 +282,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setUnicodeStream");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -292,7 +292,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setBinaryStream(int parameterIndex, InputStream x, int length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setBinaryStream");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -302,7 +302,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void clearParameters() throws SQLException {
         log.finest("NanodbcPreparedStatement.clearParameters");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -312,7 +312,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
         log.finest("NanodbcPreparedStatement.setObject");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -380,7 +380,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void addBatch() throws SQLException {
         log.finest("NanodbcPreparedStatement.addBatch");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -390,7 +390,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setCharacterStream(int parameterIndex, Reader reader, int length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setCharacterStream");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -400,7 +400,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setRef(int parameterIndex, Ref x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setRef");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -410,7 +410,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setBlob(int parameterIndex, Blob x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setBlob");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -420,7 +420,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setClob(int parameterIndex, Clob x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setClob");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -430,7 +430,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setArray(int parameterIndex, Array x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setArray");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -453,7 +453,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setDate(int parameterIndex, Date x, Calendar cal) throws SQLException {
         log.finest("NanodbcPreparedStatement.setDate");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -463,7 +463,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setTime(int parameterIndex, Time x, Calendar cal) throws SQLException {
         log.finest("NanodbcPreparedStatement.setTime");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -473,7 +473,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal) throws SQLException {
         log.finest("NanodbcPreparedStatement.setTimestamp");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -483,7 +483,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setNull(int parameterIndex, int sqlType, String typeName) throws SQLException {
         log.finest("NanodbcPreparedStatement.setNull");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -493,7 +493,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setURL(int parameterIndex, URL x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setURL");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -503,7 +503,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public ParameterMetaData getParameterMetaData() throws SQLException {
         log.finest("NanodbcPreparedStatement.getParameterMetaData");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -513,7 +513,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setRowId(int parameterIndex, RowId x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setRowId");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -523,7 +523,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setNString(int parameterIndex, String value) throws SQLException {
         log.finest("NanodbcPreparedStatement.setNString");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -533,7 +533,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setNCharacterStream");
         log.warning("throw SQLFeatureNotSupportedException");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -542,7 +542,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setNClob(int parameterIndex, NClob value) throws SQLException {
         log.finest("NanodbcPreparedStatement.setNClob");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -551,7 +551,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setClob(int parameterIndex, Reader reader, long length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setClob");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -560,7 +560,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setBlob");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -569,7 +569,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setNClob");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -578,7 +578,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException {
         log.finest("NanodbcPreparedStatement.setSQLXML");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -587,7 +587,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setObject(int parameterIndex, Object x, int targetSqlType, int scaleOrLength) throws SQLException {
         log.finest("NanodbcPreparedStatement.setObject");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -596,7 +596,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setAsciiStream");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -605,7 +605,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setBinaryStream");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -614,7 +614,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException {
         log.finest("NanodbcPreparedStatement.setCharacterStream");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -623,7 +623,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setAsciiStream");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -632,7 +632,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
         log.finest("NanodbcPreparedStatement.setBinaryStream");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -641,7 +641,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
         log.finest("NanodbcPreparedStatement.setCharacterStream");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -650,7 +650,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
         log.finest("NanodbcPreparedStatement.setNCharacterStream");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -659,7 +659,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setClob(int parameterIndex, Reader reader) throws SQLException {
         log.finest("NanodbcPreparedStatement.setClob");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -668,7 +668,7 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException {
         log.finest("NanodbcPreparedStatement.setBlob");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -677,6 +677,6 @@ public class NanodbcPreparedStatement extends NanodbcStatement implements Prepar
     @Override
     public void setNClob(int parameterIndex, Reader reader) throws SQLException {
         log.finest("NanodbcPreparedStatement.setNClob");
-        throw new SQLFeatureNotSupportedException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 }
