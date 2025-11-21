@@ -231,9 +231,8 @@ public class NanodbcStatement implements Statement {
     public int getUpdateCount() throws SQLException {
         log.finest("NanodbcStatement.getUpdateCount");
         throwIfAlreadyClosed();
-        resultSet.throwIfAlreadyClosed();
         try {
-            return ResultSetHandler.getUpdateCount(resultSet.resultSetPtr);
+            return resultSet == null || resultSet.isClosed() ? -1 : ResultSetHandler.getUpdateCount(resultSet.resultSetPtr);
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
