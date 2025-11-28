@@ -75,6 +75,24 @@ NumberProxy<T>::operator string() const {
     return to_string(value);
 }
 
+NumberProxy<string>::NumberProxy(string&& str)
+    : value(std::move(str)) {
+    hash = hash_djb2a(value);
+    switch (hash) {
+        case ""_sh:
+        case "false"_sh:
+            value = "0";
+            hash = "0"_sh;
+            break;
+        case "true"_sh:
+            value = "1";
+            hash = "1"_sh;
+            break;
+        default:
+            break;
+    }
+}
+
 NumberProxy<string>::NumberProxy(const string& str)
     : value(str.empty() ? NULL_NUMBER : str) {
     hash = hash_djb2a(value);
@@ -91,7 +109,6 @@ NumberProxy<string>::NumberProxy(const string& str)
             break;
     }
 }
-
 
 NumberProxy<string>::NumberProxy(const char* str)
     : value(str && *str ? str : NULL_NUMBER) {
@@ -112,7 +129,7 @@ NumberProxy<string>::NumberProxy(const char* str)
 
 NumberProxy<string>::operator short() const {
     try {
-        return stoi(value);
+        return static_cast<short>(stoi(value));
     } catch (out_of_range&) {
         return numeric_limits<short>::max();
     }
@@ -203,6 +220,155 @@ NumberProxy<string>::operator bool() const {
 }
 
 NumberProxy<string>::operator string() const {
+    return value;
+}
+
+NumberProxy<wstring>::NumberProxy(wstring&& str)
+    : value(std::move(str)) {
+    hash = hash_djb2a(value);
+    switch (hash) {
+        case L""_sh:
+        case L"false"_sh:
+            value = L"0";
+            hash = L"0"_sh;
+            break;
+        case L"true"_sh:
+            value = L"1";
+            hash = L"1"_sh;
+            break;
+        default:
+            break;
+    }
+}
+
+NumberProxy<wstring>::NumberProxy(const wstring& str)
+    : value(str.empty() ? NULL_NUMBER : str) {
+    hash = hash_djb2a(value);
+    switch (hash) {
+        case L"false"_sh:
+            value = L"0";
+            hash = L"0"_sh;
+            break;
+        case L"true"_sh:
+            value = L"1";
+            hash = L"1"_sh;
+            break;
+        default:
+            break;
+    }
+}
+
+
+NumberProxy<wstring>::NumberProxy(const wchar_t* str)
+    : value(str && *str ? str : NULL_NUMBER) {
+    hash = hash_djb2a(value);
+    switch (hash) {
+        case L"false"_sh:
+            value = L"0";
+            hash = L"0"_sh;
+            break;
+        case L"true"_sh:
+            value = L"1";
+            hash = L"1"_sh;
+            break;
+        default:
+            break;
+    }
+}
+
+NumberProxy<wstring>::operator short() const {
+    try {
+        return static_cast<short>(stoi(value));
+    } catch (out_of_range&) {
+        return numeric_limits<short>::max();
+    }
+}
+
+NumberProxy<wstring>::operator int() const {
+    try {
+        return stoi(value);
+    } catch (out_of_range&) {
+        return numeric_limits<int>::max();
+    }
+}
+
+NumberProxy<wstring>::operator long() const {
+    try {
+        return stol(value);
+    } catch (out_of_range&) {
+        return numeric_limits<long>::max();
+    }
+}
+
+NumberProxy<wstring>::operator long long() const {
+    try {
+        return stoll(value);
+    } catch (out_of_range&) {
+        return numeric_limits<long long>::max();
+    }
+}
+
+NumberProxy<wstring>::operator unsigned short() const {
+    try {
+        return stoul(value);
+    } catch (out_of_range&) {
+        return numeric_limits<unsigned short>::max();
+    }
+}
+
+NumberProxy<wstring>::operator unsigned int() const {
+    try {
+        return stoul(value);
+    } catch (out_of_range&) {
+        return numeric_limits<unsigned int>::max();
+    }
+}
+
+NumberProxy<wstring>::operator unsigned long() const {
+    try {
+        return stoul(value);
+    } catch (out_of_range&) {
+        return numeric_limits<unsigned long>::max();
+    }
+}
+
+NumberProxy<wstring>::operator unsigned long long() const {
+    try {
+        return stoull(value);
+    } catch (out_of_range&) {
+        return numeric_limits<unsigned long long>::max();
+    }
+}
+
+NumberProxy<wstring>::operator float() const {
+    try {
+        return stof(value);
+    } catch (out_of_range&) {
+        return numeric_limits<float>::max();
+    }
+}
+
+NumberProxy<wstring>::operator double() const {
+    try {
+        return stod(value);
+    } catch (out_of_range&) {
+        return numeric_limits<double>::max();
+    }
+}
+
+NumberProxy<wstring>::operator long double() const {
+    try {
+        return stold(value);
+    } catch (out_of_range&) {
+        return numeric_limits<long double>::max();
+    }
+}
+
+NumberProxy<wstring>::operator bool() const {
+    return !value.empty() && hash != L"0"_sh && hash != L"false"_sh;
+}
+
+NumberProxy<wstring>::operator wstring() const {
     return value;
 }
 

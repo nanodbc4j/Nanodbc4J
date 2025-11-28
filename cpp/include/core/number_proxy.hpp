@@ -44,6 +44,8 @@ class NumberProxy<std::string> {
     unsigned long hash;
 
 public:
+    explicit NumberProxy(std::string&& str);
+
     explicit NumberProxy(const std::string& str);
 
     explicit NumberProxy(const char* str);
@@ -73,6 +75,47 @@ public:
     explicit operator bool() const;
 
     explicit operator std::string() const;
+};
+
+template<>
+class NumberProxy<std::wstring> {
+    static constexpr std::wstring_view NULL_NUMBER = L"0";
+
+    std::wstring value;
+    unsigned long hash;
+
+public:
+    explicit NumberProxy(std::wstring&& str);
+
+    explicit NumberProxy(const std::wstring& str);
+
+    explicit NumberProxy(const wchar_t* str);
+
+    explicit operator short() const;
+
+    explicit operator int() const;
+
+    explicit operator long() const;
+
+    explicit operator long long() const;
+
+    explicit operator unsigned short() const;
+
+    explicit operator unsigned int() const;
+
+    explicit operator unsigned long() const;
+
+    explicit operator unsigned long long() const;
+
+    explicit operator float() const;
+
+    explicit operator double() const;
+
+    explicit operator long double() const;
+
+    explicit operator bool() const;
+
+    explicit operator std::wstring() const;
 };
 
 extern template class NumberProxy<short>;
