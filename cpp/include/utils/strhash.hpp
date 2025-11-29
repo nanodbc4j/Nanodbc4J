@@ -16,7 +16,7 @@ constexpr auto operator"" _sh(const char* str, const size_t len) {
 constexpr auto hash_djb2a(const std::wstring_view sv) {
     unsigned long hash{ 5381 };
     for (const wchar_t c : sv) {
-        hash = ((hash << 5) + hash) ^ c;
+        hash = ((hash << 5) + hash) ^ static_cast<unsigned long>(c);
     }
     return hash;
 }
