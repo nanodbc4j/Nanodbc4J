@@ -58,7 +58,7 @@ public interface OdbcApi extends Library {
      * Sets logging level for native library.
      *
      * @param level log level to set
-     * @return previous log level
+     * @return log level
      */
     int set_log_level(int level);
 

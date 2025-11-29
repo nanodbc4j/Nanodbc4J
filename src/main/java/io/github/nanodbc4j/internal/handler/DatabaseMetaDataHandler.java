@@ -22,23 +22,23 @@ public class DatabaseMetaDataHandler {
         DatabaseMetaDataDto metaData = new DatabaseMetaDataDto();
 
         // === Строковые значения ===
-        metaData.databaseProductName = getWideString(metaDataStruct.databaseProductName);
-        metaData.databaseProductVersion = getWideString(metaDataStruct.databaseProductVersion);
-        metaData.driverName = getWideString(metaDataStruct.driverName);
-        metaData.driverVersion = getWideString(metaDataStruct.driverVersion);
-        metaData.identifierQuoteString = getWideString(metaDataStruct.identifierQuoteString);
-        metaData.schemaTerm = getWideString(metaDataStruct.schemaTerm);
-        metaData.procedureTerm = getWideString(metaDataStruct.procedureTerm);
-        metaData.catalogTerm = getWideString(metaDataStruct.catalogTerm);
-        metaData.catalogSeparator = getWideString(metaDataStruct.catalogSeparator);
-        metaData.sqlKeywords = getWideString(metaDataStruct.sqlKeywords);
-        metaData.numericFunctions = getWideString(metaDataStruct.numericFunctions);
-        metaData.stringFunctions = getWideString(metaDataStruct.stringFunctions);
-        metaData.systemFunctions = getWideString(metaDataStruct.systemFunctions);
-        metaData.timeDateFunctions = getWideString(metaDataStruct.timeDateFunctions);
-        metaData.searchStringEscape = getWideString(metaDataStruct.searchStringEscape);
-        metaData.extraNameCharacters = getWideString(metaDataStruct.extraNameCharacters);
-        metaData.userName = getWideString(metaDataStruct.userName);
+        metaData.databaseProductName = getUtf16String(metaDataStruct.databaseProductName);
+        metaData.databaseProductVersion = getUtf16String(metaDataStruct.databaseProductVersion);
+        metaData.driverName = getUtf16String(metaDataStruct.driverName);
+        metaData.driverVersion = getUtf16String(metaDataStruct.driverVersion);
+        metaData.identifierQuoteString = getUtf16String(metaDataStruct.identifierQuoteString);
+        metaData.schemaTerm = getUtf16String(metaDataStruct.schemaTerm);
+        metaData.procedureTerm = getUtf16String(metaDataStruct.procedureTerm);
+        metaData.catalogTerm = getUtf16String(metaDataStruct.catalogTerm);
+        metaData.catalogSeparator = getUtf16String(metaDataStruct.catalogSeparator);
+        metaData.sqlKeywords = getUtf16String(metaDataStruct.sqlKeywords);
+        metaData.numericFunctions = getUtf16String(metaDataStruct.numericFunctions);
+        metaData.stringFunctions = getUtf16String(metaDataStruct.stringFunctions);
+        metaData.systemFunctions = getUtf16String(metaDataStruct.systemFunctions);
+        metaData.timeDateFunctions = getUtf16String(metaDataStruct.timeDateFunctions);
+        metaData.searchStringEscape = getUtf16String(metaDataStruct.searchStringEscape);
+        metaData.extraNameCharacters = getUtf16String(metaDataStruct.extraNameCharacters);
+        metaData.userName = getUtf16String(metaDataStruct.userName);
 
         // === Булевы значения ===
         metaData.isReadOnly = metaDataStruct.isReadOnly != 0;

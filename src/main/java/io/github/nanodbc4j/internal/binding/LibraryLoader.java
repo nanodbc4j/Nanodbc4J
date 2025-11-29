@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @Log
 @UtilityClass
-class LibraryLoader {
+public class LibraryLoader {
     private static final String LIBRARY_NAME = "nanodbc4j";
     private static final String TEMP_LIB_PREFIX = "nanodbc4j_";
     private static final String LOCK_EXT = ".lck";
@@ -39,7 +39,7 @@ class LibraryLoader {
      *
      * @throws IOException if library extraction fails or library not found in JAR
      */
-    static synchronized String load() throws IOException {
+    public static synchronized String load() throws IOException {
         if (isLoaded) {
             return libraryPath;
         }

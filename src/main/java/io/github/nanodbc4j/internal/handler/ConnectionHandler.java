@@ -5,6 +5,7 @@ import io.github.nanodbc4j.internal.binding.ConnectionApi;
 import io.github.nanodbc4j.internal.binding.DatabaseMetaDataApi;
 import io.github.nanodbc4j.internal.binding.OdbcApi;
 import io.github.nanodbc4j.internal.binding.StatementApi;
+import io.github.nanodbc4j.internal.binding.jni.Native;
 import io.github.nanodbc4j.internal.cstruct.DatabaseMetaDataStruct;
 import io.github.nanodbc4j.internal.dto.DatabaseMetaDataDto;
 import io.github.nanodbc4j.internal.pointer.ConnectionPtr;
@@ -109,10 +110,10 @@ public final class ConnectionHandler {
         try {
             catalogPtr = ConnectionApi.INSTANCE.get_catalog_name(conn, nativeError);
             throwIfNativeError(nativeError);
-            return getWideString(catalogPtr);
+            return getUtf16String(catalogPtr);
         } finally {
             OdbcApi.INSTANCE.clear_native_error(nativeError);
-            OdbcApi.INSTANCE.std_free(catalogPtr);
+            Native.std_free(Pointer.nativeValue(catalogPtr));
         }
     }
 

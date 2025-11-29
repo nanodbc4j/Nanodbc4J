@@ -38,13 +38,13 @@ public final class DriverHandler {
                 long driversListOffset = (long) POINTER_SIZE * i;
                 DriverStruct ds = new DriverStruct(driversListPtrs.getPointer(driversListOffset));
                 List<DriverProperties.AttributeProperties> driverAttributes = new ArrayList<>(ds.attribute_count);
-                String name = getWideString(ds.name);
+                String name = getUtf16String(ds.name);
 
                 for (int j = 0; j < ds.attribute_count; j++) {
                     long attributeListOffset =  (long) POINTER_SIZE * j;
                     DriverStruct.AttributeStruct attr = new DriverStruct.AttributeStruct(ds.attributes.getPointer(attributeListOffset));
-                    String keyword = getWideString(attr.keyword);
-                    String value = getWideString(attr.value);
+                    String keyword = getUtf16String(attr.keyword);
+                    String value = getUtf16String(attr.value);
                     driverAttributes.add(new DriverProperties.AttributeProperties(keyword, value));
                 }
 
@@ -64,8 +64,8 @@ public final class DriverHandler {
             for (int i = 0; i < count.getValue(); i++) {
                 long datasourceListOffset = (long) POINTER_SIZE * i;
                 DatasourceStruct ds = new DatasourceStruct(datasourcesListPtrs.getPointer(datasourceListOffset));
-                String name = getWideString(ds.name);
-                String driver = getWideString(ds.driver);
+                String name = getUtf16String(ds.name);
+                String driver = getUtf16String(ds.driver);
                 datasources.add(new DatasourceProperties(name, driver));
             }
         } finally {
