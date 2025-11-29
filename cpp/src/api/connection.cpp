@@ -180,7 +180,7 @@ const ApiChar *get_catalog_name(Connection *conn, NativeError *error) noexcept {
             return nullptr;
         }
         StringProxy catalog(conn->catalog_name());
-        const auto result = static_cast<wstring>(catalog);
+        const auto result = static_cast<ApiString>(catalog);
         LOG_DEBUG("Catalog name: '{}'", catalog);
         return duplicate_string(result.c_str(), result.length());
     } catch (const nanodbc::database_error &e) {

@@ -5,7 +5,7 @@
 
 using namespace utils;
 
-static const wchar_t* convert_string(const nanodbc::string& str) {
+static const ApiChar* convert_string(const nanodbc::string& str) {
 	StringProxy str_proxy(str);
 	LOG_TRACE("Converting string to char array: '{}'", str_proxy);
 	const auto api_string = static_cast<ApiString>(str_proxy);

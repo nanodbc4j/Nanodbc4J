@@ -41,6 +41,7 @@ set(SPDLOG_FMT_EXTERNAL ON)
 
 find_package(Threads REQUIRED)
 find_package(ODBC REQUIRED)
+find_package(JNI REQUIRED)
 
 add_subdirectory(third_party/nanodbc)
 add_subdirectory(third_party/fmt)
@@ -58,8 +59,9 @@ add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
 # Include project header files
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
-
 target_compile_definitions(${PROJECT_NAME} PRIVATE ODBC_EXPORTS)
+
+include_directories(${JNI_INCLUDE_DIRS})
 
 if(WIN32)
     add_definitions(-DSPDLOG_WCHAR_TO_UTF8_SUPPORT)

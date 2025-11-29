@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
 import java.util.ArrayList;
 
 import static com.sun.jna.Native.POINTER_SIZE;
-import static io.github.nanodbc4j.internal.handler.Handler.getWideString;
+import static io.github.nanodbc4j.internal.handler.Handler.getUtf16String;
 
 /**
  * Converts native ODBC metadata (pointer) to Java OdbcResultSetMetadata object.
@@ -40,13 +40,13 @@ public final class ResultSetMetaDataHandler {
             columnMetaData.isWritable = columnMetaDataStruct.isWritable != 0;
             columnMetaData.isDefinitelyWritable = columnMetaDataStruct.isDefinitelyWritable != 0;
 
-            columnMetaData.columnLabel = getWideString(columnMetaDataStruct.columnLabel);
-            columnMetaData.columnName = getWideString(columnMetaDataStruct.columnName);
-            columnMetaData.schemaName = getWideString(columnMetaDataStruct.schemaName);
-            columnMetaData.tableName = getWideString(columnMetaDataStruct.tableName);
-            columnMetaData.catalogName = getWideString(columnMetaDataStruct.catalogName);
-            columnMetaData.columnTypeName = getWideString(columnMetaDataStruct.columnTypeName);
-            columnMetaData.columnClassName = getWideString(columnMetaDataStruct.columnClassName);
+            columnMetaData.columnLabel = getUtf16String(columnMetaDataStruct.columnLabel);
+            columnMetaData.columnName = getUtf16String(columnMetaDataStruct.columnName);
+            columnMetaData.schemaName = getUtf16String(columnMetaDataStruct.schemaName);
+            columnMetaData.tableName = getUtf16String(columnMetaDataStruct.tableName);
+            columnMetaData.catalogName = getUtf16String(columnMetaDataStruct.catalogName);
+            columnMetaData.columnTypeName = getUtf16String(columnMetaDataStruct.columnTypeName);
+            columnMetaData.columnClassName = getUtf16String(columnMetaDataStruct.columnClassName);
 
             metaData.columnMetaData.add(columnMetaData);
         }

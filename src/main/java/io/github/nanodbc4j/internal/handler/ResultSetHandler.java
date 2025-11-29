@@ -4,6 +4,7 @@ import com.sun.jna.Pointer;
 import io.github.nanodbc4j.internal.binding.OdbcApi;
 import io.github.nanodbc4j.internal.binding.ResultApi;
 import io.github.nanodbc4j.internal.binding.ResultSetMetaDataApi;
+import io.github.nanodbc4j.internal.binding.jni.Native;
 import io.github.nanodbc4j.internal.cstruct.BinaryArray;
 import io.github.nanodbc4j.internal.cstruct.ResultSetMetaDataStruct;
 import io.github.nanodbc4j.internal.dto.ResultSetMetadataDto;
@@ -134,10 +135,10 @@ public final class ResultSetHandler {
             strPtr = ResultApi.INSTANCE.get_string_value_by_index(resultSet, index - 1, nativeError);
             throwIfNativeError(nativeError);
 
-            return getWideString(strPtr);
+            return getUtf16String(strPtr);
         } finally {
             OdbcApi.INSTANCE.clear_native_error(nativeError);
-            OdbcApi.INSTANCE.std_free(strPtr);
+            Native.std_free(Pointer.nativeValue(strPtr));
         }
     }
 
@@ -217,11 +218,11 @@ public final class ResultSetHandler {
         try {
             strPtr = ResultApi.INSTANCE.get_string_value_by_name(resultSet, name + NUL_CHAR, nativeError);
             throwIfNativeError(nativeError);
-            return getWideString(strPtr);
+            return getUtf16String(strPtr);
         } finally {
             OdbcApi.INSTANCE.clear_native_error(nativeError);
             if (strPtr != null) {
-                OdbcApi.INSTANCE.std_free(strPtr);
+                Native.std_free(Pointer.nativeValue(strPtr));
             }
         }
     }

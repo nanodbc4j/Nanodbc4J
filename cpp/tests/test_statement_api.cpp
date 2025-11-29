@@ -17,7 +17,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Create table
-    const std::wstring create_sql = L"CREATE TABLE users (id INTEGER, name VARCHAR(50));";
+    const ApiString create_sql = ODBC_TEXT("CREATE TABLE users (id INTEGER, name VARCHAR(50));");
     auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -29,7 +29,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
     ASSERT_NE(stmt, nullptr);
     assert_no_error(error);
 
-    const std::wstring insert_sql = L"INSERT INTO users (id, name) VALUES (?, ?);";
+    const ApiString insert_sql = ODBC_TEXT("INSERT INTO users (id, name) VALUES (?, ?);");
     prepare_statement(stmt, insert_sql.c_str(), &error);
     assert_no_error(error);
 
@@ -37,7 +37,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
     set_int_value(stmt, 0, 42, &error);
     assert_no_error(error);
 
-    const std::wstring name_val = L"Bob";
+    const ApiString name_val = ODBC_TEXT("Bob");
     set_string_value(stmt, 1, name_val.c_str(), &error);
     assert_no_error(error);
 
@@ -49,7 +49,7 @@ TEST(StatementAPITest, PrepareAndExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Verify insertion
-    const std::wstring select_sql = L"SELECT name FROM users LIMIT 1;";
+    const ApiString select_sql = ODBC_TEXT("SELECT name FROM users LIMIT 1;");
     res = execute_request(conn, select_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     EXPECT_TRUE(res->next());
@@ -71,7 +71,7 @@ TEST(StatementAPITest, SetNumericParameterTypes) {
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
 
-    const std::wstring create_sql = L"CREATE TABLE nums (i16 SMALLINT, i32 INTEGER, i64 BIGINT, f32 REAL, f64 DOUBLE PRECISION);";
+    const ApiString create_sql = ODBC_TEXT("CREATE TABLE nums (i16 SMALLINT, i32 INTEGER, i64 BIGINT, f32 REAL, f64 DOUBLE PRECISION);");
     auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -79,7 +79,7 @@ TEST(StatementAPITest, SetNumericParameterTypes) {
 
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    const std::wstring insert_sql = L"INSERT INTO nums VALUES (?, ?, ?, ?, ?);";
+    const ApiString insert_sql = ODBC_TEXT("INSERT INTO nums VALUES (?, ?, ?, ?, ?);");
     prepare_statement(stmt, insert_sql.c_str(), &error);
     assert_no_error(error);
 
@@ -108,7 +108,7 @@ TEST(StatementAPITest, SetDateTimeAndBool) {
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
 
-    const std::wstring create_sql = L"CREATE TABLE events (active BOOLEAN, event_date DATE, event_time TIME, event_ts TIMESTAMP);";
+    const ApiString create_sql = ODBC_TEXT("CREATE TABLE events (active BOOLEAN, event_date DATE, event_time TIME, event_ts TIMESTAMP);");
     auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -116,7 +116,7 @@ TEST(StatementAPITest, SetDateTimeAndBool) {
 
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    const std::wstring insert_sql = L"INSERT INTO events VALUES (?, ?, ?, ?);";
+    const ApiString insert_sql = ODBC_TEXT("INSERT INTO events VALUES (?, ?, ?, ?);");
     prepare_statement(stmt, insert_sql.c_str(), &error);
     assert_no_error(error);
 
@@ -150,7 +150,7 @@ TEST(StatementAPITest, SetBinaryData) {
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
 
-    const std::wstring create_sql = L"CREATE TABLE blobs (data BLOB);";
+    const ApiString create_sql = ODBC_TEXT("CREATE TABLE blobs (data BLOB);");
     auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -158,7 +158,7 @@ TEST(StatementAPITest, SetBinaryData) {
 
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    const std::wstring insert_sql = L"INSERT INTO blobs VALUES (?);";
+    const ApiString insert_sql = ODBC_TEXT("INSERT INTO blobs VALUES (?);");
     prepare_statement(stmt, insert_sql.c_str(), &error);
     assert_no_error(error);
 
@@ -186,7 +186,7 @@ TEST(StatementAPITest, ExecuteWithTimeout) {
 
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    const std::wstring sql = L"SELECT 1;";
+    const ApiString sql = ODBC_TEXT("SELECT 1;");
     prepare_statement(stmt, sql.c_str(), &error);
     assert_no_error(error);
 
