@@ -12,8 +12,8 @@ JNIEXPORT jstring JNICALL Java_io_github_nanodbc4j_internal_binding_jni_Native_g
 
     try {
         const auto charPtr = reinterpret_cast<ApiChar *>(addr);
-        const ApiString result(charPtr);
-        return env->NewString(reinterpret_cast<const jchar *>(result.data()), static_cast<jsize>(result.length()));
+        const size_t length = std::char_traits<ApiChar>::length(charPtr);
+        return env->NewString(reinterpret_cast<const jchar *>(charPtr), static_cast<jsize>(length));
     } catch (const std::exception &e) {
         const auto exClass = env->FindClass("java/lang/RuntimeException");
         env->ThrowNew(exClass, e.what());
