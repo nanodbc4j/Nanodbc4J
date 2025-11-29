@@ -11,7 +11,7 @@
 // Test: connect using a valid connection string
 TEST(ConnectionAPITest, ConnectWithConnectionString) {
     NativeError error;
-    const std::wstring conn_str = get_connection_string();
+    const ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
@@ -28,7 +28,7 @@ TEST(ConnectionAPITest, ConnectWithConnectionString) {
 TEST(ConnectionAPITest, ConnectWithInvalidConnectionString) {
     NativeError error;
 
-    const std::wstring bad_conn = L"DRIVER={NonExistentDriver};Database=foo;";
+    const ApiString bad_conn = ODBC_TEXT("DRIVER={NonExistentDriver};Database=foo;");
     Connection* conn = connection_with_timeout(bad_conn.c_str(), 5, &error);
 
     EXPECT_EQ(conn, nullptr);
@@ -38,7 +38,7 @@ TEST(ConnectionAPITest, ConnectWithInvalidConnectionString) {
 // Test: transaction handling
 TEST(ConnectionAPITest, TransactionControl) {
     NativeError error;
-    const std::wstring conn_str = get_connection_string();
+    const ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
     assert_no_error(error);
@@ -98,12 +98,12 @@ TEST(ConnectionAPITest, TransactionControl) {
 TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     NativeError error;
 
-    const std::wstring conn_str = get_connection_string();
+    const ApiString conn_str = get_connection_string();
     Connection* conn = connection_with_timeout(conn_str.c_str(), 10, &error);
     ASSERT_NE(conn, nullptr);
 
     // Create table
-    const std::wstring create_sql = L"CREATE TABLE test (id INTEGER, name VARCHAR(50));";
+    const ApiString create_sql = ODBC_TEXT("CREATE TABLE test (id INTEGER, name VARCHAR(50));");
     auto* res = execute_request(conn, create_sql.c_str(), 10, &error);
     EXPECT_NE(res, nullptr);
     assert_no_error(error);
@@ -112,7 +112,7 @@ TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Insert data
-    const std::wstring insert_sql = L"INSERT INTO test VALUES (1, 'Alice');";
+    const ApiString insert_sql = ODBC_TEXT("INSERT INTO test VALUES (1, 'Alice');");
     res = execute_request(conn, insert_sql.c_str(), 10, &error);
     EXPECT_NE(res, nullptr);
     assert_no_error(error);
@@ -121,7 +121,7 @@ TEST(ConnectionAPITest, ExecuteSimpleQuery) {
     assert_no_error(error);
 
     // Select data
-    const std::wstring select_sql = L"SELECT name FROM test WHERE id = 1;";
+    const ApiString select_sql = ODBC_TEXT("SELECT name FROM test WHERE id = 1;");
     res = execute_request(conn, select_sql.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);

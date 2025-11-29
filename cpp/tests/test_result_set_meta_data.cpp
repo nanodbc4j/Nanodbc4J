@@ -10,7 +10,7 @@
 #include "struct/binary_array.h"
 
 static void count_check(Connection* conn, NativeError& error) {
-    const std::wstring count_sql = L"SELECT COUNT(*) FROM test_data;";
+    const ApiString count_sql = ODBC_TEXT("SELECT COUNT(*) FROM test_data;");
     auto* count_res = execute_request(conn, count_sql.c_str(), 10, &error);
     EXPECT_TRUE(count_res->next());
     int count = count_res->get<int>(0);
@@ -21,7 +21,7 @@ static void count_check(Connection* conn, NativeError& error) {
 
 // Helper function: prepare a test table
 static void setup_test_table(Connection* conn, NativeError& error) {
-    const std::wstring create = LR"(
+    const ApiString create = ODBC_TEXT(R"(
         CREATE TABLE test_data (
         id INTEGER PRIMARY KEY,
         name VARCHAR(50),
@@ -32,7 +32,7 @@ static void setup_test_table(Connection* conn, NativeError& error) {
         created_time TIME,
         created_ts TIMESTAMP,
         blob_data BLOB
-        );)";
+        );)");
     auto* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -41,12 +41,12 @@ static void setup_test_table(Connection* conn, NativeError& error) {
     // Insert data
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    const std::wstring insert = L"INSERT INTO test_data VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    const ApiString insert = ODBC_TEXT("INSERT INTO test_data VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
     prepare_statement(stmt, insert.c_str(), &error);
     assert_no_error(error);
 
     set_long_value(stmt, 0, 1, &error);
-    set_string_value(stmt, 1, L"Alice", &error);
+    set_string_value(stmt, 1, ODBC_TEXT("Alice"), &error);
     set_bool_value(stmt, 2, true, &error);
     set_float_value(stmt, 3, 95.5f, &error);
     set_double_value(stmt, 4, 1234567.89, &error);
@@ -79,7 +79,7 @@ TEST(ResultSetMetaDataTest, BasicMetadata) {
     ASSERT_NE(conn, nullptr);
     setup_test_table(conn, error);
 
-    const std::wstring select = L"SELECT id, name FROM test_data;";
+    const ApiString select = ODBC_TEXT("SELECT id, name FROM test_data;");
     auto* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
 
@@ -89,8 +89,8 @@ TEST(ResultSetMetaDataTest, BasicMetadata) {
 
     EXPECT_EQ(meta->columnCount, 2);
 
-    EXPECT_EQ(std::wstring(meta->column[0]->columnName), std::wstring(L"id"));
-    EXPECT_EQ(std::wstring(meta->column[1]->columnName), std::wstring(L"name"));
+    EXPECT_EQ(ApiString(meta->column[0]->columnName), ApiString(ODBC_TEXT("id")));
+    EXPECT_EQ(ApiString(meta->column[1]->columnName), ApiString(ODBC_TEXT("name")));
 
     delete_meta_data(meta);
     close_result(res, &error);

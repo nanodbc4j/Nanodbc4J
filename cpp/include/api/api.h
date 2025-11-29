@@ -2,9 +2,11 @@
 #include <string>
 
 #ifdef _WIN32
+#define ODBC_TEXT(s) L##s
 typedef wchar_t ApiChar;
 typedef std::wstring ApiString;
 #else
+#define ODBC_TEXT(s) u##s
 typedef char16_t ApiChar;
 typedef std::u16string ApiString;
 #endif

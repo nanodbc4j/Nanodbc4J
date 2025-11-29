@@ -15,8 +15,8 @@ void assert_has_error(const NativeError& err) {
     EXPECT_NE(err.error_message, nullptr);
 }
 
-std::wstring get_connection_string() {
-    static std::wstring result{};
+ApiString get_connection_string() {
+    static ApiString result{};
 
     if (!result.empty()) {
         return result;
@@ -24,17 +24,17 @@ std::wstring get_connection_string() {
 
     for (const auto&[name, attributes] : nanodbc::list_drivers()) {
         // HACK: duplicate_string used to avoid heap corruption
-        auto* name_c_wstr = utils::duplicate_string(utils::to_wstring(name).c_str());
+        auto* name_c_api_str = utils::duplicate_string( static_cast<ApiString>(StringProxy(name)).c_str());
         auto* lower_name_c_str = utils::duplicate_string(utils::to_lower(utils::to_string(name)).c_str());
 
         std::string lower_name = lower_name_c_str ? std::string(lower_name_c_str) : std::string();
-        std::wstring name_wstr = name_c_wstr ? std::wstring(name_c_wstr) : std::wstring();
+        ApiString name_wstr = name_c_api_str ? ApiString(name_c_api_str) : ApiString();
 
         if (lower_name.find("sqlite3") != std::string::npos) {
-            result = L"DRIVER={" + name_wstr + L"};Database=:memory:;Timeout=1000;";
+            result = ODBC_TEXT("DRIVER={") + name_wstr + ODBC_TEXT("};Database=:memory:;Timeout=1000;");
         }
 
-        std_free(name_c_wstr);
+        std_free(name_c_api_str);
         std_free(lower_name_c_str);
     }
 
@@ -47,6 +47,6 @@ std::wstring get_connection_string() {
 
 // Helper: create in-memory SQLite connection
 Connection* create_in_memory_db(NativeError& error) {
-    const auto conn_str = utils::to_wstring(get_connection_string()) ;
+    const auto conn_str = get_connection_string();
     return connection_with_timeout(conn_str.c_str(), 10, &error);
 }

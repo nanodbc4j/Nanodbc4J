@@ -9,7 +9,7 @@
 #include <../tests/test_utils.hpp>
 
 static void count_check(Connection* conn, NativeError& error) {
-    const std::wstring count_sql = L"SELECT COUNT(*) FROM test_data;";
+    const ApiString count_sql = ODBC_TEXT("SELECT COUNT(*) FROM test_data;");
     auto* count_res = execute_request(conn, count_sql.c_str(), 10, &error);
     EXPECT_TRUE(count_res->next());
     const int count = count_res->get<int>(0);
@@ -20,7 +20,7 @@ static void count_check(Connection* conn, NativeError& error) {
 
 // Helper function: prepare a test table
 static void setup_test_table(Connection* conn, NativeError& error) {
-    const std::wstring create = LR"(
+    const ApiString create = ODBC_TEXT(R"(
         CREATE TABLE test_data (
         id INTEGER PRIMARY KEY,
         name VARCHAR(50),
@@ -31,7 +31,7 @@ static void setup_test_table(Connection* conn, NativeError& error) {
         created_time TIME,
         created_ts TIMESTAMP,
         blob_data BLOB
-        );)";
+        );)");
     auto* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -40,11 +40,11 @@ static void setup_test_table(Connection* conn, NativeError& error) {
     // Insert data
     nanodbc::statement* stmt = create_statement(conn, &error);
     ASSERT_NE(stmt, nullptr);
-    const std::wstring insert = L"INSERT INTO test_data VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?);";
+    const ApiString insert = ODBC_TEXT("INSERT INTO test_data VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?);");
     prepare_statement(stmt, insert.c_str(), &error);
     assert_no_error(error);
 
-    const std::wstring text = L"Alice";
+    const ApiString text = ODBC_TEXT("Alice");
     set_string_value(stmt, 0, text.data(), &error);
     assert_no_error(error);
     set_bool_value(stmt, 1, true, &error);
@@ -86,7 +86,7 @@ TEST(ResultSetAPITest, GetValueByIndex) {
 
     count_check(conn, error);
 
-    const std::wstring select = L"SELECT * FROM test_data;";
+    const ApiString select = ODBC_TEXT("SELECT * FROM test_data;");
     auto* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);
@@ -97,7 +97,7 @@ TEST(ResultSetAPITest, GetValueByIndex) {
     // By index
     EXPECT_EQ(get_long_value_by_index(res, 0, &error), 1);
     assert_no_error(error);
-    EXPECT_EQ(std::wstring(get_string_value_by_index(res, 1, &error)), std::wstring(L"Alice"));
+    EXPECT_EQ(ApiString(get_string_value_by_index(res, 1, &error)), ApiString(ODBC_TEXT("Alice")));
     assert_no_error(error);
 
     // error on unix sqlite odbc
@@ -107,7 +107,7 @@ TEST(ResultSetAPITest, GetValueByIndex) {
 #endif
 
     // find_column
-    int idx = find_column_by_name(res, L"score", &error);
+    int idx = find_column_by_name(res, ODBC_TEXT("score"), &error);
     EXPECT_EQ(idx, 3);
     assert_no_error(error);
 
@@ -124,7 +124,7 @@ TEST(ResultSetAPITest, GetValueByName) {
 
     count_check(conn, error);
 
-    const std::wstring select = L"SELECT * FROM test_data;";
+    const ApiString select = ODBC_TEXT("SELECT * FROM test_data;");
     auto* res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     assert_no_error(error);
@@ -133,11 +133,11 @@ TEST(ResultSetAPITest, GetValueByName) {
     assert_no_error(error);
 
     // By name
-    std::wstring name = L"id";
+    ApiString name = ODBC_TEXT("id");
     EXPECT_EQ(get_long_value_by_name(res, name.data(), &error), 1);
     assert_no_error(error);
-    name = L"name";
-    EXPECT_EQ(std::wstring(get_string_value_by_name(res, name.data(), &error)), std::wstring(L"Alice"));
+    name = ODBC_TEXT("name");
+    EXPECT_EQ(ApiString(get_string_value_by_name(res, name.data(), &error)), ApiString(ODBC_TEXT("Alice")));
     assert_no_error(error);
 
     // error on unix sqlite odbc
@@ -148,7 +148,7 @@ TEST(ResultSetAPITest, GetValueByName) {
 #endif
 
     // find_column
-    int idx = find_column_by_name(res, L"score", &error);
+    int idx = find_column_by_name(res, ODBC_TEXT("score"), &error);
     EXPECT_EQ(idx, 3);
     assert_no_error(error);
 
@@ -162,17 +162,17 @@ TEST(ResultSetAPITest, NullAndBinaryHandling) {
     Connection* conn = create_in_memory_db(error);
     ASSERT_NE(conn, nullptr);
 
-    const std::wstring create = L"CREATE TABLE null_test (val INTEGER);";
+    const ApiString create = ODBC_TEXT("CREATE TABLE null_test (val INTEGER);");
     auto* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
 
-    const std::wstring insert = L"INSERT INTO null_test VALUES (NULL);";
+    const ApiString insert = ODBC_TEXT("INSERT INTO null_test VALUES (NULL);");
     res = execute_request(conn, insert.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
 
-    const std::wstring select = L"SELECT val FROM null_test;";
+    const ApiString select = ODBC_TEXT("SELECT val FROM null_test;");
     res = execute_request(conn, select.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     EXPECT_TRUE(next_result(res, &error));
@@ -180,7 +180,7 @@ TEST(ResultSetAPITest, NullAndBinaryHandling) {
     std::cout << "null_test val:\t" << res->get<int>(0) << std::endl;
 
     EXPECT_TRUE(was_null_by_index(res, 0, &error));
-    EXPECT_TRUE(was_null_by_name(res, L"val", &error));
+    EXPECT_TRUE(was_null_by_name(res, ODBC_TEXT("val"), &error));
     assert_no_error(error);
 
     close_result(res, &error);

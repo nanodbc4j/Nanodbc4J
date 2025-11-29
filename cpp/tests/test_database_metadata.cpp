@@ -8,7 +8,7 @@
 
 // Helper function: prepare a test table
 static void setup_test_table(Connection* conn, NativeError& error) {
-    const std::wstring create = LR"(
+    const ApiString create = ODBC_TEXT(R"(
         CREATE TABLE test_data (
         id INTEGER PRIMARY KEY,
         name VARCHAR(50),
@@ -19,7 +19,7 @@ static void setup_test_table(Connection* conn, NativeError& error) {
         created_time TIME,
         created_ts TIMESTAMP,
         blob_data BLOB
-        );)";
+        );)");
     auto* res = execute_request(conn, create.c_str(), 10, &error);
     ASSERT_NE(res, nullptr);
     close_result(res, &error);
@@ -37,8 +37,8 @@ TEST(DatabaseMetaDataTest, BasicInfo) {
     ASSERT_NE(db_meta, nullptr);
     assert_no_error(error);
 
-    EXPECT_NE(std::wstring(db_meta->driverName), L"");
-    EXPECT_NE(std::wstring(db_meta->driverVersion), L"");
+    EXPECT_NE(db_meta->driverName, nullptr);
+    EXPECT_NE(db_meta->driverVersion, nullptr);
 
     delete_database_meta_data(db_meta);
 

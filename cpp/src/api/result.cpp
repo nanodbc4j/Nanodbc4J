@@ -180,8 +180,8 @@ const ApiChar* get_string_value_by_index(const ResultSet* results, int index, Na
             return nullptr;
         }
         LOG_DEBUG("String value retrieved from index {}: '{}'", index, result);
-        const auto wstr_result = static_cast<wstring> (result);
-        return duplicate_string(wstr_result.c_str(), wstr_result.length());
+        const auto str_result = static_cast<ApiString> (result);
+        return duplicate_string(str_result.c_str(), str_result.length());
     } catch (const nanodbc::index_range_error& e) {
         set_error(error, ErrorCode::Database, "IndexError", e.what());
         LOG_ERROR("Index range error at index {}: {}", index, StringProxy(e.what()));
