@@ -1,4 +1,6 @@
 # Nanodbc4J
+![build status](https://github.com/nanodbc4j/Nanodbc4J/actions/workflows/build.yml/badge.svg)
+![lines count](https://img.shields.io/endpoint?url=https%3A%2F%2Fghloc.vercel.app%2Fapi%2Fnanodbc4j%2FNanodbc4J%2Fbadge%3Ffilter%3D%255Ecpp%252F%252C%255Esrc%252F)
 
 **A modern JDBC-ODBC bridge using nanodbc and JNA**
 
