@@ -149,9 +149,9 @@ public class LibraryLoader {
         } else {
             // Unix-like systems use 32-bit wchar_t with endianness-dependent encoding
             if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-                options.put(Library.OPTION_STRING_ENCODING, "UTF-32LE");
+                options.put(Library.OPTION_STRING_ENCODING, "UTF-16LE");
             } else {
-                options.put(Library.OPTION_STRING_ENCODING, "UTF-32BE");
+                options.put(Library.OPTION_STRING_ENCODING, "UTF-16BE");
             }
         }
         options.put(Library.OPTION_CALLING_CONVENTION, Function.C_CONVENTION);
