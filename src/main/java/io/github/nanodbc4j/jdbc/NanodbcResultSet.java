@@ -43,7 +43,7 @@ import java.util.UUID;
  * Result set from a query. Iterate with next(), read data with getX() methods.
  */
 @Log
-public class NanodbcResultSet implements ResultSet {
+public class NanodbcResultSet implements ResultSet, JdbcWrapper {
     protected ResultSetPtr resultSetPtr;
     private final WeakReference<NanodbcStatement> statement;
     private ResultSetMetaData metaData = null;
@@ -2088,27 +2088,6 @@ public class NanodbcResultSet implements ResultSet {
         } catch (BufferUnderflowException e) {
             throw new NanodbcSQLException("Not enough bytes to construct UUID", e);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        log.finest("NanodbcResultSet.unwrap");
-        if (isWrapperFor(iface)) {
-            return iface.cast(this);
-        }
-        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        log.finest("NanodbcResultSet.isWrapperFor");
-        return iface.isInstance(this) || iface == ResultSet.class;
     }
 
     /**

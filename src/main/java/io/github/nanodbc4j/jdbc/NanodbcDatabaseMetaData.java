@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Log
-public class NanodbcDatabaseMetaData implements DatabaseMetaData {
+public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     private final WeakReference<NanodbcConnection> connection;
     private final DatabaseMetaDataDto metaData;
 
@@ -1713,27 +1713,6 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData {
     public boolean generatedKeyAlwaysReturned() throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.generatedKeyAlwaysReturned");
         return metaData.generatedKeyAlwaysReturned;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        log.log(Level.FINEST, "NanodbcDatabaseMetaData.unwrap");
-        if (isWrapperFor(iface)) {
-            return iface.cast(this);
-        }
-        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        log.log(Level.FINEST, "NanodbcDatabaseMetaData.isWrapperFor");
-        return iface.isInstance(this) || iface == DatabaseMetaData.class;
     }
 
     @Override

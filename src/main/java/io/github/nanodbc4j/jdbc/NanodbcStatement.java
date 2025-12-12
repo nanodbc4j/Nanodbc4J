@@ -22,7 +22,7 @@ import java.sql.Statement;
  * Executes SQL statements. Forward-only, read-only result sets.
  */
 @Log
-public class NanodbcStatement implements Statement {
+public class NanodbcStatement implements Statement, JdbcWrapper {
     protected StatementPtr statementPtr;
     protected final WeakReference<NanodbcConnection> connection;
     protected NanodbcResultSet resultSet = null;
@@ -479,27 +479,6 @@ public class NanodbcStatement implements Statement {
     public boolean isCloseOnCompletion() throws SQLException {
         log.finest("NanodbcStatement.isCloseOnCompletion");
         throw new NanodbcSQLFeatureNotSupportedException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        log.finest("NanodbcStatement.unwrap");
-        if (isWrapperFor(iface)) {
-            return iface.cast(this);
-        }
-        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        log.finest("NanodbcStatement.isWrapperFor");
-        return iface.isInstance(this) || iface == Statement.class;
     }
 
     /**

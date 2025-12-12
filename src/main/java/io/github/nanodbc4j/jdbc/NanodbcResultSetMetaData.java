@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * Metadata about result columns: name, type, size, nullability, etc.
  */
 @Log
-public class NanodbcResultSetMetaData implements ResultSetMetaData {
+public class NanodbcResultSetMetaData implements ResultSetMetaData, JdbcWrapper {
     private final ResultSetMetadataDto metaData;
 
     public NanodbcResultSetMetaData(ResultSetMetadataDto metaData) {
@@ -225,27 +225,6 @@ public class NanodbcResultSetMetaData implements ResultSetMetaData {
         log.finest("NanodbcResultSetMetaData.getColumnClassName");
         checkIndex(column);
         return metaData.columnMetaData.get(column - 1).columnClassName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        log.finest("NanodbcResultSetMetaData.unwrap");
-        if (isWrapperFor(iface)) {
-            return iface.cast(this);
-        }
-        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        log.finest("NanodbcResultSetMetaData.isWrapperFor");
-        return iface.isInstance(this) || iface == ResultSetMetaData.class;
     }
 
     @Override

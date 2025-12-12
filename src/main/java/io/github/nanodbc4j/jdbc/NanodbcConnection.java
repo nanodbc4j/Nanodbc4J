@@ -38,7 +38,7 @@ import java.util.logging.Level;
  * Closed via close() or garbage collection.
  */
 @Log
-public class NanodbcConnection implements Connection {
+public class NanodbcConnection implements Connection, JdbcWrapper {
 
     @Getter(AccessLevel.PACKAGE)
     private ConnectionPtr connectionPtr;
@@ -645,27 +645,6 @@ public class NanodbcConnection implements Connection {
         log.log(Level.FINEST, "NanodbcConnection.getNetworkTimeout");
         throwIfAlreadyClosed();
         return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        log.log(Level.FINEST, "NanodbcConnection.unwrap");
-        if (isWrapperFor(iface)) {
-            return iface.cast(this);
-        }
-        throw new NanodbcSQLException("Cannot unwrap to " + iface.getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        log.log(Level.FINEST, "NanodbcConnection.isWrapperFor");
-        return iface.isInstance(this) || iface == Connection.class;
     }
 
     /**
