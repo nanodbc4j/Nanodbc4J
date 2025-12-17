@@ -2077,6 +2077,8 @@ public class NanodbcResultSet implements ResultSet, JdbcWrapper {
                     long mostSigBits = bb.getLong();
                     long leastSigBits = bb.getLong();
                     return new UUID(mostSigBits, leastSigBits);
+                case 32:    // Hex string without dashes
+                    return parseHexUuid(bytes);
                 case 36:    // String UUID format - 36 ASCII characters
                     String uuidStr = new String(bytes, StandardCharsets.US_ASCII);
                     return UUID.fromString(uuidStr);
@@ -2088,6 +2090,22 @@ public class NanodbcResultSet implements ResultSet, JdbcWrapper {
         } catch (BufferUnderflowException e) {
             throw new NanodbcSQLException("Not enough bytes to construct UUID", e);
         }
+    }
+
+    @SuppressWarnings("StringBufferReplaceableByString")
+    private UUID parseHexUuid(byte[] bytes) {
+        String hex = new String(bytes, StandardCharsets.US_ASCII);
+        StringBuilder sb  = new StringBuilder(36)
+                .append(hex, 0, 8)
+                .append("-")
+                .append(hex, 8, 12)
+                .append("-")
+                .append(hex, 12, 16)
+                .append("-")
+                .append(hex, 16, 20)
+                .append("-")
+                .append(hex, 20, 32);
+        return UUID.fromString(sb.toString());
     }
 
     /**
