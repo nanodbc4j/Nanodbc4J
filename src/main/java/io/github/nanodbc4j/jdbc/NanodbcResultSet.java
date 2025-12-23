@@ -2092,20 +2092,18 @@ public class NanodbcResultSet implements ResultSet, JdbcWrapper {
         }
     }
 
-    @SuppressWarnings("StringBufferReplaceableByString")
     private UUID parseHexUuid(byte[] bytes) {
-        String hex = new String(bytes, StandardCharsets.US_ASCII);
-        StringBuilder sb  = new StringBuilder(36)
-                .append(hex, 0, 8)
-                .append("-")
-                .append(hex, 8, 12)
-                .append("-")
-                .append(hex, 12, 16)
-                .append("-")
-                .append(hex, 16, 20)
-                .append("-")
-                .append(hex, 20, 32);
-        return UUID.fromString(sb.toString());
+        byte[] uuidBytes = new byte[36];
+        System.arraycopy(bytes, 0, uuidBytes, 0, 8);
+        uuidBytes[8] = '-';
+        System.arraycopy(bytes, 8, uuidBytes, 9, 4);
+        uuidBytes[13] = '-';
+        System.arraycopy(bytes, 12, uuidBytes, 14, 4);
+        uuidBytes[18] = '-';
+        System.arraycopy(bytes, 16, uuidBytes, 19, 4);
+        uuidBytes[23] = '-';
+        System.arraycopy(bytes, 20, uuidBytes, 24, 12);
+        return UUID.fromString(new String(uuidBytes, StandardCharsets.US_ASCII));
     }
 
     /**
