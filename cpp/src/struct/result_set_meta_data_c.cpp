@@ -1,6 +1,6 @@
 #include "struct/result_set_meta_data_c.h"
 #include "utils/string_utils.hpp"
-#include "core/string_proxy.hpp"
+#include "utils/string_proxy.hpp"
 #include "utils/logger.hpp"
 
 using namespace utils;

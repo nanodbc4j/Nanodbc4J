@@ -1,7 +1,6 @@
-#include "core/number_proxy.hpp"
+#include "utils/number_proxy.hpp"
 #include <stdexcept>
 #include <limits>
-#include "utils/strhash.hpp"
 
 using namespace std;
 
@@ -76,54 +75,29 @@ NumberProxy<T>::operator string() const {
 }
 
 NumberProxy<string>::NumberProxy(string&& str)
-    : value(std::move(str)) {
-    hash = hash_djb2a(value);
-    switch (hash) {
-        case ""_sh:
-        case "false"_sh:
-            value = "0";
-            hash = "0"_sh;
-            break;
-        case "true"_sh:
-            value = "1";
-            hash = "1"_sh;
-            break;
-        default:
-            break;
+    : value(str.empty() ? ZERO : std::move(str)) {
+    if (value == FALSE) {
+        value = ZERO;
+    } else if (value == TRUE) {
+        value = ONE;
     }
 }
 
 NumberProxy<string>::NumberProxy(const string& str)
-    : value(str.empty() ? NULL_NUMBER : str) {
-    hash = hash_djb2a(value);
-    switch (hash) {
-        case "false"_sh:
-            value = "0";
-            hash = "0"_sh;
-            break;
-        case "true"_sh:
-            value = "1";
-            hash = "1"_sh;
-            break;
-        default:
-            break;
+    : value(str.empty() ? ZERO : str) {
+    if (value == FALSE) {
+        value = ZERO;
+    } else if (value == TRUE) {
+        value = ONE;
     }
 }
 
 NumberProxy<string>::NumberProxy(const char* str)
-    : value(str && *str ? str : NULL_NUMBER) {
-    hash = hash_djb2a(value);
-    switch (hash) {
-        case "false"_sh:
-            value = "0";
-            hash = "0"_sh;
-            break;
-        case "true"_sh:
-            value = "1";
-            hash = "1"_sh;
-            break;
-        default:
-            break;
+    : value(str && *str ? str : ZERO) {
+    if (value == FALSE) {
+        value = ZERO;
+    } else if (value == TRUE) {
+        value = ONE;
     }
 }
 
@@ -216,7 +190,7 @@ NumberProxy<string>::operator long double() const {
 }
 
 NumberProxy<string>::operator bool() const {
-    return !value.empty() && hash != "0"_sh && hash != "false"_sh;
+    return value != ZERO;
 }
 
 NumberProxy<string>::operator string() const {
@@ -224,55 +198,30 @@ NumberProxy<string>::operator string() const {
 }
 
 NumberProxy<wstring>::NumberProxy(wstring&& str)
-    : value(std::move(str)) {
-    hash = hash_djb2a(value);
-    switch (hash) {
-        case L""_sh:
-        case L"false"_sh:
-            value = L"0";
-            hash = L"0"_sh;
-            break;
-        case L"true"_sh:
-            value = L"1";
-            hash = L"1"_sh;
-            break;
-        default:
-            break;
+    : value(str.empty() ? ZERO : std::move(str)) {
+    if (value == FALSE) {
+        value = ZERO;
+    } else if (value == TRUE) {
+        value = ONE;
     }
 }
 
 NumberProxy<wstring>::NumberProxy(const wstring& str)
-    : value(str.empty() ? NULL_NUMBER : str) {
-    hash = hash_djb2a(value);
-    switch (hash) {
-        case L"false"_sh:
-            value = L"0";
-            hash = L"0"_sh;
-            break;
-        case L"true"_sh:
-            value = L"1";
-            hash = L"1"_sh;
-            break;
-        default:
-            break;
+    : value(str.empty() ? ZERO : str) {
+    if (value == FALSE) {
+        value = ZERO;
+    } else if (value == TRUE) {
+        value = ONE;
     }
 }
 
 
 NumberProxy<wstring>::NumberProxy(const wchar_t* str)
-    : value(str && *str ? str : NULL_NUMBER) {
-    hash = hash_djb2a(value);
-    switch (hash) {
-        case L"false"_sh:
-            value = L"0";
-            hash = L"0"_sh;
-            break;
-        case L"true"_sh:
-            value = L"1";
-            hash = L"1"_sh;
-            break;
-        default:
-            break;
+    : value(str && *str ? str : ZERO) {
+    if (value == FALSE) {
+        value = ZERO;
+    } else if (value == TRUE) {
+        value = ONE;
     }
 }
 
@@ -365,7 +314,7 @@ NumberProxy<wstring>::operator long double() const {
 }
 
 NumberProxy<wstring>::operator bool() const {
-    return !value.empty() && hash != L"0"_sh && hash != L"false"_sh;
+    return value != ZERO;
 }
 
 NumberProxy<wstring>::operator wstring() const {

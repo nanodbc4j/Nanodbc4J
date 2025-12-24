@@ -1,8 +1,7 @@
 #pragma once
 #include <nanodbc/nanodbc.h>
-#include "core/number_proxy.hpp"
-#include "core/string_proxy.hpp"
-#include "utils/string_utils.hpp"
+#include "utils/number_proxy.hpp"
+#include "utils/string_proxy.hpp"
 
 class ResultSet : public nanodbc::result {
 public:

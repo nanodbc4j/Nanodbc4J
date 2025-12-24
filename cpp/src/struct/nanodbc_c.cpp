@@ -1,7 +1,7 @@
 #include "struct/nanodbc_c.h"
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
-#include "core/string_proxy.hpp"
+#include "utils/string_proxy.hpp"
 
 using namespace utils;
 

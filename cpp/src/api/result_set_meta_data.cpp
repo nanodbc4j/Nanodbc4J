@@ -1,6 +1,6 @@
 #include "api/result_set_meta_data.h"
 #include "utils/logger.hpp"
-#include "core/string_proxy.hpp"
+#include "utils/string_proxy.hpp"
 
 CResultSetMetaData* get_meta_data(ResultSet* results, NativeError* error) noexcept {
 	LOG_DEBUG("Getting metadata from result: {}", reinterpret_cast<uintptr_t>(results));

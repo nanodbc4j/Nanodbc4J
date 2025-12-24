@@ -15,7 +15,7 @@
 #include "utils/logger.hpp"
 #include "utils/string_utils.hpp"
 #include "core/nanodbc_defs.h"
-#include "core/string_proxy.hpp"
+#include "utils/string_proxy.hpp"
 
 #define BUFFER_SIZE 1024
 

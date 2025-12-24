@@ -38,10 +38,12 @@ public:
 
 template<>
 class NumberProxy<std::string> {
-    static constexpr std::string_view NULL_NUMBER = "0";
+    static constexpr std::string_view TRUE = "true";
+    static constexpr std::string_view FALSE = "false";
+    static constexpr std::string_view ZERO = "0";
+    static constexpr std::string_view ONE = "1";
 
     std::string value;
-    unsigned long hash;
 
 public:
     explicit NumberProxy(std::string&& str);
@@ -79,10 +81,12 @@ public:
 
 template<>
 class NumberProxy<std::wstring> {
-    static constexpr std::wstring_view NULL_NUMBER = L"0";
+    static constexpr std::wstring_view TRUE = L"true";
+    static constexpr std::wstring_view FALSE = L"false";
+    static constexpr std::wstring_view ZERO = L"0";
+    static constexpr std::wstring_view ONE = L"1";
 
     std::wstring value;
-    unsigned long hash;
 
 public:
     explicit NumberProxy(std::wstring&& str);

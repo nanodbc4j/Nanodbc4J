@@ -2,7 +2,7 @@
 #include <functional>
 #include "utils/string_utils.hpp"
 #include "utils/logger.hpp"
-#include "core/string_proxy.hpp"
+#include "utils/string_proxy.hpp"
 
 #ifdef _WIN32
 // needs to be included above sql.h for windows
