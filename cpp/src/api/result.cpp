@@ -60,7 +60,7 @@ static T execute_result_set_query(ResultSet* results, const function<T(ResultSet
     try {
         if (!results) {
             LOG_ERROR("Result is null, returns false");
-            return false;
+            return {};
         }
         T result = func(results);
         LOG_DEBUG("Result: {}", result);
@@ -72,7 +72,7 @@ static T execute_result_set_query(ResultSet* results, const function<T(ResultSet
         set_error(error, "Unknown error");
         LOG_ERROR("Unknown exception in next_result");
     }
-    return false;
+    return {};
 }
 
 bool next_result(ResultSet* results, NativeError* error) noexcept {
@@ -494,6 +494,49 @@ bool was_null_by_name(ResultSet* results, const ApiChar* name, NativeError* erro
         LOG_ERROR("Unknown exception '{}'", str_name);
     } 
     return true;
+}
+
+void set_alias_column_name(ResultSet* results, const ApiChar* alias_column_name, short column, NativeError* error) noexcept {
+    LOG_DEBUG("Set alias column name: {}", reinterpret_cast<uintptr_t>(results));
+    const StringProxy str_alias_column_name (alias_column_name);
+    init_error(error);
+    try {
+        if (!results) {
+            LOG_ERROR("Attempted to close null result");
+            return;
+        }
+        results->set_alias_column_name(static_cast<nanodbc::string>(str_alias_column_name), column);
+    } catch (const std::exception& e) {
+        set_error(error, e.what());
+        LOG_ERROR("Exception '{}': {}", str_alias_column_name, StringProxy(e.what()));
+    } catch (...) {
+        set_error(error, "Unknown error");
+        LOG_ERROR("Unknown exception '{}'", str_alias_column_name);
+    }
+}
+
+const ApiChar* map_column_name(ResultSet* results, const ApiChar* column_name, short column, NativeError* error) noexcept {
+    LOG_DEBUG("Map alias column name: {}", reinterpret_cast<uintptr_t>(results));
+    const StringProxy str_alias_column_name (column_name);
+    init_error(error);
+    try {
+        if (!results) {
+            LOG_ERROR("Result is null");
+            set_error(error, "Result is null");
+            return nullptr;
+        }
+
+        const StringProxy result (results->map_column_name(column_name, column));
+        const auto str_result = static_cast<ApiString> (result);
+        return duplicate_string(str_result.c_str(), str_result.length());
+    } catch (const exception& e) {
+        set_error(error, e.what());
+        LOG_ERROR("Exception in map_column_name {}: {}", column, StringProxy(e.what()));
+    } catch (...) {
+        set_error(error, "Unknown error");
+        LOG_ERROR("Unknown exception in map_column_name {}", column);
+    }
+    return nullptr;
 }
 
 void close_result(ResultSet* results, NativeError* error) noexcept {

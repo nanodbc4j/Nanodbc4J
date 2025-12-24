@@ -1117,7 +1117,13 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getProcedureColumns");
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getProcedureColumns(connection.get().getConnectionPtr(), catalog, schemaPattern, procedureNamePattern, columnNamePattern);
-            return new NanodbcResultSet(resultSetPtr);
+            NanodbcResultSet rs = new NanodbcResultSet(resultSetPtr);
+            //rename some columns in order to be JDBC compilant.
+            rs.setAliasColumnName("PRECISION", 8);
+            rs.setAliasColumnName("LENGTH", 9);
+            rs.setAliasColumnName("SCALE", 10);
+            rs.setAliasColumnName("RADIX", 11);
+            return rs;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -1194,7 +1200,10 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
         try {
             ResultSetPtr resultSetPtr =
                     DatabaseMetaDataHandler.getColumns(connection.get().getConnectionPtr(), catalog, schemaPattern, tableNamePattern, columnNamePattern);
-            return new NanodbcResultSet(resultSetPtr);
+            NanodbcResultSet rs = new NanodbcResultSet(resultSetPtr);
+            //rename some columns in order to be JDBC compilant.
+            rs.setAliasColumnName ("SQL_DATETIME_SUB", 15);
+            return rs;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }
@@ -1329,7 +1338,11 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getTypeInfo");
         try {
             ResultSetPtr resultSetPtr = DatabaseMetaDataHandler.getTypeInfo(connection.get().getConnectionPtr());
-            return new NanodbcResultSet(resultSetPtr);
+            NanodbcResultSet rs = new NanodbcResultSet(resultSetPtr);
+            //rename some columns in order to be JDBC compilant.
+            rs.setAliasColumnName("PRECISION", 3);
+            rs.setAliasColumnName("AUTO_INCREMENT", 12);
+            return rs;
         } catch (NativeException e) {
             throw new NanodbcSQLException(e);
         }

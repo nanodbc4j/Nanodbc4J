@@ -303,6 +303,31 @@ public final class ResultSetHandler {
         }
     }
 
+    public static void setAliasColumnName(ResultSetPtr resultSet, @NonNull String aliasColumnName, short column) {
+        NativeError nativeError = new NativeError();
+        try {
+            ResultApi.INSTANCE.set_alias_column_name(resultSet, aliasColumnName + NUL_CHAR, (short) (column - 1), nativeError);
+            throwIfNativeError(nativeError);
+        } finally {
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+        }
+    }
+
+    public static String mapColumnName(ResultSetPtr resultSet, @NonNull String columnName, short column) {
+        NativeError nativeError = new NativeError();
+        Pointer strPtr = null;
+        try {
+            strPtr = ResultApi.INSTANCE.map_column_name(resultSet, columnName + NUL_CHAR, (short) (column - 1), nativeError);
+            throwIfNativeError(nativeError);
+            return getUtf16String(strPtr);
+        } finally {
+            OdbcApi.INSTANCE.clear_native_error(nativeError);
+            if (strPtr != null) {
+                Native.std_free(Pointer.nativeValue(strPtr));
+            }
+        }
+    }
+
     public static ResultSetMetaData getResultSetMetaData(ResultSetPtr resultSet) {
         NativeError nativeError = new NativeError();
         ResultSetMetaDataStruct metaDataStruct = null;

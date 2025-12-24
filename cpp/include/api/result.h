@@ -251,6 +251,23 @@ extern "C" {
     /// \return true if value was NULL, false otherwise.
     ODBC_API bool was_null_by_name(ResultSet* results, const ApiChar* name, NativeError* error) noexcept;
 
+    /// \brief Sets an alias name for the specified column in the rowset.
+    ///
+    /// If the specified column number is out of range, no alias is set and
+    /// the original column name will be used in subsequent operations.
+    /// \param alias_column_name The alias name to assign to the column.
+    /// \param column Column position (0-indexed).
+    ODBC_API void set_alias_column_name(ResultSet* results, const ApiChar* alias_column_name, short column, NativeError* error) noexcept;
+
+    /// \brief Maps a column name to its alias for the specified column position.
+    ///
+    /// If no alias has been set for the column, or if the column number is
+    /// out of range, the original column name is returned unchanged.
+    /// \param column_name Original column name from the result set.
+    /// \param column Column position (0-indexed).
+    /// \return The alias name if set, otherwise the original column name.
+    ODBC_API const ApiChar* map_column_name(ResultSet* results, const ApiChar* column_name, short column, NativeError* error) noexcept;
+
     /// \brief Closes and releases result set resources.
     /// \param results Pointer to the result set object.
     /// \param error Error information structure to populate on failure.

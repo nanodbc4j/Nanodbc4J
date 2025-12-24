@@ -76,6 +76,10 @@ endif()
 add_library(utfcpp INTERFACE)
 target_include_directories(utfcpp INTERFACE third_party/utfcpp/source)
 
+# bimap
+add_library(bimap INTERFACE)
+target_include_directories(bimap INTERFACE third_party/bimap)
+
 # Link dependencies
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     nanodbc 
@@ -84,6 +88,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ODBC::ODBC 
     Threads::Threads
     utfcpp
+    bimap
 )
 
 if(UNIX AND NOT APPLE)

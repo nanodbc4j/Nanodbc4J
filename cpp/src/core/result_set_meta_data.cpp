@@ -37,54 +37,68 @@ static nanodbc::string determineClassNameByTypeName(int column, int sqlType, con
             lowerTypeName.find("bit") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Boolean");
             return NANODBC_TEXT("java.lang.Boolean");
-        } else if (lowerTypeName.find("tinyint") != std::string::npos) {
+        }
+        if (lowerTypeName.find("tinyint") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Byte");
             return NANODBC_TEXT("java.lang.Byte");
-        } else if (lowerTypeName.find("smallint") != std::string::npos) {
+        }
+        if (lowerTypeName.find("smallint") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Short");
             return NANODBC_TEXT("java.lang.Short");
-        } else if (lowerTypeName.find("int") != std::string::npos ||
+        }
+        if (lowerTypeName.find("int") != std::string::npos ||
             lowerTypeName.find("integer") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Integer");
             return NANODBC_TEXT("java.lang.Integer");
-        } else if (lowerTypeName.find("bigint") != std::string::npos) {
+        }
+        if (lowerTypeName.find("bigint") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Long");
             return NANODBC_TEXT("java.lang.Long");
-        } else if (lowerTypeName.find("float") != std::string::npos) {
+        }
+        if (lowerTypeName.find("float") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Float");
             return NANODBC_TEXT("java.lang.Float");
-        } else if (lowerTypeName.find("real") != std::string::npos) {
+        }
+        if (lowerTypeName.find("real") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Float");
             return NANODBC_TEXT("java.lang.Float");
-        } else if (lowerTypeName.find("double") != std::string::npos) {
+        }
+        if (lowerTypeName.find("double") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.Double");
             return NANODBC_TEXT("java.lang.Double");
-        } else if (lowerTypeName.find("decimal") != std::string::npos ||
+        }
+        if (lowerTypeName.find("decimal") != std::string::npos ||
             lowerTypeName.find("numeric") != std::string::npos) {
             LOG_TRACE("Mapping to java.math.BigDecimal");
             return NANODBC_TEXT("java.math.BigDecimal");
-        } else if (lowerTypeName.find("date") != std::string::npos) {
+        }
+        if (lowerTypeName.find("date") != std::string::npos) {
             LOG_TRACE("Mapping to java.sql.Date");
             return NANODBC_TEXT("java.sql.Date");
-        } else if (lowerTypeName.find("timestamp") != std::string::npos ||
+        }
+        if (lowerTypeName.find("timestamp") != std::string::npos ||
             lowerTypeName.find("datetime") != std::string::npos) {
             LOG_TRACE("Mapping to java.sql.Timestamp");
             return NANODBC_TEXT("java.sql.Timestamp");
-        } else if (lowerTypeName.find("time") != std::string::npos) {
+        }
+        if (lowerTypeName.find("time") != std::string::npos) {
             LOG_TRACE("Mapping to java.sql.Time");
             return NANODBC_TEXT("java.sql.Time");
-        } else if (lowerTypeName.find("char") != std::string::npos ||
+        }
+        if (lowerTypeName.find("char") != std::string::npos ||
             lowerTypeName.find("varchar") != std::string::npos ||
             lowerTypeName.find("text") != std::string::npos ||
             lowerTypeName.find("string") != std::string::npos) {
             LOG_TRACE("Mapping to java.lang.String");
             return NANODBC_TEXT("java.lang.String");
-        } else if (lowerTypeName.find("binary") != std::string::npos ||
+        }
+        if (lowerTypeName.find("binary") != std::string::npos ||
             lowerTypeName.find("varbinary") != std::string::npos ||
             lowerTypeName.find("blob") != std::string::npos) {
             LOG_TRACE("Mapping to [B (byte array)");
             return NANODBC_TEXT("[B"); // byte array
-        } else if (lowerTypeName.find("guid") != std::string::npos ||
+        }
+        if (lowerTypeName.find("guid") != std::string::npos ||
             lowerTypeName.find("uuid") != std::string::npos) {
             LOG_TRACE("Mapping to java.util.UUID");
             return NANODBC_TEXT("java.util.UUID");
@@ -155,14 +169,13 @@ static SQLLEN getColumnNumericAttribute(const SQLHSTMT& hStmt, const SQLUSMALLIN
     if (SQL_SUCCEEDED(rc)) {
         LOG_DEBUG("Numeric attribute value: {}", value);
         return value;
-    } else {
-        LOG_DEBUG("Failed to get numeric attribute, returning 0");
-        return 0;
     }
+    LOG_DEBUG("Failed to get numeric attribute, returning 0");
+    return 0;
 }
 
 
-ResultSetMetaData::ResultSetMetaData(const nanodbc::result& result) 
+ResultSetMetaData::ResultSetMetaData(const ResultSet& result)
     : result_ (result)
 {
     LOG_DEBUG("ResultSetMetaData initialized successfully with {} columns", result.columns());
@@ -308,6 +321,7 @@ nanodbc::string ResultSetMetaData::getColumnLabel(int column) const {
     LOG_TRACE("column={}", column);
     nanodbc::string label = getColumnStringAttribute(result_.native_statement_handle(), column, SQL_DESC_LABEL);
     if (!label.empty()) {
+        label = result_.map_column_name(label, column);
         LOG_DEBUG("Column {} label: '{}'", column, StringProxy(label));
         return label;
     }
@@ -323,6 +337,7 @@ nanodbc::string ResultSetMetaData::getColumnName(int column) const {
 
     try {
         nanodbc::string name = result_.column_name(column - 1);
+        name = result_.map_column_name(name, column);
         LOG_DEBUG("Column {} name: '{}'", column, StringProxy(name));
         return name;
     } catch (const std::exception& e) {

@@ -1,9 +1,14 @@
 #pragma once
+#include <bimap.hpp>
 #include <nanodbc/nanodbc.h>
 #include "utils/number_proxy.hpp"
 #include "utils/string_proxy.hpp"
+#include "utils/string_utils.hpp"
 
 class ResultSet : public nanodbc::result {
+
+    stde::bimap<nanodbc::string, short> aliases;
+
 public:
     /// \brief Empty result set.
     ResultSet() = default;
@@ -93,6 +98,23 @@ public:
         }
         return result::get<T>(column_name, fallback);
     }
+
+    /// \brief Sets an alias name for the specified column in the rowset.
+    ///
+    /// If the specified column number is out of range, no alias is set and
+    /// the original column name will be used in subsequent operations.
+    /// \param alias_column_name The alias name to assign to the column.
+    /// \param column Column position (0-indexed).
+    void set_alias_column_name(nanodbc::string const& alias_column_name, short column);
+
+    /// \brief Maps a column name to its alias for the specified column position.
+    ///
+    /// If no alias has been set for the column, or if the column number is
+    /// out of range, the original column name is returned unchanged.
+    /// \param column_name Original column name from the result set.
+    /// \param column Column position (0-indexed).
+    /// \return The alias name if set, otherwise the original column name.
+    nanodbc::string map_column_name(nanodbc::string const& column_name, short column) const;
 
 private:
     template <typename T>

@@ -23,6 +23,19 @@ ResultSet::ResultSet(nanodbc::statement&& statement, long rowset_size)
         : result(std::move(statement), rowset_size) {
 }
 
+void ResultSet::set_alias_column_name(nanodbc::string const &alias_column_name, short column) {
+    if (column >= 0 && column < columns()) {
+        aliases.insert(alias_column_name, column);
+    }
+}
+
+nanodbc::string ResultSet::map_column_name(nanodbc::string const &column_name, short column) const {
+    if (aliases.has_value(column)) {
+        return aliases.get_key(column);
+    }
+    return column_name;
+}
+
 bool ResultSet::is_string_or_binary(short column) const {
     auto datatype = column_c_datatype(column);
     return datatype == SQL_C_CHAR || datatype == SQL_C_BINARY;

@@ -1,11 +1,11 @@
 #pragma once
-#include <nanodbc/nanodbc.h>
+#include <core/result_set.hpp>
 
 class ResultSetMetaData {
-    const nanodbc::result& result_;
+    const ResultSet& result_;
 
 public:
-    explicit ResultSetMetaData(const nanodbc::result& result);
+    explicit ResultSetMetaData(const ResultSet& result);
 
     int getColumnCount() const;
 

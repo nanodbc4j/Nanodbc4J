@@ -48,6 +48,7 @@ target_link_libraries(nanodbc4j_tests PRIVATE
     ODBC::ODBC
     Threads::Threads
     utfcpp
+    bimap
 )
 
 # Repeat compilation flags as in main project

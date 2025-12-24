@@ -657,6 +657,37 @@ public class NanodbcResultSet implements ResultSet, JdbcWrapper {
     }
 
     /**
+     * Given a column number and column name to be used, set the column alias
+     * name for the corresponding column number. If the column number is
+     * out-of-range, nothing is set and original column name will be used and
+     * not renamed.
+     */
+    public void setAliasColumnName (String aliasColumnName, int column) throws SQLException {
+        log.finest("NanodbcResultSet.setAliasColumnName");
+        throwIfAlreadyClosed();
+        try {
+            ResultSetHandler.setAliasColumnName(resultSetPtr, aliasColumnName, (short) column);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
+    }
+
+    /**
+     * Given a column name, map it to the corresponding column rename in the
+     * result set. If no column rename exist, return the original column name.
+     * If the column number is out-of-range, return original column name.
+     */
+    public String mapColumnName (String columnName, int column) throws SQLException {
+        log.finest("NanodbcResultSet.mapColumnName");
+        throwIfAlreadyClosed();
+        try {
+            return ResultSetHandler.mapColumnName(resultSetPtr, columnName, (short) column);
+        } catch (NativeException e) {
+            throw new NanodbcSQLException(e);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

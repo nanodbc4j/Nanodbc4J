@@ -374,6 +374,25 @@ public interface ResultApi extends Library {
     byte was_null_by_name(ResultSetPtr results, String name, NativeError error);
 
     /**
+    * Sets an alias name for the specified column in the rowset.
+    * If the specified column number is out of range, no alias is set and
+    * the original column name will be used in subsequent operations.
+    * @param alias_column_name The alias name to assign to the column.
+     * @param column Column position (0-indexed).
+     */
+    void set_alias_column_name(ResultSetPtr results, String alias_column_name, short column, NativeError error);
+
+    /**
+     * Maps a column name to its alias for the specified column position.
+     *  If no alias has been set for the column, or if the column number is
+     *  out of range, the original column name is returned unchanged.
+     *  @param column_name Original column name from the result set.
+     *  @param column Column position (0-indexed).
+     *  @return Pointer The alias name if set, otherwise the original column name.
+     */
+    Pointer map_column_name(ResultSetPtr results, String column_name, short column, NativeError error);
+
+    /**
      * Frees binary array resources.
      *
      * @param array binary array to delete
