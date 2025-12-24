@@ -5,17 +5,12 @@ import com.sun.jna.Structure;
 
 import java.nio.charset.StandardCharsets;
 
-@Structure.FieldOrder({"error_code", "error_message", "error_type"})
+@Structure.FieldOrder({"status", "error_message"})
 public final class NativeError extends Structure {
-    public int error_code;
+    public int status;
     public Pointer error_message;
-    public Pointer error_type;
 
     public String getErrorMessage() {
         return error_message == null ? "" : error_message.getString(0, StandardCharsets.UTF_8.name());
-    }
-
-    public String getErrorType() {
-        return error_type == null ? "" : error_type.getString(0, StandardCharsets.UTF_8.name());
     }
 }

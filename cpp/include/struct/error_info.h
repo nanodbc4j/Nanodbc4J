@@ -1,14 +1,13 @@
 #pragma once
-#include <core/error_codes.hpp>
+#include <cstdlib>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
     struct NativeError {
-        int error_code = ErrorCode::Success;
+        int status = EXIT_SUCCESS;
         char* error_message = nullptr;
-        char* error_type = nullptr;
 
         NativeError() = default;
         NativeError(const NativeError& other);
@@ -25,4 +24,4 @@ extern "C" {
 void init_error(NativeError* error);
 
 // Set error
-void set_error(NativeError* error, ErrorCode code, const char* type, const char* message);
+void set_error(NativeError* error, const char* message);

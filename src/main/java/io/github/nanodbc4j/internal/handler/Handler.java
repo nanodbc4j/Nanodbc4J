@@ -22,7 +22,7 @@ public class Handler {
     }
 
     public static void throwIfNativeError(NativeError nativeError) {
-        if (nativeError.error_code != 0) {
+        if (nativeError.status != 0) {
             throw new NativeException(nativeError);
         }
     }

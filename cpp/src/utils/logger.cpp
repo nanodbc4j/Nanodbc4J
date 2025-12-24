@@ -3,7 +3,7 @@
 
 static std::once_flag g_init_flag;
 
-std::string set_spdlog_level(int level) {
+int set_spdlog_level(int level) {
     ensure_initialized();
 
     spdlog::level::level_enum spdlog_level;
@@ -21,10 +21,7 @@ std::string set_spdlog_level(int level) {
 
     spdlog::set_level(spdlog_level);
 
-    // Use built-in spdlog function to get level name
-    const auto& sv = spdlog::level::to_string_view(spdlog_level);
-    std::string result(sv.data(), sv.size());
-    return result;
+    return static_cast<int>(spdlog::get_level());
 }
 
 void ensure_initialized() {

@@ -4,14 +4,12 @@
 #include "utils/string_utils.hpp"
 
 void assert_no_error(const NativeError& err) {
-    EXPECT_EQ(err.error_type, nullptr);
-    EXPECT_EQ(err.error_code, 0);
+    EXPECT_EQ(err.status, EXIT_SUCCESS);
     EXPECT_EQ(err.error_message, nullptr);
 }
 
 void assert_has_error(const NativeError& err) {
-    EXPECT_NE(err.error_code, 0);
-    EXPECT_NE(err.error_type, nullptr);
+    EXPECT_NE(err.status, EXIT_SUCCESS);
     EXPECT_NE(err.error_message, nullptr);
 }
 

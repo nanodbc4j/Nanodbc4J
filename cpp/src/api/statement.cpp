@@ -21,17 +21,11 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
     init_error(error);
     try {        
         stmt->bind(index, &value);
-    } catch (const nanodbc::index_range_error& e) {
-        set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error in set_value: {}", StringProxy(e.what()));
-    } catch (const nanodbc::type_incompatible_error& e) {
-        set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR("Type incompatible error in set_value: {}", StringProxy(e.what()));
     } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Standard exception in set_value: {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
+        set_error(error, "Unknown error");
         LOG_ERROR("Unknown exception in set_value");
     }
 }
@@ -42,18 +36,12 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
         // Wrap a single string in a vector
         std::vector<nanodbc::string> vec;
         vec.emplace_back(value);
-        stmt->bind_strings(index, vec);
-    } catch (const nanodbc::index_range_error& e) {
-        set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error (String): {}", StringProxy(e.what()));
-    } catch (const nanodbc::type_incompatible_error& e) {
-        set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR("Type incompatible error (String): {}", StringProxy(e.what()));
+        stmt->bind_strings(static_cast<short>(index), vec);
     } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Standard exception (String {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error setting string");
+        set_error(error, "Unknown error setting string");
         LOG_ERROR("Unknown exception (String)");
     }
 }
@@ -61,18 +49,12 @@ static void set_value_with_error_handling(nanodbc::statement* stmt, int index, c
 static void set_value_with_error_handling(nanodbc::statement* stmt, int index, nullptr_t, NativeError* error) noexcept {
     init_error(error);
     try {
-        stmt->bind_null(index);
-    } catch (const nanodbc::index_range_error& e) {
-        set_error(error, ErrorCode::Database, "IndexError", e.what());
-        LOG_ERROR("Index range error (NULL): {}", StringProxy(e.what()));
-    } catch (const nanodbc::type_incompatible_error& e) {
-        set_error(error, ErrorCode::Database, "TypeError", e.what());
-        LOG_ERROR("Type incompatible error (NULL): {}", StringProxy(e.what()));
+        stmt->bind_null(static_cast<short>(index));
     } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Standard exception (NULL): {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error setting NULL");
+        set_error(error, "Unknown error setting NULL");
         LOG_ERROR("Unknown exception (NULL)");
     }
 }
@@ -87,18 +69,15 @@ void prepare_statement(nanodbc::statement* stmt, const ApiChar* sql, NativeError
 
         if (!stmt) {
             LOG_ERROR("Statement is null, cannot prepare");
-            set_error(error, ErrorCode::Database, "StatementError", "Statement is null");
+            set_error(error, "Statement is null");
             return;
         }
         nanodbc::prepare(*stmt, static_cast<nanodbc::string>(str_sql));
-    } catch (const nanodbc::database_error& e) {
-        set_error(error, ErrorCode::Database, "StatementError", e.what());
-        LOG_ERROR("Database error during prepare: {}", StringProxy(e.what()));
     } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "StatementError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Standard exception during prepare: {}", StringProxy( e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown create statement error");
+        set_error(error, "Unknown create statement error");
         LOG_ERROR("Unknown exception during prepare");
     }
 }
@@ -193,18 +172,18 @@ void set_binary_array_value(nanodbc::statement* stmt, int index, BinaryArray* va
     try {
         std::vector<uint8_t> data = value->to_vector();
         if (data.empty()) {
-            std::vector<std::vector<uint8_t>> empty_batch;
-            stmt->bind(index, empty_batch);
+            const std::vector<std::vector<uint8_t>> empty_batch;
+            stmt->bind(static_cast<short>(index), empty_batch);
         } else {
             std::vector<std::vector<uint8_t>> batch;
             batch.push_back(data);
-            stmt->bind(index, batch);
+            stmt->bind(static_cast<short>(index), batch);
         }
     } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "DatabaseError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Exception in set_binary_array_value: {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
+        set_error(error, "Unknown error");
         LOG_ERROR("Unknown exception in set_binary_array_value");
     }
 }
@@ -215,7 +194,7 @@ ResultSet* execute(nanodbc::statement* stmt, int timeout, NativeError* error) no
     try {
         if (!stmt) {
             LOG_ERROR("Statement is null, cannot execute");
-            set_error(error, ErrorCode::Database, "ExecuteError", "Statement is null");
+            set_error(error, "Statement is null");
             return nullptr;
         }
         auto results = stmt->execute(BATCH_OPERATIONS, timeout);
@@ -223,14 +202,11 @@ ResultSet* execute(nanodbc::statement* stmt, int timeout, NativeError* error) no
         auto result_ptr = new ResultSet(std::move(results));
         LOG_DEBUG("Execute succeeded, result: {}", reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
-    } catch (const nanodbc::database_error& e) {
-        set_error(error, ErrorCode::Database, "ExecuteError", e.what());
-        LOG_ERROR("Database error during execute: {}", StringProxy(e.what()));
     } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "ExecuteError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Database error during execute: {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown execute statement error");
+        set_error(error, "Unknown execute statement error");
         LOG_ERROR("Unknown exception during execute");
     }
     return nullptr;
@@ -246,14 +222,11 @@ void cancel_statement(nanodbc::statement* stmt, NativeError* error) noexcept {
         }
         stmt->cancel();
         LOG_DEBUG("Statement cancel");
-    } catch (const nanodbc::database_error& e) {
-        set_error(error, ErrorCode::Database, "StatementError", e.what());
-        LOG_ERROR("Database error during cancel_statement: {}", StringProxy(e.what()));
     } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "StatementError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Standard exception during cancel_statement: {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown cancel statement error");
+        set_error(error, "Unknown cancel statement error");
         LOG_ERROR("Unknown exception during cancel_statement");
     }
 }
@@ -270,14 +243,11 @@ void close_statement(nanodbc::statement* stmt, NativeError* error) noexcept {
         LOG_DEBUG("Statement closed, now deleting object");
         delete stmt;
         LOG_DEBUG("Statement successfully closed and deleted");
-    } catch (const nanodbc::database_error& e) {
-        set_error(error, ErrorCode::Database, "StatementError", e.what());
-        LOG_ERROR("Database error during close_statement: {}", StringProxy(e.what()));
     } catch (const std::exception& e) {
-        set_error(error, ErrorCode::Standard, "StatementError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Standard exception during close_statement: {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown close statement error");
+        set_error(error, "Unknown close statement error");
         LOG_ERROR("Unknown exception during close_statement");
     }
 }

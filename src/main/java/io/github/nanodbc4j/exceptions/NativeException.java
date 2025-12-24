@@ -10,24 +10,20 @@ import lombok.Getter;
  */
 @Getter
 public final class NativeException extends RuntimeException {
-    private final int errorCode;
-    private final String errorType;
+    private final int status;
 
     public NativeException(String message) {
         super(message);
-        this.errorCode = 0;
-        this.errorType = null;
+        this.status = 0;
     }
 
     public NativeException(NativeError error) {
         super(error.getErrorMessage());
-        this.errorCode = error.error_code;
-        this.errorType = error.getErrorType();
+        this.status = error.status;
     }
 
-    public NativeException(int errorCode, String errorType, String message) {
+    public NativeException(int status, String message) {
         super(message);
-        this.errorCode = errorCode;
-        this.errorType = errorType;
+        this.status = status;
     }
 }
