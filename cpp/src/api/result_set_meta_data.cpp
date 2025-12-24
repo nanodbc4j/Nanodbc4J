@@ -8,7 +8,7 @@ CResultSetMetaData* get_meta_data(ResultSet* results, NativeError* error) noexce
 	try {
 		if (!results) {
 			LOG_ERROR("Result pointer is null, cannot get metadata");
-			set_error(error, ErrorCode::Database, "MetaDataError", "Result is null");
+			set_error(error, "Result is null");
 			return nullptr;
 		}
 
@@ -17,10 +17,10 @@ CResultSetMetaData* get_meta_data(ResultSet* results, NativeError* error) noexce
 		LOG_DEBUG("Metadata created successfully: columns count = {}", meta_data->columnCount);
 		return meta_data;
 	} catch (const std::exception& e) {
-		set_error(error, ErrorCode::Standard, "MetaDataError", e.what());
+		set_error(error, e.what());
 		LOG_ERROR("Exception in get_meta_data: {}", StringProxy(e.what()));
 	} catch (...) {
-		set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
+		set_error(error,"Unknown get meta data error");
 		LOG_ERROR("Unknown exception in get_meta_data");
 	}
 	return nullptr;

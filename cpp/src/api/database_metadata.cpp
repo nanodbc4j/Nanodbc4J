@@ -15,7 +15,7 @@ static ResultSet* execute_metadata_query(nanodbc::connection *conn, Func &&func,
     try {
         if (!conn) {
             LOG_ERROR("Connection pointer is null, cannot execute '{}'", operation_name);
-            set_error(error, ErrorCode::Database, "ResultSetError", "Result is null");
+            set_error(error, "Result is null");
             return nullptr;
         }
 
@@ -25,14 +25,11 @@ static ResultSet* execute_metadata_query(nanodbc::connection *conn, Func &&func,
 
         LOG_DEBUG("ResultSet for '{}' created successfully: {}", operation_name, reinterpret_cast<uintptr_t>(result_ptr));
         return result_ptr;
-    } catch (const nanodbc::database_error &e) {
-        set_error(error, ErrorCode::Database, "MetaDataError", e.what());
-        LOG_ERROR("Database error in '{}': {}", operation_name, StringProxy(e.what()));
     } catch (const exception &e) {
-        set_error(error, ErrorCode::Standard, "MetaDataError", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Exception in '{}': {}", operation_name, StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown error");
+        set_error(error, "Unknown error");
         LOG_ERROR("Unknown exception in '{}'", operation_name);
     }
 
@@ -45,7 +42,7 @@ CDatabaseMetaData *get_database_meta_data(nanodbc::connection *conn, NativeError
     try {
         if (!conn) {
             LOG_ERROR("Connection pointer is null, cannot get metadata");
-            set_error(error, ErrorCode::Database, "DatabaseMetaData", "Result is null");
+            set_error(error, "Result is null");
             return nullptr;
         }
 
@@ -54,10 +51,10 @@ CDatabaseMetaData *get_database_meta_data(nanodbc::connection *conn, NativeError
         LOG_DEBUG("Metadata created successfully: {}", reinterpret_cast<uintptr_t>(meta_data));
         return meta_data;
     } catch (const exception &e) {
-        set_error(error, ErrorCode::Standard, "DatabaseMetaData", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Exception in get_database_meta_data: {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
+        set_error(error, "Unknown get meta data error");
         LOG_ERROR("Unknown exception in get_database_meta_data");
     }
     return nullptr;
@@ -70,7 +67,7 @@ bool database_meta_data_support_convert(nanodbc::connection *conn, int from_type
     try {
         if (!conn) {
             LOG_ERROR("Connection pointer is null");
-            set_error(error, ErrorCode::Database, "DatabaseMetaData", "Result false");
+            set_error(error, "Result false");
             return false;
         }
 
@@ -79,10 +76,10 @@ bool database_meta_data_support_convert(nanodbc::connection *conn, int from_type
         LOG_TRACE("Result: {}", result);
         return result;
     } catch (const exception &e) {
-        set_error(error, ErrorCode::Standard, "DatabaseMetaData", e.what());
+        set_error(error, e.what());
         LOG_ERROR("Exception in database_meta_data_support_convert: {}", StringProxy(e.what()));
     } catch (...) {
-        set_error(error, ErrorCode::Unknown, "UnknownError", "Unknown get meta data error");
+        set_error(error, "Unknown get meta data error");
         LOG_ERROR("Unknown exception in database_meta_data_support_convert");
     }
     return false;

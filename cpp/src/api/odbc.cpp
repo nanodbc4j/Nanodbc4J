@@ -22,9 +22,9 @@ Datasource** datasources_list(int* count) noexcept {
 
 int set_log_level(int level) noexcept {
 	try {
-		auto result_level_name = set_spdlog_level(level);
-		LOG_DEBUG("Set log level: {}", result_level_name);
-		return ErrorCode::Success;
+		auto result_level = set_spdlog_level(level);
+		LOG_DEBUG("Set log level: {}", result_level);
+		return result_level;
 	} catch (const std::exception& e) {
 		LOG_ERROR("Exception in set_log_level: {}", StringProxy(e.what()));
 	} catch (...) {

@@ -8,7 +8,7 @@
 void ensure_initialized();
 
 // Set logging level
-std::string set_spdlog_level(int level = SPDLOG_LEVEL_INFO);
+int set_spdlog_level(int level = SPDLOG_LEVEL_INFO);
 
 // Ensure initialization before logging, but only if the log level is enabled
 #define LOG_WITH_INIT(level, ...) \
