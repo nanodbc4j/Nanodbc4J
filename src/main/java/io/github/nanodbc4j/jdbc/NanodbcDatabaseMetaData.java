@@ -1,6 +1,7 @@
 package io.github.nanodbc4j.jdbc;
 
 import io.github.nanodbc4j.exceptions.NanodbcSQLException;
+import io.github.nanodbc4j.exceptions.NanodbcSQLFeatureNotSupportedException;
 import io.github.nanodbc4j.exceptions.NativeException;
 import io.github.nanodbc4j.internal.dto.DatabaseMetaDataDto;
 import io.github.nanodbc4j.internal.handler.DatabaseMetaDataHandler;
@@ -1537,7 +1538,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public ResultSet getSuperTypes(String catalog, String schemaPattern, String typeNamePattern) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSuperTypes");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -1547,7 +1548,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public ResultSet getSuperTables(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSuperTables");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -1557,7 +1558,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public ResultSet getAttributes(String catalog, String schemaPattern, String typeNamePattern, String attributeNamePattern) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getAttributes");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -1648,7 +1649,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public RowIdLifetime getRowIdLifetime() throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getRowIdLifetime");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -1658,7 +1659,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getSchemas");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException("getSchemas with parameters is not supported");
+        throw new NanodbcSQLFeatureNotSupportedException("getSchemas with parameters is not supported");
     }
 
     /**
@@ -1686,7 +1687,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public ResultSet getClientInfoProperties() throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getClientInfoProperties");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException();
+        throw new NanodbcSQLFeatureNotSupportedException();
     }
 
     /**
@@ -1696,7 +1697,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getFunctions");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException("Operation not yet supported");
+        throw new NanodbcSQLFeatureNotSupportedException("Operation not yet supported");
     }
 
     /**
@@ -1706,7 +1707,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern, String columnNamePattern) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getFunctionColumns");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException("Operation not yet supported");
+        throw new NanodbcSQLFeatureNotSupportedException("Operation not yet supported");
     }
 
     /**
@@ -1716,7 +1717,7 @@ public class NanodbcDatabaseMetaData implements DatabaseMetaData, JdbcWrapper {
     public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
         log.log(Level.FINEST, "NanodbcDatabaseMetaData.getPseudoColumns");
         // sun.jdbc.odbc does not support this
-        throw new UnsupportedOperationException("Operation not yet supported");
+        throw new NanodbcSQLFeatureNotSupportedException("Operation not yet supported");
     }
 
     /**
