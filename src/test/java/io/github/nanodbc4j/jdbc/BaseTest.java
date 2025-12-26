@@ -1,6 +1,6 @@
 package io.github.nanodbc4j.jdbc;
 
-import io.github.nanodbc4j.internal.dto.DriverProperties;
+import io.github.nanodbc4j.dto.DriverProperties;
 import org.junit.jupiter.api.BeforeAll;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

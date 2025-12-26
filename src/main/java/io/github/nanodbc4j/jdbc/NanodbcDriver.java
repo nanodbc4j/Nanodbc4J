@@ -1,8 +1,8 @@
 package io.github.nanodbc4j.jdbc;
 
+import io.github.nanodbc4j.dto.DatasourceProperties;
+import io.github.nanodbc4j.dto.DriverProperties;
 import io.github.nanodbc4j.exceptions.NanodbcSQLFeatureNotSupportedException;
-import io.github.nanodbc4j.internal.dto.DatasourceProperties;
-import io.github.nanodbc4j.internal.dto.DriverProperties;
 import io.github.nanodbc4j.internal.handler.DriverHandler;
 import io.github.nanodbc4j.logging.EnhancedSimpleFormatter;
 import lombok.extern.java.Log;

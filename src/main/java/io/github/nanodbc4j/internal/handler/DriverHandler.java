@@ -2,9 +2,9 @@ package io.github.nanodbc4j.internal.handler;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import io.github.nanodbc4j.dto.DatasourceProperties;
+import io.github.nanodbc4j.dto.DriverProperties;
 import io.github.nanodbc4j.internal.binding.OdbcApi;
-import io.github.nanodbc4j.internal.dto.DatasourceProperties;
-import io.github.nanodbc4j.internal.dto.DriverProperties;
 import io.github.nanodbc4j.jdbc.SpdLogLevel;
 import io.github.nanodbc4j.internal.cstruct.DatasourceStruct;
 import io.github.nanodbc4j.internal.cstruct.DriverStruct;

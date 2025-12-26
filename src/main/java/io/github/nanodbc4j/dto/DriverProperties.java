@@ -1,4 +1,4 @@
-package io.github.nanodbc4j.internal.dto;
+package io.github.nanodbc4j.dto;
 
 import java.util.List;
 

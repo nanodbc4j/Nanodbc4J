@@ -1,6 +1,5 @@
 package io.github.nanodbc4j.jdbc;
 
-import io.github.nanodbc4j.internal.dto.DriverProperties;
 import org.junit.jupiter.api.*;
 import java.sql.*;
 
