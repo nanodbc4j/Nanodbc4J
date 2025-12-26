@@ -7,4 +7,6 @@ module io.github.nanodbc4j {
     exports io.github.nanodbc4j.jdbc;
     exports io.github.nanodbc4j.dto;
     exports io.github.nanodbc4j.exceptions;
+
+    provides java.sql.Driver with io.github.nanodbc4j.jdbc.NanodbcDriver;
 }
