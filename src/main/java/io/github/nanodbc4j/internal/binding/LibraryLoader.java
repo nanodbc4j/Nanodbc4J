@@ -37,35 +37,42 @@ public class LibraryLoader {
      * Performs cleanup, extracts library to temp directory and loads it.
      * Thread-safe and idempotent.
      *
-     * @throws IOException if library extraction fails or library not found in JAR
      */
-    public static synchronized String load() throws IOException {
+    public static synchronized String load() {
         if (isLoaded) {
             return libraryPath;
         }
 
         // Only on first run - clean up old files
-        cleanup();
-
-        // Convert library name to system-specific (libodbc.so, odbc.dll, libodbc.dylib)
-        String libName = System.mapLibraryName(LIBRARY_NAME);
-        // Define path inside JAR: e.g., /natives/odbc.dll
-        String resourcePath = "natives" + '/' + libName;
-
-        loadLibraryFromJar(resourcePath);
-        isLoaded = true;
+        cleanupOldTempLibs();
+        String resourceName = resourceName();
+        loadLibraryFromJar(resourceName);
         return libraryPath;
+    }
+
+    /**
+     * Builds the path to a native resource inside the JAR file.
+     * Converts the library name into a system-specific filename
+     * and appends it to the base resource directory path.
+     *
+     * @return the relative path to the library file inside the JAR
+     */
+    @SuppressWarnings("SpellCheckingInspection")
+    private static String resourceName() {
+        // Convert library name to system-specific (libnanodbc4j.so, nanodbc4j.dll, libnanodbc4j.dylib)
+        String libName = System.mapLibraryName(LIBRARY_NAME);
+        // Define path inside JAR: e.g., /natives/nanodbc4j.dll
+        return  "natives" + '/' + libName;
     }
 
     /**
      * Extracts and loads native library from JAR resource.
      * Creates temp files with UUID and lock file for cleanup tracking.
      *
-     * @param resourcePath path to native library in JAR
-     * @throws IOException if file operations fail or library not found in JAR
+     * @param resourceName path to native library in JAR
      */
-    private static void loadLibraryFromJar(String resourcePath) throws IOException {
-        String libFileName = new File(resourcePath).getName();
+    private static void loadLibraryFromJar(String resourceName) {
+        String libFileName = new File(resourceName).getName();
         String uuid = UUID.randomUUID().toString();
         String extractedLibName = TEMP_LIB_PREFIX + uuid + '_' + libFileName;
         String extractedLckName = extractedLibName + LOCK_EXT;
@@ -74,9 +81,9 @@ public class LibraryLoader {
         Path libFile = tempDir.resolve(extractedLibName);
         Path lckFile = tempDir.resolve(extractedLckName);
 
-        try (InputStream in = LibraryLoader.class.getClassLoader().getResourceAsStream(resourcePath)) {
+        try (InputStream in = LibraryLoader.class.getClassLoader().getResourceAsStream(resourceName)) {
             if (in == null) {
-                throw new IOException("Cannot find native library in JAR: " + resourcePath);
+                throw new IOException("Cannot find native library in JAR: " + resourceName);
             }
 
             Files.copy(in, libFile, StandardCopyOption.REPLACE_EXISTING);
@@ -99,7 +106,24 @@ public class LibraryLoader {
 
             libraryPath = libFile.toString();
             System.load(libraryPath);
+            isLoaded = true;
             log.info("Successfully loaded native library from JAR: " + libraryPath);
+        } catch (IOException e) {
+            throw new ExceptionInInitializerError("Cannot unpack nanodbc4j: " + e);
+        } finally {
+            if (!isLoaded) {
+                try {
+                    Files.deleteIfExists(libFile);
+                } catch (IOException e) {
+                    log.warning("Failed to delete library file " + libFile + ": " + e.getMessage());
+                }
+
+                try {
+                    Files.deleteIfExists(lckFile);
+                } catch (IOException e) {
+                    log.warning("Failed to delete lock file " + lckFile + ": " + e.getMessage());
+                }
+            }
         }
     }
 
@@ -108,7 +132,8 @@ public class LibraryLoader {
      * Deletes library files that don't have corresponding lock files.
      * Suppresses all exceptions during cleanup.
      */
-    private static void cleanup() {
+    @SuppressWarnings("NullableProblems")
+    private static void cleanupOldTempLibs() {
         try {
             Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
             Files.walkFileTree(tempDir, EnumSet.of(FileVisitOption.FOLLOW_LINKS), 1, new SimpleFileVisitor<>() {
