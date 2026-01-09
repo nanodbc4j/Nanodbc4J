@@ -53,8 +53,8 @@ val nativeWindowsDir = when (nativeProfile) {
 }
 
 val nativeLinuxDir = when (nativeProfile) {
-    "debug" -> "out/build/WSL-GCC-Debug"
-    "release" -> "out/build/WSL-GCC-Release"
+    "debug" -> "out/build/GCC-Debug"
+    "release" -> "out/build/GCC-Release"
     else -> error("Unsupported nativeProfile: $nativeProfile. Use 'debug' or 'release'.")
 }
 
